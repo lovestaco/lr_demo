@@ -1,0 +1,317 @@
+<template>
+  <style>
+    /* Brand face — staged locally at assets/fonts/Inter-var.woff2 (variable, wght 100-900).
+       Declared so headless Chrome can actually supply Inter instead of falling back. */
+    @font-face {
+      font-family: "Inter";
+      src: url("assets/fonts/Inter-var.woff2") format("woff2");
+      font-weight: 100 900;
+      font-style: normal;
+      font-display: block;
+    }
+
+    #root {
+      width: 1920px;
+      height: 1080px;
+      position: relative;
+      overflow: hidden;
+      font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+      color: #05070b;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* full-bleed ground rides a clip layer, never #root */
+    .f09-review-ground { position: absolute; inset: 0; background: #ffffff; }
+    .f09-review-stage  { position: absolute; inset: 0; }
+
+    /* ── section marker: the Review node lifted out of F08's ring ───────── */
+    .f09-review-morph {
+      position: absolute;
+      left: 830px;
+      top: 290px;
+      width: 260px;
+      height: 110px;
+      border-radius: 14px;
+      background: rgba(29, 86, 240, 0.04);
+      border: 2px solid rgba(29, 86, 240, 0.2);
+      overflow: hidden;
+      will-change: transform;
+    }
+    .f09-review-morph-old,
+    .f09-review-morph-new {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      white-space: nowrap;
+    }
+    .f09-review-morph-new { opacity: 0; gap: 14px; }
+    .f09-review-node-num {
+      font-size: 28px; font-weight: 700; letter-spacing: 0.04em; color: #1d56f0;
+    }
+    .f09-review-node-label {
+      font-size: 28px; font-weight: 600; letter-spacing: 0.06em;
+      text-transform: uppercase; color: #05070b;
+    }
+    /* chip type is authored at apparent-size / END_SCALE (0.68) */
+    .f09-review-chip-num {
+      font-size: 29.4px; font-weight: 700; letter-spacing: 0.1em; color: #1d56f0;
+    }
+    .f09-review-chip-label {
+      font-size: 29.4px; font-weight: 600; letter-spacing: 0.12em;
+      text-transform: uppercase; color: #05070b;
+    }
+
+    /* ── pillar question ────────────────────────────────────────────────── */
+    .f09-review-question {
+      position: absolute;
+      left: 110px;
+      top: 192px;
+      width: 830px;
+      font-size: 56px;
+      font-weight: 600;
+      line-height: 1.14;
+      letter-spacing: -0.02em;
+      color: #05070b;
+    }
+    .f09-review-word { display: inline-block; will-change: transform; }
+
+    /* ── supporting triad ───────────────────────────────────────────────── */
+    .f09-review-row {
+      position: absolute;
+      left: 110px;
+      width: 780px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+    }
+    .f09-review-dash {
+      width: 26px; height: 3px; border-radius: 2px; background: #1d56f0;
+      margin-right: 20px; transform-origin: 0% 50%; will-change: transform;
+    }
+    .f09-review-row-text {
+      font-size: 28px; font-weight: 400; line-height: 1.6; color: #1648cf;
+      will-change: transform;
+    }
+
+    /* ── footage card ───────────────────────────────────────────────────── */
+    .f09-review-card {
+      position: absolute;
+      left: 980px;
+      top: 236px;
+      width: 830px;
+      height: 384px;
+      border-radius: 14px;
+      background: rgba(29, 86, 240, 0.04);
+      border: 1.5px solid rgba(29, 86, 240, 0.2);
+      overflow: hidden;
+      will-change: transform;
+    }
+    .f09-review-card-head {
+      position: absolute; left: 0; top: 0; right: 0; height: 64px;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 24px;
+      border-bottom: 1px solid rgba(29, 86, 240, 0.2);
+    }
+    .f09-review-head-slot { position: relative; width: 480px; height: 26px; }
+    .f09-review-head-label {
+      position: absolute; left: 0; top: 0;
+      font-size: 18px; font-weight: 600; letter-spacing: 0.08em;
+      text-transform: uppercase; color: #1d56f0; white-space: nowrap;
+      opacity: 0; will-change: transform;
+    }
+    .f09-review-steps { display: flex; align-items: center; gap: 10px; }
+    .f09-review-step {
+      display: block; width: 30px; height: 5px; border-radius: 3px;
+      background: rgba(29, 86, 240, 0.15); overflow: hidden;
+    }
+    .f09-review-step i {
+      display: block; width: 100%; height: 100%; background: #1d56f0;
+      transform-origin: 0% 50%; will-change: transform;
+    }
+    .f09-review-screen {
+      position: absolute; left: 14px; top: 66px;
+      width: 802px; height: 304px;
+      background: #0e1322;
+      border-radius: 2px;
+    }
+
+    /* ── severity rail (the diff's findings, ranked) ────────────────────── */
+    .f09-review-rail {
+      position: absolute; left: 980px; top: 672px; width: 830px; height: 72px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .f09-review-rail-label {
+      font-size: 18px; font-weight: 600; letter-spacing: 0.08em;
+      text-transform: uppercase; color: #1d56f0; white-space: nowrap;
+      will-change: transform;
+    }
+    .f09-review-chips { display: flex; align-items: center; gap: 14px; }
+    .f09-review-chip {
+      display: flex; align-items: center; gap: 10px;
+      padding: 11px 20px;
+      border-radius: 100px;
+      border: 1.5px solid rgba(29, 86, 240, 0.2);
+      background: #ffffff;
+      font-size: 20px; font-weight: 600; letter-spacing: 0.04em;
+      white-space: nowrap;
+      will-change: transform;
+    }
+    .f09-review-chip-dot {
+      width: 10px; height: 10px; border-radius: 50%;
+      background: currentColor; will-change: transform;
+    }
+    .f09-review-chip-critical { color: #dc2626; }
+    .f09-review-chip-warning  { color: #1d56f0; }
+    .f09-review-chip-info     { color: #9a9a9a; }
+  </style>
+
+  <div
+    id="root"
+    data-composition-id="09-review"
+    data-start="0"
+    data-duration="7.177"
+    data-width="1920"
+    data-height="1080"
+  >
+    <div class="clip f09-review-ground" data-start="0" data-duration="7.177" data-track-index="0"></div>
+
+    <div class="clip f09-review-stage" data-start="0" data-duration="7.177" data-track-index="1">
+
+      <!-- Scene 1 — the Review node lifts out of the ring and morphs into the marker -->
+      <div class="f09-review-morph" id="f09-review-morph">
+        <div class="f09-review-morph-old" id="f09-review-morph-old">
+          <span class="f09-review-node-num">01</span>
+          <span class="f09-review-node-label">Review</span>
+        </div>
+        <div class="f09-review-morph-new" id="f09-review-morph-new">
+          <span class="f09-review-chip-num">01</span>
+          <span class="f09-review-chip-label">Review</span>
+        </div>
+      </div>
+
+      <div class="f09-review-question" id="f09-review-question"><span class="f09-review-word">&ldquo;What</span> <span class="f09-review-word">matters</span> <span class="f09-review-word">in</span> <span class="f09-review-word">this</span> <span class="f09-review-word">code</span> <span class="f09-review-word">change?&rdquo;</span></div>
+
+      <div class="f09-review-row" style="top: 404px;">
+        <span class="f09-review-dash"></span>
+        <span class="f09-review-row-text">Blast-radius scoring</span>
+      </div>
+      <div class="f09-review-row" style="top: 468px;">
+        <span class="f09-review-dash"></span>
+        <span class="f09-review-row-text">Review-priority ranking</span>
+      </div>
+      <div class="f09-review-row" style="top: 532px;">
+        <span class="f09-review-dash"></span>
+        <span class="f09-review-row-text">10-category risk taxonomy</span>
+      </div>
+
+      <!-- Scene 2/3 — the product surface, card-mounted on the white ground -->
+      <div class="f09-review-card" id="f09-review-card">
+        <div class="f09-review-card-head">
+          <div class="f09-review-head-slot">
+            <span class="f09-review-head-label" id="f09-review-label-a">Review pipeline</span>
+            <span class="f09-review-head-label" id="f09-review-label-b">Findings on the diff</span>
+          </div>
+          <div class="f09-review-steps">
+            <span class="f09-review-step"><i id="f09-review-step-1-fill"></i></span>
+            <span class="f09-review-step"><i id="f09-review-step-2-fill"></i></span>
+          </div>
+        </div>
+        <div class="f09-review-screen"></div>
+      </div>
+
+      <div class="f09-review-rail">
+        <span class="f09-review-rail-label" id="f09-review-rail-label">Ranked by severity</span>
+        <div class="f09-review-chips">
+          <span class="f09-review-chip f09-review-chip-critical"><i class="f09-review-chip-dot"></i>CRITICAL</span>
+          <span class="f09-review-chip f09-review-chip-warning"><i class="f09-review-chip-dot"></i>WARNING</span>
+          <span class="f09-review-chip f09-review-chip-info"><i class="f09-review-chip-dot"></i>INFO</span>
+        </div>
+      </div>
+
+      <!-- approved product footage, mounted in the card's screen rect -->
+      <!-- approved frame video hoisted by assemble-index -->
+      <!-- approved frame video hoisted by assemble-index -->
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <script>
+    (function () {
+      window.__timelines = window.__timelines || {};
+      var tl = gsap.timeline({ paused: true });
+
+      /* ── Scene 1 (0.0–1.8s) — card-morph-anchor ───────────────────────────
+         The Review node holds its F08 ring geometry (260x110 @ 830,290), then
+         one tween carries every morph channel in lockstep: uniform scale
+         (0.68), the paint-only borderRadius (14px -> stadium) and background,
+         plus the x/y delta onto the marker slot at 110,88. Old content fades
+         out over the first 40%, new content in over the last 40% — the gap
+         between is the shape-only blink. No handoff anchor: the card IS the
+         section marker for the rest of the frame.                            */
+      tl.to("#f09-review-morph", {
+        x: -761.6, y: -219.6, scale: 0.68,
+        borderRadius: "55px",
+        backgroundColor: "rgba(29, 86, 240, 0.08)",
+        duration: 0.8, ease: "power2.inOut"
+      }, 0.25);
+      tl.to("#f09-review-morph-old", { opacity: 0, duration: 0.32, ease: "power1.in" }, 0.25);
+      tl.fromTo("#f09-review-morph-new",
+        { opacity: 0 },
+        { opacity: 1, duration: 0.32, ease: "power1.out" }, 0.73);
+
+      /* the pillar question sets beneath it, word by word */
+      tl.fromTo(".f09-review-word",
+        { opacity: 0, y: 28 },
+        { opacity: 1, y: 0, duration: 0.55, ease: "power3.out", stagger: 0.085 }, 0.78);
+
+      /* ── Scene 2 (1.8–4.2s) — the surface arrives, long-tail settle ────── */
+      tl.fromTo("#f09-review-card",
+        { opacity: 0, x: 104, scale: 0.98 },
+        { opacity: 1, x: 0, scale: 1, duration: 0.85, ease: "power4.out" }, 1.72);
+      tl.fromTo("#f09-review-label-a",
+        { opacity: 0, y: 10 },
+        { opacity: 1, y: 0, duration: 0.45, ease: "power2.out" }, 2.06);
+      tl.fromTo("#f09-review-step-1-fill",
+        { scaleX: 0 },
+        { scaleX: 1, duration: 0.45, ease: "power2.out" }, 2.16);
+
+      /* what actually matters — the triad answers, one row per beat */
+      tl.fromTo(".f09-review-dash",
+        { scaleX: 0 },
+        { scaleX: 1, duration: 0.42, ease: "power2.out", stagger: 0.4 }, 2.55);
+      tl.fromTo(".f09-review-row-text",
+        { opacity: 0, x: -18 },
+        { opacity: 1, x: 0, duration: 0.52, ease: "power3.out", stagger: 0.4 }, 2.58);
+
+      /* ── Scene 3 (4.2–6.677s) — the surface advances to the diff ───────── */
+      tl.to("#f09-review-label-a", { opacity: 0, duration: 0.14, ease: "power1.in" }, 4.04);
+      tl.fromTo("#f09-review-label-b",
+        { opacity: 0, y: 10 },
+        { opacity: 1, y: 0, duration: 0.3, ease: "power2.out" }, 4.24);
+      tl.to("#f09-review-step-1-fill", { opacity: 0.38, duration: 0.3, ease: "power1.inOut" }, 4.2);
+      tl.fromTo("#f09-review-step-2-fill",
+        { scaleX: 0 },
+        { scaleX: 1, duration: 0.4, ease: "power2.out" }, 4.2);
+
+      /* ranked by how much it can hurt you — severity marks land worst-first */
+      tl.fromTo("#f09-review-rail-label",
+        { opacity: 0, x: -16 },
+        { opacity: 1, x: 0, duration: 0.45, ease: "power3.out" }, 4.42);
+      tl.fromTo(".f09-review-chip",
+        { opacity: 0, y: 20, scale: 0.94 },
+        { opacity: 1, y: 0, scale: 1, duration: 0.5, ease: "power3.out", stagger: 0.25 }, 4.7);
+      tl.fromTo(".f09-review-chip-dot",
+        { scale: 0.4 },
+        { scale: 1, duration: 0.45, ease: "back.out(2)", stagger: 0.25 }, 4.76);
+
+      /* hold the payoff state to the end of the frame (no exit — the root owns it) */
+      tl.to({ hold: 0 }, { hold: 1, duration: 0.96, ease: "none" }, 5.72);
+
+      window.__timelines["09-review"] = tl;
+      tl.seek(0);
+    })();
+  </script>
+</template>

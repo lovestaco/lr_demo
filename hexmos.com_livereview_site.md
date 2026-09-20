@@ -1,0 +1,1491 @@
+Title: LiveReview: Blast-Radius Aware AI Code Review
+
+URL Source: https://hexmos.com/livereview/
+
+Published Time: Fri, 18 Sep 2026 07:34:10 GMT
+
+Markdown Content:
+[![Image 7: LiveReview Logo](https://hexmos.com/livereview/logo.svg) ## Live Review Blast-Radius Aware AI Code Review](https://hexmos.com/livereview/)
+
+[Overview](https://hexmos.com/livereview/#blast-radius)
+
+Product
+
+[Pricing](https://hexmos.com/livereview/pricing/)
+
+Outcomes
+
+Enterprise
+
+Resources
+
+[](https://github.com/HexmosTech/LiveReview "View on GitHub")Start Free
+
+Start Free
+
+On this page
+
+Overview The System
+
+Review
+
+Understand
+
+Enforce
+
+Improve
+
+Connect
+
+Overview The System
+
+Review Understand Enforce Improve Connect
+
+## AI generates code fast, like a wild horse.  
+LiveReview tames it into your workhorse.
+
+![Image 8: Horse under human control, wearing a bridle](https://hexmos.com/livereview/hero/domesticated-horse.webp)
+
+![Image 9: Wild, untamed horse](https://hexmos.com/livereview/hero/wild-horse.webp)
+
+Before Before LiveReview
+
+## AI Speed
+
+*   Raw power.
+*   Immense potential.
+*   Uncontrolled behavior.
+
+![Image 10: LiveReview Logo](https://hexmos.com/livereview/logo.svg)After After LiveReview
+
+## Human Control
+
+*   Guided.
+*   Focused.
+*   Reliable.
+
+Prioritized by blast radius
+
+# [Blast-Radius Aware AI Code Review for Business-Critical Systems.](https://hexmos.com/livereview/#blast-radius)
+
+Your team's attention is limited. Spend review effort where business risk is highest — not spread evenly across every diff.
+
+300
+
+line UI tweak
+
+Breaks one page.
+
+VS
+
+3
+
+line DB change
+
+Breaks the entire app.
+
+Not all diffs are created equal — so we score and sort every piece of a diff by its blast radius.
+
+LiveReview — Blast Radius & Review Priority scoring
+
+[Video 12](https://hexmos.com/livereview/risk-score/risk-score-demo-compressed.mp4)
+
+![Image 11: Blast Radius and Review Priority score broken down step by step in Math Mode](https://hexmos.com/livereview/risk-score/new-risk-score-3.webp)
+
+The exact math, not a black box
+
+![Image 12: Sunburst chart visualizing a function's blast radius across the call graph](https://hexmos.com/livereview/risk-score/new-risk-score-4.webp)
+
+Visualize blast radius at a glance
+
+![Image 13: Full breakdown of every factor behind the Blast Radius and Review Priority scores](https://hexmos.com/livereview/risk-score/new-risk-score-2.webp)
+
+Every factor that feeds the score
+
+LiveReview scores risk using a live call graph of your codebase, not just the diff in front of you.Hover a node to preview its blast radius,click to lock it in.
+
+Backend (Go)Frontend (React)Function Struct Blast radius
+
+82 symbols from LiveReview's own codebase — size shows how central a symbol is.
+
+How does Blast Radius scoring work?(a more technical explanation)▾
+
+Here's the goal:
+
+*   A 3-line fix in a function used by 40 other files, that also writes to a database, should score high.
+*   A 300-line UI change in one file, fully covered by tests and used by nothing else, should score low, even though it's the bigger diff.
+
+To get there, LiveReview gives each hunk two scores, then combines them into one and ranks every hunk in the diff by it.
+
+*   Blast Radius: how far a change can reach through your code.
+    *   How many other places call this code, directly or a few steps removed
+    *   Whether it writes to a database or other long-term storage
+    *   Whether those callers live in other parts of the codebase, not just nearby files
+
+*   Review Priority: how much scrutiny a change warrants, based on its complexity, subtlety, and potential for important details to be missed.
+    *   How many different paths the logic can take, and how hard it is to follow
+    *   How deeply loops sit nested inside other loops
+    *   How many other functions or symbols this code itself calls into
+    *   Whether the code has tests
+
+LiveReview may add new signals over time. The two questions behind them stay the same: how far, and how much scrutiny.
+
+Customer trust runs on uptime, responsiveness, and delight — all of which demand engineering confidence.
+
+LiveReview is the org-wide harness for AI-written code — turning raw AI power into enterprise-grade dependability.
+
+Before LiveReview
+
+AI Code Volume →
+
+After LiveReview
+
+AI Code Volume →
+
+The System
+
+## The System
+
+![Image 14: Admiral Hyman G. Rickover, U.S. Navy](https://hexmos.com/livereview/rickover/rickover-portrait.jpg)
+
+“You get what you inspect, not what you expect.”
+
+Admiral Hyman G. Rickover, U.S. Navy
+
+LiveReview runs as an independent inspection layer on top of whatever writes your code: Claude, Copilot, Cursor, or anything else. That independence is what turns engineering competence into business leverage: fewer regressions, less downtime, and fewer quality, performance, and security surprises.
+
+[0 1 Review Some tools give you speed and sacrifice quality, or the reverse. Multi-level reviews let you set policy per team and repo, at different gradations, so you get both.](https://hexmos.com/livereview/#review)[0 2 Understand Keep the business under your team's intellectual control, even as generative AI writes more of the code. Cognitive Coverage builds real understanding without costing time or energy.](https://hexmos.com/livereview/#understand)[0 3 Enforce Aspirations are easy to set. Real transformation lives in the depth and precision of implementation. LiveReview enforces and monitors at that level, so standards get lived, not just stated.](https://hexmos.com/livereview/#enforce)[0 4 Improve An org with a higher learning rate beats one with a lower rate. LiveReview turns the day's activity into chat, charts, and reports, taking the guesswork out of what to improve next.](https://hexmos.com/livereview/#improve)[0 5 Connect None of this requires disruption. LiveReview works with the tools and systems you already run, so these outcomes are low-friction to reach, not a rebuild.](https://hexmos.com/livereview/#connect)
+
+The result: engineering becomes a business advantage. You stay ahead, your engineers build deep systems understanding, standards get enforced where the work actually happens, and you get speed and quality together.
+
+Improve feeds straight back into Review: the loop runs continuously on every commit, not once at setup.
+
+Review
+
+Some tools give you speed and sacrifice quality, or the reverse. Multi-level reviews let you set policy per team and repo, at different gradations, so you get both.
+
+Helps you answer the question:
+
+## [“What matters in this code change?”](https://hexmos.com/livereview/#review)
+
+Blast-radius scoring Review-priority ranking 10-category risk taxonomy Adaptive multi-model reviews
+
+Focus attention on what's actually risky.
+
+## [Prevent Outages, Breaches, and Technical Debt Before They Happen](https://hexmos.com/livereview/#risk-taxonomy)
+
+Every commit git-lrc reviews gets checked against the same risk categories LiveReview tracks across production codebases. Hover or tap any item below to see exactly what it costs when it slips through.
+
+10
+
+Risk Categories
+
+100+
+
+Failure Patterns Tracked
+
+Every Commit
+
+Scanned Automatically
+
+Outages Breaches Technical Debt
+
+What takes down production - and impacts your on-call rotation.
+
+### Reliability
+
+10 risks tracked
+
+Error Handling Fault Tolerance Retry Logic Timeout Management Resilience Patterns Availability Risks Data Integrity Race Conditions Resource Cleanup Failure Recovery
+
+### Correctness
+
+10 risks tracked
+
+Logic Errors Edge Cases Data Validation State Management Concurrency Bugs Business Rule Violations Numerical Accuracy Null Handling Type Safety API Contract Violations
+
+### Performance
+
+10 risks tracked
+
+Database Efficiency Algorithmic Complexity Memory Usage CPU Utilization Network Efficiency Caching Concurrency Resource Contention Rendering Performance Startup Performance
+
+### Scalability
+
+10 risks tracked
+
+Horizontal Scaling Vertical Scaling Distributed Systems Load Balancing Capacity Planning Bottleneck Risks Concurrency Limits Service Growth Constraints Database Scaling Queue Backpressure
+
+Reliability → Error Handling
+
+Unhandled errors crash services mid-request, leaving customers staring at broken pages during peak traffic.
+
+Start Free 
+
+Multi-Level Reviews
+
+## [Enforce your standards on every line of AI-generated code.](https://hexmos.com/livereview/#multi-level-reviews)
+
+Activate checks at the levels that matter to you — mix and match enforcement per repository.
+
+Commit
+
+Before Push
+
+MR / PR
+
+CI / CD
+
+Scheduled Checks
+
+Want the code nobody committed to today still checked? See [Scheduled Reviews](https://hexmos.com/livereview/#feature-scheduled_reviews) below.
+
+### Pick the Right Review Depth Based on Your Need for Shipping Speed
+
+Not every repo needs the same amount of scrutiny. Turn on more checkpoints where the blast radius of a bad change is high, and fewer where speed matters most.
+
+*   •Commit Only: fastest, lightest net. Fine for low-stakes, throwaway repos.
+*   •Commit + Scheduled: the startup pick. Near-zero friction day-to-day, plus a daily sweep that catches anything that slipped past commit-time checks.
+*   •Commit + Before Push + MR/PR: the standard team flow. A human sees every change before it merges.
+*   •All Five (Full Harness): maximum coverage, for repos where a bad change is expensive: payments, auth, core infra.
+
+There's no single right answer, only the right trade-off for a given repository, team, or organization. Mix and match per repository, and change your mind any time.
+
+## [Cut AI Review Costs by 50% Without Compromising Quality](https://hexmos.com/livereview/#adaptive-reviews)
+
+**Adaptive Reviews** saves 40-50% of AI inference costs using an innovative multi-model technique. A powerful Leader Model detects complex issues, while a cost-efficient Helper Model explains them - delivering the exact same review quality at half the price.
+
+See Adaptive Reviews in action
+
+### Reduce Costs by 40-50%
+
+Significantly lower your AI inference costs. By using a cost-efficient Helper Model for explanations, you can save 40-50% compared to using a single expensive model for everything.
+
+### Double Review Volume
+
+Review up to 2x more code with the exact same budget. With optimized token usage, you don't have to constantly monitor limits or restrict how much code gets reviewed.
+
+### Leader + Helper Architecture
+
+A powerful Leader Model is solely dedicated to analyzing your code and finding complex issues, while a more economical Helper Model expands those findings into helpful, detailed explanations.
+
+### Maintain Review Quality
+
+Because issue detection is still driven by the high-end Leader Model, there is no degradation in the quality or accuracy of the code reviews you receive.
+
+## Blast-Radius Aware AI Code Review.
+
+A powerful and flexible AI code reviewer — light on the pocket, heavy on impact.
+
+Git-Level Guardrails
+
+Unread code never sneaks in. Reviews track every commit, and deliberate skips stay in the audit trail.
+
+Works With Your Git Setup
+
+GitHub, GitLab, Bitbucket, Gitea, Azure DevOps, or something else—LiveReview adapts to your workflow, not the other way around.
+
+Fair Pricing
+
+Free includes 30k reviewed LOC per month. Paid plans start at $32 for 100k LOC, keep users unlimited, and scale by reviewed LOC instead of seats or opaque token usage.
+
+Works Wherever You Do
+
+Web, CLI, IDE. Cloud, self-hosted, or air gapped. Same guardrails and visibility everywhere.
+
+Trusted & Transparent
+
+Source-available code on GitHub. Audit every line, security scans, and maintain total data privacy with air-gapped readiness.
+
+Enough Depth When You Need It
+
+Line-level review, real MR conversations, and durable team learnings—without the usual tool bloat.
+
+Start Free 
+No setup required — start reviewing code in minutes
+
+Works with your favorite platform
+
+![Image 15: GitHub](https://hexmos.com/livereview/version_control_logos/github-logo-dark.png)
+
+GitHub
+
+![Image 16: GitLab](https://hexmos.com/livereview/version_control_logos/gitlab-logo.png)
+
+GitLab
+
+![Image 17: Bitbucket](https://hexmos.com/livereview/version_control_logos/bitbucket-logo.png)
+
+Bitbucket
+
+![Image 18: Gitea](https://hexmos.com/livereview/version_control_logos/gitea_logo.png)
+
+Gitea
+
+![Image 19: Azure DevOps](https://hexmos.com/livereview/version_control_logos/azure-devops-logo.png)
+
+Azure DevOps
+
+Click to Enlarge![Image 20: LiveReview Dashboard - AI Code Review in Action](https://hexmos.com/livereview/home_bg_compressed.webp)
+
+Zoom
+
+### [View All AI Reviews in One Place](https://hexmos.com/livereview/#feature-reviewlist)
+
+Manage all your code reviews from a single, intuitive interface. Track review status, prioritize PRs, and monitor team activity with real-time updates.
+
+![Image 21: View All AI Reviews in One Place](https://hexmos.com/livereview/features/reviewlist.webp)Click to Expand
+
+Understand
+
+Keep the business under your team's intellectual control, even as generative AI writes more of the code. Cognitive Coverage builds real understanding without costing time or energy.
+
+Helps you answer the question:
+
+## [“Can an engineer quickly understand what changed and what it means?”](https://hexmos.com/livereview/#understand)
+
+Summary decks Issue navigator PR summaries PR quizzes
+
+Turn a diff into something a reviewer can actually reason about.
+
+Institutional memory
+
+## [Summary Deck](https://hexmos.com/livereview/#summary-deck)
+
+Every completed review also generates a short slide deck - a 60-second summary of what changed, why, and what risks were flagged, without anyone having to write it. Pairs with [Git Log Tracking](https://hexmos.com/livereview/#git-log) to give your team institutional memory of every change, with no changelog to maintain.
+
+What was implemented, why, and what risks were flagged - in slides, not a wall of diff.
+
+[Video 13](https://hexmos.com/livereview/git-lrc/summary-deck-compressed.mp4)
+
+60-second slide summary
+
+What was implemented, in plain English - a narrative of the change, not just a diff
+
+Risks called out up front
+
+Security, cost, and reliability issues get their own highlighted slides, in red when they matter
+
+Technical highlights, isolated
+
+New config, new endpoints, new data flows - the things a reviewer actually needs to know
+
+Institutional memory
+
+Pairs with git log tracking so your team can grok any past change without re-reading the diff
+
+Triage every finding
+
+## [Issue Navigator](https://hexmos.com/livereview/#issue-navigator)
+
+A wall of inline comments is hard to triage. The Issue Navigator turns every review into a structured, filterable view across the same [10 risk categories and 100+ patterns](https://hexmos.com/livereview/#risk-taxonomy) - so you see exactly what's wrong, ranked by how much it can hurt you.
+
+Filter by severity, category, and area - then send the issues that matter straight to your AI agent.
+
+[Video 14](https://hexmos.com/livereview/git-lrc/issue-navigator-compressed.mp4)
+
+Filter by severity
+
+Critical, Warning, Info - fix what matters first instead of scrolling through everything
+
+Drill into categories
+
+10 risk categories, 100+ subcategories - Security to Secrets Management, Reliability to Error Handling, and beyond
+
+Slice by type and area
+
+Bug, Code Smell, Reliability, Security - see exactly where risk is concentrated in a diff
+
+Send straight to your AI agent
+
+Copy visible issues, or send directly to Claude, and feed them back into the fix loop
+
+Feedback built in
+
+Thumbs up/down on each finding tunes future reviews - signal-to-noise improves over time
+
+Cognitive Coverage
+
+## [Cognitive Coverage via PR Quizzes](https://hexmos.com/livereview/#quiz-coverage)
+
+AI can write a diff faster than you can read it. **LiveReview quizzes you on the PR before it gets committed** — so you stay in touch with the technical decisions baked into your codebase, instead of rubber-stamping code you never really understood.
+
+Auto-generated from the diff
+
+Questions come straight from the actual changes — no manual quiz writing.
+
+Quick, before commit
+
+Takes less than a minute, and runs before the diff gets committed — not after.
+
+Slides, text, or quiz mode
+
+Switch between a walkthrough, plain text, and the quiz for the same PR.
+
+Builds durable understanding
+
+Surfaces gaps in your grasp of the system while they're still cheap to fix.
+
+See Cognitive Coverage in action
+
+LiveReview — PR Quiz mode
+
+[Video 15](https://hexmos.com/livereview/quiz-coverage/quiz-coverage-demo-compressed.mp4)
+
+### [Sharp AI-Generated Pull Request Summaries](https://hexmos.com/livereview/#feature-detailed_mr_summaries)
+
+Get detailed, actionable summaries of every pull request. Understand changes at a glance with AI-generated insights that highlight key modifications, potential issues, and improvement suggestions.
+
+![Image 22: Sharp AI-Generated Pull Request Summaries](https://hexmos.com/livereview/features/detailed_mr_summaries.png)Click to Expand
+
+### [Ask AI for Clarification or Debate Code Changes](https://hexmos.com/livereview/#feature-clarification_question)
+
+Ask questions and get instant clarifications about code changes. The AI reviewer understands context and provides helpful explanations to speed up the review process.
+
+![Image 23: Ask AI for Clarification or Debate Code Changes](https://hexmos.com/livereview/features/clarification_question.png)Click to Expand
+
+Enforce
+
+Aspirations are easy to set. Real transformation lives in the depth and precision of implementation. LiveReview enforces and monitors at that level, so standards get lived, not just stated.
+
+Helps you answer the question:
+
+## [“Can we make our engineering standards and review policies actually happen?”](https://hexmos.com/livereview/#enforce)
+
+Repository Rules CI/CD Gates
+
+Turn agreed-upon standards into checks that run on every commit and merge, with a full audit trail.
+
+## [Enforce Your Team's Engineering Standards with Repository Rules](https://hexmos.com/livereview/#repository-rules)
+
+A good reviewer doesn't just know your language and framework — it knows _your_ repository: which patterns your team prefers, which dependencies are off-limits, and which files don't need a second look. **LiveReview enforces your team's engineering standards through repository rules** — drop a `.lrc/` directory in your repo and LiveReview reads it on every review.
+
+This is per-repo, and stacks on top of any org-wide [Custom Prompts](https://hexmos.com/livereview/features/#feature-prompt_customization). Most teams should start with Repository Rules — each team keeps its own rules without affecting anyone else's repo.
+
+.lrc/
+├── ignore               # files the reviewer never sees
+├── rules/
+│   ├── INSTRUCTIONS.md  # read first, every review
+│   ├── security.md
+│   └── style.md
+└── policy/
+    └── tools.toml       # which checks are allowed to run
+
+See repository rules in action
+
+### Repository Rules
+
+Write down the handful of decisions that come up in every review — "prefer direct SQL over ORM abstractions", "avoid new infrastructure dependencies". INSTRUCTIONS.md is read first, every other rules/*.md file follows in order, so the reviewer always has your team's context.
+
+### Ignore File
+
+Point the reviewer away from generated code, vendored dependencies, and anything else that doesn't need a second look. Gitignore syntax, matched from your repo root — ignored files don't count toward billable lines.
+
+### Policies Coming soon
+
+Decide which tools and checks are allowed to run on this repo. Machine-readable settings that LiveReview reads directly — never sent to the AI model.
+
+### Static Checks Coming soon
+
+Pair AI review with static analyzers like semgrep and eslint, authorized through policy and run as part of the same commit-time flow — one gate, multiple kinds of checks.
+
+## [CI/CD Gates: Precise, Customized Merge Enforcement](https://hexmos.com/livereview/#cicd-gates)
+
+Write a jq rule against a review's findings, save it, and call **one URL from any CI/CD pipeline** to block or allow the build. A generic "fail if severity is high" checkbox can't match how your team actually thinks about risk, jq can.
+
+*   **Works on any review source:** web, git-lrc, CI/CD triggers, or API/MCP triggers all produce the same findings document, so one gate covers every path to a merge.
+*   **Full power of jq** to enforce complex conditions, customized exactly to repository, team, and org requirements.
+*   **Live expression editor:** LLM help drafts a jq rule, live preview runs it against a synthetic sample and real past reviews as you type.
+
+See CI/CD Gates in action
+
+![Image 24: CI/CD Gates: a list of named rulesets, each with its own jq expression](https://hexmos.com/images/livereview/ci-cd-gates/ruleset-list.png)Click to Expand![Image 25: Live jq rule editor with presets, Ask LLM helper, and a live BLOCK/ALLOW preview against a sample review](https://hexmos.com/images/livereview/ci-cd-gates/jq-editor.png)Click to Expand
+
+### Write the rule that matches how your team actually weighs risk
+
+Different teams weigh the same findings differently. jq lets each team encode its own answer, not a preset severity bucket:
+
+#### Security-conscious team
+
+Cares about
+
+Even one security finding is unacceptable, and so is any critical-severity bug elsewhere.
+
+What They Need in Plain English
+
+Block if there's any security finding, or any critical-severity finding of any kind.
+
+What They Need in jq
+
+`(.counts.by_category.security > 0) or (.counts.by_severity.critical > 0)`
+
+#### Fast-moving startup
+
+Cares about
+
+Ship velocity matters most: block only on correctness and UX bugs that would actually hurt users or slow the team down, let architecture/style debt through for now.
+
+What They Need in Plain English
+
+Block only if there's a critical or warning-level finding in correctness, UX, or developer experience.
+
+What They Need in jq
+
+`[.findings[] | select((.category=="correctness" or .category=="ui-ux" or .category=="developer-experience") and (.severity=="critical" or .severity=="warning"))] | length > 0`
+
+#### Mature enterprise
+
+Cares about
+
+Security is non-negotiable, but cost, scale, and architecture decisions matter just as much once you're operating at scale.
+
+What They Need in Plain English
+
+Block on any security finding, or on a critical finding in cost, architecture, or scalability.
+
+What They Need in jq
+
+`(.counts.by_category.security > 0) or ([.findings[] | select((.category=="cost" or .category=="architecture" or .category=="scalability") and .severity=="critical")] | length > 0)`
+
+Every category above comes from the same [10-category, 100+ risk taxonomy](https://hexmos.com/livereview/#risk-taxonomy) LiveReview already tracks on every review: the gate is just a rule over data you're already generating.
+
+### [Customize Review Prompts to Fit Your Team](https://hexmos.com/livereview/#feature-prompt_customization)
+
+Custom Prompts apply org-wide, to every repo in your organization, so keep them to standards that are genuinely universal. For anything specific to one repo, use Repository Rules instead — most teams should start there.
+
+![Image 26: Customize Review Prompts to Fit Your Team](https://hexmos.com/livereview/features/prompt_customization.png)Click to Expand
+
+### [Scheduled Reviews: A Safety Net for the Code Nobody Reviewed](https://hexmos.com/livereview/#feature-scheduled_reviews)
+
+Not every change goes through a full review. A hotfix might land straight on the main branch, or a dependency bump might merge on its own. For a fast-moving startup team, that's often the right call, so Scheduled Reviews close the gap left behind.
+
+*   •Checks your default branch on its own schedule, even when nobody asked for a review
+*   •Turn it on per repository, one toggle
+*   •Pick how often it runs, in plain cron syntax, or leave it blank for once a day
+*   •Shows the last run and the next run, right in the schedule list
+
+![Image 27: Scheduled Reviews: A Safety Net for the Code Nobody Reviewed](https://hexmos.com/livereview/harness/scheduled-reviews.png)Click to Expand
+
+### [Discuss with AI in MR and See it Learn Everyday](https://hexmos.com/livereview/#feature-learnings_management)
+
+Build an institutional knowledge base from code reviews. Capture best practices, common issues, and team learnings to continuously improve code quality.
+
+![Image 28: Discuss with AI in MR and See it Learn Everyday](https://hexmos.com/livereview/features/learnings_management.png)Click to Expand
+
+Improve
+
+An org with a higher learning rate beats one with a lower rate. LiveReview turns the day's activity into chat, charts, and reports, taking the guesswork out of what to improve next.
+
+Helps you answer the question:
+
+## [“How are we doing, and where should engineering improve?”](https://hexmos.com/livereview/#improve)
+
+Livi Organization-wide analytics
+
+Turn review history into decisions: what to fix, what to automate, and where to spend the next engineering hour.
+
+## [The Impact Report: 57 Charts, Zero Dashboards to Build](https://hexmos.com/livereview/#impact-report)
+
+A one-click, pre-built report on how your org actually uses LiveReview: adoption, per-repo and per-engineer activity, finding quality, cost, and engagement. No SQL, no LLM calls, no dashboard to build: just real charts pulled straight from your own review history, exportable as PDF or HTML.
+
+57
+
+Charts
+
+7
+
+Sections
+
+1-click
+
+Generation
+
+PDF / HTML
+
+Export
+
+![Image 29: The Impact Report: 57 charts across 7 sections, generated from real review history](https://hexmos.com/images/livereview/onboarding-report/onboarding-report-overview.png)Click to Expand
+
+Adoption & Growth
+
+Daily review counts, cumulative LOC reviewed, adoption breadth, top adopters
+
+Repository Analysis
+
+Per-repo velocity change, LOC reviewed by repo, Pareto of top repos
+
+Engineer Analysis
+
+Top engineers by reviews, LOC Pareto, trigger types per engineer
+
+Review Quality & Findings
+
+Trigger-type mix, severity distribution, top problem categories, top files
+
+Cost & Efficiency
+
+Daily cost, cost per line of code, cost by AI provider, median review duration
+
+Engagement & Trust
+
+Completed reviews, comments per review, upvote/downvote trends
+
+Summary & Comparison
+
+Cross-cutting activity trend, severity distribution, per-engineer comparisons
+
+![Image 30: Livi](https://hexmos.com/livereview/lrbot/lrbot.png)
+
+👋 Hi, I'm Livi. Ask me anything about your engineering data.
+
+## [An AI chatbot for your engineering data](https://hexmos.com/livereview/#data-backed-decisions)
+
+Ask Livi a product, engineering, or ops question in plain English. It answers with a chart pulled straight from your organization's own data, no dashboards to build, no SQL to write.
+
+Every engineering decision becomes more data-backed, so you can act with confidence instead of guesswork.
+
+### Exec
+
+Track adoption and ROI across the whole org without waiting on a report.
+
+“How broadly has the org adopted LiveReview this month?”
+
+### Eng Manager
+
+See which repos and engineers need attention, and where issues are piling up.
+
+“Which repos have the highest issue concentration?”
+
+### Product
+
+Understand engineering velocity and capacity by repo, in plain language.
+
+“Which repos are gaining or losing engineering velocity?”
+
+### Engineer
+
+Trace an incident back to the reviews and files that touched it.
+
+“Which files have the most issues flagged?”
+
+![Image 31: Livi](https://hexmos.com/livereview/lrbot/lrbot.png)
+
+Livi AI Analytics Chatbot
+
+Exec
+
+Is LiveReview adoption increasing across the org?
+
+![Image 32: Livi](https://hexmos.com/livereview/lrbot/lrbot.png)
+
+Adoption is up 23% this month. Here's the daily review count with a 7 day rolling average: steady growth since mid June, from 1 review in May to 15 on Aug 12.
+
+Is LiveReview adoption increasing across the org?
+
+![Image 33: Livi](https://hexmos.com/livereview/lrbot/lrbot.png)
+
+Adoption is up 23% this month. Here's the daily review count with a 7 day rolling average: steady growth since mid June, from 1 review in May to 15 on Aug 12.
+
+Which repositories have adopted LiveReview the most?
+
+![Image 34: Livi](https://hexmos.com/livereview/lrbot/lrbot.png)
+
+LiveReview itself leads with 171 reviews, followed by git-lrc at 73. Five smaller repos are active but under 20 reviews each: worth a nudge if you want org-wide coverage.
+
+Which repos are gaining or losing engineering velocity?
+
+![Image 35: Livi](https://hexmos.com/livereview/lrbot/lrbot.png)
+
+LiveReview and git-lrc are both trending up: LiveReview went from 45k LOC reviewed last week to 73k this week (+62%). ExpenseSync dropped from 14k to 8k. The scatterplot below plots reviews vs. LOC per repo, with bubble size showing active engineers.
+
+How much code are we reviewing in each repository?
+
+![Image 36: Livi](https://hexmos.com/livereview/lrbot/lrbot.png)
+
+LiveReview accounts for 138k of the 200k total LOC reviewed this quarter, more than every other repo combined. git-lrc and ExpenseSync are a distant second and third.
+
+Who are our top contributors by review volume?
+
+![Image 37: Livi](https://hexmos.com/livereview/lrbot/lrbot.png)
+
+Alex leads with 62 reviews this quarter, followed by Priya at 54. The top 3 engineers account for over half of all reviews on the team.
+
+How does each engineer trigger their reviews?
+
+![Image 38: Livi](https://hexmos.com/livereview/lrbot/lrbot.png)
+
+Alex and Priya lean heavily on pre-commit reviews, while Sam and Jordan still rely more on PR/MR review. Worth sharing Alex's workflow with the rest of the team.
+
+What are the most concerning issue types this quarter?
+
+![Image 39: Livi](https://hexmos.com/livereview/lrbot/lrbot.png)
+
+Security leads with 87 findings, followed by Reliability (64) and Correctness (53). Those three categories make up 60% of all issues, so I'd point next sprint's review time at Security and Reliability.
+
+Are engineers actually incorporating reviews into their daily workflow?
+
+![Image 40: Livi](https://hexmos.com/livereview/lrbot/lrbot.png)
+
+Yes. Pre-commit reviews now make up 52% of all reviews, up from 18% six weeks ago, while PR/MR reviews dropped from 55% to 27%. Your team is catching issues earlier, before they ever reach a pull request.
+
+How much does LiveReview cost us per day?
+
+![Image 41: Livi](https://hexmos.com/livereview/lrbot/lrbot.png)
+
+Daily spend has climbed from about $14 to $24 over the last two weeks, tracking the growth in review volume. Cost per review has stayed flat, so this is growth, not waste.
+
+Which AI provider gives us the best value?
+
+![Image 42: Livi](https://hexmos.com/livereview/lrbot/lrbot.png)
+
+Anthropic handles 65% of review volume and 66% of spend, roughly proportional. OpenAI and Google make up the rest as fallback providers for redundancy.
+
+Are people trusting the reviews LiveReview produces?
+
+![Image 43: Livi](https://hexmos.com/livereview/lrbot/lrbot.png)
+
+Correctness and Security findings get upvoted far more than downvoted. Style suggestions have the most pushback, 14 downvotes against 28 upvotes, worth tuning if it keeps coming up.
+
+Which engineers get the most value from LiveReview?
+
+![Image 44: Livi](https://hexmos.com/livereview/lrbot/lrbot.png)
+
+Alex has the most LOC reviewed at 42k, with Priya close behind at 38.5k. These are the two engineers whose workflow is worth showcasing to the rest of the org.
+
+How does this week compare to last week?
+
+![Image 45: Livi](https://hexmos.com/livereview/lrbot/lrbot.png)
+
+Sam and Jordan both grew their review counts week over week, while Priya dipped from 22 to 19. Net review volume across the team is still up.
+
+What's the overall severity mix across all our findings?
+
+![Image 46: Livi](https://hexmos.com/livereview/lrbot/lrbot.png)
+
+Medium severity issues dominate at 112, but Critical (18) and High (46) are the ones worth prioritizing since they're the most likely to cause real damage.
+
+Show me reviews connected to last week's production incident.
+
+![Image 47: Livi](https://hexmos.com/livereview/lrbot/lrbot.png)
+
+Found 8 reviews touching the affected files in the 2 weeks before the incident. The heatmap below shows review activity by repo and day: notice the gap on Aug 4-5, right before the outage on Aug 6. payment-service had zero reviews that week.
+
+Which files keep showing up with issues?
+
+![Image 48: Livi](https://hexmos.com/livereview/lrbot/lrbot.png)
+
+auth/session.go has been flagged 14 times, more than any other file. It's touched by three different engineers, which is a common source of merge-time regressions.
+
+01/16
+
+Adoption & Growth 2
+
+1 2
+
+Repository Analysis 2
+
+Engineer Analysis 2
+
+Review Quality 2
+
+Cost & Efficiency 2
+
+Engagement & Trust 2
+
+Summary & Comparison 2
+
+Trace & Investigate 2
+
+Previous Question 1 of 2 · Adoption & Growth Next Example
+
+16 example questions across 8 categories, the same structure as LiveReview's Onboarding Report. Use ←→ to browse.
+
+Start Free 
+
+### [Track Engineering Excellence](https://hexmos.com/livereview/#feature-dashboard)
+
+Quantify your team's improvement with comprehensive metrics. Track review times, code quality trends, and team velocity to demonstrate engineering value to stakeholders.
+
+![Image 49: Track Engineering Excellence (1/3)](https://hexmos.com/livereview/features/dashboard-1.png)Click to Expand‹›
+
+Connect
+
+None of this requires disruption. LiveReview works with the tools and systems you already run, so these outcomes are low-friction to reach, not a rebuild.
+
+Helps you answer the question:
+
+## [“Can LiveReview fit into our existing engineering environment?”](https://hexmos.com/livereview/#connect)
+
+Git providers AI providers Web CLI IDE extensions CI/CD MCP API Self-hosted & air-gapped
+
+LiveReview meets your stack where it already lives.
+
+CLI Tools
+
+## [Two CLI tools. One LiveReview backend.](https://hexmos.com/livereview/#lrc-cli)
+
+Install git-lrc for commit-time reviews in any terminal. Use claude-lrc when you're building inside Claude Code. Both tools share the same AI review engine and monthly LOC quota.
+
+Git commit hook
+
+### git-lrc
+
+Hooks into `git commit` and runs a micro AI review before every diff lands. Skips are explicit and auditable in git history.
+
+*   Git-native — works in any repo without a cloud platform connection
+*   Skips tracked in git log — auditable, not silent
+*   One-line install, 30k LOC free every month
+
+Linux(detected)macOS Windows
+
+Shell (macOS / Linux):
+
+curl -fsSL https://hexmos.com/lrc-install.sh | bash Copy
+
+[Explore git-lrc](https://hexmos.com/livereview/git-lrc/)
+
+Claude Code integration
+
+### claude-lrc
+
+Review, vouch, and skip inside Claude Code — without leaving the chat surface where the code was generated.
+
+*   Natural language or slash commands (`/lrc:review`)
+*   Same LOC quota and review engine as git-lrc
+*   Bundled with git-lrc — no separate install needed
+
+Claude Code surface
+
+review with lrc
+
+/lrc:review
+
+/lrc:skip
+
+/lrc:vouch
+
+[Explore claude-lrc](https://hexmos.com/livereview/claude-lrc/)
+
+Start Free 
+
+## [Get Actionable Engineering Intelligence with MCP and APIs](https://hexmos.com/livereview/#mcp-api)
+
+Every code review performed by LiveReview adds to a growing source of **engineering intelligence**. Query, analyze, and act on that knowledge with the LiveReview MCP and API.
+
+Instead of manually piecing together pull requests, comments, and reviews, generate custom reports, identify your strongest contributors, uncover quality and security trends, drill into engineering activity, or ask **whatever your imagination comes up with**, all **in minutes instead of hours**.
+
+### [Connect to the MCP Server Integrate LiveReview with AI agents and internal tools Set up in minutes](https://hexmos.com/livereview/docs/livereview/mcp/mcp-configuration/)### [API Reference Query review intelligence and build custom tooling Full REST API documentation](https://hexmos.com/livereview/docs/livereview/api/)
+
+### [Browse More Usecases Explore more ways to use LiveReview with MCP and API See all use cases](https://hexmos.com/livereview/docs/livereview/mcp/usecases/)
+
+See what you can build
+
+LiveReview CI/CD Gates: Control What Code Gets Merged from Your PR
+
+[Video 16](https://www.youtube.com/watch?v=Gc9tz-ena30)
+
+1.   1 Go to CI/CD Gates in the LiveReview dashboard and click 'New Ruleset'.
+2.   2 Name it, then write or pick a preset jq expression against the findings document.
+3.   3 Use 'Ask LLM' if the condition gets complex: it builds a copy-paste prompt (with your org's taxonomy and a sample document) for ChatGPT, Gemini, or DeepSeek to draft the expression.
+4.   4 Confirm the live BLOCK/ALLOW preview matches what you expect against a real past review, then save.
+5.   5 Open the ruleset's 'Get code' integration page, copy the snippet for your CI provider, and add the LIVEREVIEW_API_KEY secret to your pipeline.
+
+Prevent Production Issues with Automated CI/CD Reviews
+
+[Video 17](https://www.youtube.com/watch?v=ar4B6IrDrqk)
+
+1.   1 Open your MCP client and ensure it is connected to the LiveReview MCP.
+2.   2 Ask a question like: "Add LiveReview to my CI/CD pipeline. Whenever a new pull request is opened, trigger an automated LiveReview review."
+3.   3 Wait for the code changes to be applied. Add the `LIVEREVIEW_API_KEY` repository secret, then push the changes.
+4.   4 Open a pull request. You should see LiveReview trigger automatically, with review comments appearing on the PR.
+
+Generate On-Demand Engineering Reports with Natural Language
+
+[Video 18](https://www.youtube.com/watch?v=WW74fFSRxgQ)
+
+1.   1 Open your MCP client and ensure it's connected to the LiveReview MCP.
+2.   2 Ask a question like: "Hey @livereview, please generate a sprint report for the past week based on all the reviewed code."
+3.   3 Get the output.
+
+Understand Engineering Decisions and Long-Term Trends
+
+[Video 19](https://www.youtube.com/watch?v=L1KqCj2aoS0)
+
+1.   1 Open your MCP client and ensure it's connected to the LiveReview MCP.
+2.   2 Ask a question like: "Hey Livereview, analyze our code review history across all repositories. Which services or modules are suffering from the highest concentration of recurring quality issues or technical debt?"
+3.   3 Get your results, and take a look.
+
+Generate Release Notes from Reviewed Code Changes
+
+[Video 20](https://www.youtube.com/watch?v=jvsf_P-0jw4)
+
+1.   1 Open your MCP client and ensure it's connected to the LiveReview MCP.
+2.   2 Ask a question like: "Hey Livereview, generate release notes based on the latest review for the repository of your choice."
+3.   3 Get the release notes, and use them.
+
+…and many more.
+
+EXTENSIONS • IDE Integration
+
+## [Install LiveReview directly in your IDE](https://hexmos.com/livereview/#extensions)
+
+Get instant AI code reviews without leaving your editor. Available for VSCode, Cursor, and Antigravity.
+
+[![Image 50: VSCode](https://hexmos.com/livereview/extensions/vscode-logo.png) ### VSCode Install from Visual Studio Marketplace Install Extension →](https://marketplace.visualstudio.com/items?itemName=Hexmos.livereview)[![Image 51: Cursor](https://hexmos.com/livereview/extensions/cursor-logo.png) ### Cursor Install from Open VSX Registry Install Extension →](https://open-vsx.org/extension/hexmos/livereview)[![Image 52: Antigravity](https://hexmos.com/livereview/extensions/antigravity-logo.png) ### Antigravity Install from Open VSX Registry Install Extension →](https://open-vsx.org/extension/hexmos/livereview)
+
+### Quick Installation Guide
+
+![Image 53: Extension Installation Guide](https://hexmos.com/livereview/extensions/install_demo.png)Click to Expand
+
+Start Free 
+
+## [Meet Livi Where Your Team Already Talks](https://hexmos.com/livereview/#chat-platforms)
+
+Connect LiveReview to your team's chat platform so reviews can be triggered and discussed without leaving the conversation.
+
+### Slack
+
+Livi joins your workspace oveSocket Mode — no public webhook URL to expose. Trigger reviews and get findings where your team already talks.
+
+### Microsoft Teams
+
+An Azure Bot-backed Teams app brings Livi into your channels and DMs for review triggers and findings.
+
+### Discord
+
+A Discord bot you control — mention Livi in a channel or DM it to trigger and discuss reviews.
+
+### See Slack in action
+
+[Setup guide →](https://hexmos.com/livereview/docs/livereview/integrations/slack)
+
+Trigger a review in-channel
+
+![Image 54: Livi trigge review from a Slack channel](https://hexmos.com/livereview/integrations/slack-trigger-review.png)Click to Expand
+
+![Image 55: Livi answering an analytics question with a generated chart in Slack](https://hexmos.com/livereview/integrations/slack-analytics-chart.png)Click to Expand
+
+Trigger a review right from a Slack channel — just @-mention Livi with a PR link.
+
+### [Fine-Tuned LiveReview AI Model](https://hexmos.com/livereview/#feature-ai_providers)
+
+Live Review comes with its own fine-tuned AI model rey to use from day one. If you prefer to use your own provider — Gemini, OpenAI, AWS Bedrock, a self-hosted Ollama model, or any other LLM — you can bring your own key (BYOK) and plug it in.
+
+![Image 56: Fine-Tuned LiveReview AI Model](https://hexmos.com/livereview/features/ai_providers.png)Click to Expand
+
+### [Use Any git Provider: Github, GitLab, Bitbucket, Gitea, Azure DevOps](https://hexmos.com/livereview/#feature-git_providers)
+
+Works effortlessly with GitHub, GitLab, Bitbucket, Gitea, Azure DevOpsnnect your repositories in minutes and start receiving AI-powered code reviews across all your projects.
+
+![Image 57: GitHub](https://hexmos.com/livereview/version_control_logos/github-logo-dark.png)
+
+GitHub
+
+![Image 58: GitLab](https://hexmos.com/livereview/version_control_logos/gitlab-logo.png)
+
+GitLab
+
+![Image 59: Bitbucket](https://hexmos.com/livereview/version_control_logos/bitbucket-logo.png)
+
+Bitbucket
+
+![Image 60: Gitea](https://hexmos.com/livereview/version_control_logos/gitea_logo.png)
+
+Gitea
+
+![Image 61: Azure DevOps](https://hexmos.com/livereview/version_control_logos/azure-devops-logo.png)
+
+Azure DevOps
+
+![Image 62: Use Any git Provider: Github, GitLab, Bitbucket, Gitea, Azure DevOps](https://hexmos.com/livereview/features/git_providers.png)Click to Expand
+
+## [Capability · Control · Cost](https://hexmos.com/livereview/#3c)
+
+Underneath the five stages above, LiveReview is really answering three questions engineering leadership keeps asking at once: can the review engine actually catch what matts, can we make our standards stick, and does any of this pay for itself.
+
+### [Capability Blast-radius scoring and review-depth controls mean the review engine goes as deep as a change actually warrants, not a fixed shallow pass. See Review above.](https://hexmos.com/livereview/#multi-level-reviews)
+
+### Control
+
+[Repository Rules](https://hexmos.com/livereview/#repository-rules) and [CI/CD Gates](https://hexmos.com/livereview/#cicd-gates) turn agreed standards into checks that actually block a merge, with every skip logged in the audit trail.
+
+### [Cost Adaptive Reviews' Leader + Helper model architecture cuts AI inference cost 40-50% without dropping review quality, see Adaptive Reviews above.](https://hexmos.com/livereview/#adaptive-reviews)
+
+Outcomes
+
+Helps you answer the question:
+
+## [“What does this add up to?”](https://hexmos.com/livereview/#outcomes)
+
+The business impact and technical excellence teams get once Connect, Review, Understand, Enforce, and Improve are all running.
+
+## [Why Teams ChoosveReview](https://hexmos.com/livereview/#why-livereview)
+
+### We Specialize in Reviews
+
+Code review is our entire product, not a side-feature bolted onto something else.
+
+That focus goes into catching what matters, so your team spends its time building.
+
+### A Comprehensive Platform
+
+LiveReview operates across all five pillars of engineering review, instead of covering one slice and leaving the rest to other tools.
+
+[Connect](https://hexmos.com/livereview/#connect) · [Review](https://hexmos.com/livereview/review) · [Understand](https://hexmos.com/livereview/#understand) · [Enforce](https://hexmos.com/livereview/#enforce) · [Improve](https://hexmos.com/livereview/#improve)
+
+### Competitive, Token-Efficient Pricing
+
+[Adaptive Reviews'](https://hexmos.com/livereview/#adaptive-reviews) Leader + Helper model architecture cuts AI inference cost 40-50%.
+
+Same review quality, without rationing depth to stay on budget.
+
+### Control: Host on Your Infrastructure
+
+[Self-hosted deployments](https://hexmos.com/liverevienterprise-selfhosted/) keep code and API keys on your own infrastructure.
+
+No intermediary cloud sitting between your repos and your AI provider.
+
+### Source-Available Code
+
+The codebase is [transparent on GitHub](https://hexmos.com/livereview/#security) with a responsive disclosure policy.
+
+Your security and engineering teams can inspect what's actually running, see the full [security page](https://hexmos.com/livereview/security/).
+
+### Free 14-Day Transformation Program
+
+You're live in 15 minutes. The 14 days are hands-on handholding to get your whole org, from the CEO to the developer writing the PR, seeing real results.
+
+[See the program](https://hexmos.com/livereview/transform/).
+
+## [See What LiveReview Delivers](https://hexmos.com/livereview/#benefits)
+
+Real benefits that engineering teams experience every day
+
+Business Impact Business Technical Excellence Technical
+
+### Business Impact
+
+50 benefits total
+
+Page 1 of 10 • Showing 5 of 50 benefits
+
+Auto-cycling
+
+Show More Benefits
+
+## [LiveReview Enterise](https://hexmos.com/livereview/#enterprise)
+
+Custom deployments, SSO integration, dedicated AI keys, and priority SLA support for scaling engineering organizations.
+
+### Security & Ops
+
+Self-hosted deployment (optional), support for multiple organizations, custom domain hosting, SSO & User Directory integration (SAML/OIDC), and full data privacy.
+
+### Flexible AI & Models
+
+Connect to private cloud LLMs or opt for fully self-hosted AI models using Ollama or your private infrastructure to guarantee no code leaves your network.
+
+### Custom Integrations
+
+Custom API access, bespoke workflow integrations, and engineering insights dashboards tailored to your development tooling and platform requirements.
+
+### Dedicated SLA Support
+
+Prioritized support channel with dedicated service level agreements (SLAs), custom development, and professional onboarding services.
+
+Self-Hosted Deployment
+
+### AI code reviews without the vendor cloud
+
+*   No intermediary cloud — your code goes directly to the AI provider
+*   Yo own API keys, your own infrastructure, Docker-based
+*   Typically 40–50% lower TCO vs cloud-only alternatives
+
+[Explore Self-Hosted](https://hexmos.com/livereview/enterprise-selfhosted/)
+
+Contact Sales
+
+Tailored options for internal networks, custom compliance, and high-volume workloads.
+
+## [Security](https://hexmos.com/livereview/#security)
+
+### Built for security review
+
+LiveReview documents the answers enterprise teams ask first: deployment model differences, code/data handling, AI safeguards, supplyhain visibility, and clear security response timelines.
+
+*   Separate guidance for self-hosted/Ollama and cloud LLM deployments
+*   Explicit data handling: what leaves your network, when it happens, and retention/deletion expectations
+*   Prompt-injection and unsafe-output mitigations, automated scanners, SBOM visibility, and transparent GitHub source with responsive disclosure policy
+
+[Open Security Page](https://hexmos.com/livereview/security/)[Read SECURITY.md](https://github.com/HexmosTech/LiveReview/blob/master/SECURITY.md)[Report Vulnerability](https://github.com/HexmosTech/LiveReview/security/advisories/new)
+
+Proof
+
+Helps you answer the question:
+
+## [“Who else is already doing this?”](https://hexmos.com/livereview/#proof)
+
+Teams already running LiveReview, community reviews, and the latest from our blog.
+
+Used by engineers at
+
+![Image 63: fourkites.com](https://hexmos.com/livereview/git-lrc/trusted_by/71_fourkites.com.png)
+
+![Image 64: antino.com](https://hexmos.com/livereview/git-lrc/trusted_by/6tino.com.png)
+
+![Image 65: repcard.com](https://hexmos.com/livereview/git-lrc/trusted_by/51_repcard.com.png)
+
+![Image 66: astronauts.id](https://hexmos.com/livereview/git-lrc/trusted_by/48_astronauts.id.png)
+
+![Image 67: zapak.com](https://hexmos.com/livereview/git-lrc/trusted_by/38_zapak.com.png)
+
+![Image 68: legionelladossier.com](https://hexmos.com/livereview/git-lrc/trusted_by/36_legionelladossier.com.png)
+
+![Image 69: secuvy.ai](https://hexmos.com/livereview/git-lrc/trusted_by/35_secuvy.ai.jpeg)
+
+![Image 70: spicemoney.com](https://hexmos.com/livereview/git-lrc/trusted_by/34_spicemoney.com.png)
+
+![Image 71: reliancegroupindia.com](https://hexmos.com/livereview/git-lrc/trusted_by/34_reliancegroupindia.com.jpeg)
+
+![Image 72: apexti.com](https://hexmos.com/livereview/git-lrc/trusted_by/22_apexti.com.jpeg)
+
+![Image 73: unboundxinc.com](https://hexmos.com/livereview/git-lrc/trusted_by/18_unboundxinc.com.jpeg)
+
+![Image 74: 360ithub.com](https://hexmos.com/livereview/git-lrc/trusted_by/11_360ithub.com.jpeg)
+
+![Image 75: utkallabs.com](https://hexmos.com/livereview/git-lrc/trusted_by/10_utkallabs.com.jpeg)
+
+![Image 76: betatestsolutions.com](https://hexmos.com/livereview/git-lrc/trusted_by/9_betatestsolutions.com.jpeg)
+
+![Image 77: mayson.dev](https://hexmos.com/livereview/git-lrc/trusted_by/5_mayson.dev.jpeg)
+
+![Image 78: nexuscoreerp.com](https://hexmos.com/livereview/git-lrc/trusted_by/1_nexuscoreerp.com.jpeg)
+
+![Image 79: indiasatcom.ltd](https://hexmos.com/livereview/git-lrc/trusted_by/0_indiasatcom.ltd.png)
+
+![Image 80: raksasapartners.com](https://hexmos.com/livereview/git-lrc/trusted_by/0_raksasapartners.com.jpeg)
+
+![Image 81](https://hexmos.com/livereview/git-lrc/trusted_by/71_fourkites.com.png)
+
+![Image 82](https://hexmos.com/livereview/git-lrc/trusted_by/60_antino.com.png)
+
+![Image 83](https://hexmos.com/livereview/git-lrc/trusted_by/51_repcard.com.png)
+
+![Image 84](https://hexmos.com/livereview/git-lrc/trusted_by/48_astronauts.id.png)
+
+![Image 85](https://hexmos.com/livereview/git-lrc/trusted_by/38_zapak.com.png)
+
+![Image 86](https://hexmos.com/livereview/git-lrc/trusted_by/36_legionelladossier.com.png)
+
+![Image 87](https://hexmos.com/livereview/git-lrc/trusted_by/35_secuvy.ai.jpeg)
+
+![Image 88](https://hexmos.com/livereview/git-lrc/trusted_by/34_spicemoney.com.png)
+
+![Image 89](https://hexmos.com/livereview/git-lrc/trusted_by/34_reliancegroupindia.com.jpeg)
+
+![Image 90](https://hexmos.com/livereview/git-lrc/trusted_by/22_apexti.com.jpeg)
+
+![Image 91](https://hexmos.com/livereview/git-lrc/trusted_by/18_unboundxinc.com.jpeg)
+
+![Image 92](https://hexmos.com/livereview/git-lrc/trusted_by/11_360ithub.com.jpeg)
+
+![Image 93](https://hexmos.com/livereview/git-lrc/trusted_by/10_utkallabs.com.jpeg)
+
+![Image 94](https://hexmos.com/livereview/git-lrc/trusted_by/9_betatestsolutions.com.jpeg)
+
+![Image 95](https://hexmos.com/livereview/git-lrc/trusted_by/5_mayson.dev.jpeg)
+
+![Image 96](https://hexmos.com/livereview/git-lrc/trusted_by/1_nexuscoreerp.com.jpeg)
+
+![Image 97](https://hexmos.com/livereview/git-lrc/trusted_by/0_indiasatcom.ltd.png)
+
+![Image 98](https://hexmos.com/livereview/git-lrc/trusted_by/0_raksasapartners.com.jpeg)
+
+Start Free 
+
+## [Loved by the community](https://hexmos.com/livereview/#community)
+
+22 developers are sharing git-lrc on LinkedIn. Swipe through what they had to say.
+
+Start Free 
+
+## [Latest from Our Blog](https://hexmos.com/livereview/#blog)
+
+Stay updated with insights, tips, and developments in AI-powered code reviews
+
+[![Image 99: Our Code Is Too Sensitive to Send to Another Service. What Should We Do?](https://hexmos.com/livereview/blog/self-hosted-ai-code-review.jpg) September 18, 2026•3 min read ### Our Code Is Too Sensitive to Send to Another Service. What Should We Do? Worried about sending code to a third-party AI review service? Self-host it instead — keep your code, infrastructure, and AI provider entirely under your control. Read full post](https://hexmos.com/livereview/blog/self-hosted-ai-code-review/)
+
+[View All Posts](https://hexmos.com/livereview/blog/)
+
+## [Frequently Asked Quens](https://hexmos.com/livereview/#faq)
+
+Enlarge
+
+All Comparison Pricing git-lrc Security Integrations Technical Enterprise
+
+### How is LiveReview different from CodeRabbit?
+
+LiveReview stands out from CodeRabbit in four key ways: **pricing**, **usage**, **transparency**, and **team standardization**.  
+  
+**Predictable Pricing**  
+LiveReview starts free with **30k LOC per month**. Paid usage then scales through fixed monthly bands: **100k LOC for $32**, 200k for $64, 400k for $128, 800k for $256, 1.6M for $512, and 3.2M for $1024. Paid plans keep **users unlimited**, so the bill tracks reviewed workload instead of headcount. CodeRabbit charges per seat, so cost rises as the team grows even when workload does not.  
+  
+**Usage Limits**  
+LiveReview's main limit is monthly reviewed LOC. Within that envelope, teams can review across unlimited users and unlimited repositories. CodeRabbit applies hourly rate limits per developer per repository, which makes throughput harder to predict.  
+  
+**Transparency**  
+LiveReview is **source-available**, meaning you can browse the entire codebase from GitHub, check the security scanning reports, and see exactly what is running under the hood. CodeRabbit does not offer anything like this.  
+  
+**Team Standardization**  
+Regardless of what editor or operating system your team members use, LiveReview enforces code quality at the **git level**. Every line of code pushed to production goes through LiveReview's analysis, ensuring that code standards and quality are maintained across the entire organization - something none of the other code review tools currently provide.
+
+### How is LiveReview different from GitHub Copilot review?
+
+**Predictable Pricing**  
+LiveReview starts free with **30k LOC per month**. Paid plans then move through fixed monthly reviewed-LOC bands: **100k for $32**, 200k for $64, 400k for $128, 800k for $256, 1.6M for $512, and 3.2M for $1024. Paid plans keep **users unlimited**, so cost stays tied to review workload. GitHub Copilot charges per user, so the bill rises with headcount rather than the amount of code reviewed.  
+  
+**Usage Limits**  
+Copilot caps premium requests at 300 in the Pro plan, whereas LiveReview's main limit is monthly reviewed LOC and paid plans keep review capacity available across unlimited users and projects inside that envelope.  
+  
+**Team Standardization**  
+Copilot is limited only to GitHub - if your team uses GitLab, Gitea or Bitbucket, you would need separate products. LiveReview works across **GitHub, GitLab, Gitea, Bitbucket and Azure DevOps** through unified Git-level integration with no additional setup.
+
+### How is LiveReview different from SonarQube?
+
+LiveReview stands out from SonarQube in two key ways: **transparency** and **setup**.  
+  
+**Transparency**  
+SonarQube's Community Edition is source-available but comes with limited features, while the Developer and Enterprise editions are closed. LiveReview's entire codebase is **source-available** - you can check out all the core functions directly from GitHub.  
+  
+**Setup**  
+For teams using SonarQube server, setting up and maintaining the server can be a burden due to its resource intensity and dependency management overhead. With LiveReview, you can **self-host on your own infrastructure** with a single command in under 5 minutes.
+
+### How is LiveReview different from Claude Code?
+
+**Pricing & Usage**  
+LiveReview starts free with **30k LOC per month**. Premium starts at **$32 for 100k LOC** and scales through fixed monthly bands to 3.2M LOC while keeping users unlimited. That makes spend predictable and directly tied to reviewed code. Claude Code is token-metered, so a few complex reviews can create costs that are much harder to forecast.  
+  
+**Transparency & Privacy**  
+LiveReview is source-available and can be self-hosted in enterprise plan, so you can inspect the code and keep your data within your own network. Claude Code is a closed product that sends your source code to Anthropic's cloud for processing.  
+  
+**Team Standardization**  
+LiveReview enforces code quality at the git level, keeping standards consistent across GitHub, GitLab, Gitea, Bitbucket and Azure DevOps, regardless of which IDE your team uses. Claude Code is a CLI tool built for individual developers to tackle specific tasks, not for enforcing code standards across an entire organization.
+
+### Cursor and Antigravity provide in-editor code reviews for AI-generated code. Why do I still need LiveReview?
+
+**Organization-wide Visibility**  
+Code review analysis from in-editor tools is only visible to the individual using them. In a team where members use different IDEs, it becomes difficult to enforce common code quality standards across the organization.  
+  
+**Git-level Enforcement**  
+Since LiveReview operates at the Git level, it works regardless of which IDE your team members use, allowing the entire team to follow common practices and maintain consistent code quality - reducing issues that make it to production.  
+  
+**Automated Prevention**  
+Once LiveReview is set up on a team member's machine, it automatically triggers code analysis during commits, catching buggy or non-production-ready code before it gets pushed.
+
+### Why is LiveReview's pricing fair compared to other review tools?
+
+Most code review tools charge more as your team grows or as token consumption fluctuates. LiveReview makes the main limit explicit: monthly reviewed **Lines of Code (LOC)**.  
+  
+You can start free with **30k LOC per month**. When you need more, the paid ladder is fixed and public: **100k LOC for $32**, 200k for $64, 400k for $128, 800k for $256, 1.6M for $512, and 3.2M for $1024.  
+  
+Paid plans keep **users unlimited**, so if your team grows but your review workload stays the same, your bill does not suddenly double. That makes LiveReview predictable, workload-anchored, and easier to budget than seat-based or opaque token-based alternatives.
+
+### If I have a 1 million line project, will I be charged for all the lines?
+
+No. You are only charged for the code that appears in the reviewed diff, not for the entire repository. A 1 million line project does not mean 1 million lines are billed. Only the code in the actual review diff counts.
+
+### What data is sent?
+
+Only the **staged diff** is analyzed. No full repository context is uploaded, and diffs are not stored after review.
+
+### Can I disable it for a specific repo?
+
+git lrc hooks disable # disable for current repo
+
+git lrc hooks enable # re-enable later
+
+### Can I review an older commit?
+
+git lrc review --commit HEAD # review the last commit
+
+git lrc review --commit HEAD~3..HEAD # review a range
+
+### How would this be different from existing tools like SonarQube?
+
+Tools like SonarQube are primarily static analyzers and linters. They check code against predefined rules and usually run in the IDE or CI pipeline. Many enterprises use them to enforce quality and security standards across large codebases.
+
+git-lrc focuses on a different layer: **Git itself.** Instead of analyzing the whole codebase through rule catalogs, git-lrc reviews the actual diffs at commit time. The goal is to help developers understand what changed, catch issues earlier, and attach review signals directly to the commit.
+
+Another key difference is that git-lrc treats review as repository state. The review outcome (reviewed, skipped, vouched) becomes part of the git log, so review decisions are versioned alongside the code.
+
+The main idea is to bring verification directly into Git, so review happens earlier and becomes part of the repository's engineering history rather than something external in CI or dashboards.
+
+If you're interested in the broader idea behind this:
+
+*   [Conjecture, Criticize, Commit: Bringing Adversarial Refutation into AI-Assisted Software Engineering](https://substack.com/home/post/p-189490023)
+*   [Should Code Review Live Inside Git?](https://substack.com/home/post/p-189387950)
+
+They explain the thinking behind making review a Git-native artifact rather than something that lives only in CI or dashboards.
+
+### What data is collected, stored, and used in LiveReview?
+
+When you run a review, LiveReview only sends the diff to the AI model — nothing else. We do not store your code, and we never train any AI models on your code.  
+  
+On the security side, we regularly run scans on our own codebase to catch vulnerabilities before they become a problem. This includes Gitleaks, OSV Scanner, Govulncheck, and Semgrep, all running through GitHub Actions. A Bill of Materials (BOM) is also generated and published with every release so you can see exactly what is inside.  
+  
+LiveReview is fully transparent the entire source code is available for you to browse on GitHub. You can review the full security details in the [security documentation](https://hexmos.com/livereview/security/).
+
+### What security scans are running for LiveReview?
+
+We regularly run security scans on our codebase to catch vulnerabilities early. This includes Gitleaks, OSV Scanner, Govulncheck, and Semgrep. You can check the full scan history and logs directly from our [GitHub Actions page](https://github.com/HexmosTech/LiveReview/actions).
+
+### How does the self-hosted deployment differ from the cloud deployment in terms of security?
+
+**Self-Hosted Mode**  
+In self-hosted mode, your team runs the entire application stack and database, and your infrastructure team controls all data storage, backups, retention, and network access.  
+  
+**Cloud/Provider Integrated**  
+In cloud/provider-integrated mode, LiveReview sends data to configured external provider endpoints for AI inference and Git provider operations.  
+  
+Check out more information in our [deployment models documentation](https://github.com/HexmosTech/LiveReview/blob/master/SECURITY.md#deployment-models).
+
+### How does LiveReview handle security when using a local Ollama model vs a cloud LLM?
+
+**Local Ollama Model**  
+With a local Ollama model, all inference traffic stays within your own infrastructure — nothing is sent externally.  
+  
+**Cloud LLM**  
+With a cloud LLM like OpenAI, Anthropic, or AWS Bedrock, the review payload is sent to that provider's API endpoint.  
+  
+The choice omodel is explicitly configured by the operator, ensuring complete visibility and no surprises.
+
+### Can a malicious code comment manipulate or hijack the AI's review output?
+
+LiveReview has robust guardrails to prevent this. Before sending any data to the AI model, it runs prompt injection detection, neutralizes instruction override phrases (like "ignore previous instructions"), strips hidden characters, and replaces known control tokens. These checks run automatically on every review request.  
+  
+Detailed information is available in our [AI risks and mitigations documentation](https://github.com/HexmosTech/LiveReview/blob/master/SECURITY.md#ai-risks-and-mitigations).
+
+### Does LiveReview have any guardrails against insecure code suggestions?
+
+AI suggestions are strictly advisory and require human review before any action is taken. Teams can additionally enforce branch protection, CI checks, and mandatory reviewer approvals before merging.  
+  
+LiveReview also sanitizes model output before returning it, redacting sensitive patterns and handling unsafe links or HTML in the response. You can verify this in our [guardrail verification documentation](https://github.com/HexmosTech/LiveReview/blob/master/SECURITY.md#ai-guardrail-verification).
+
+### Does LiveReview provide a Software Bill of Materials (SBOM) for auditing dependencies?
+
+Yes. An SBOM is automatically generated on every release using Syft and published to the GitHub release assets. You can review it at the [latest release page](https://github.com/HexmosTech/LiveReview/releases/latest).
+
+### Is LiveReview SOC 2 Type II certified?
+
+LiveReview is not SOC 2 Type II certified at this time. However, the full security documentation, scan history, SBOM, and source code are **publicly available** for review, giving enterprise buyers direct visibility into the security posture of the product.
+
+### Does LiveReview support Gitea?
+
+Yes. You can connect your Gitea repositories in minutes and start receiving code reviews across all your projects right away.
+
+### Does LiveReview provide a VSCode extension?
+
+Yes. LiveReview provides a VSCode extension. If you are using Cursor, Antigravity, or any other VSCode-based editor, you can install the LiveReview extension from OpenVSX. Find out more [here](https://hexmos.com/livereview/#extensions).
+
+### Does git-lrc work if I commit through VSCode's Git UI?
+
+Yes. When you try to commit through VSCode's built-in Git UI, the commit will initially fail — this is expected. git-lrc does not allow a commit to go through until the revieis either completed or intentionally skipped.  
+  
+To get it working, stage your files and either run `git lrc review` manually in the terminal, or click the eye icon in VSCode's Git tab. Once done, you can either commit directly from the LiveReview UI, or fix the flagged issues, stage the files again, run the review once more, and then commit through VSCode's Git UI as usual.
+
+### Does Livereview support PRs created from the GitHub, GitLab, Bitbucket, Gitea, or Azure DevOps UI?
+
+Yes, you can mention the Livereview bot on your GitHub, GitLab, Bitbucket, Gitea, and Azure DevOps PR requests; it will automatically review all the changes and provide feedback. You can also ask further questions or debate with the AI.
+
+### How are LiveReview and git-lrc different?
+
+**LiveReview**  
+LiveReview is the complete platform — it includes the dashboard, organization-level code review tracking, PR integration across GitHub, GitLab, Bitbucket, Gitea, and Azure DevOps, and the full suite of features for managing code qualitacross your entire team.  
+  
+**git-lrc**  
+git-lrc is a lightweight git subcommand (`git lrc review`) that brings LiveReview's AI analysis directly into your local git workflow. It runs on your uncommitted code before you push, so you catch issues at the earliest possible point. It installs with a single command and requires no Git provider connection to get started. [Learn more about git-lrc here](https://hexmos.com/livereview/git-lrc).  
+  
+In short, git-lrc is the fastest way to get started with LiveReview and is focused on the individual developer's local workflow, while LiveReview as a platform is built for the entire organization — tracking reviews, enforcing standards, and giving managers visibility across all projects and teams.
+
+### Does LiveReview provide a dashboard for auditing code reviews across an organization?
+
+Yes. The LiveReview dashboard gives you a full view of all triggered code reviews across multiple projects — whether they came from GitHub, GitLab, or were triggered locally througt-lrc. This brings team standardization across your entire organization, giving managers an organization-level view of code quality, while helping developers push better code to production consistently across all projects.
+
+### Is it possible to customize or give organization-level code review instructions to LiveReview?
+
+Yes. If your team or organization follows specific code review practices, you can add them as instructions directly from the LiveReview dashboard. LiveReview will then check and verify that those standards are met on every code review.
+
+### What is LOC in LiveReview?
+
+LOC stands for Lines of Code. In LiveReview pricing, it refers to the code shown in the reviewed diff, not the total size of your repository.
+
+### How much LOC is available on the premium plan?
+
+Premium starts at **100,000 LOC per month for $32**. Higher paid bands are 200,000 LOC for $64, 400,000 LOC for $128, 800,000 LOC for $256, 1.6M LOC for $512, and 3.2M LOC for $1024. All paid bands keep **users unlimited** and refresh every month. If 100,000 LOC is not enough, you move to the next fixed workload band instead of buying more seats.
+
+### Does LiveReview support Python, Java, or other major programming languages?
+
+Yes. LiveReview is powered by large language models rather than a per-language static analyzer, so it isn't limited to a fixed list of languages. It works well with Python, Java, JavaScript/TypeScript, Go, C/C++, C#, Ruby, PHP, Rust, Kotlin, Swift, and most other mainstream languages and frameworks you'll find in a typical codebase. If your team's stack includes multiple languages in the same repository, LiveReview reviews them all in the same PR without extra configuration.
+
+### What does the enterprise plan offer?
+
+The enterprise plan is built for organizations that need more control, privacy, and flexibility. Here is what it includes:  
+  
+**Multiple Organization Support**  
+Manage distinct engineering teams or entities under a single subscription.  
+  
+**SSO & Directory Sync**  
+Connect your internal user directory through SAML or OIDC, so your team can log in without managing separate credentials.  
+  
+**Self-Hosted Deployment**  
+Run LiveReview entirely within your own infrastructure, keeping all your code and review data inside your network.  
+  
+**Custom Domain**  
+Host LiveReview on your own company-branded subdomain.  
+  
+**Full Data Privacy**  
+Complete control over where your code and review data is stored and who can access it.
+
+### Does LiveReview support local AI models?
+
+Yes. If your team runs a private self-hosted AI model and wants to use it instead of LiveReview's default models, you can opt for the enterprise plan. Our technical support team will help you set it up on your own infrastructure.
+
+### How do you verify the integrity of the AI model used in the self-hosted variant?
+
+In self-hosted mode with Ollama, the model runs entirely on customer-controlled infrastructure. The operator is responsible for choosing and managing the model. For external providers, the integration is explicitly configured, so the model being used is always known to the operator.
+
+### What additional support is provided in the enterprise plan?
+
+Enterprise customers get a **dedicated SLA** with guaranteed response and turnaround times for critical issues, so your team is never left waiting when something urgent comes up.
+
+### Who should consider the enterprise plan?
+
+The enterprise plan is a good fit for organizations that handle sensitive codebases, require SSO for compliance, want to self-host for data privacy, or need guaranteed support response times.
+
+[![Image 100: LiveReview Logo](https://hexmos.com/livereview/logo-mono.svg)](https://hexmos.com/livereview/)
+
+## [Start Reviewing Smarter Today](https://hexmos.com/livereview/#cta)
+
+Cloud-hosted, fully managed, zero setup
+
+Start reviewing code in minutes!
+
+Start Free
+
+On-Premise Deployment
+
+Enterprise-Grade Security
+
+Multi-Provider Support
+
+[![Image 101: LiveReview Logo](https://hexmos.com/livereview/logo.svg) ### Live Review](https://hexmos.com/livereview/)
+
+#### Product
+
+[Features](https://hexmos.com/livereview/features/)|[Pricing](https://hexmos.com/livereview/pricing/)|[Security](https://hexmos.com/livereview/security/)|[Demo](https://hexmos.com/livereview/demo/)|[FAQ](https://hexmos.com/livereview/faq/)
+
+#### Compare LiveReview
+
+[vs CodeRabbit](https://hexmos.com/livereview/blog/coderabbit-alternative/)|[vs GitHub Copilot Code Review](https://hexmos.com/livereview/blog/copilot-review-alternative/)|[vs Graphite](https://hexmos.com/livereview/blog/graphite-alternative/)|[vs Qodo Merge](https://hexmos.com/livereview/blog/qodo-merge-alternative/)|[vs CodeAnt AI](https://hexmos.com/livereview/blog/codeant-alternative/)|[Best CodeRabbit Alternatives](https://hexmos.com/livereview/blog/5-best-coderabbit-alternatives/)
+
+© 2026 LiveReview by [Hexmos](https://hexmos.com/). All rights reserved.
