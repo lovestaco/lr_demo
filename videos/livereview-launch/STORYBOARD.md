@@ -1,14 +1,26 @@
 ---
 format: 1920x1080
-duration: 120s
+duration: 157s
 message: "LiveReview is the independent inspection layer over your AI stack — so review effort lands where the blast radius is"
-arc: "PAS with feature-benefit progression — WHY (pain) → WHAT (inspection layer) → HOW (blast radius) → WHEN/WHERE (five pillars) → recap"
+arc: "Three-act resolution arc — ACT 1 the six problems of AI-written code, named and listed · ACT 2 the inspection layer, blast radius, five pillars · ACT 3 the same six problems, resolved. Silent: every beat must read from the visuals alone."
 audience: "engineering leadership (CTO / VP Eng / EM) first, developers second"
 mode: collaborative
-music: measured cinematic tech underscore, restrained, minor-to-major turn at the Rickover beat
+music: none
 ---
 
 ## Video direction
+
+**SILENT FILM — the governing constraint.** There is no narration, no music and no SFX
+(`music: none`, no `SCRIPT.md`). Nothing is explained by a voice, so **every frame must be fully
+understandable from what is on screen**. Each beat therefore carries its own words. Frame durations
+are reading-paced, not speech-paced: budget roughly 2.2–2.5s per short line, and never reveal a
+line the viewer has no time to finish. The old `voiceover:` fields are retained ONLY as a record of
+what each beat used to say — they are no longer spoken and must not be relied on to carry meaning.
+
+**THE ARC — the whole point of this revision.** Frame 03 lists six named problems. Frame 17 returns
+to those exact six, in the same order, resolved. The viewer must recognise the second list as the
+first one answered; that recognition IS the film's payoff. Do not reword the six between the two
+frames — same labels, same order, same layout.
 
 Written once; every frame inherits it. Per-frame Scene lines carry only the delta.
 
@@ -27,6 +39,9 @@ t=0 only what the voiceover is saying then is on screen, and each further piece 
 spoken cue, weighted into the back half of the shot. Nothing front-loads. Entrances use `fromTo`
 with explicit from-state. During a hold the only sanctioned aliveness is low-amplitude subtle
 jitter (`sine-wave-loop`); no breathing, no back-half pan or push.
+
+**Reading pace (silent)**: a frame holds until its last revealed line has had ~2.2s of screen time.
+Lists reveal one item at a time; six-item lists get ~13s. No beat is shorter than 4s.
 
 **Rhythm — held frames, allocated deliberately**: **F03** (the Rickover quote) is the stillest
 frame in the film and holds dead still with no jitter at all — it is the breath after F02's crowd
@@ -54,10 +69,37 @@ modes are banned outright — **slideshow** (everything dumped in the first 25%,
 **screensaver** (elements floating independently to fake life). No `repeat` / `yoyo`, no
 `Math.random` / `Date.now`, no CSS `transition` / `@keyframes` for motion.
 
-## Frame 1 — Faster. Not safer.
+## Frame 1 — AI writes more of your code every week
+
+- status: outline
+- src: compositions/frames/01-the-shift.html
+- type: hook
+- duration: 5.5s
+- transition_in: cut
+- blueprint: kinetic-type-beats (Reproduce)
+- narrativeRole: Open on the shift everyone has already lived through, stated plainly, so the viewer is nodding before any problem is named.
+- focal: the third clause
+- roles: none — designed beat, no captured candidates
+- sfx: none — silent film
+- scene: Three stacked clauses build, each greying as the next arrives; the last one lands in ink and holds.
+- voiceover: (not spoken — silent film) "AI writes more of your code every week."
+- asset_candidates: none — designed beat
+
+**This frame uses the stacked-clause treatment the reviewer specifically asked to see at the start** —
+the same one the recap (Frame 18) uses: earlier lines drop to `text-light`, the live line sits in
+`text` with a short `primary` rule at its left edge. Opening and closing the film in the same visual
+language is what makes the arc legible.
+
+Reproduce: kinetic-type-beats — statement beats on a bare canvas, each its own move, no set and no surface.
+
+Scene 1 (0.0–1.8s): bare white field. Clause one sets full-width, left-aligned in the display ramp: **"AI writes more of your code every week."** Per-word staggered reveal (`dynamic-content-sequencing`), long-tail settle.
+Scene 2 (1.8–3.4s): clause one drops to `text-light`; clause two arrives beneath it with the `primary` left rule: **"Your review capacity hasn't changed."**
+Scene 3 (3.4–5.5s): clause two greys; clause three lands and holds: **"So what does that actually cost you?"** — the question the next four frames answer. Frame holds still; low-amplitude jitter only.
+
+## Frame 2 — Faster. Not safer.
 
 - status: animated
-- src: compositions/frames/01-faster-not-safer.html
+- src: compositions/frames/02-the-gap.html
 - type: hook
 - duration: 6.421s
 - transition_in: cut
@@ -81,10 +123,42 @@ Scene 2 (1.8–3.8s): as the VO reaches "faster than it ever has", the volume li
 Scene 3 (3.8–5.4s): on "your review capacity didn't move", the flat "review capacity" line draws in low and level beneath it (`svg-path-draw`) — deliberately short, deliberately horizontal — and **"Not safer."** sets under the first word in `text-light`.
 Scene 4 (5.4–6.421s): the wedge between the two lines fills with a faint `primary` wash (`ambient-glow-bloom`) and holds. Frame still; low-amplitude jitter only (`sine-wave-loop`). No further camera move.
 
-## Frame 2 — The question everyone is already asking
+## Frame 3 — Six things that break
+
+- status: outline
+- src: compositions/frames/03-six-problems.html
+- type: pain_point
+- duration: 13s
+- transition_in: push-slide
+- blueprint: grid-card-assemble (Adapt)
+- narrativeRole: THE frame this revision exists for — name the problems explicitly, as a list, so the viewer knows exactly what is wrong before any solution appears.
+- focal: the six-item list
+- roles: none — designed beat, no captured candidates
+- sfx: none — silent film
+- scene: Six named problems arrive one at a time, each with an ✕ mark and a one-line consequence.
+- voiceover: (not spoken — silent film)
+- asset_candidates: none — designed beat
+
+Adapt: keep grid-card-assemble's staggered self-assembly, but as a **vertical enumerated list**, not a
+grid — the viewer must be able to read it top to bottom and count it. Each row is `✕ Label — consequence`.
+
+**THE SIX, VERBATIM — these exact labels and this exact order must reappear in Frame 17:**
+
+1. **Repeated comments** — seniors flag the same issues every week
+2. **Late bug discovery** — QA finds them, or customers do
+3. **Reviewer-dependent quality** — it depends who happened to review it
+4. **Blind leadership** — you hear about quality when something breaks
+5. **Tribal knowledge** — it lives in a few people's heads
+6. **Review overload** — more AI output, more review pressure
+
+Scene 1 (0.0–1.6s): the title sets upper-left — **"Six things AI-written code breaks"** — with the eyebrow "TODAY". The empty list rail draws beneath it.
+Scene 2 (1.6–11.0s): the six rows arrive **one at a time, ~1.55s apart** (`center-outward-expansion`, staggered), each with a `negative` ✕ glyph, the bold label, and the consequence in the body ramp. Nothing is on screen before its turn; the viewer reads down the list as it builds.
+Scene 3 (11.0–13.0s): all six hold together, still, so the full list can be taken in as one picture. This held read is what Frame 17 will answer.
+
+## Frame 4 — The question everyone is already asking
 
 - status: animated
-- src: compositions/frames/02-the-question.html
+- src: compositions/frames/04-who-feels-it.html
 - type: pain_point
 - duration: 6.123s
 - transition_in: cut
@@ -110,10 +184,31 @@ Scene 2 (1.9–3.6s): on "the developer asks", the Developer panel arrives from 
 Scene 3 (3.6–5.2s): all four panels drift inward, closing the negative space — the surround. `depth-of-field-blur` softens the two secondary panels so only the CTO and Developer bubbles stay readable.
 Scene 4 (5.2–6.123s): hold on the crowded frame with the centre still empty. Still; subtle jitter only. Nothing answers the question — F03 does.
 
-## Frame 3 — You get what you inspect
+## Frame 5 — What it costs when it slips through
+
+- status: outline
+- src: compositions/frames/05-what-it-costs.html
+- type: pain_point
+- duration: 4.5s
+- transition_in: zoom-through
+- blueprint: kinetic-type-beats (Adapt)
+- narrativeRole: Close the problem act on consequence, not on complaint — the stakes that make inspection worth paying for.
+- focal: the three consequence words
+- roles: none — designed beat, no captured candidates
+- sfx: none — silent film
+- scene: Three consequence words slam in on a bare field, then the scale beneath them.
+- voiceover: (not spoken — silent film)
+- asset_candidates: none — designed beat
+
+Adapt: kinetic-type-beats — statement beats on a bare canvas, but delivered as a hard three-word slam using the `kinetic-beat-slam` rule rather than a per-word build. Smooth long-tail settle, no overshoot.
+
+Scene 1 (0.0–2.6s): three words land in sequence via `kinetic-beat-slam`, large, centred, `negative` red: **"Outages."** · **"Breaches."** · **"Technical debt."** Roughly 0.8s apart.
+Scene 2 (2.6–4.5s): beneath them the scale sets and holds — **"10 risk categories · 100+ failure patterns · every commit"** — in the body ramp. Frame locks still. This is the last beat before the turn.
+
+## Frame 6 — You get what you inspect
 
 - status: animated
-- src: compositions/frames/03-you-get-what-you-inspect.html
+- src: compositions/frames/06-you-get-what-you-inspect.html
 - type: product_intro
 - duration: 6.699s
 - transition_in: blur-crossfade
@@ -136,10 +231,10 @@ Scene 1 (0.0–2.2s): F02's crowd hands off — the portrait wipes up from the l
 Scene 2 (2.2–4.6s): as the VO reaches the quote, the line reveals per-word across the right two-thirds in display type (`dynamic-content-sequencing`), with "inspect" and "expect" each landing on their own spoken beat.
 Scene 3 (4.6–6.699s): the attribution sets small beneath the quote; `asr-keyword-glow` touches "inspect", then "expect", synced to the word rail. The frame then holds **dead still** — no push, no drift, no jitter. The stillness is the payload.
 
-## Frame 4 — An independent inspection layer
+## Frame 7 — An independent inspection layer
 
 - status: animated
-- src: compositions/frames/04-inspection-layer.html
+- src: compositions/frames/07-inspection-layer.html
 - type: product_intro
 - duration: 8.981s
 - transition_in: push-slide
@@ -164,10 +259,10 @@ Scene 2 (2.4–4.4s): on "sitting above", the mark rises to the upper third and 
 Scene 3 (4.4–7.4s): as the VO names them, Claude, then Copilot, then Cursor flip in at their ring positions below the rule, one per spoken name (`orbit-3d-entry`, entry only, no continuing orbit); the DeepSeek and OpenRouter marks follow staggered on "anything". **Every provider card carries its real brand mark beside the name** — all five marks are staged in `assets/` and none is set as bare type.
 Scene 4 (7.4–8.981s): SVG connectors draw upward from each provider to the layer rule (`avatar-cloud-network`); a single slow push settles (`multi-phase-camera`) and stops. Hold.
 
-## Frame 5 — Not all diffs are equal
+## Frame 8 — Not all diffs are equal
 
 - status: animated
-- src: compositions/frames/05-not-all-diffs-equal.html
+- src: compositions/frames/08-not-all-diffs-equal.html
 - type: feature_showcase
 - duration: 9.259s
 - transition_in: zoom-through
@@ -191,10 +286,10 @@ Scene 2 (2.0–4.8s): "Three hundred lines of UI" — the left cell enters from 
 Scene 3 (4.8–7.6s): "Three lines of database code" — the right cell enters from the right wing on the mirrored tilt (`split-tilt-cards`); the numeral 3 arrives at the same type size in `negative`.
 Scene 4 (7.6–9.259s): "breaks the entire app" — the inner-edge badge spring-pops on the red cell (`spring-pop-entrance`, smooth settle) and a marker circle scribes around the numeral 3 (`css-marker-patterns`). Both cells then hold motionless.
 
-## Frame 6 — Scored by blast radius
+## Frame 9 — Scored by blast radius
 
 - status: animated
-- src: compositions/frames/06-blast-radius-scored.html
+- src: compositions/frames/09-blast-radius-scored.html
 - type: feature_showcase
 - duration: 9.067s
 - transition_in: push-slide
@@ -218,10 +313,10 @@ Scene 2 (2.2–5.0s): "by its blast radius" — the surface advances to the scor
 Scene 3 (5.0–7.6s): "how far a change can reach" — the surface advances to the sunburst (risk-score demo ~21s); the rings read outward from the centre. `depth-of-field-blur` drops the supporting text back so the chart holds the eye.
 Scene 4 (7.6–9.067s): "traced through a live call graph" — the supporting line sets beneath the card; hold, card still, subtle jitter only.
 
-## Frame 7 — The exact math, not a black box
+## Frame 10 — The exact math, not a black box
 
 - status: animated
-- src: compositions/frames/07-exact-math.html
+- src: compositions/frames/10-exact-math.html
 - type: feature_showcase
 - duration: 8.32s
 - transition_in: crossfade
@@ -245,11 +340,11 @@ Scene 2 (1.8–5.4s): the four factor cards self-assemble in a staggered cascade
 Scene 3 (5.4–7.2s): "and the math behind them" — the cards recede and the Math Mode panel scale-swaps into their place (`scale-swap-transition`), formulas legible at read size.
 Scene 4 (7.2–8.32s): `asr-keyword-glow` touches the two score names — Blast Radius, then Review Priority — as the frame settles. Hold still.
 
-## Frame 8 — Five pillars, one loop
+## Frame 11 — Five pillars, one loop
 
 - handoff_out: five-pillar ring nodes, node box 260x88 radius 14, at the frame's final locked camera (scale 1.00, opacity 1). Review (960, 290) · Understand (1430, 480) · Enforce (1250, 830) · Improve (670, 830) · Connect (490, 480). Geometry sits 55px above the sketch's original placement so the bottom nodes clear the caption keep-out band.
 - status: animated
-- src: compositions/frames/08-five-pillars-loop.html
+- src: compositions/frames/11-five-pillars-loop.html
 - type: benefit_highlight
 - duration: 11.563s
 - transition_in: zoom-through
@@ -275,11 +370,11 @@ Scene 2 (2.2–7.4s): the five nodes place **one per spoken name** — Review, U
 Scene 3 (7.4–9.6s): "And Improve feeds straight back into Review" — the **return edge draws from Improve to Review** (`svg-path-draw`), closing the circuit. Hold the completed loop for a beat before anything else moves.
 Scene 4 (9.6–11.563s): "a loop, not a checklist" — one pull-back frames the whole ring (`multi-phase-camera`, single settle, no re-push). The ring locks and holds still. **These node positions are fixed here and inherited unchanged by Frames 9–13.**
 
-## Frame 9 — Review
+## Frame 12 — Review
 
 - handoff_in: the Review node arrives from the five-pillar ring at (960, 290), node box 260x88 radius 14, scale 1.00, opacity 1, motionless at the cut; it then travels to this frame's section-marker slot. Frames 9-13 each inherit their own node from Frame 8's locked ring — same box, same radius, same colour treatment.
 - status: animated
-- src: compositions/frames/09-review.html
+- src: compositions/frames/12-review.html
 - type: feature_showcase
 - duration: 6.677s
 - transition_in: push-slide
@@ -301,11 +396,11 @@ Scene 1 (0.0–1.8s): the **Review** node lifts out of F08's ring into the upper
 Scene 2 (1.8–4.2s): "what actually matters" — the footage card mounts right (0–5s review pipeline sankey), cropped `2192:830:164:0`, entering on a long-tail settle. Asymmetric 40/60.
 Scene 3 (4.2–6.677s): "ranks every finding by how much it can hurt you" — the surface advances to the diff findings (21–23s) and `coordinate-target-zoom` frames the severity marks, the one place `negative` is allowed in this frame. Hold.
 
-## Frame 10 — Understand
+## Frame 13 — Understand
 
 - handoff_in: the Understand node arrives from the five-pillar ring at (1430, 480), node box 260x88 radius 14, scale 1.00, opacity 1, motionless at the cut; it then travels to this frame's section-marker slot. Frames 9-13 each inherit their own node from Frame 8's locked ring — same box, same radius, same colour treatment.
 - status: animated
-- src: compositions/frames/10-understand.html
+- src: compositions/frames/13-understand.html
 - type: feature_showcase
 - duration: 9.003s
 - transition_in: push-slide
@@ -329,11 +424,11 @@ Scene 2 (2.0–4.4s): "a summary deck" — the summary-deck surface enters and t
 Scene 3 (4.4–6.6s): "a filterable issue list" — a cut-the-curve seam at matched velocity into the issue navigator (`cut-catalog.md`); the severity filters read as it settles.
 Scene 4 (6.6–9.003s): "a quiz before you commit" — the quiz artifact reveals via `scale-swap-transition`, landing on the "Take the Quiz" state. This is the payoff that answers F02's rubber-stamping fear. Hold still.
 
-## Frame 11 — Enforce
+## Frame 14 — Enforce
 
 - handoff_in: the Enforce node arrives from the five-pillar ring at (1250, 830), node box 260x88 radius 14, scale 1.00, opacity 1, motionless at the cut; it then travels to this frame's section-marker slot. Frames 9-13 each inherit their own node from Frame 8's locked ring — same box, same radius, same colour treatment.
 - status: animated
-- src: compositions/frames/11-enforce.html
+- src: compositions/frames/14-enforce.html
 - type: feature_showcase
 - duration: 6.72s
 - transition_in: push-slide
@@ -355,11 +450,11 @@ Scene 1 (0.0–1.6s): the **Enforce** node lifts from its ring position (`card-m
 Scene 2 (1.6–4.4s): "checks that run on every commit" — five checkpoint rows arrive staggered and **check off in sequence** (`dynamic-content-sequencing` + `stat-bars-and-fills`): Commit · Before push · MR/PR · CI/CD gate · Scheduled sweep. One row per beat, left column, ~45% of frame.
 Scene 3 (4.4–6.72s): "and every merge" — the footage card mounts right (33–38s, "Edit ruleset: High-confidence critical issues" with its live jq expression), cropped, and the rule text reads. Hold.
 
-## Frame 12 — Improve
+## Frame 15 — Improve
 
 - handoff_in: the Improve node arrives from the five-pillar ring at (670, 830), node box 260x88 radius 14, scale 1.00, opacity 1, motionless at the cut; it then travels to this frame's section-marker slot. Frames 9-13 each inherit their own node from Frame 8's locked ring — same box, same radius, same colour treatment.
 - status: animated
-- src: compositions/frames/12-improve.html
+- src: compositions/frames/15-improve.html
 - type: feature_showcase
 - duration: 7.765s
 - transition_in: push-slide
@@ -383,11 +478,11 @@ Scene 2 (1.6–3.4s): "review history into answers" — the headline stats card 
 Scene 3 (3.4–5.6s): "Fifty-seven charts, one click" — the numeral **57** counts up with value-scaled growth (`counting-dynamic-scale`) while the chart wall assembles behind it (`center-outward-expansion`), resolving on the product's own "57 charts across 7 sections" line (90–92s).
 Scene 4 (5.6–7.765s): "a chatbot you can just ask" — Livi's mark and one plain-English question scale-swap into the lower-left (`scale-swap-transition`). Hold. This frame closes the loop back to Review — F13 inherits the handoff.
 
-## Frame 13 — Connect
+## Frame 16 — Connect
 
 - handoff_in: the Connect node arrives from the five-pillar ring at (490, 480), node box 260x88 radius 14, scale 1.00, opacity 1, motionless at the cut; it then travels to this frame's section-marker slot. Frames 9-13 each inherit their own node from Frame 8's locked ring — same box, same radius, same colour treatment.
 - status: animated
-- src: compositions/frames/13-connect.html
+- src: compositions/frames/16-connect.html
 - type: feature_showcase
 - duration: 8.171s
 - transition_in: push-slide
@@ -409,10 +504,44 @@ Scene 1 (0.0–1.8s): the **Connect** node lifts from its ring position and morp
 Scene 2 (1.8–6.4s): the categories cycle around the pinned mark **one per spoken item** — git hosts, then AI providers, then IDEs, then chat — each a hard-cut token swap in the same slots (`discrete-text-sequence`), logo rows swapping in place rather than re-flowing. **Every chip in AI PROVIDERS and CHAT now carries its real brand mark**, matching the GIT HOSTS and IDE EXTENSIONS rows that already had them — no group is left as bare type. Email has no brand mark: use a simple inline envelope glyph in `text-light`.
 Scene 3 (6.4–8.171s): "it already fits" — the connect-git footage (54–56s, GitHub / GitLab.com / self-hosted GitLab / Bitbucket) reads briefly in a side card, then the satellites settle into a static ring. The anchor holds dead still.
 
-## Frame 14 — What this adds up to
+## Frame 17 — The same six, answered
+
+- status: outline
+- src: compositions/frames/17-six-resolved.html
+- type: benefit_highlight
+- duration: 13s
+- transition_in: push-slide
+- blueprint: grid-card-assemble (Adapt)
+- narrativeRole: The payoff. The six problems from Frame 3 return in the same order, resolved — the film closes the loop it opened.
+- focal: the six resolved rows
+- roles: none — designed beat, no captured candidates
+- sfx: none — silent film
+- scene: The six problems return in the same positions, each ✕ flipping to ✓ with its resolved state.
+- voiceover: (not spoken — silent film)
+- asset_candidates: none — designed beat
+
+Adapt: the same vertical list shape as Frame 3, deliberately identical in layout, type and row order —
+**the recognition is the payoff**. The transformation is the motion: each row's `negative` ✕ flips to a
+`positive` ✓ and the consequence text swaps to its resolved state.
+
+**THE SAME SIX, SAME ORDER — paired to Frame 3 exactly:**
+
+1. **Repeated comments** → **Standards reinforced automatically**
+2. **Late bug discovery** → **Caught while the code is still being written**
+3. **Reviewer-dependent quality** → **The same standard on every review**
+4. **Blind leadership** → **Trends visible before they become incidents**
+5. **Tribal knowledge** → **Shared in the everyday workflow**
+6. **Review overload** → **Effort lands where the blast radius is**
+
+Scene 1 (0.0–1.4s): the list re-enters **already populated with the Frame 3 problem rows**, ✕ marks intact, title reading **"Six things AI-written code breaks"** with the eyebrow still "TODAY". The viewer must recognise it instantly.
+Scene 2 (1.4–2.2s): the eyebrow swaps "TODAY" → "WITH LIVEREVIEW" and the title crossfades to **"Six things LiveReview closes"** (`discrete-text-sequence`, hard swap).
+Scene 3 (2.2–10.6s): the rows resolve **one at a time, top to bottom, ~1.4s apart** — each ✕ flips to a `positive` ✓ and its consequence line swaps to the resolved wording (`scale-swap-transition` per row). Same rhythm as Frame 3's build, so the two frames rhyme.
+Scene 4 (10.6–13.0s): all six hold green and still — the film's argument, complete in one frame.
+
+## Frame 18 — What this adds up to
 
 - status: animated
-- src: compositions/frames/14-adds-up-to.html
+- src: compositions/frames/18-adds-up-to.html
 - type: branding
 - duration: 10.048s
 - transition_in: zoom-through
@@ -437,10 +566,10 @@ Scene 2 (3.2–6.2s): a waterfall cut at word granularity carries clause two int
 Scene 3 (6.2–8.6s): a second waterfall cut into clause three in `primary` — "blast radius is what makes that inspection land where it counts" — the F05 300-vs-3 split ghosting behind it.
 Scene 4 (8.6–10.048s): the five-pillar ring resolves faintly behind the final clause and closes (`svg-path-draw`). Hold dead still into the CTA.
 
-## Frame 15 — The close
+## Frame 19 — The close
 
 - status: animated
-- src: compositions/frames/15-start-free.html
+- src: compositions/frames/19-close.html
 - type: cta
 - duration: 6.4s
 - transition_in: blur-crossfade
@@ -462,3 +591,4 @@ Scene 1 (0.0–1.6s): F14's ring collapses inward and the LiveReview mark assemb
 Scene 2 (1.6–3.6s): the ownership triad sets beneath the mark as **three beats, one per spoken clause** (`dynamic-content-sequencing`): "Your code." · "Your infrastructure." · "Your reviewer." The frame's hero line, display ramp.
 Scene 3 (3.6–5.4s): on "Start free", the offer line sets beneath the triad — "Start free — we'll walk you through self-hosted setup." — in the body ramp, one measure, never wrapping onto the URL.
 Scene 4 (5.4–6.4s): "hexmos.com/livereview" sets small beneath in `primary`. Everything holds dead still. No flourish, no second CTA.
+

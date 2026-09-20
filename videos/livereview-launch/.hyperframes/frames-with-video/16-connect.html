@@ -1,0 +1,270 @@
+<template>
+  <style>
+    /* Brand face — staged locally at assets/fonts/Inter-var.woff2 (variable, wght 100-900).
+       Declared so headless Chrome can actually supply Inter instead of falling back. */
+    @font-face {
+      font-family: "Inter";
+      src: url("assets/fonts/Inter-var.woff2") format("woff2");
+      font-weight: 100 900;
+      font-style: normal;
+      font-display: block;
+    }
+
+    #root {
+      width: 1920px; height: 1080px; position: relative; overflow: hidden;
+      font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+      color: #05070b;
+    }
+    .f13-bg { position: absolute; inset: 0; background: #ffffff; }
+    .f13-stage { position: absolute; inset: 0; }
+
+    /* ---- slide-header ---- */
+    .f13-eyebrow {
+      position: absolute; left: 110px; top: 110px;
+      font-size: 22px; font-weight: 600; letter-spacing: 0.08em;
+      text-transform: uppercase; color: #1d56f0;
+    }
+    .f13-head {
+      position: absolute; left: 110px; top: 158px; width: 820px;
+      font-size: 72px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.08;
+      color: #05070b;
+    }
+
+    /* ---- the pinned anchor (never moves after 1.45s) ---- */
+    .f13-anchor {
+      position: absolute; left: 700px; top: 430px; width: 520px; height: 200px;
+      border-radius: 14px;
+      background: rgba(29, 86, 240, 0.04);
+      border: 1.5px solid rgba(29, 86, 240, 0.2);
+      overflow: hidden;
+    }
+    .f13-node-label, .f13-lockup {
+      position: absolute; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .f13-node-label {
+      font-size: 76px; font-weight: 600; letter-spacing: -0.01em; color: #ffffff;
+    }
+    .f13-lockup { gap: 26px; opacity: 0; }
+    .f13-mark { width: 116px; height: 116px; display: block; }
+    .f13-word { font-size: 54px; font-weight: 700; letter-spacing: -0.02em; color: #05070b; }
+
+    /* ---- satellite slots ---- */
+    .f13-slot {
+      position: absolute;
+      border-radius: 12px;
+      background: rgba(29, 86, 240, 0.04);
+      border: 1.5px solid rgba(29, 86, 240, 0.2);
+      display: flex; flex-direction: column; justify-content: center;
+      padding: 0 22px;
+      opacity: 0; visibility: hidden;
+    }
+    .f13-cat {
+      font-size: 14px; font-weight: 600; letter-spacing: 0.08em;
+      text-transform: uppercase; color: #1d56f0;
+      margin-bottom: 9px;
+    }
+    .f13-row { display: flex; align-items: flex-end; }
+    .f13-row-logo { gap: 18px; }
+    .f13-row-pill { gap: 10px; align-items: center; }
+    .f13-tok { opacity: 0; }
+    .f13-chip {
+      display: flex; flex-direction: column; align-items: center; gap: 4px;
+      white-space: nowrap;
+    }
+    .f13-chip img { height: 28px; width: auto; display: block; }
+    .f13-mailglyph {
+      height: 28px; width: 37px; display: block; color: #9A9A9A;
+    }
+    .f13-chip span {
+      font-size: 15px; font-weight: 500; color: #1648cf; line-height: 1.2;
+    }
+    .f13-pill {
+      border-radius: 100px;
+      background: rgba(29, 86, 240, 0.08);
+      color: #1d56f0;
+      font-size: 19px; font-weight: 500; line-height: 1.25;
+      padding: 9px 14px; white-space: nowrap;
+    }
+
+    /* ---- connector hairlines ---- */
+    .f13-line { position: absolute; background: #1d56f0; opacity: 0; }
+
+    /* ---- footage card ---- */
+    .f13-vidcard {
+      position: absolute; left: 1126px; top: 113px; width: 654px; height: 263px;
+      border-radius: 14px;
+      background: rgba(29, 86, 240, 0.04);
+      border: 1.5px solid rgba(29, 86, 240, 0.2);
+      opacity: 0;
+    }
+  </style>
+
+  <div id="root" data-composition-id="16-connect" data-start="0" data-duration="8.571" data-width="1920" data-height="1080">
+    <div class="clip f13-bg" data-start="0" data-duration="8.571" data-track-index="0"></div>
+    <div class="clip f13-stage" data-start="0" data-duration="8.571" data-track-index="1">
+
+      <div class="f13-eyebrow">05 &middot; Connect</div>
+      <div class="f13-head">Nothing to<br>rebuild.</div>
+
+      <!-- connector hairlines -->
+      <div class="f13-line" id="f13-l-s1" style="left:620px; top:477px; width:80px; height:2px;"></div>
+      <div class="f13-line" id="f13-l-s2" style="left:620px; top:587px; width:80px; height:2px;"></div>
+      <div class="f13-line" id="f13-l-s3" style="left:1220px; top:477px; width:80px; height:2px;"></div>
+      <div class="f13-line" id="f13-l-s4" style="left:1220px; top:587px; width:80px; height:2px;"></div>
+      <div class="f13-line" id="f13-l-s5" style="left:959px; top:630px; width:2px; height:34px;"></div>
+
+      <!-- satellites: left column -->
+      <div class="f13-slot" id="f13-s1" style="left:140px; top:430px; width:480px; height:96px;">
+        <div class="f13-cat">Git hosts</div>
+        <div class="f13-row f13-row-logo">
+          <div class="f13-tok f13-chip"><img src="assets/version_control_logos_github-logo-dark.png" alt="GitHub"><span>GitHub</span></div>
+          <div class="f13-tok f13-chip"><img src="assets/version_control_logos_gitlab-logo.png" alt="GitLab"><span>GitLab</span></div>
+          <div class="f13-tok f13-chip"><img src="assets/version_control_logos_bitbucket-logo.png" alt="Bitbucket"><span>Bitbucket</span></div>
+          <div class="f13-tok f13-chip"><img src="assets/version_control_logos_azure-devops-logo.png" alt="Azure"><span>Azure</span></div>
+          <div class="f13-tok f13-chip"><img src="assets/version_control_logos_gitea_logo.png" alt="Gitea"><span>Gitea</span></div>
+        </div>
+      </div>
+
+      <div class="f13-slot" id="f13-s2" style="left:140px; top:540px; width:480px; height:96px;">
+        <div class="f13-cat">IDE extensions</div>
+        <div class="f13-row f13-row-logo">
+          <div class="f13-tok f13-chip"><img src="assets/extensions_vscode-logo.png" alt="VS Code"><span>VS Code</span></div>
+          <div class="f13-tok f13-chip"><img src="assets/extensions_cursor-logo.png" alt="Cursor"><span>Cursor</span></div>
+          <div class="f13-tok f13-chip"><img src="assets/extensions_antigravity-logo.png" alt="Antigravity"><span>Antigravity</span></div>
+        </div>
+      </div>
+
+      <!-- satellites: right column -->
+      <div class="f13-slot" id="f13-s3" style="left:1300px; top:430px; width:480px; height:96px;">
+        <div class="f13-cat">Chat</div>
+        <div class="f13-row f13-row-logo">
+          <div class="f13-tok f13-chip"><img src="assets/brand-slack.svg" alt="Slack"><span>Slack</span></div>
+          <div class="f13-tok f13-chip"><img src="assets/brand-teams.svg" alt="Teams"><span>Teams</span></div>
+          <div class="f13-tok f13-chip"><img src="assets/brand-discord.svg" alt="Discord"><span>Discord</span></div>
+          <div class="f13-tok f13-chip">
+            <svg class="f13-mailglyph" width="37" height="28" viewBox="0 0 24 18" fill="none"
+                 stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"
+                 xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <rect x="1" y="1" width="22" height="16" rx="2.2"></rect>
+              <path d="M1.9 2.4 12 10.2 22.1 2.4"></path>
+            </svg><span>Email</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="f13-slot" id="f13-s4" style="left:1300px; top:540px; width:480px; height:96px;">
+        <div class="f13-cat">Automation</div>
+        <div class="f13-row f13-row-pill">
+          <div class="f13-tok f13-pill">MCP</div>
+          <div class="f13-tok f13-pill">REST API</div>
+          <div class="f13-tok f13-pill">CI/CD</div>
+        </div>
+      </div>
+
+      <!-- satellite: below the anchor -->
+      <div class="f13-slot" id="f13-s5" style="left:700px; top:664px; width:520px; height:96px;">
+        <div class="f13-cat">AI providers</div>
+        <div class="f13-row f13-row-logo">
+          <div class="f13-tok f13-chip"><img src="assets/brand-openai.svg" alt="OpenAI"><span>OpenAI</span></div>
+          <div class="f13-tok f13-chip"><img src="assets/brand-anthropic.svg" alt="Anthropic"><span>Anthropic</span></div>
+          <div class="f13-tok f13-chip"><img src="assets/brand-gemini.svg" alt="Gemini"><span>Gemini</span></div>
+          <div class="f13-tok f13-chip"><img src="assets/brand-deepseek.svg" alt="DeepSeek"><span>DeepSeek</span></div>
+        </div>
+      </div>
+
+      <!-- the pinned mark: Connect node morphs into the LiveReview lockup -->
+      <div class="f13-anchor" id="f13-anchor">
+        <div class="f13-node-label">Connect</div>
+        <div class="f13-lockup">
+          <img class="f13-mark" src="assets/logo.svg" alt="LiveReview">
+          <div class="f13-word">LiveReview</div>
+        </div>
+      </div>
+
+      <!-- Scene 3: the real Connect Git screen, card-mounted -->
+      <div class="f13-vidcard"></div>
+      <video id="el-13-connect-video-12" src="assets/footage/connect-git.mp4" preload="auto" muted playsinline class="clip" data-frame-video="approved" data-frame-video-x="1138" data-frame-video-y="125" data-frame-video-width="630" data-frame-video-height="239" data-frame-video-fit="cover" data-start="6.45" data-duration="2.121" data-track-index="2"></video>
+
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <script>
+    (function () {
+      var DUR = 8.171;
+      var tl = gsap.timeline({ paused: true });
+
+      /* --- Scene 1 (0.0-1.8s): slide-header lands, the Connect node morphs into the pinned mark --- */
+      tl.fromTo(".f13-eyebrow", { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: 0.5, ease: "power2.out" }, 0.12);
+      tl.fromTo(".f13-head", { opacity: 0, y: 26 }, { opacity: 1, y: 0, duration: 0.65, ease: "power3.out" }, 0.3);
+
+      /* card-morph-anchor: hold the node, then ONE tween carries scale + borderRadius + background + the lift. */
+      tl.fromTo("#f13-anchor",
+        { x: 176, y: 188, scale: 0.365, borderRadius: 274, backgroundColor: "rgb(29,86,240)" },
+        { x: 0, y: 0, scale: 1, borderRadius: 14, backgroundColor: "rgba(29,86,240,0.04)", duration: 0.9, ease: "power2.inOut" },
+        0.55);
+      tl.to(".f13-node-label", { opacity: 0, duration: 0.36, ease: "power1.in" }, 0.55);
+      tl.fromTo(".f13-lockup", { opacity: 0 }, { opacity: 1, duration: 0.36, ease: "power1.out" }, 1.09);
+      /* From t=1.45s the mark is PINNED: no tween below ever touches #f13-anchor again. */
+
+      /* --- Scene 2 (1.8-6.4s): discrete-text-sequence. One category per spoken item, hard cuts. --- */
+      var ORDER = ["s1", "s5", "s2", "s3", "s4"];
+      var BEAT = [2.05, 3.2, 4.3, 5.25, 6.05];
+      var SETTLE = 6.8;
+      var STEP = 0.06;
+
+      var slots = [], lines = [], toks = [];
+      for (var i = 0; i < ORDER.length; i++) {
+        var el = document.getElementById("f13-" + ORDER[i]);
+        slots.push(el);
+        lines.push(document.getElementById("f13-l-" + ORDER[i]));
+        toks.push(el ? Array.prototype.slice.call(el.querySelectorAll(".f13-tok")) : []);
+      }
+
+      function render(t) {
+        var lit = 0, active = -1;
+        for (var i = 0; i < BEAT.length; i++) {
+          if (t >= BEAT[i]) { lit = i + 1; active = i; }
+        }
+        if (t >= SETTLE) active = -1; /* Scene 3: the satellites settle into a static ring */
+
+        for (var s = 0; s < ORDER.length; s++) {
+          var on = s < lit;
+          var hot = (s === active);
+          var el = slots[s];
+          if (el) {
+            el.style.visibility = on ? "visible" : "hidden";
+            el.style.opacity = on ? (hot ? "1" : "0.9") : "0";
+            el.style.borderColor = hot ? "rgba(29,86,240,0.55)" : "rgba(29,86,240,0.2)";
+            el.style.backgroundColor = hot ? "rgba(29,86,240,0.09)" : "rgba(29,86,240,0.04)";
+          }
+          var ln = lines[s];
+          if (ln) ln.style.opacity = on ? (hot ? "0.55" : "0.25") : "0";
+
+          var list = toks[s];
+          var shown = 0;
+          if (on) {
+            shown = Math.floor((t - BEAT[s]) / STEP) + 1;
+            if (shown > list.length) shown = list.length;
+          }
+          for (var j = 0; j < list.length; j++) {
+            list[j].style.opacity = j < shown ? "1" : "0";
+          }
+        }
+      }
+
+      var driver = { t: 0 };
+      tl.fromTo(driver, { t: 0 },
+        { t: DUR, duration: DUR, ease: "none", onUpdate: function () { render(driver.t); } }, 0);
+
+      /* --- Scene 3 (6.4-8.171s): the Connect Git screen reads in its card; the anchor holds dead still. --- */
+      tl.fromTo(".f13-vidcard", { opacity: 0 }, { opacity: 1, duration: 0.26, ease: "power2.out" }, 6.42);
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines["16-connect"] = tl;
+      tl.seek(0);
+      render(0);
+    })();
+  </script>
+</template>

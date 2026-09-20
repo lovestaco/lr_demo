@@ -2,14 +2,14 @@
 workflow: product-launch-video
 flow: automation
 storyboard: yes
-message: "LiveReview is the independent inspection layer over your AI stack — so review effort lands where the blast radius is"
+message: "The six things AI-written code breaks — and how an independent inspection layer closes every one of them"
 destination: youtube
 aspect: 1920x1080
 language: en
 audience: engineering-leadership
-length: 120s
-angle: why-what-how
-narration: yes
+length: 157s
+angle: problem-solution-resolution
+narration: no
 captions: no
 
 ## Intent
@@ -80,6 +80,40 @@ leadership first (CTO / VP Eng / EM), developers second.
   BGM -> MusicGen local generation (auto-installs `transformers`/`torch`, one <=30s
   seed clip crossfade-looped to length; CPU-only here, so expect it to be slow).
   Do not re-offer HeyGen.
+
+
+## Revision — 2026-09-20 (silent restructure)
+
+Feedback after the second render, from the user and from the reviewer:
+
+- The problems of AI-generated code must be **listed explicitly at the start**, and the film must end
+  by showing **those same problems addressed** — the user's analogy was a sports film: the character
+  starts with the dream and ends as the star. Same list, opened and closed.
+- **"I actually didn't get what the problem was first time around."** The previous cut spent 12.5s on
+  the problem and reached the Rickover turn at 0:12 — about 10% of the runtime on the thing that has
+  to make a viewer care.
+- **"We should have more text for the problem — audio alone is not giving enough emphasis."**
+- The stacked-clause treatment used in the recap frame should appear **at the beginning too**.
+- **The film must be fully understandable from the visuals alone**, like reading a storyboard. The
+  user is removing audio entirely for this reason.
+- The middle (solution, blast radius, five pillars, features) was explicitly called good — leave it.
+
+What changed:
+
+- **Silent.** `music: none`, no `SCRIPT.md`, no `audio_meta.json`, no SFX. The narration, score and
+  SFX are archived under `.hyperframes/disabled/`. Every frame now carries its own words. Frame
+  `voiceover:` fields are kept only as a record of what a beat used to say.
+- **19 frames, ~157s** (was 15 frames, 121s). Reading-paced, not speech-paced.
+- **ACT 1 grew 12.5s → 35.5s**: F01 stacked-clause hook · F02 the widening gap · **F03 the six problems,
+  named and listed** · F04 who feels it · F05 what it costs. Rickover now lands at ~0:36, not 0:12.
+- **ACT 3 gained F17** — the same six problems, same order, same layout, each ✕ flipping to ✓.
+  F03 and F17 are a matched pair; the recognition between them is the film's payoff. Their six labels
+  must never be reworded or reordered independently.
+- The six come from the product's own Today/After table on hexmos.com/livereview/transform/.
+- Existing frames were renumbered (old 01→02, 02→04, 03→06 … 14→18, 15→19). Composition ids and
+  timeline keys were rewritten to match; class prefixes were deliberately left alone to avoid
+  collisions in the shared DOM. Originals are in `.hyperframes/old-frames/`.
+- New frames use `n01-` / `n03-` / `n05-` / `n17-` class prefixes for the same reason.
 
 ## Notes
 

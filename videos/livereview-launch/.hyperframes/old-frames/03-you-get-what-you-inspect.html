@@ -1,0 +1,241 @@
+<template>
+  <style>
+    /* Brand face — staged locally at assets/fonts/Inter-var.woff2 (variable, wght 100-900).
+       Declared so headless Chrome can actually supply Inter instead of falling back. */
+    @font-face {
+      font-family: "Inter";
+      src: url("assets/fonts/Inter-var.woff2") format("woff2");
+      font-weight: 100 900;
+      font-style: normal;
+      font-display: block;
+    }
+
+    /* 03 — You get what you inspect.  The pivot. The stillest frame in the film.
+       Blue Professional / frame.md: white ground, single cobalt accent, near-black
+       display type, tinted card (4% fill / 20% border / 14px radius / NO shadow).
+       No webfont is named: this project ships no font files, so the system sans
+       stack is declared directly rather than pointing at a face that would
+       silently fall back on the clean render machine. */
+    #root {
+      width: 1920px; height: 1080px; position: relative; overflow: hidden;
+      font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+      color: #05070b;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .f-03-you-get-what-you-inspect-bg { position: absolute; inset: 0; background: #ffffff; }
+    .f-03-you-get-what-you-inspect-w  { position: absolute; inset: 0; }
+
+    /* --- portrait: card-tinted, the focal cutout ------------------------- */
+    .f-03-you-get-what-you-inspect-portrait {
+      position: absolute; left: 190px; top: 300px; width: 420px; height: 480px;
+      border-radius: 14px;
+      background: rgba(29, 86, 240, 0.04);
+      border: 1.5px solid rgba(29, 86, 240, 0.2);
+      box-shadow: none;
+      overflow: hidden;
+      will-change: transform, clip-path, opacity;
+    }
+    .f-03-you-get-what-you-inspect-portrait img {
+      display: block; width: 100%; height: 100%;
+      object-fit: cover; object-position: 50% 8%;
+    }
+
+    /* --- type ------------------------------------------------------------ */
+    .f-03-you-get-what-you-inspect-eyebrow {
+      position: absolute; left: 700px; top: 300px;
+      font-size: 22px; font-weight: 600; letter-spacing: 0.08em;
+      text-transform: uppercase; color: #1d56f0; line-height: 1.2;
+    }
+
+    .f-03-you-get-what-you-inspect-quote {
+      position: absolute; left: 700px; top: 360px; width: 1060px;
+      font-size: 60px; font-weight: 500; line-height: 1.34; letter-spacing: -0.015em;
+      color: #05070b;
+    }
+    .f-03-you-get-what-you-inspect-line {
+      display: flex; flex-wrap: wrap; align-items: baseline; gap: 0 0.28em;
+    }
+    /* outer span — carries the glow envelope (scale + text-shadow + color) */
+    .f-03-you-get-what-you-inspect-gw {
+      display: inline-block; transform-origin: 50% 50%;
+      text-shadow: 0 0 0 rgba(29, 86, 240, 0);
+    }
+    /* inner span — carries the per-word entrance (opacity + rise) */
+    .f-03-you-get-what-you-inspect-wi { display: inline-block; }
+
+    .f-03-you-get-what-you-inspect-cite {
+      position: absolute; left: 700px; top: 620px;
+      font-size: 20px; font-weight: 500; letter-spacing: 0.1em;
+      text-transform: uppercase; color: #1648cf; line-height: 1.3;
+    }
+  </style>
+
+  <div id="root" data-composition-id="03-you-get-what-you-inspect"
+       data-start="0" data-duration="7.199" data-width="1920" data-height="1080">
+
+    <div class="clip f-03-you-get-what-you-inspect-bg"
+         data-start="0" data-duration="7.199" data-track-index="0"></div>
+
+    <div class="clip f-03-you-get-what-you-inspect-w"
+         data-start="0" data-duration="7.199" data-track-index="1">
+
+      <div class="f-03-you-get-what-you-inspect-portrait">
+        <img src="capture/assets/rickover_rickover-portrait.jpg" alt="">
+      </div>
+
+      <div class="f-03-you-get-what-you-inspect-eyebrow">The System</div>
+
+      <div class="f-03-you-get-what-you-inspect-quote">
+        <div class="f-03-you-get-what-you-inspect-line"><span class="f-03-you-get-what-you-inspect-gw" data-w="w1"><span class="f-03-you-get-what-you-inspect-wi">&ldquo;You</span></span><span class="f-03-you-get-what-you-inspect-gw" data-w="w2"><span class="f-03-you-get-what-you-inspect-wi">get</span></span><span class="f-03-you-get-what-you-inspect-gw" data-w="w3"><span class="f-03-you-get-what-you-inspect-wi">what</span></span><span class="f-03-you-get-what-you-inspect-gw" data-w="w4"><span class="f-03-you-get-what-you-inspect-wi">you</span></span><span class="f-03-you-get-what-you-inspect-gw" data-w="w5"><span class="f-03-you-get-what-you-inspect-wi">inspect,</span></span></div>
+        <div class="f-03-you-get-what-you-inspect-line"><span class="f-03-you-get-what-you-inspect-gw" data-w="w6"><span class="f-03-you-get-what-you-inspect-wi">not</span></span><span class="f-03-you-get-what-you-inspect-gw" data-w="w7"><span class="f-03-you-get-what-you-inspect-wi">what</span></span><span class="f-03-you-get-what-you-inspect-gw" data-w="w8"><span class="f-03-you-get-what-you-inspect-wi">you</span></span><span class="f-03-you-get-what-you-inspect-gw" data-w="w9"><span class="f-03-you-get-what-you-inspect-wi">expect.&rdquo;</span></span></div>
+      </div>
+
+      <div class="f-03-you-get-what-you-inspect-cite">Admiral Hyman G. Rickover, U.S. Navy</div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <script>
+    (function () {
+      var P = ".f-03-you-get-what-you-inspect-";
+      var DUR = 6.699;
+
+      var tl = gsap.timeline({ paused: true });
+      window.__timelines = window.__timelines || {};
+      window.__timelines["03-you-get-what-you-inspect"] = tl;
+
+      /* ==================================================================
+         SCENE 1 (0.0-2.2s) — the ONE restrained move.
+         scale-swap-transition, restrained in/settle variant: the portrait
+         receives F02's outgoing crowd, wiping UP from the lower edge into
+         the left third on a single long-tail ease. No bounce, no overshoot
+         chain — calm register.
+         ================================================================== */
+      tl.fromTo(P + "portrait",
+        { y: 150, scale: 0.94, clipPath: "inset(100% 0% 0% 0%)" },
+        { y: 0, scale: 1, clipPath: "inset(0% 0% 0% 0%)",
+          duration: 1.62, ease: "power4.out" }, 0);
+      /* opacity resolves early so the focal is unambiguously present by 0.5s;
+         the long tail belongs to the wipe + settle. */
+      tl.fromTo(P + "portrait", { opacity: 0 },
+        { opacity: 1, duration: 0.5, ease: "power2.out" }, 0);
+
+      /* context chrome sets the stage before the headline beat */
+      tl.fromTo(P + "eyebrow", { opacity: 0, y: 10 },
+        { opacity: 1, y: 0, duration: 0.55, ease: "power2.out" }, 0.3);
+
+      /* ==================================================================
+         SCENE 2 (2.15-4.60s) — dynamic-content-sequencing.
+         Per-word start times are REDUCED ONCE at build time from content
+         length + per-word config; nothing is hand-offset. "inspect," carries
+         an extra hold so the rhyme's first half lands on its own spoken beat
+         and the second clause starts clean.
+         ================================================================== */
+      var QUOTE_START = 2.15;
+      var BASE_STEP   = 0.125;   // minimum step per word
+      var SEC_PER_CHAR = 0.024;  // longer words earn more of the rail
+      var WORD_IN      = 0.44;   // entrance length per word
+
+      var WORDS = [
+        { key: "w1", text: "“You",      hold: 0 },
+        { key: "w2", text: "get",            hold: 0 },
+        { key: "w3", text: "what",           hold: 0 },
+        { key: "w4", text: "you",            hold: 0 },
+        { key: "w5", text: "inspect,",       hold: 0.24 },
+        { key: "w6", text: "not",            hold: 0 },
+        { key: "w7", text: "what",           hold: 0 },
+        { key: "w8", text: "you",            hold: 0 },
+        { key: "w9", text: "expect.”",  hold: 0 }
+      ];
+
+      var cumulative = 0;
+      var RAIL = WORDS.map(function (w) {
+        var step = BASE_STEP + w.text.length * SEC_PER_CHAR + w.hold;
+        var start = QUOTE_START + cumulative;
+        cumulative += step;
+        return { key: w.key, start: start, end: start + WORD_IN };
+      });
+
+      RAIL.forEach(function (slot) {
+        tl.fromTo(P + 'gw[data-w="' + slot.key + '"] ' + P + "wi",
+          { opacity: 0, y: 18 },
+          { opacity: 1, y: 0, duration: WORD_IN, ease: "power3.out" },
+          slot.start);
+      });
+
+      /* ==================================================================
+         SCENE 3 (4.60-6.699s) — the attribution sets small, then
+         asr-keyword-glow touches "inspect" and then "expect" on the word
+         rail. Default (subtle) style, committed: this is the stillest frame
+         in the film. After the release the frame holds DEAD STILL — no
+         push, no drift, no jitter, no breathing. The stillness is the payload.
+         ================================================================== */
+      tl.fromTo(P + "cite", { opacity: 0, y: 12 },
+        { opacity: 1, y: 0, duration: 0.62, ease: "power3.out" }, 4.62);
+
+      var ATTACK_DUR      = 0.16;
+      var RELEASE         = 0.30;
+      var REST_LEVEL      = 0.20;
+      var MAX_BLUR        = 18;
+      var MAX_SCALE_BOOST = 0.035;
+      var MAX_GLOW_ALPHA  = 0.55;
+
+      /* monotonic, non-overlapping spoken windows for the two beat words */
+      var TIMINGS = {
+        w5: { start: 4.62, end: 4.96 },
+        w9: { start: 5.08, end: 5.46 }
+      };
+
+      var REST_RGB   = { r: 5,  g: 7,  b: 11 };   /* near-black headline */
+      var ACTIVE_RGB = { r: 29, g: 86, b: 240 };  /* the single cobalt accent */
+
+      function envelope(time, start, end) {
+        if (time < start) return 0;
+        if (time < end) return Math.min((time - start) / ATTACK_DUR, 1);
+        var releaseEnd = end + RELEASE;
+        if (time < releaseEnd) return 1 - ((time - end) / RELEASE) * (1 - REST_LEVEL);
+        return REST_LEVEL;
+      }
+      function lerpChannel(a, b, t) { return Math.round(a + (b - a) * t); }
+      function colorAt(env) {
+        return "rgb(" + lerpChannel(REST_RGB.r, ACTIVE_RGB.r, env) + ", "
+                      + lerpChannel(REST_RGB.g, ACTIVE_RGB.g, env) + ", "
+                      + lerpChannel(REST_RGB.b, ACTIVE_RGB.b, env) + ")";
+      }
+
+      /* ONE linear driver sweeps scene time and computes every word's
+         envelope — never one tween per word. Nodes are resolved lazily and
+         cached so the query cannot run ahead of the cloned DOM. */
+      var beatNodes = null;
+      function nodes() {
+        if (!beatNodes || !beatNodes.length) {
+          beatNodes = document.querySelectorAll(".f-03-you-get-what-you-inspect-gw");
+        }
+        return beatNodes;
+      }
+
+      var driver = { t: 0 };
+      tl.to(driver, {
+        t: DUR,
+        duration: DUR,
+        ease: "none", /* linear — t maps 1:1 to scene time; any other ease warps the envelope */
+        onUpdate: function () {
+          var list = nodes();
+          for (var i = 0; i < list.length; i++) {
+            var el = list[i];
+            var timing = TIMINGS[el.getAttribute("data-w")];
+            if (!timing) continue;
+            var env = envelope(driver.t, timing.start, timing.end);
+            el.style.textShadow = "0 0 " + (MAX_BLUR * env).toFixed(2) + "px rgba(29, 86, 240, "
+                                + (MAX_GLOW_ALPHA * env).toFixed(3) + ")";
+            el.style.transform = "scale(" + (1 + MAX_SCALE_BOOST * env).toFixed(4) + ")";
+            el.style.color = colorAt(env);
+          }
+        }
+      }, 0);
+
+      tl.seek(0);
+    })();
+  </script>
+</template>

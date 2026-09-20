@@ -1,0 +1,177 @@
+{
+ "mounts": [
+  {
+   "id": "01-the-shift",
+   "start": 0.0,
+   "dur": 5.5,
+   "track": 0
+  },
+  {
+   "id": "02-the-gap",
+   "start": 5.5,
+   "dur": 6.921,
+   "track": 1
+  },
+  {
+   "id": "03-six-problems",
+   "start": 11.921,
+   "dur": 13.0,
+   "track": 0
+  },
+  {
+   "id": "04-who-feels-it",
+   "start": 24.921,
+   "dur": 6.523,
+   "track": 1
+  },
+  {
+   "id": "05-what-it-costs",
+   "start": 31.044,
+   "dur": 5.1,
+   "track": 0
+  },
+  {
+   "id": "06-you-get-what-you-inspect",
+   "start": 35.544,
+   "dur": 7.199,
+   "track": 1
+  },
+  {
+   "id": "07-inspection-layer",
+   "start": 42.242999999999995,
+   "dur": 9.381,
+   "track": 0
+  },
+  {
+   "id": "08-not-all-diffs-equal",
+   "start": 51.224,
+   "dur": 9.759,
+   "track": 1
+  },
+  {
+   "id": "09-blast-radius-scored",
+   "start": 60.483,
+   "dur": 9.567,
+   "track": 0
+  },
+  {
+   "id": "10-exact-math",
+   "start": 69.55,
+   "dur": 8.72,
+   "track": 1
+  },
+  {
+   "id": "11-five-pillars-loop",
+   "start": 77.87,
+   "dur": 12.063,
+   "track": 0
+  },
+  {
+   "id": "12-review",
+   "start": 89.433,
+   "dur": 7.177,
+   "track": 1
+  },
+  {
+   "id": "13-understand",
+   "start": 96.11000000000001,
+   "dur": 9.503,
+   "track": 0
+  },
+  {
+   "id": "14-enforce",
+   "start": 105.11300000000001,
+   "dur": 7.22,
+   "track": 1
+  },
+  {
+   "id": "15-improve",
+   "start": 111.83300000000001,
+   "dur": 8.265,
+   "track": 0
+  },
+  {
+   "id": "16-connect",
+   "start": 119.59800000000001,
+   "dur": 8.671,
+   "track": 1
+  },
+  {
+   "id": "17-six-resolved",
+   "start": 127.769,
+   "dur": 13.4,
+   "track": 0
+  },
+  {
+   "id": "18-adds-up-to",
+   "start": 140.769,
+   "dur": 10.648,
+   "track": 1
+  },
+  {
+   "id": "19-close",
+   "start": 150.817,
+   "dur": 6.4,
+   "track": 0
+  }
+ ],
+ "videos": [
+  {
+   "src": "assets/footage/risk-score.mp4",
+   "start": 61.483,
+   "dur": 1.78,
+   "style": "position:absolute;left:882px;top:238px;width:906px;height:343px;object-fit:cover",
+   "mediaStart": 0.0
+  },
+  {
+   "src": "assets/footage/review-pipeline.mp4",
+   "start": 91.833,
+   "dur": 1.8,
+   "style": "position:absolute;left:994px;top:302px;width:802px;height:304px;object-fit:cover",
+   "mediaStart": 0.0
+  },
+  {
+   "src": "assets/footage/review-diff.mp4",
+   "start": 93.633,
+   "dur": 2.977,
+   "style": "position:absolute;left:994px;top:302px;width:802px;height:304px;object-fit:cover",
+   "mediaStart": 0.0
+  },
+  {
+   "src": "assets/footage/summary-deck.mp4",
+   "start": 100.61,
+   "dur": 2.4,
+   "style": "position:absolute;left:124px;top:486px;width:502px;height:332px;object-fit:cover",
+   "mediaStart": 0.0
+  },
+  {
+   "src": "assets/footage/quiz-cta.mp4",
+   "start": 104.08,
+   "dur": 1.533,
+   "style": "position:absolute;left:1264px;top:486px;width:532px;height:332px;object-fit:cover",
+   "mediaStart": 0.6
+  },
+  {
+   "src": "assets/footage/cicd-ruleset.mp4",
+   "start": 109.813,
+   "dur": 2.52,
+   "style": "position:absolute;left:964px;top:454px;width:832px;height:315px;object-fit:cover",
+   "mediaStart": 0.0
+  },
+  {
+   "src": "assets/footage/stats-headline.mp4",
+   "start": 113.883,
+   "dur": 1.35,
+   "style": "position:absolute;left:894px;top:374px;width:902px;height:256px;object-fit:cover",
+   "mediaStart": 0.0
+  },
+  {
+   "src": "assets/footage/connect-git.mp4",
+   "start": 126.048,
+   "dur": 2.121,
+   "style": "position:absolute;left:1138px;top:125px;width:630px;height:239px;object-fit:cover",
+   "mediaStart": 0.0
+  }
+ ],
+ "total": 157.217
+}

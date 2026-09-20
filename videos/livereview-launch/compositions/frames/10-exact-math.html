@@ -1,0 +1,314 @@
+<template>
+  <style>
+    /* Brand face — staged locally at assets/fonts/Inter-var.woff2 (variable, wght 100-900).
+       Declared so headless Chrome can actually supply Inter instead of falling back. */
+    @font-face {
+      font-family: "Inter";
+      src: url("assets/fonts/Inter-var.woff2") format("woff2");
+      font-weight: 100 900;
+      font-style: normal;
+      font-display: block;
+    }
+
+    #root {
+      width: 1920px; height: 1080px; position: relative; overflow: hidden;
+      font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+      color: #05070b;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── ground ─────────────────────────────────────────────────────────── */
+    .f07-exact-math-bg { position: absolute; inset: 0; background: #ffffff; }
+    .f07-exact-math-w  { position: absolute; inset: 0; }
+    .f07-exact-math-cam { position: absolute; inset: 0; transform-origin: 50% 50%; }
+
+    /* ── type ramp (frame.md) ───────────────────────────────────────────── */
+    .f07-exact-math-h2 {
+      position: absolute; font-size: 56px; font-weight: 600;
+      letter-spacing: -.02em; line-height: 1.12; color: #05070b;
+      transform-origin: 0% 50%; white-space: nowrap;
+    }
+    .f07-exact-math-accent {
+      position: absolute; width: 60px; height: 4px; border-radius: 2px;
+      background: #1d56f0; transform-origin: 0% 50%;
+    }
+    .f07-exact-math-eyebrow {
+      position: absolute; font-size: 22px; font-weight: 600; letter-spacing: .08em;
+      text-transform: uppercase; color: #1d56f0; white-space: nowrap;
+    }
+
+    /* ── factor grid (center-outward-expansion wrap) ────────────────────── */
+    .f07-exact-math-grid { position: absolute; transform-origin: 50% 50%; }
+    .f07-exact-math-card {
+      position: absolute; left: 50%; top: 50%;
+      width: 400px; height: 150px; box-sizing: border-box;
+      padding: 16px 22px;
+      background: rgba(29, 86, 240, 0.04);
+      border: 1.5px solid rgba(29, 86, 240, 0.2);
+      border-radius: 14px;
+      will-change: transform;
+    }
+    .f07-exact-math-ctop { display: flex; align-items: baseline; justify-content: space-between; }
+    .f07-exact-math-cv {
+      font-size: 38px; font-weight: 700; color: #1d56f0;
+      letter-spacing: -.02em; line-height: 1;
+    }
+    .f07-exact-math-ctag {
+      font-size: 15px; font-weight: 600; letter-spacing: .08em;
+      text-transform: uppercase; color: #1d56f0; opacity: .5;
+    }
+    .f07-exact-math-cl {
+      margin-top: 9px; font-size: 28px; font-weight: 600; color: #05070b;
+      letter-spacing: -.01em; line-height: 1.12; white-space: nowrap;
+    }
+    .f07-exact-math-cd {
+      margin-top: 5px; font-size: 20px; font-weight: 400; color: #1648cf;
+      opacity: .72; line-height: 1.3; white-space: nowrap;
+    }
+
+    /* ── the two scores (asr-keyword-glow targets) ──────────────────────── */
+    .f07-exact-math-srow { position: absolute; white-space: nowrap; }
+    .f07-exact-math-word {
+      display: inline-block; transform-origin: 0% 50%;
+      font-size: 34px; font-weight: 700; letter-spacing: -.01em;
+      color: #9A9A9A; text-shadow: 0 0 0 rgba(29, 86, 240, 0);
+    }
+    .f07-exact-math-sdesc { margin-left: 44px; font-size: 26px; font-weight: 400; color: #1648cf; opacity: .6; }
+
+    /* ── Math Mode swap panel (scale-swap-transition) ───────────────────── */
+    .f07-exact-math-swap { position: absolute; }
+    .f07-exact-math-panel {
+      position: absolute; inset: 0; box-sizing: border-box; overflow: hidden;
+      border-radius: 14px; border: 1.5px solid rgba(29, 86, 240, 0.2);
+      background: #16181d; transform-origin: 50% 50%; z-index: 1;
+    }
+    .f07-exact-math-panel-top { z-index: 2; opacity: 0; }
+    .f07-exact-math-shot { position: absolute; height: auto; display: block; }
+  </style>
+
+  <div id="root" data-composition-id="10-exact-math"
+       data-start="0" data-duration="8.72" data-width="1920" data-height="1080">
+
+    <div class="clip f07-exact-math-bg" data-start="0" data-duration="8.72" data-track-index="0"></div>
+
+    <div class="clip f07-exact-math-w" data-start="0" data-duration="8.72" data-track-index="1">
+      <div class="f07-exact-math-cam" id="f07-exact-math-cam">
+
+        <!-- Scene 1 — the line lands alone, centre-left (kinetic-beat-slam) -->
+        <div class="f07-exact-math-h2" id="f07-exact-math-h-a" style="left:110px; top:110px;">The exact math,</div>
+        <div class="f07-exact-math-h2" id="f07-exact-math-h-b" style="left:110px; top:173px;">not a black box.</div>
+        <div class="f07-exact-math-accent" id="f07-exact-math-accent" style="left:110px; top:250px;"></div>
+
+        <!-- Scene 2 — four factor cards self-assemble, one per spoken factor -->
+        <div class="f07-exact-math-grid" id="f07-exact-math-grid" style="left:110px; top:280px; width:835px; height:335px;">
+          <div class="f07-exact-math-card" id="f07-exact-math-c1">
+            <div class="f07-exact-math-ctop"><span class="f07-exact-math-cv">+1.6</span><span class="f07-exact-math-ctag">Blast radius</span></div>
+            <div class="f07-exact-math-cl">Caller reach</div>
+            <div class="f07-exact-math-cd">2 direct + 1 transitive caller</div>
+          </div>
+          <div class="f07-exact-math-card" id="f07-exact-math-c2">
+            <div class="f07-exact-math-ctop"><span class="f07-exact-math-cv">+1.5</span><span class="f07-exact-math-ctag">Blast radius</span></div>
+            <div class="f07-exact-math-cl">Writes persistent data</div>
+            <div class="f07-exact-math-cd">mutates a persistent store</div>
+          </div>
+          <div class="f07-exact-math-card" id="f07-exact-math-c3">
+            <div class="f07-exact-math-ctop"><span class="f07-exact-math-cv">+6.0</span><span class="f07-exact-math-ctag">Review priority</span></div>
+            <div class="f07-exact-math-cl">Nested loops</div>
+            <div class="f07-exact-math-cd">max loop nesting depth 2</div>
+          </div>
+          <div class="f07-exact-math-card" id="f07-exact-math-c4">
+            <div class="f07-exact-math-ctop"><span class="f07-exact-math-cv">+3.0</span><span class="f07-exact-math-ctag">Review priority</span></div>
+            <div class="f07-exact-math-cl">Test coverage</div>
+            <div class="f07-exact-math-cd">no direct test coverage</div>
+          </div>
+        </div>
+
+        <!-- Scene 4 targets — the two scores, plainly named -->
+        <div class="f07-exact-math-srow" id="f07-exact-math-s1" style="left:110px; top:656px;"><span class="f07-exact-math-word" data-word="blast">Blast Radius</span><span class="f07-exact-math-sdesc">— how far.</span></div>
+        <div class="f07-exact-math-srow" id="f07-exact-math-s2" style="left:110px; top:710px;"><span class="f07-exact-math-word" data-word="review">Review Priority</span><span class="f07-exact-math-sdesc">— how much scrutiny.</span></div>
+
+        <!-- Scene 3 — breakdown → Math Mode, same footprint, same chrome -->
+        <div class="f07-exact-math-eyebrow" id="f07-exact-math-eb-a" style="left:1030px; top:242px;">Factor breakdown</div>
+        <div class="f07-exact-math-eyebrow" id="f07-exact-math-eb-b" style="left:1030px; top:242px; opacity:0;">Math mode — the arithmetic</div>
+        <div class="f07-exact-math-swap" style="left:1030px; top:280px; width:780px; height:520px;">
+          <div class="f07-exact-math-panel" id="f07-exact-math-p-a">
+            <img class="f07-exact-math-shot" src="assets/risk-score_new-risk-score-2.webp" alt="" style="width:1668.6px; left:-17.1px; top:-91.8px;">
+          </div>
+          <div class="f07-exact-math-panel f07-exact-math-panel-top" id="f07-exact-math-p-b">
+            <img class="f07-exact-math-shot" src="assets/risk-score_new-risk-score-3.webp" alt="" style="width:1663.2px; left:-14.4px; top:-99px;">
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <script>
+    (function () {
+      window.__timelines = window.__timelines || {};
+
+      var ID = "10-exact-math";
+      var DUR = 8.32;
+
+      var root = document.querySelector('[data-composition-id="' + ID + '"]');
+      var scope = root || document;
+      function q(sel) { return scope.querySelector(sel); }
+      function qa(sel) { return Array.prototype.slice.call(scope.querySelectorAll(sel)); }
+
+      var tl = gsap.timeline({ paused: true });
+      window.__timelines[ID] = tl;
+
+      /* ── ONE cue grid. Not a timer: these are the narration's own word
+         onsets, so every reveal lands on the word that names it. ──────── */
+      var CUE = {
+        notBlack:   0.06,  // "not"
+        box:        1.55,  // resolves on "box." (1.68)
+        factor:     2.30,  // "Every factor…"
+        theTable:   2.73,  // "…on the table"
+        callers:    3.54,  // "callers,"
+        storage:    4.17,  // "storage writes,"
+        nesting:    5.19,  // "nesting,"
+        coverage:   5.80,  // "test coverage,"
+        theMath:    7.02   // "and the math behind them."
+      };
+
+      /* ── Scene 1 (0.00–1.88) — kinetic-beat-slam, two hits off the cue
+         grid, three distinct entrance axes + eases, no overshoot. ─────── */
+      tl.fromTo(q("#f07-exact-math-h-a"),
+        { scale: 1.26, filter: "blur(14px)", opacity: 0 },
+        { scale: 1, filter: "blur(0px)", opacity: 1, duration: 0.62, ease: "power4.out" },
+        CUE.notBlack);
+
+      tl.fromTo(q("#f07-exact-math-h-b"),
+        { x: -180, filter: "blur(10px)", opacity: 0 },
+        { x: 0, filter: "blur(0px)", opacity: 1, duration: 0.54, ease: "expo.out" },
+        CUE.box);
+
+      tl.fromTo(q("#f07-exact-math-accent"),
+        { scaleX: 0, opacity: 0 },
+        { scaleX: 1, opacity: 1, duration: 0.5, ease: "circ.out" },
+        CUE.box + 0.36);
+
+      /* ── Scene 2 (1.88–7.02) — "every factor is on the table": the real
+         breakdown lands, then one card per spoken factor. ──────────────── */
+      tl.fromTo(q("#f07-exact-math-eb-a"),
+        { opacity: 0, y: 10 },
+        { opacity: 1, y: 0, duration: 0.42, ease: "power3.out" },
+        CUE.factor);
+
+      tl.fromTo(q("#f07-exact-math-p-a"),
+        { scale: 0.9, opacity: 0 },
+        { scale: 1, opacity: 1, duration: 0.6, ease: "power3.out" },
+        CUE.theTable);
+
+      // center-outward-expansion — partially-spread start (4 items), short
+      // path straight into each slot, out-ease only, x/y over baked -50%.
+      var START_PROGRESS = 0.34, EXPAND_DUR = 0.72;
+      var CARDS = [
+        { sel: "#f07-exact-math-c1", tx: -217.5, ty: -92.5, at: CUE.callers },
+        { sel: "#f07-exact-math-c2", tx:  217.5, ty: -92.5, at: CUE.storage },
+        { sel: "#f07-exact-math-c3", tx: -217.5, ty:  92.5, at: CUE.nesting },
+        { sel: "#f07-exact-math-c4", tx:  217.5, ty:  92.5, at: CUE.coverage }
+      ];
+      for (var i = 0; i < CARDS.length; i++) {
+        var c = CARDS[i];
+        tl.fromTo(q(c.sel),
+          { xPercent: -50, yPercent: -50,
+            x: c.tx * START_PROGRESS, y: c.ty * START_PROGRESS,
+            scale: 0.62, opacity: 0 },
+          { x: c.tx, y: c.ty, scale: 1, opacity: 1,
+            duration: EXPAND_DUR, ease: "power3.out" },
+          c.at);
+      }
+
+      // slow camera push-in under the assemble (blueprint hold modifier).
+      tl.fromTo(q("#f07-exact-math-cam"),
+        { scale: 1 },
+        { scale: 1.01, duration: 3.7, ease: "power1.inOut" },
+        CUE.callers - 0.2);
+
+      // the two scores the factors feed — named plainly, still dim.
+      tl.fromTo(q("#f07-exact-math-s1"),
+        { y: 22, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.5, ease: "power3.out" },
+        6.55);
+      tl.fromTo(q("#f07-exact-math-s2"),
+        { y: 22, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.5, ease: "power3.out" },
+        6.82);
+
+      /* ── Scene 3 (7.02–) — "and the math behind them": scale-swap from the
+         factor breakdown to Math Mode. Same wrapper, same footprint, same
+         origin; outgoing power2.in, incoming back.out, incoming on top. ─── */
+      var TRIGGER = CUE.theMath, EXIT_DUR = 0.34, ENTER_DUR = 0.52,
+          OVERLAP = 0.14, EXIT_SCALE = 0.78;
+
+      tl.to(q("#f07-exact-math-eb-a"),
+        { opacity: 0, duration: 0.24, ease: "power2.in" }, TRIGGER);
+      tl.fromTo(q("#f07-exact-math-eb-b"),
+        { opacity: 0, y: 8 },
+        { opacity: 1, y: 0, duration: 0.42, ease: "power3.out" }, TRIGGER + 0.18);
+
+      tl.to(q("#f07-exact-math-p-a"),
+        { scale: EXIT_SCALE, opacity: 0, duration: EXIT_DUR, ease: "power2.in" },
+        TRIGGER);
+      tl.fromTo(q("#f07-exact-math-p-b"),
+        { scale: EXIT_SCALE, opacity: 0 },
+        { scale: 1, opacity: 1, duration: ENTER_DUR, ease: "back.out(1.6)" },
+        TRIGGER + EXIT_DUR - OVERLAP);
+
+      // the cards recede (de-emphasis, not an exit — they stay on frame).
+      tl.to(q("#f07-exact-math-grid"),
+        { scale: 0.965, opacity: 0.34, duration: 0.55, ease: "power2.inOut" },
+        TRIGGER);
+
+      /* ── Scene 4 (7.2–8.32) — asr-keyword-glow, karaoke amplitudes, ONE
+         linear driver looping both words, glyph glow via text-shadow. ─── */
+      var ATTACK = 0.16, RELEASE = 0.34, REST_LEVEL = 0.12;
+      var MAX_BLUR = 34, MAX_SCALE_BOOST = 0.16;
+      var REST_RGB = { r: 154, g: 154, b: 154 };
+      var ACTIVE_RGB = { r: 29, g: 86, b: 240 };
+      var TIMINGS = {
+        blast:  { start: 7.52, end: 7.88 },
+        review: { start: 7.96, end: 8.32 }
+      };
+
+      function envelope(t, s, e) {
+        if (t < s) return 0;
+        if (t < e) return Math.min((t - s) / ATTACK, 1);
+        var releaseEnd = e + RELEASE;
+        if (t < releaseEnd) return 1 - ((t - e) / RELEASE) * (1 - REST_LEVEL);
+        return REST_LEVEL;
+      }
+      function lerpChannel(a, b, t) { return Math.round(a + (b - a) * t); }
+      function colorAt(env) {
+        return "rgb(" + lerpChannel(REST_RGB.r, ACTIVE_RGB.r, env) + ","
+                      + lerpChannel(REST_RGB.g, ACTIVE_RGB.g, env) + ","
+                      + lerpChannel(REST_RGB.b, ACTIVE_RGB.b, env) + ")";
+      }
+
+      var words = qa(".f07-exact-math-word");
+      var driver = { t: 0 };
+      tl.to(driver, {
+        t: DUR,
+        duration: DUR,
+        ease: "none",
+        onUpdate: function () {
+          for (var w = 0; w < words.length; w++) {
+            var el = words[w];
+            var tm = TIMINGS[el.getAttribute("data-word")];
+            if (!tm) continue;
+            var env = envelope(driver.t, tm.start, tm.end);
+            el.style.textShadow = "0 0 " + (MAX_BLUR * env).toFixed(2)
+              + "px rgba(29,86,240," + (0.55 * env).toFixed(3) + ")";
+            el.style.color = colorAt(env);
+            el.style.transform = "scale(" + (1 + MAX_SCALE_BOOST * env).toFixed(4) + ")";
+          }
+        }
+      }, 0);
+
+      tl.seek(0);
+    })();
+  </script>
+</template>

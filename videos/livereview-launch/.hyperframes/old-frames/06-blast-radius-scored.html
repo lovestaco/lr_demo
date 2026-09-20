@@ -1,0 +1,382 @@
+<template>
+  <style>
+    /* Brand face — staged locally at assets/fonts/Inter-var.woff2 (variable, wght 100-900).
+       Declared so headless Chrome can actually supply Inter instead of falling back. */
+    @font-face {
+      font-family: "Inter";
+      src: url("assets/fonts/Inter-var.woff2") format("woff2");
+      font-weight: 100 900;
+      font-style: normal;
+      font-display: block;
+    }
+
+    #root {
+      width: 1920px; height: 1080px; position: relative; overflow: hidden;
+      font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+      color: #05070b;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ---------- ground ---------- */
+    .f06-bg { position: absolute; inset: 0; background: #ffffff; }
+    .f06-w  { position: absolute; inset: 0; }
+
+    /* ---------- depth-of-field layers ----------
+       Every off-focus layer carries --dof (px of blur) read by filter.
+       The focal layer (the surface card) stays at --dof:0 and sits ABOVE. */
+    .f06-layer {
+      position: absolute;
+      --dof: 0px;
+      filter: blur(var(--dof));
+      will-change: filter;
+      z-index: 1;
+    }
+
+    /* ---------- slide-header (left column) ---------- */
+    .f06-copy { left: 96px; top: 96px; width: 780px; height: 210px; }
+    .f06-eyebrow {
+      position: absolute; left: 14px; top: 16px;
+      font-size: 22px; font-weight: 600; letter-spacing: .08em;
+      text-transform: uppercase; color: #1d56f0; white-space: nowrap;
+    }
+    .f06-h2 {
+      position: absolute; left: 14px; top: 64px;
+      font-size: 56px; font-weight: 600; letter-spacing: -.02em; line-height: 1.14;
+      color: #05070b; white-space: nowrap;
+    }
+    .f06-word { display: inline-block; }
+
+    /* ---------- score readout (left column, lower) ---------- */
+    .f06-readout { left: 96px; top: 376px; width: 780px; height: 360px; }
+    .f06-label {
+      position: absolute; left: 14px; top: 6px;
+      font-size: 22px; font-weight: 600; letter-spacing: .08em;
+      text-transform: uppercase; color: #1d56f0; white-space: nowrap;
+    }
+    .f06-numrow { position: absolute; left: 14px; top: 72px; height: 140px; white-space: nowrap; }
+    .f06-num {
+      display: inline-block;
+      font-size: 140px; line-height: 140px; font-weight: 700; letter-spacing: -.03em;
+      font-variant-numeric: tabular-nums; color: #1d56f0;
+      transform-origin: 0% 50%;
+    }
+    .f06-den {
+      display: inline-block; margin-left: 10px;
+      font-size: 38px; line-height: 140px; font-weight: 500;
+      font-variant-numeric: tabular-nums; color: #9A9A9A;
+    }
+
+    /* bar-track — 12px track, cobalt fill carries the value */
+    .f06-track {
+      position: absolute; left: 14px; top: 220px; width: 600px; height: 12px;
+      background: rgba(29, 86, 240, 0.10); border-radius: 6px; overflow: hidden;
+    }
+    .f06-fill {
+      display: block; width: 306px; height: 12px;   /* 51 / 100 of the 600px track */
+      background: #1d56f0; border-radius: 6px;
+      transform-origin: 0% 50%;
+    }
+
+    .f06-stat { position: absolute; top: 266px; }
+    .f06-stat-a { left: 14px; }
+    .f06-stat-b { left: 284px; }
+    .f06-statnum {
+      font-size: 46px; line-height: 46px; font-weight: 700; letter-spacing: -.02em;
+      font-variant-numeric: tabular-nums; color: #1d56f0; white-space: nowrap;
+    }
+    .f06-statlbl {
+      position: absolute; top: 322px;
+      font-size: 22px; font-weight: 500; letter-spacing: .02em; color: #9A9A9A; white-space: nowrap;
+    }
+    .f06-statlbl-a { left: 14px; }
+    .f06-statlbl-b { left: 284px; }
+
+    /* ---------- the surface card (FOCAL — stays sharp, sits above) ----------
+       Product footage is card-mounted on the light ground: a tinted brand card
+       holding a dark product screen. Never full-bleed. */
+    .f06-card {
+      position: absolute; left: 860px; top: 180px; width: 950px; height: 431px;
+      box-sizing: border-box;
+      background: rgba(29, 86, 240, 0.04);
+      border: 1.5px solid rgba(29, 86, 240, 0.2);
+      border-radius: 14px;
+      z-index: 2;
+    }
+    .f06-screen {
+      position: absolute; left: 12.5px; top: 12.5px; width: 922px; height: 403px;
+      background: #0f172b; border-radius: 10px; overflow: hidden;
+    }
+    .f06-chrome {
+      position: absolute; left: 0; top: 0; width: 922px; height: 44px;
+      background: rgba(255, 255, 255, 0.05);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+    }
+    .f06-dot {
+      position: absolute; top: 19px; width: 10px; height: 10px; border-radius: 50%;
+      background: rgba(255, 255, 255, 0.18);
+    }
+    .f06-dot-1 { left: 19px; }
+    .f06-dot-2 { left: 41px; }
+    .f06-dot-3 { left: 63px; }
+    .f06-path {
+      position: absolute; left: 98px; top: 6px;
+      padding: 6px 16px; border-radius: 100px;
+      background: rgba(255, 255, 255, 0.06);
+      font-family: ui-monospace, monospace;
+      font-size: 16px; line-height: 20px; font-weight: 500;
+      color: rgba(255, 255, 255, 0.46); white-space: nowrap;
+    }
+
+    /* media window — the video (hoisted to the host root) and the call-graph
+       still occupy the exact same box, so the surface advance is a clean swap. */
+    .f06-shotframe {
+      position: absolute; left: 8px; top: 44px; width: 906px; height: 343px;
+      background: #0f172b; overflow: hidden;
+    }
+    .f06-still { position: absolute; inset: 0; background: #2a2a2c; }
+    /* coordinate-target-zoom — OUTER scales, INNER counter-translates. Never both
+       transforms on one element; transform-origin stays 50% 50%. */
+    .f06-zoom-outer { position: absolute; inset: 0; transform-origin: 50% 50%; will-change: transform; }
+    .f06-shot { position: absolute; inset: 0; will-change: transform; }
+    .f06-shot img {
+      position: absolute; left: 0; top: -56.2px;
+      width: 906px; height: 654.6px; display: block;
+    }
+
+    /* ---------- supporting line beneath the card ---------- */
+    .f06-pills { position: absolute; left: 860px; top: 664px; width: 950px; height: 52px; }
+    .f06-pill {
+      position: absolute; top: 0;
+      padding: 12px 26px; box-sizing: border-box; height: 52px;
+      background: rgba(29, 86, 240, 0.08); color: #1d56f0;
+      border-radius: 100px;
+      font-size: 22px; line-height: 28px; font-weight: 500; white-space: nowrap;
+    }
+    .f06-pill-1 { left: 0; }
+    .f06-pill-2 { left: 210px; }
+    .f06-pill-3 { left: 560px; }
+  </style>
+
+  <div id="root" data-composition-id="06-blast-radius-scored"
+       data-start="0" data-duration="9.567" data-width="1920" data-height="1080">
+
+    <div class="clip f06-bg" data-start="0" data-duration="9.567" data-track-index="0"></div>
+
+    <div class="clip f06-w" data-start="0" data-duration="9.567" data-track-index="1">
+
+      <!-- left column — headline block (defocus layer, depth 2) -->
+      <div class="f06-layer f06-copy" id="f06-copy" data-depth="2">
+        <div class="f06-eyebrow" id="f06-eyebrow">How</div>
+        <div class="f06-h2"><span class="f06-word">Scored</span> <span class="f06-word">by</span><br><span class="f06-word">blast</span> <span class="f06-word">radius.</span></div>
+      </div>
+
+      <!-- left column — the score readout (defocus layer, depth 1) -->
+      <div class="f06-layer f06-readout" id="f06-readout" data-depth="1">
+        <div class="f06-label" id="f06-label">Blast radius</div>
+        <div class="f06-numrow" id="f06-numrow">
+          <span class="f06-num" id="f06-num">0</span><span class="f06-den">/100</span>
+        </div>
+        <div class="f06-track" id="f06-track"><span class="f06-fill" id="f06-fill"></span></div>
+        <div class="f06-stat f06-stat-a f06-statnum" id="f06-stat-a">71</div>
+        <div class="f06-statlbl f06-statlbl-a" id="f06-statlbl-a">Risk score &middot; High</div>
+        <div class="f06-stat f06-stat-b f06-statnum" id="f06-stat-b">100</div>
+        <div class="f06-statlbl f06-statlbl-b" id="f06-statlbl-b">Review priority</div>
+      </div>
+
+      <!-- right column — the held surface (focal) -->
+      <div class="f06-card" id="f06-card">
+        <div class="f06-screen">
+          <div class="f06-chrome">
+            <span class="f06-dot f06-dot-1" id="f06-dot-1"></span>
+            <span class="f06-dot f06-dot-2" id="f06-dot-2"></span>
+            <span class="f06-dot f06-dot-3" id="f06-dot-3"></span>
+            <span class="f06-path" id="f06-path-a">ui/src/pages/Settings/PreloadedChangesArchivalSettingsTab.tsx</span>
+            <span class="f06-path" id="f06-path-b">internal/batch/batch.go &middot; isValidQuiz</span>
+          </div>
+
+          <div class="f06-shotframe">
+            <video id="f06-riskscore" src="assets/footage/risk-score.mp4" data-media-start="0" muted playsinline class="clip" data-frame-video="approved" data-frame-video-x="882" data-frame-video-y="238" data-frame-video-width="906" data-frame-video-height="343" data-frame-video-fit="cover" data-start="1.0" data-duration="1.78" data-track-index="2"></video>
+
+            <div class="f06-still" id="f06-still">
+              <div class="f06-zoom-outer" id="f06-zoom-outer" data-layout-allow-overflow="true">
+                <div class="f06-shot" id="f06-shot" data-layout-allow-overflow="true">
+                  <img src="capture/assets/risk-score_new-risk-score-4.webp" alt="Call-graph sunburst and scoring factors">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- supporting line beneath the card -->
+      <div class="f06-pills">
+        <span class="f06-pill f06-pill-1">Caller reach</span>
+        <span class="f06-pill f06-pill-2">Cross-package impact</span>
+        <span class="f06-pill f06-pill-3">Configuration</span>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <script>
+    (function () {
+      window.__timelines = window.__timelines || {};
+      var tl = gsap.timeline({ paused: true });
+
+      /* =====================================================================
+         Scene 1 (0.0-2.2) — "LiveReview scores every hunk"
+         Headline sets left per word; the surface card mounts right on a
+         long-tail settle and the screen turns on as the recording starts.
+         ===================================================================== */
+      tl.fromTo("#f06-eyebrow",
+        { opacity: 0, y: 14 },
+        { opacity: 1, y: 0, duration: 0.5, ease: "power3.out" }, 0.08);
+
+      /* dynamic-content-sequencing — each word's start is pre-computed ONCE
+         from its content length + a per-item floor. Never inside an onUpdate. */
+      var WORD_BASE = 0.10;      /* BASE_DURATION floor per word */
+      var SEC_PER_CHAR = 0.018;  /* longer words earn more runway */
+      var cursor = 0.28;
+      gsap.utils.toArray(".f06-word").forEach(function (word) {
+        tl.fromTo(word,
+          { opacity: 0, y: 26 },
+          { opacity: 1, y: 0, duration: 0.55, ease: "power3.out" }, cursor);
+        cursor += WORD_BASE + word.textContent.length * SEC_PER_CHAR;
+      });
+
+      /* the surface mounts from the right and settles at 0.97 — the hoisted
+         recording starts at 1.00, so the card is dead still under it. */
+      tl.fromTo("#f06-card",
+        { x: 64, opacity: 0, scale: 0.985 },
+        { x: 0, opacity: 1, scale: 1, duration: 0.75, ease: "power3.out" }, 0.22);
+
+      tl.fromTo("#f06-dot-1, #f06-dot-2, #f06-dot-3",
+        { opacity: 0 },
+        { opacity: 1, duration: 0.3, ease: "power2.out", stagger: 0.05 }, 0.80);
+      tl.fromTo("#f06-path-a",
+        { opacity: 0, x: -10 },
+        { opacity: 1, x: 0, duration: 0.4, ease: "power2.out" }, 0.88);
+
+      /* =====================================================================
+         Scene 2 (2.2-5.0) — "by its blast radius"
+         The numeric score sets on the left while the surface advances from the
+         live recording to the call-graph view, framed by coordinate-target-zoom.
+         ===================================================================== */
+      tl.fromTo("#f06-label",
+        { opacity: 0, y: 16 },
+        { opacity: 1, y: 0, duration: 0.45, ease: "power3.out" }, 2.20);
+
+      tl.fromTo("#f06-numrow",
+        { opacity: 0, y: 26 },
+        { opacity: 1, y: 0, duration: 0.6, ease: "power3.out" }, 2.32);
+
+      var numEl = document.getElementById("f06-num");
+      var counter = { value: 0 };
+      tl.to(counter, {
+        value: 51, duration: 0.9, ease: "power2.out",
+        onUpdate: function () { numEl.textContent = Math.round(counter.value); }
+      }, 2.36);
+
+      tl.fromTo("#f06-track",
+        { opacity: 0 },
+        { opacity: 1, duration: 0.3, ease: "power2.out" }, 2.62);
+      tl.fromTo("#f06-fill",
+        { scaleX: 0 },
+        { scaleX: 1, duration: 0.9, ease: "power2.out" }, 2.70);
+
+      tl.fromTo("#f06-stat-a, #f06-statlbl-a",
+        { opacity: 0, y: 18 },
+        { opacity: 1, y: 0, duration: 0.5, ease: "power3.out" }, 2.95);
+      tl.fromTo("#f06-stat-b, #f06-statlbl-b",
+        { opacity: 0, y: 18 },
+        { opacity: 1, y: 0, duration: 0.5, ease: "power3.out" }, 3.12);
+
+      /* --- the surface advance: recording (ends 2.78) -> call-graph view.
+         The still is brought up underneath while the video still covers the
+         window, so the swap lands as a screen state change, not a fade. --- */
+      tl.fromTo("#f06-still",
+        { opacity: 0 },
+        { opacity: 1, duration: 0.25, ease: "none" }, 2.50);
+      tl.to("#f06-path-a",
+        { opacity: 0, duration: 0.18, ease: "power1.out" }, 2.74);
+      tl.fromTo("#f06-path-b",
+        { opacity: 0 },
+        { opacity: 1, duration: 0.22, ease: "power1.out" }, 2.80);
+
+      /* --- coordinate-target-zoom -------------------------------------------
+         Nested wrappers: OUTER scales, INNER counter-translates. The counter-
+         translate is the NEGATION of the target's offset from the window centre
+         (T = -offset) and is INDEPENDENT of the scale, so it is baked once and
+         held constant through the push. Offsets are derived from the authored
+         pixel geometry of the still inside its window (fixed boxes, no font
+         metrics involved), then shared by scale + translate at one position,
+         one duration, one ease. --------------------------------------------- */
+      var BOX_W = 906, BOX_H = 343;          /* media window */
+      var IMG_R = 906 / 919;                 /* rendered px per source px */
+      var IMG_TOP = -56.2;                   /* img offset inside the window */
+
+      function srcOffset(sx, sy) {           /* source px -> offset from centre */
+        return { x: sx * IMG_R - BOX_W / 2, y: sy * IMG_R + IMG_TOP - BOX_H / 2 };
+      }
+
+      /* target = the scoring-factor cluster (the point breakdown) */
+      var FACTOR = srcOffset(380, 155);
+      var FACTOR_T = { x: -FACTOR.x, y: -FACTOR.y };
+      var S_ARRIVE = 1.24;   /* the state the surface advances into */
+      var S_PEAK = 1.46;     /* headroom-capped: the cluster stays < 90% of the window */
+      var ZOOM_AT = 3.20, ZOOM_DUR = 1.2, ZOOM_EASE = "power3.inOut";
+
+      gsap.set("#f06-zoom-outer", { scale: S_ARRIVE });
+      gsap.set("#f06-shot", { x: FACTOR_T.x, y: FACTOR_T.y });
+
+      tl.to("#f06-zoom-outer",
+        { scale: S_PEAK, duration: ZOOM_DUR, ease: ZOOM_EASE }, ZOOM_AT);
+      tl.to("#f06-shot",
+        { x: FACTOR_T.x, y: FACTOR_T.y, duration: ZOOM_DUR, ease: ZOOM_EASE }, ZOOM_AT);
+
+      /* =====================================================================
+         Scene 3 (5.0-7.6) — "how far a change can reach"
+         Zoom-out variation of the same rule: the reveal beat is the panorama,
+         and the rings open outward from the centre of the call graph. The
+         depth-of-field pull runs on the SAME window, so "the world recedes"
+         and "we pull back onto the chart" read as one move.
+         ===================================================================== */
+      var OUT_AT = 5.05, OUT_DUR = 1.65, OUT_EASE = "power3.inOut";
+      tl.to("#f06-zoom-outer",
+        { scale: 1, duration: OUT_DUR, ease: OUT_EASE }, OUT_AT);
+      tl.to("#f06-shot",
+        { x: 0, y: 0, duration: OUT_DUR, ease: OUT_EASE }, OUT_AT);
+
+      /* depth-of-field-blur — focal pull. Blur scales with data-depth; the
+         surface card (the focal layer) is never touched and sits above. */
+      var BLUR_PER_DEPTH = 4;   /* px per depth step */
+      var DIM_LEVEL = 0.55;
+      var FOCUS_AT = 5.15, FOCUS_DUR = 0.9;
+      gsap.utils.toArray(".f06-layer").forEach(function (el) {
+        var depth = Number(el.dataset.depth) || 1;
+        tl.to(el, {
+          "--dof": (BLUR_PER_DEPTH * depth) + "px",
+          opacity: DIM_LEVEL,
+          duration: FOCUS_DUR,
+          ease: "power2.inOut"
+        }, FOCUS_AT);
+      });
+
+      /* =====================================================================
+         Scene 4 (7.6-9.067) — "traced through a live call graph"
+         The supporting line sets beneath the card; the surface holds, with a
+         single settling breath that resolves (no idle loop).
+         ===================================================================== */
+      tl.fromTo(".f06-pill",
+        { opacity: 0, y: 18 },
+        { opacity: 1, y: 0, duration: 0.5, ease: "power3.out", stagger: 0.13 }, 7.62);
+
+      tl.to("#f06-zoom-outer",
+        { scale: 1.012, duration: 1.15, ease: "power1.inOut" }, 7.80);
+
+      window.__timelines["06-blast-radius-scored"] = tl;
+      tl.seek(0);
+    })();
+  </script>
+</template>

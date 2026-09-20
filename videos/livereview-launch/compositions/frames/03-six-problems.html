@@ -1,0 +1,330 @@
+<template>
+  <!-- ============================================================================
+       03-six-problems  —  LAYOUT CONTRACT (frame 17 "six-resolved" must mirror this)
+
+       canvas            1920 x 1080
+       left margin       110px          right edge of cards  1810px
+       index gutter      left 110,  width 46,  right-aligned  ("01".."06")
+       rail              left 178,  width 2,  y 252 -> 864  (cobalt 20%)
+       card              left 204,  width 1606,  height 92,  radius 14
+
+       ROW_TOP           252      (top of row 1)
+       ROW_PITCH         104
+       ROW_HEIGHT        92
+       ROW Y-POSITIONS   252 / 356 / 460 / 564 / 668 / 772     (row 6 bottom = 864)
+
+       row internals (card-relative):
+         marker ring     left 26,  top 23,  46 x 46   <- flip #dc2626 -> #059669 in frame 17
+         glyph svg       24 x 24 centred in the ring  <- swap the two X strokes for a check path
+         label           left 100,  38px / 600  #05070b
+         consequence     left 700,  31px / 400  #1648cf
+
+       Rows are laid out via center-outward-expansion: each row sits at top:50% with
+       yPercent:-50 baked in, and its final offset from the stage centre lives in
+       data-target-y (-242 / -138 / -34 / 70 / 174 / 278). Frame 17 can reuse these
+       numbers verbatim; the rendered tops are the ROW Y-POSITIONS above.
+       ============================================================================ -->
+  <style>
+    /* Brand face — staged locally at assets/fonts/Inter-var.woff2 (variable, wght 100-900).
+       Declared so headless Chrome can actually supply Inter instead of falling back. */
+    @font-face {
+      font-family: "Inter";
+      src: url("assets/fonts/Inter-var.woff2") format("woff2");
+      font-weight: 100 900;
+      font-style: normal;
+      font-display: block;
+    }
+
+    #root {
+      width: 1920px; height: 1080px; position: relative; overflow: hidden;
+      font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+      color: #05070b;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ---------- ground (full-bleed lives on a clip layer, never on #root) ---------- */
+    .n03-bg { position: absolute; inset: 0; background: #ffffff; }
+    .n03-w  { position: absolute; inset: 0; }
+
+    /* ---------- slide-header ---------- */
+    .n03-eyebrow {
+      position: absolute; left: 110px; top: 96px;
+      font-size: 22px; font-weight: 600; letter-spacing: .08em;
+      text-transform: uppercase; color: #1d56f0; white-space: nowrap;
+    }
+    .n03-h2 {
+      position: absolute; left: 110px; top: 140px;
+      font-size: 58px; font-weight: 600; letter-spacing: -.02em; line-height: 1.1;
+      color: #05070b; white-space: nowrap;
+    }
+    .n03-word { display: inline-block; }
+
+    /* ---------- the empty list rail (drawn in scene 1, before any row) ---------- */
+    .n03-rail {
+      position: absolute; left: 178px; top: 252px; width: 2px; height: 612px;
+      background: rgba(29, 86, 240, 0.2); border-radius: 1px;
+      transform-origin: 50% 0%;
+    }
+
+    /* ---------- center-outward-expansion wrap ----------
+       One shared origin = the stage centre. Each row carries its final offset in
+       data-target-y and lerps out to it; self-centering is baked as yPercent:-50
+       so the tweened y is a pure offset (never a CSS transform on these elements). */
+    .n03-burst { position: absolute; inset: 0; }
+
+    .n03-row {
+      position: absolute; left: 110px; top: 50%;
+      width: 1700px; height: 92px;
+      transform-origin: 0% 50%;   /* the entry scale grows out of the left margin, not the middle */
+      will-change: transform;
+    }
+
+    /* enumeration — the viewer must be able to COUNT the list, not just read it */
+    .n03-idx {
+      position: absolute; left: 0; top: 0; width: 46px; height: 92px;
+      line-height: 92px; text-align: right;
+      font-size: 24px; font-weight: 500; letter-spacing: .04em;
+      font-variant-numeric: tabular-nums; color: #9A9A9A;
+    }
+
+    /* card-tinted — 4% cobalt fill, 20% cobalt 1.5px border, 14px radius, no shadow */
+    .n03-card {
+      position: absolute; left: 94px; top: 0; width: 1606px; height: 92px;
+      box-sizing: border-box;
+      background: rgba(29, 86, 240, 0.04);
+      border: 1.5px solid rgba(29, 86, 240, 0.2);
+      border-radius: 14px;
+    }
+
+    /* negative marker — ring + drawn-in cross. Inline negative only, never a fill. */
+    .n03-mark {
+      position: absolute; left: 26px; top: 23px; width: 46px; height: 46px;
+      box-sizing: border-box;
+      border: 1.5px solid rgba(220, 38, 38, 0.3);
+      background: rgba(220, 38, 38, 0.06);
+      border-radius: 50%;
+      transform-origin: 50% 50%;
+    }
+    .n03-glyph {
+      position: absolute; left: 10px; top: 10px; width: 24px; height: 24px;
+      overflow: visible;
+    }
+    .n03-stroke {
+      stroke: #dc2626; stroke-width: 3; stroke-linecap: round; fill: none;
+      stroke-dasharray: 15; stroke-dashoffset: 15;
+    }
+
+    .n03-label {
+      position: absolute; left: 100px; top: 0; height: 92px; line-height: 92px;
+      font-size: 38px; font-weight: 600; letter-spacing: -.01em;
+      color: #05070b; white-space: nowrap;
+    }
+    .n03-cons {
+      position: absolute; left: 700px; top: 0; height: 92px; line-height: 92px;
+      font-size: 31px; font-weight: 400;
+      color: #1648cf; white-space: nowrap;
+      clip-path: inset(0 100% 0 0);
+    }
+  </style>
+
+  <div id="root" data-composition-id="03-six-problems"
+       data-start="0" data-duration="13" data-width="1920" data-height="1080">
+
+    <div class="clip n03-bg" data-start="0" data-duration="13" data-track-index="0"></div>
+
+    <div class="clip n03-w" data-start="0" data-duration="13" data-track-index="1">
+
+      <div class="n03-eyebrow">Today</div>
+      <div class="n03-h2"><span class="n03-word">Six</span> <span class="n03-word">things</span> <span class="n03-word">AI-written</span> <span class="n03-word">code</span> <span class="n03-word">breaks</span></div>
+
+      <div class="n03-rail" id="n03-rail"></div>
+
+      <div class="n03-burst">
+
+        <div class="n03-row" data-target-y="-242">
+          <div class="n03-idx">01</div>
+          <div class="n03-card">
+            <div class="n03-mark">
+              <svg class="n03-glyph" viewBox="0 0 24 24">
+                <line class="n03-stroke" x1="7" y1="7" x2="17" y2="17"></line>
+                <line class="n03-stroke" x1="17" y1="7" x2="7" y2="17"></line>
+              </svg>
+            </div>
+            <div class="n03-label">Repeated comments</div>
+            <div class="n03-cons">seniors flag the same issues every week</div>
+          </div>
+        </div>
+
+        <div class="n03-row" data-target-y="-138">
+          <div class="n03-idx">02</div>
+          <div class="n03-card">
+            <div class="n03-mark">
+              <svg class="n03-glyph" viewBox="0 0 24 24">
+                <line class="n03-stroke" x1="7" y1="7" x2="17" y2="17"></line>
+                <line class="n03-stroke" x1="17" y1="7" x2="7" y2="17"></line>
+              </svg>
+            </div>
+            <div class="n03-label">Late bug discovery</div>
+            <div class="n03-cons">QA finds them, or customers do</div>
+          </div>
+        </div>
+
+        <div class="n03-row" data-target-y="-34">
+          <div class="n03-idx">03</div>
+          <div class="n03-card">
+            <div class="n03-mark">
+              <svg class="n03-glyph" viewBox="0 0 24 24">
+                <line class="n03-stroke" x1="7" y1="7" x2="17" y2="17"></line>
+                <line class="n03-stroke" x1="17" y1="7" x2="7" y2="17"></line>
+              </svg>
+            </div>
+            <div class="n03-label">Reviewer-dependent quality</div>
+            <div class="n03-cons">it depends who happened to review it</div>
+          </div>
+        </div>
+
+        <div class="n03-row" data-target-y="70">
+          <div class="n03-idx">04</div>
+          <div class="n03-card">
+            <div class="n03-mark">
+              <svg class="n03-glyph" viewBox="0 0 24 24">
+                <line class="n03-stroke" x1="7" y1="7" x2="17" y2="17"></line>
+                <line class="n03-stroke" x1="17" y1="7" x2="7" y2="17"></line>
+              </svg>
+            </div>
+            <div class="n03-label">Blind leadership</div>
+            <div class="n03-cons">you hear about quality when something breaks</div>
+          </div>
+        </div>
+
+        <div class="n03-row" data-target-y="174">
+          <div class="n03-idx">05</div>
+          <div class="n03-card">
+            <div class="n03-mark">
+              <svg class="n03-glyph" viewBox="0 0 24 24">
+                <line class="n03-stroke" x1="7" y1="7" x2="17" y2="17"></line>
+                <line class="n03-stroke" x1="17" y1="7" x2="7" y2="17"></line>
+              </svg>
+            </div>
+            <div class="n03-label">Tribal knowledge</div>
+            <div class="n03-cons">it lives in a few people&rsquo;s heads</div>
+          </div>
+        </div>
+
+        <div class="n03-row" data-target-y="278">
+          <div class="n03-idx">06</div>
+          <div class="n03-card">
+            <div class="n03-mark">
+              <svg class="n03-glyph" viewBox="0 0 24 24">
+                <line class="n03-stroke" x1="7" y1="7" x2="17" y2="17"></line>
+                <line class="n03-stroke" x1="17" y1="7" x2="7" y2="17"></line>
+              </svg>
+            </div>
+            <div class="n03-label">Review overload</div>
+            <div class="n03-cons">more AI output, more review pressure</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <script>
+    (function () {
+      window.__timelines = window.__timelines || {};
+      var tl = gsap.timeline({ paused: true });
+
+      /* =========================================================
+         Scene 1 (0.0-1.7) — the title sets upper-left and the
+         EMPTY list rail draws beneath it. Nothing else exists yet.
+         ========================================================= */
+      tl.fromTo(".n03-eyebrow",
+        { opacity: 0, y: 14 },
+        { opacity: 1, y: 0, duration: 0.45, ease: "power3.out" }, 0.10);
+
+      /* per-word headline fill — word starts pre-computed once from
+         content length, never inside an onUpdate */
+      var WORD_BASE = 0.10;
+      var SEC_PER_CHAR = 0.016;
+      var cursor = 0.28;
+      gsap.utils.toArray(".n03-word").forEach(function (word) {
+        tl.fromTo(word,
+          { opacity: 0, y: 24 },
+          { opacity: 1, y: 0, duration: 0.55, ease: "power3.out" }, cursor);
+        cursor += WORD_BASE + word.textContent.length * SEC_PER_CHAR;
+      });
+
+      /* the rail draws top-down and lands exactly as row 01 arrives */
+      tl.fromTo("#n03-rail",
+        { scaleY: 0, opacity: 0 },
+        { scaleY: 1, opacity: 1, duration: 0.62, ease: "power3.out" }, 1.06);
+
+      /* =========================================================
+         Scene 2 (1.7-11.0) — the six rows arrive ONE AT A TIME,
+         1.55s apart. Silent film: that gap IS the read time.
+
+         center-outward-expansion, short-path form: every row shares
+         ONE origin (the stage centre) and lerps outward to its slot
+         via data-target-y. START_PROGRESS keeps the travel short, so
+         rows near the centre barely move and the outer rows swing
+         furthest — the expansion gradient without the pile-up.
+         ========================================================= */
+      var ROW_AT = 1.70;          /* ENTRY_AT */
+      var ROW_GAP = 1.55;         /* one row per read-beat */
+      var START_PROGRESS = 0.85;
+      var EXPAND_DUR = 0.62;
+      var EXPAND_EASE = "power3.out";   /* out-easing only */
+
+      gsap.utils.toArray(".n03-row").forEach(function (row, i) {
+        var at = ROW_AT + i * ROW_GAP;
+        var targetY = Number(row.dataset.targetY);
+
+        /* the slot arrives (empty tinted card), expanding outward from centre */
+        tl.fromTo(row,
+          { yPercent: -50, y: targetY * START_PROGRESS, scale: 0.96, opacity: 0 },
+          { yPercent: -50, y: targetY, scale: 1, opacity: 1,
+            duration: EXPAND_DUR, ease: EXPAND_EASE }, at);
+
+        /* then the row fills itself in reading order: index -> mark -> label -> consequence */
+        tl.fromTo(row.querySelector(".n03-idx"),
+          { opacity: 0, x: -12 },
+          { opacity: 1, x: 0, duration: 0.45, ease: "power2.out" }, at + 0.12);
+
+        tl.fromTo(row.querySelector(".n03-mark"),
+          { scale: 0, opacity: 0 },
+          { scale: 1, opacity: 1, duration: 0.46, ease: "back.out(1.7)" }, at + 0.18);
+
+        /* svg-path-draw — the cross scribes itself, stroke after stroke */
+        var strokes = row.querySelectorAll(".n03-stroke");
+        tl.fromTo(strokes[0],
+          { strokeDashoffset: 15 },
+          { strokeDashoffset: 0, duration: 0.20, ease: "power2.out" }, at + 0.38);
+        tl.fromTo(strokes[1],
+          { strokeDashoffset: 15 },
+          { strokeDashoffset: 0, duration: 0.20, ease: "power2.out" }, at + 0.54);
+
+        tl.fromTo(row.querySelector(".n03-label"),
+          { opacity: 0, x: 22 },
+          { opacity: 1, x: 0, duration: 0.52, ease: "power3.out" }, at + 0.30);
+
+        /* the consequence mask-wipes open left-to-right, a beat behind the
+           label, so the eye reads the name first and the cost second */
+        tl.fromTo(row.querySelector(".n03-cons"),
+          { clipPath: "inset(0 100% 0 0)", opacity: 0 },
+          { clipPath: "inset(0 0% 0 0)", opacity: 1,
+            duration: 0.64, ease: "power2.out" }, at + 0.62);
+      });
+
+      /* =========================================================
+         Scene 3 (11.0-13.0) — deliberate held read. All six sit
+         together, motionless, so the list can be taken in as ONE
+         picture. Frame 17 answers this exact composition.
+         ========================================================= */
+      tl.set("#n03-rail", { opacity: 1 }, 13);
+
+      window.__timelines["03-six-problems"] = tl;
+      tl.seek(0);
+    })();
+  </script>
+</template>

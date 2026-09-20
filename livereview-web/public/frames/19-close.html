@@ -1,0 +1,261 @@
+<template>
+  <style>
+    /* Brand face — staged locally at assets/fonts/Inter-var.woff2 (variable, wght 100-900).
+       Declared so headless Chrome can actually supply Inter instead of falling back. */
+    @font-face {
+      font-family: "Inter";
+      src: url("assets/fonts/Inter-var.woff2") format("woff2");
+      font-weight: 100 900;
+      font-style: normal;
+      font-display: block;
+    }
+
+    /* Blue Professional — closing / CTA treatment (frame.md §6).
+       Centred lockup, the ownership triad as the hero line, the offer, the URL. */
+    #root {
+      width: 1920px; height: 1080px; position: relative; overflow: hidden;
+      font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+      color: #05070b;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* full-bleed ground lives on a clip layer, never on #root */
+    .f15-bg {
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(720px 720px at 900px 400px, rgba(29, 86, 240, 0.06), rgba(29, 86, 240, 0) 72%),
+        #ffffff;
+    }
+
+    .f15-stage { position: absolute; inset: 0; }
+
+    /* closing-ring atmosphere — the ring handed over from frame 14, centred on the mark */
+    .f15-ring {
+      position: absolute; left: 820px; top: 275px;
+      width: 150px; height: 150px; margin-left: -75px; margin-top: -75px;
+      border-radius: 50%;
+      border: 1.5px solid #1d56f0;
+      will-change: transform, opacity;
+    }
+
+    /* ---- the lockup: mark + wordmark ---- */
+    .f15-lockup {
+      position: absolute; left: 0; top: 205px; width: 1920px; height: 140px;
+    }
+    .f15-mark-wrap {
+      position: absolute; left: 750px; top: 0; width: 140px; height: 140px;
+      transform-origin: 50% 50%; will-change: transform;
+    }
+    .f15-wm-mask {
+      position: absolute; left: 910px; top: 39px;
+      overflow: hidden; padding: 4px 0;
+    }
+    .f15-wm {
+      font-size: 48px; font-weight: 700; letter-spacing: -0.02em;
+      line-height: 1.1; color: #05070b; white-space: nowrap;
+      will-change: transform;
+    }
+
+    /* ---- the hero line: the ownership triad, three beats ---- */
+    .f15-triad {
+      position: absolute; left: 0; top: 425px; width: 1920px; height: 76px;
+      display: flex; align-items: baseline; justify-content: center; gap: 26px;
+      white-space: nowrap;
+    }
+    .f15-beat {
+      display: inline-block;
+      font-size: 58px; font-weight: 600; letter-spacing: -0.02em;
+      line-height: 1.3; color: #05070b;
+      will-change: transform, opacity;
+    }
+
+    /* ---- the offer line (body ramp, one measure, never wrapping) ---- */
+    .f15-offer {
+      position: absolute; left: 0; top: 570px; width: 1920px;
+      text-align: center; white-space: nowrap;
+      font-size: 32px; font-weight: 450; letter-spacing: -0.005em;
+      line-height: 1.3; color: #05070b;
+    }
+    .f15-w { display: inline-block; will-change: transform, opacity; }
+    .f15-cta { color: #1d56f0; font-weight: 600; }
+    .f15-dash { color: #9A9A9A; }
+
+    /* ---- the url, set small beneath, in primary ---- */
+    .f15-url {
+      position: absolute; left: 0; top: 682px; width: 1920px;
+      text-align: center;
+      font-size: 22px; font-weight: 500; letter-spacing: 0.05em;
+      color: #1d56f0;
+      will-change: transform, opacity;
+    }
+  </style>
+
+  <div id="root" data-composition-id="19-close" data-start="0" data-duration="6.4" data-width="1920" data-height="1080">
+    <div class="clip f15-bg" data-start="0" data-duration="6.4" data-track-index="0"></div>
+
+    <div class="clip f15-stage" data-start="0" data-duration="6.4" data-track-index="1">
+      <div class="f15-ring"></div>
+      <div class="f15-ring"></div>
+      <div class="f15-ring"></div>
+
+      <div class="f15-lockup">
+        <div class="f15-mark-wrap">
+          <!-- the LiveReview mark — artwork of assets/logo.svg, inlined so the
+               concentric parts can collapse inward into the assembled mark -->
+          <svg viewBox="0 0 512 512" width="140" height="140" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <circle class="f15-p" data-o="0" data-s="2.30" data-op="0.2" cx="256" cy="256" r="240" fill="#1E429F" opacity="0.2"></circle>
+            <circle class="f15-p" data-o="2" data-s="1.85" data-op="1" cx="256" cy="256" r="200" fill="#111827"></circle>
+            <circle class="f15-p" data-o="2" data-s="1.85" data-op="1" cx="256" cy="256" r="200" stroke="#3B82F6" stroke-width="16"></circle>
+            <circle class="f15-p" data-o="3" data-s="1.55" data-op="1" cx="256" cy="256" r="100" fill="#60A5FA"></circle>
+            <circle class="f15-p" data-o="4" data-s="1.40" data-op="1" cx="256" cy="256" r="50" fill="#1E40AF"></circle>
+            <path class="f15-p" data-o="5" data-s="1.28" data-op="0.8" d="M235 220C235 228.284 228.284 235 220 235C211.716 235 205 228.284 205 220C205 211.716 211.716 205 220 205C228.284 205 235 211.716 235 220Z" fill="white" opacity="0.8"></path>
+            <circle class="f15-p" data-o="1" data-s="2.10" data-op="0.6" cx="256" cy="256" r="220" stroke="#93C5FD" stroke-width="4" opacity="0.6"></circle>
+          </svg>
+        </div>
+        <div class="f15-wm-mask"><div class="f15-wm">LiveReview</div></div>
+      </div>
+
+      <div class="f15-triad"><span class="f15-beat">Your code.</span><span class="f15-beat">Your infrastructure.</span><span class="f15-beat">Your reviewer.</span></div>
+
+      <div class="f15-offer"><span class="f15-w f15-cta">Start</span> <span class="f15-w f15-cta">free</span> <span class="f15-w f15-dash">&#8212;</span> <span class="f15-w">we&#8217;ll</span> <span class="f15-w">walk</span> <span class="f15-w">you</span> <span class="f15-w">through</span> <span class="f15-w">self-hosted</span> <span class="f15-w">setup.</span></div>
+
+      <div class="f15-url">hexmos.com/livereview</div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <script>
+    (function () {
+      var ID = "19-close";
+      var root = document.querySelector('[data-composition-id="' + ID + '"]');
+      var scope = root || document;
+      function q(sel) { return Array.prototype.slice.call(scope.querySelectorAll(sel)); }
+      function one(sel) { return scope.querySelector(sel); }
+
+      window.__timelines = window.__timelines || {};
+      var tl = gsap.timeline({ paused: true });
+      window.__timelines[ID] = tl;
+
+      /* ---------------- Scene 1 (0.00-1.60s) - the mark assembles ----------------
+         center-outward-expansion, run INWARD: frame 14's ring collapses toward the
+         mark centre and the mark's own concentric parts nest outer -> inner;
+         a calm settle (power3.out, no overshoot) carries the whole mark in, so the
+         hero is on screen well before t = 0.5s. */
+
+      var RING_FROM = [3.60, 2.70, 2.05];
+      var RING_OP   = [0.55, 0.40, 0.28];
+      var RING_DUR  = [0.95, 1.05, 1.15];
+      q(".f15-ring").forEach(function (el, i) {
+        tl.fromTo(
+          el,
+          { scale: RING_FROM[i], opacity: RING_OP[i] },
+          { scale: 0.95, opacity: 0, duration: RING_DUR[i], ease: "power2.out" },
+          0
+        );
+      });
+
+      var PART_STAGGER = 0.055;
+      var PART_DUR = 0.70;
+      q(".f15-p").forEach(function (el) {
+        var order = Number(el.getAttribute("data-o"));
+        var fromScale = Number(el.getAttribute("data-s"));
+        var toOpacity = Number(el.getAttribute("data-op"));
+        tl.fromTo(
+          el,
+          { scale: fromScale, opacity: 0, svgOrigin: "256 256" },
+          { scale: 1, opacity: toOpacity, duration: PART_DUR, ease: "power3.out", svgOrigin: "256 256" },
+          order * PART_STAGGER
+        );
+      });
+
+      tl.fromTo(
+        one(".f15-mark-wrap"),
+        { scale: 0.90 },
+        { scale: 1, duration: 1.05, ease: "power3.out" },
+        0
+      );
+
+      /* the wordmark slides out from behind the mark to complete the lockup */
+      tl.fromTo(
+        one(".f15-wm"),
+        { xPercent: -102 },
+        { xPercent: 0, duration: 0.62, ease: "power3.out" },
+        0.82
+      );
+
+      /* ---------------- Scene 2 (1.60-3.60s) - the ownership triad ----------------
+         dynamic-content-sequencing: three beats, ONE PER SPOKEN CLAUSE. Each clause's
+         window is derived once, at build time, from its own length; the flat SEQ is
+         pre-computed and never recalculated per frame. */
+
+      var TRIAD_AT = 1.60;
+      var TRIAD_SPAN = 1.35;      /* last clause fires at 2.95s */
+      var TRIAD_BASE = 0.42;
+      var TRIAD_PER_CHAR = 0.022;
+
+      var beats = q(".f15-beat");
+      var tCum = 0;
+      var TRIAD_SEQ = beats.map(function (el) {
+        var len = (el.textContent || "").trim().length;
+        var dur = TRIAD_BASE + len * TRIAD_PER_CHAR;
+        var start = tCum;
+        tCum += dur;
+        return { start: start, end: tCum };
+      });
+      var tLast = TRIAD_SEQ.length > 1 ? TRIAD_SEQ[TRIAD_SEQ.length - 1].start : 1;
+      var tNorm = tLast > 0 ? TRIAD_SPAN / tLast : 0;
+
+      beats.forEach(function (el, i) {
+        tl.fromTo(
+          el,
+          { opacity: 0, y: 18 },
+          { opacity: 1, y: 0, duration: 0.52, ease: "power3.out" },
+          TRIAD_AT + TRIAD_SEQ[i].start * tNorm
+        );
+      });
+
+      /* ---------------- Scene 3 (3.60-5.40s) - the offer sets on "Start free" ----
+         One measure, word-staggered so the line keeps arriving through the back half
+         instead of stamping in whole. Same derived-window engine as the triad. */
+
+      var OFFER_AT = 3.60;
+      var OFFER_SPAN = 1.08;
+      var OFFER_BASE = 0.05;
+      var OFFER_PER_CHAR = 0.018;
+
+      var words = q(".f15-w");
+      var wCum = 0;
+      var OFFER_SEQ = words.map(function (el) {
+        var len = (el.textContent || "").trim().length;
+        var dur = OFFER_BASE + len * OFFER_PER_CHAR;
+        var start = wCum;
+        wCum += dur;
+        return { start: start, end: wCum };
+      });
+      var wLast = OFFER_SEQ.length > 1 ? OFFER_SEQ[OFFER_SEQ.length - 1].start : 1;
+      var wNorm = wLast > 0 ? OFFER_SPAN / wLast : 0;
+
+      words.forEach(function (el, i) {
+        tl.fromTo(
+          el,
+          { opacity: 0, y: 14 },
+          { opacity: 1, y: 0, duration: 0.44, ease: "power3.out" },
+          OFFER_AT + OFFER_SEQ[i].start * wNorm
+        );
+      });
+
+      /* ---------------- Scene 4 (5.40-6.40s) - the url, then dead still ---------- */
+      tl.fromTo(
+        one(".f15-url"),
+        { opacity: 0, y: 12 },
+        { opacity: 1, y: 0, duration: 0.48, ease: "power3.out" },
+        5.40
+      );
+
+      /* Final frame of the film: it lands and holds. Nothing moves after ~5.88s. */
+      tl.to({}, { duration: 0.01 }, 6.39);
+
+      tl.seek(0);
+    })();
+  </script>
+</template>
