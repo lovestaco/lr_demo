@@ -1,5 +1,12 @@
 <template>
   <style>
+    /* ── persistent brand bug (bottom-right), injected across all frames ── */
+    .lr-bug{position:absolute;right:44px;bottom:38px;z-index:60;display:flex;align-items:center;
+      gap:11px;opacity:.82;pointer-events:none}
+    .lr-bug img{width:34px;height:34px;display:block}
+    .lr-bug span{font:600 25px/1 Inter,ui-sans-serif,system-ui,sans-serif;color:#05070b;
+      letter-spacing:-.01em;white-space:nowrap}
+
     /* Brand face — staged locally at assets/fonts/Inter-var.woff2 (variable, wght 100-900).
        Declared so headless Chrome can actually supply Inter instead of falling back. */
     @font-face {
@@ -195,7 +202,7 @@
           </div>
 
           <div class="f06-shotframe">
-            <video id="f06-riskscore" src="assets/footage/risk-score.mp4" data-media-start="0" muted playsinline class="clip" data-frame-video="approved" data-frame-video-x="882" data-frame-video-y="238" data-frame-video-width="906" data-frame-video-height="343" data-frame-video-fit="cover" data-start="1.0" data-duration="1.78" data-track-index="2"></video>
+            <!-- approved frame video hoisted by assemble-index -->
 
             <div class="f06-still" id="f06-still">
               <div class="f06-zoom-outer" id="f06-zoom-outer" data-layout-allow-overflow="true">
@@ -216,7 +223,9 @@
       </div>
 
     </div>
-  </div>
+      <video id="f06-riskscore" src="assets/footage/risk-score.mp4" data-media-start="0" muted playsinline class="clip" data-frame-video="approved" data-frame-video-x="882" data-frame-video-y="238" data-frame-video-width="906" data-frame-video-height="343" data-frame-video-fit="cover" data-start="1.0" data-duration="1.78" data-track-index="2"></video>
+    <div class="lr-bug"><img src="assets/logo.svg" alt=""><span>LiveReview</span></div>
+</div>
 
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
   <script>
