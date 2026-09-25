@@ -1,0 +1,251 @@
+<template>
+  <style>
+    /* Brand face — staged locally at assets/fonts/Inter-var.woff2 (variable, wght 100-900).
+       Declared so headless Chrome can actually supply Inter instead of falling back. */
+    @font-face {
+      font-family: "Inter";
+      src: url("assets/fonts/Inter-var.woff2") format("woff2");
+      font-weight: 100 900;
+      font-style: normal;
+      font-display: block;
+    }
+
+    #root {
+      width: 1920px; height: 1080px; position: relative; overflow: hidden;
+      font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+      color: #05070b;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ---------- ground ---------- */
+    .f05-bg { position: absolute; inset: 0; background: #ffffff; }
+    .f05-w  { position: absolute; inset: 0; }
+
+    /* ---------- slide-header ---------- */
+    .f05-eyebrow {
+      position: absolute; left: 110px; top: 110px;
+      font-size: 22px; font-weight: 600; letter-spacing: .08em;
+      text-transform: uppercase; color: #1d56f0; white-space: nowrap;
+    }
+    .f05-h2 {
+      position: absolute; left: 110px; top: 165px;
+      font-size: 56px; font-weight: 600; letter-spacing: -.02em; line-height: 1.12;
+      color: #05070b; white-space: nowrap;
+    }
+    .f05-word { display: inline-block; }
+
+    /* ---------- the split stage (perspective owner) ---------- */
+    .f05-stage {
+      position: absolute; inset: 0;
+      perspective: 1800px;
+      transform-style: preserve-3d;
+    }
+
+    /* Both cells are IDENTICAL: same box, same tint, same border, same inner insets.
+       The asymmetry in this frame is consequence (colour), never size. */
+    .f05-cell {
+      position: absolute; top: 330px; width: 800px; height: 520px;
+      box-sizing: border-box;
+      background: rgba(29, 86, 240, 0.04);
+      border: 1.5px solid rgba(29, 86, 240, 0.2);
+      border-radius: 14px;
+      transform-style: preserve-3d;
+    }
+    .f05-cell-left  { left: 110px; }
+    .f05-cell-right { left: 1010px; }
+
+    /* ---------- hero numerals — one class, one size, both sides ---------- */
+    .f05-numwrap { position: absolute; left: 50px; top: 70px; height: 138px; }
+    .f05-numwrap-count { width: 340px; }
+    .f05-num {
+      display: inline-block;
+      font-size: 150px; line-height: 138px; font-weight: 700; letter-spacing: -.03em;
+      font-variant-numeric: tabular-nums;
+      transform-origin: 0% 50%;
+    }
+    .f05-ink { color: #05070b; }
+    .f05-neg { color: #dc2626; }
+
+    /* marker-circle (css-marker-patterns · circle mode), scaled off the numeral box */
+    .f05-ring {
+      position: absolute; left: -40%; top: -22.5%; width: 180%; height: 145%;
+      box-sizing: border-box;
+      border: 4px solid #dc2626; border-radius: 50%;
+      transform-origin: 50% 50%;
+    }
+
+    /* ---------- cell copy ---------- */
+    .f05-lede {
+      position: absolute; left: 50px; top: 250px;
+      font-size: 36px; font-weight: 500; line-height: 1.28; white-space: nowrap;
+    }
+    .f05-badge {
+      position: absolute; left: 50px; top: 310px;
+      box-sizing: border-box;
+      padding: 13px 26px; border-radius: 100px; border: 1.5px solid transparent;
+      font-size: 26px; font-weight: 500; line-height: 1; white-space: nowrap;
+      transform-origin: 50% 50%;
+    }
+    .f05-badge-ink {
+      background: rgba(5, 7, 11, 0.04); border-color: rgba(5, 7, 11, 0.14); color: #05070b;
+    }
+    .f05-badge-neg {
+      background: rgba(220, 38, 38, 0.06); border-color: rgba(220, 38, 38, 0.28); color: #dc2626;
+    }
+
+    /* ---------- symmetry axis ---------- */
+    .f05-axis {
+      position: absolute; left: 959px; top: 372px; width: 1.5px; height: 436px;
+      background: rgba(29, 86, 240, 0.2); border-radius: 1px;
+      transform-origin: 50% 50%;
+    }
+    .f05-vs {
+      position: absolute; left: 930px; top: 552px; width: 60px;
+      padding: 10px 0; background: #ffffff; text-align: center;
+      font-size: 22px; font-weight: 500; letter-spacing: .12em; color: #9A9A9A;
+      transform-origin: 50% 50%;
+    }
+  </style>
+
+  <div id="root" data-composition-id="05-not-all-diffs-equal"
+       data-start="0" data-duration="9.759" data-width="1920" data-height="1080">
+
+    <div class="clip f05-bg" data-start="0" data-duration="9.759" data-track-index="0"></div>
+
+    <div class="clip f05-w" data-start="0" data-duration="9.759" data-track-index="1">
+
+      <div class="f05-eyebrow">Prioritized by blast radius</div>
+      <div class="f05-h2"><span class="f05-word">Not</span> <span class="f05-word">all</span> <span class="f05-word">diffs</span> <span class="f05-word">are</span> <span class="f05-word">created</span> <span class="f05-word">equal.</span></div>
+
+      <div class="f05-stage">
+
+        <div class="f05-cell f05-cell-left" id="f05-cell-left">
+          <div class="f05-numwrap f05-numwrap-count">
+            <span class="f05-num f05-ink" id="f05-count">0</span>
+          </div>
+          <div class="f05-lede f05-ink" id="f05-lede-left">line UI tweak</div>
+          <div class="f05-badge f05-badge-ink" id="f05-badge-left">Breaks one page.</div>
+        </div>
+
+        <div class="f05-cell f05-cell-right" id="f05-cell-right">
+          <div class="f05-numwrap">
+            <span class="f05-num f05-neg" id="f05-three">3</span>
+            <span class="f05-ring" id="f05-ring"></span>
+          </div>
+          <div class="f05-lede f05-neg" id="f05-lede-right">line DB change</div>
+          <div class="f05-badge f05-badge-neg" id="f05-badge-right">Breaks the entire app.</div>
+        </div>
+
+      </div>
+
+      <div class="f05-axis" id="f05-axis"></div>
+      <div class="f05-vs" id="f05-vs">VS</div>
+
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <script>
+    (function () {
+      window.__timelines = window.__timelines || {};
+      var tl = gsap.timeline({ paused: true });
+
+      /* =========================================================
+         Scene 1 (0.0-2.0) — "not all diffs are equal"
+         eyebrow + per-word headline reveal. Word starts are
+         pre-computed ONCE from content length
+         (dynamic-content-sequencing), never inside an onUpdate.
+         ========================================================= */
+      tl.fromTo(".f05-eyebrow",
+        { opacity: 0, y: 14 },
+        { opacity: 1, y: 0, duration: 0.5, ease: "power3.out" }, 0.12);
+
+      var WORD_BASE = 0.10;      /* BASE_DURATION floor per word */
+      var SEC_PER_CHAR = 0.018;  /* longer words earn more runway */
+      var cursor = 0.35;
+      gsap.utils.toArray(".f05-word").forEach(function (word) {
+        tl.fromTo(word,
+          { opacity: 0, y: 26 },
+          { opacity: 1, y: 0, duration: 0.55, ease: "power3.out" }, cursor);
+        cursor += WORD_BASE + word.textContent.length * SEC_PER_CHAR;
+      });
+
+      /* =========================================================
+         Scene 2 (2.0-4.8) — "Three hundred lines of UI breaks one page."
+         split-tilt-cards: left cell arrives from the LEFT wing on a
+         book-open +rotationY that swings all the way flat, so the two
+         numerals end at identical rendered size (no foreshortening).
+         ========================================================= */
+      tl.fromTo("#f05-cell-left",
+        { x: -420, rotationY: 18, opacity: 0 },
+        { x: 0, rotationY: 0, opacity: 1, duration: 1.0, ease: "power3.out" }, 2.0);
+
+      /* counting-dynamic-scale — value + transform scale, same position, same ease */
+      var counter = document.getElementById("f05-count");
+      var state = { value: 0 };
+      var COUNT_AT = 2.45, COUNT_DUR = 1.5, COUNT_EASE = "power3.out";
+      var START_SCALE = 0.55; /* 82.5px START / 150px END */
+
+      tl.to(state, {
+        value: 300, duration: COUNT_DUR, ease: COUNT_EASE,
+        onUpdate: function () { counter.textContent = Math.round(state.value); }
+      }, COUNT_AT);
+      tl.fromTo(counter,
+        { scale: START_SCALE, opacity: 0 },
+        { scale: 1, opacity: 1, duration: COUNT_DUR, ease: COUNT_EASE }, COUNT_AT);
+
+      tl.fromTo("#f05-lede-left",
+        { opacity: 0, y: 18 },
+        { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" }, 2.6);
+
+      /* badge lands on "breaks one page" — spring-pop, smooth settle */
+      tl.fromTo("#f05-badge-left",
+        { scale: 0, opacity: 0 },
+        { scale: 1, opacity: 1, duration: 0.55, ease: "power3.out" }, 4.15);
+
+      /* =========================================================
+         Scene 3 (4.8-7.6) — "Three lines of database code"
+         mirrored right-wing entry; the 3 arrives at the SAME type size
+         and the SAME start scale as the 300 — only the ink differs.
+         ========================================================= */
+      tl.fromTo("#f05-cell-right",
+        { x: 420, rotationY: -18, opacity: 0 },
+        { x: 0, rotationY: 0, opacity: 1, duration: 1.0, ease: "power3.out" }, 4.85);
+
+      tl.fromTo("#f05-axis",
+        { scaleY: 0, opacity: 0 },
+        { scaleY: 1, opacity: 1, duration: 0.7, ease: "power3.out" }, 5.0);
+      tl.fromTo("#f05-vs",
+        { scale: 0.8, opacity: 0 },
+        { scale: 1, opacity: 1, duration: 0.5, ease: "power3.out" }, 5.15);
+
+      tl.fromTo("#f05-three",
+        { scale: START_SCALE, opacity: 0 },
+        { scale: 1, opacity: 1, duration: 0.8, ease: COUNT_EASE }, 5.45);
+
+      tl.fromTo("#f05-lede-right",
+        { opacity: 0, y: 18 },
+        { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" }, 5.75);
+
+      /* =========================================================
+         Scene 4 (7.6-9.259) — "breaks the entire app."
+         inner-edge badge spring-pop (smooth settle), then the marker
+         circle scribes around the 3. Both cells hold motionless.
+         ========================================================= */
+      tl.fromTo("#f05-badge-right",
+        { scale: 0, opacity: 0 },
+        { scale: 1, opacity: 1, duration: 0.6, ease: "power3.out" }, 7.7);
+
+      tl.fromTo("#f05-ring",
+        { scale: 0, opacity: 0, rotation: -9 },
+        { scale: 1, opacity: 1, rotation: -3, duration: 0.7, ease: "back.out(1.5)" }, 8.15);
+
+      /* held stillness through the tail of the shot (no-op keeps the
+         timeline's length matched to the frame duration) */
+      tl.set("#f05-ring", { opacity: 1 }, 9.259);
+
+      window.__timelines["05-not-all-diffs-equal"] = tl;
+      tl.seek(0);
+    })();
+  </script>
+</template>

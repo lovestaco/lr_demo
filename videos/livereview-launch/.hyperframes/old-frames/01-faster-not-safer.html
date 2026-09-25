@@ -1,0 +1,362 @@
+<template>
+  <style>
+    /* Brand face — staged locally at assets/fonts/Inter-var.woff2 (variable, wght 100-900).
+       Declared so headless Chrome can actually supply Inter instead of falling back. */
+    @font-face {
+      font-family: "Inter";
+      src: url("assets/fonts/Inter-var.woff2") format("woff2");
+      font-weight: 100 900;
+      font-style: normal;
+      font-display: block;
+    }
+
+    #root {
+      width: 1920px; height: 1080px; position: relative; overflow: hidden;
+      container-type: size;
+      font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+      color: #05070b;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── ground ───────────────────────────────────────────────────────── */
+    .fr01-faster-not-safer-bg { position: absolute; inset: 0; background: #ffffff; }
+
+    /* ── stage ────────────────────────────────────────────────────────── */
+    .fr01-faster-not-safer-stage { position: absolute; inset: 0; }
+
+    /* ambient glow layer — sits BEHIND the chart (rule: glow z1 / hero z2) */
+    .fr01-faster-not-safer-glow {
+      position: absolute; left: 1070px; top: 140px; width: 820px; height: 600px;
+      z-index: 1; opacity: 0; pointer-events: none;
+      background: radial-gradient(ellipse at 58% 52%,
+        rgba(29, 86, 240, 0.60) 0%,
+        rgba(29, 86, 240, 0.22) 44%,
+        rgba(29, 86, 240, 0.00) 72%);
+    }
+
+    /* ── chart ────────────────────────────────────────────────────────── */
+    .fr01-faster-not-safer-chart {
+      position: absolute; left: 760px; top: 150px; width: 1050px; height: 600px;
+      z-index: 2;
+    }
+    .fr01-faster-not-safer-chart svg { display: block; width: 1050px; height: 600px; }
+
+    .fr01-faster-not-safer-axis {
+      fill: none; stroke: rgba(29, 86, 240, 0.28); stroke-width: 2.5; stroke-linecap: round;
+    }
+    .fr01-faster-not-safer-grid {
+      fill: none; stroke: rgba(29, 86, 240, 0.09); stroke-width: 1.5; stroke-linecap: round; opacity: 0;
+    }
+    .fr01-faster-not-safer-line {
+      fill: none; stroke-linecap: round; stroke-linejoin: round;
+    }
+    #fr01-faster-not-safer-vol { stroke: #1d56f0; stroke-width: 6.5; }
+    #fr01-faster-not-safer-cap { stroke: #9A9A9A; stroke-width: 5; }
+    #fr01-faster-not-safer-wedge { stroke: none; fill: #1d56f0; opacity: 0; }
+    .fr01-faster-not-safer-dot {
+      transform-box: fill-box; transform-origin: 50% 50%; opacity: 0;
+    }
+
+    /* ── type ─────────────────────────────────────────────────────────── */
+    .fr01-faster-not-safer-rule {
+      position: absolute; left: 110px; top: 76px; width: 60px; height: 4px;
+      border-radius: 2px; background: #1d56f0; z-index: 3;
+      transform-origin: 0% 50%;
+    }
+    .fr01-faster-not-safer-head {
+      position: absolute; left: 110px; top: 120px; width: 620px; z-index: 3;
+    }
+    .fr01-faster-not-safer-hline {
+      height: 96px; line-height: 96px; overflow: hidden;
+      font-size: 84px; font-weight: 700; letter-spacing: -0.02em; white-space: nowrap;
+    }
+    .fr01-faster-not-safer-hline.fr01-faster-not-safer-muted { color: #9A9A9A; }
+    .fr01-faster-not-safer-w { display: inline-block; opacity: 0; }
+
+    /* ── legend ───────────────────────────────────────────────────────── */
+    .fr01-faster-not-safer-leg {
+      position: absolute; left: 790px; height: 28px; z-index: 3;
+      display: flex; align-items: center; gap: 14px; opacity: 0;
+    }
+    .fr01-faster-not-safer-swatch { width: 34px; height: 5px; border-radius: 3px; flex: none; }
+    .fr01-faster-not-safer-lbl {
+      font-size: 22px; font-weight: 500; color: #9A9A9A; letter-spacing: 0.02em;
+    }
+    .fr01-faster-not-safer-eyebrow {
+      font-size: 22px; font-weight: 600; letter-spacing: 0.08em;
+      text-transform: uppercase; color: #1d56f0;
+    }
+
+    /* ── focal callout (split-highlight) ──────────────────────────────── */
+    .fr01-faster-not-safer-callout {
+      position: absolute; left: 1180px; top: 775px; width: 420px; height: 96px;
+      z-index: 3; opacity: 0;
+      background: rgba(29, 86, 240, 0.08);
+      border-left: 4px solid #1d56f0;
+      border-radius: 12px;
+      padding: 0 26px;
+      display: flex; flex-direction: column; justify-content: center; gap: 6px;
+      box-sizing: border-box;
+    }
+    .fr01-faster-not-safer-callout-k {
+      font-size: 20px; font-weight: 600; letter-spacing: 0.08em;
+      text-transform: uppercase; color: #1d56f0; line-height: 1;
+    }
+    .fr01-faster-not-safer-callout-v {
+      font-size: 32px; font-weight: 600; letter-spacing: -0.02em; color: #05070b; line-height: 1;
+    }
+  </style>
+
+  <div id="root" data-composition-id="01-faster-not-safer"
+       data-start="0" data-duration="6.421" data-width="1920" data-height="1080">
+
+    <div class="clip fr01-faster-not-safer-bg"
+         data-start="0" data-duration="6.421" data-track-index="0"></div>
+
+    <div class="clip fr01-faster-not-safer-stage"
+         data-start="0" data-duration="6.421" data-track-index="1">
+
+      <div class="fr01-faster-not-safer-glow" id="fr01-faster-not-safer-glow"></div>
+
+      <div class="fr01-faster-not-safer-chart" id="fr01-faster-not-safer-chart">
+        <svg viewBox="0 0 1050 600" xmlns="http://www.w3.org/2000/svg">
+          <!-- widening wedge between the two series — the focal -->
+          <path id="fr01-faster-not-safer-wedge"
+                d="M 30 474 C 180 470, 320 462, 452 432 C 584 402, 700 312, 808 196 C 892 106, 958 62, 1020 38 L 1020 468 L 30 486 Z" />
+
+          <!-- faint value rules -->
+          <path class="fr01-faster-not-safer-grid" id="fr01-faster-not-safer-g1" d="M 30 130 L 1020 130" />
+          <path class="fr01-faster-not-safer-grid" id="fr01-faster-not-safer-g2" d="M 30 232 L 1020 232" />
+          <path class="fr01-faster-not-safer-grid" id="fr01-faster-not-safer-g3" d="M 30 334 L 1020 334" />
+          <path class="fr01-faster-not-safer-grid" id="fr01-faster-not-safer-g4" d="M 30 436 L 1020 436" />
+
+          <!-- axis baseline -->
+          <path class="fr01-faster-not-safer-axis" id="fr01-faster-not-safer-ax" d="M 30 540 L 1020 540" />
+
+          <!-- review capacity: flat, level, underneath -->
+          <path class="fr01-faster-not-safer-line" id="fr01-faster-not-safer-cap" d="M 30 486 L 1020 468" />
+
+          <!-- AI code volume: steep and still climbing -->
+          <path class="fr01-faster-not-safer-line" id="fr01-faster-not-safer-vol"
+                d="M 30 474 C 180 470, 320 462, 452 432 C 584 402, 700 312, 808 196 C 892 106, 958 62, 1020 38" />
+
+          <circle class="fr01-faster-not-safer-dot" id="fr01-faster-not-safer-dotc"
+                  cx="1020" cy="468" r="8" fill="#9A9A9A" />
+          <circle class="fr01-faster-not-safer-dot" id="fr01-faster-not-safer-dotv"
+                  cx="1020" cy="38" r="11" fill="#1d56f0" />
+        </svg>
+      </div>
+
+      <div class="fr01-faster-not-safer-rule" id="fr01-faster-not-safer-rule"></div>
+
+      <div class="fr01-faster-not-safer-head">
+        <div class="fr01-faster-not-safer-hline"><span class="fr01-faster-not-safer-w" id="fr01-faster-not-safer-w0">Faster.</span></div>
+        <div class="fr01-faster-not-safer-hline fr01-faster-not-safer-muted"><span class="fr01-faster-not-safer-w" id="fr01-faster-not-safer-w1">Not</span> <span class="fr01-faster-not-safer-w" id="fr01-faster-not-safer-w2">safer.</span></div>
+      </div>
+
+      <div class="fr01-faster-not-safer-leg" id="fr01-faster-not-safer-legcap" style="top:790px;">
+        <span class="fr01-faster-not-safer-swatch" style="background:#9A9A9A;"></span>
+        <span class="fr01-faster-not-safer-lbl">Review capacity</span>
+      </div>
+
+      <div class="fr01-faster-not-safer-leg" id="fr01-faster-not-safer-legvol" style="top:840px;">
+        <span class="fr01-faster-not-safer-swatch" style="background:#1d56f0;"></span>
+        <span class="fr01-faster-not-safer-eyebrow">AI code volume</span>
+      </div>
+
+      <div class="fr01-faster-not-safer-callout" id="fr01-faster-not-safer-callout">
+        <div class="fr01-faster-not-safer-callout-k">The gap</div>
+        <div class="fr01-faster-not-safer-callout-v">widening</div>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <script>
+    (function () {
+      window.__timelines = window.__timelines || {};
+
+      var scope = document.querySelector('[data-composition-id="01-faster-not-safer"]') || document;
+      var q = function (sel) { return scope.querySelector(sel); };
+
+      var tl = gsap.timeline({ paused: true });
+      window.__timelines["01-faster-not-safer"] = tl;
+
+      /* guarded entrance helper — a missing node must never throw mid-build */
+      var add = function (sel, from, to, time) {
+        var el = (typeof sel === "string") ? q(sel) : sel;
+        if (!el) { return; }
+        tl.fromTo(el, from, to, time);
+      };
+
+      var TOTAL = 6.421;
+
+      /* ── beat grid (seconds) ──────────────────────────────────────────
+         Scene 1  0.00–1.80   axis self-draws · "AI code volume" sets
+         Scene 2  1.80–3.80   volume line climbs · "Faster." lands
+         Scene 3  3.80–5.40   capacity line draws flat · "Not safer." sets
+         Scene 4  5.40–6.421  the wedge washes cobalt and holds
+      */
+      var AXIS_START = 0.04, AXIS_DUR = 0.86;
+      var RULE_START = 0.16, RULE_DUR = 0.52;
+      var LEGVOL_START = 1.12, LEG_DUR = 0.46;
+      var GRID_START = 1.44, GRID_STAGGER = 0.09, GRID_DUR = 0.44;
+      var VOL_START = 1.80, VOL_DUR = 1.25;
+      var DOTV_START = 2.96, DOT_DUR = 0.30;
+      var CAP_START = 3.85, CAP_DUR = 1.00;
+      var DOTC_START = 4.88;
+      var LEGCAP_START = 4.96;
+      var BLOOM_START = 5.36, BLOOM_DUR = 0.72;
+      var WASH_DUR = 0.80;
+      var CALLOUT_START = 5.52, CALLOUT_DUR = 0.56;
+      var IDLE_START = 5.42;
+
+      var GLOW_PEAK_OPACITY = 0.26;   /* ≤ 0.45 ceiling */
+      var GLOW_START_SCALE = 0.86;
+      var WASH_PEAK_OPACITY = 0.13;   /* the faint primary wash inside the wedge */
+
+      /* ── svg-path-draw · measured dash setup ───────────────────────── */
+      var STROKES = [
+        { el: q("#fr01-faster-not-safer-ax"),  fallback: 995 },
+        { el: q("#fr01-faster-not-safer-g1"),  fallback: 995 },
+        { el: q("#fr01-faster-not-safer-g2"),  fallback: 995 },
+        { el: q("#fr01-faster-not-safer-g3"),  fallback: 995 },
+        { el: q("#fr01-faster-not-safer-g4"),  fallback: 995 },
+        { el: q("#fr01-faster-not-safer-vol"), fallback: 1240 },
+        { el: q("#fr01-faster-not-safer-cap"), fallback: 995 }
+      ];
+      var LEN = {};
+      STROKES.forEach(function (s) {
+        if (!s.el) { return; }
+        var len = s.fallback;
+        if (typeof s.el.getTotalLength === "function") {
+          var measured = s.el.getTotalLength();
+          if (measured && measured > 1) { len = measured; }
+        }
+        len = len * 1.02; /* slight overestimate — never clips the tail */
+        LEN[s.el.id] = len;
+        s.el.style.strokeDasharray = String(len);
+        s.el.style.strokeDashoffset = String(len);
+      });
+      var dashFrom = function (id) { return { strokeDashoffset: LEN[id] }; };
+
+      /* ══ SCENE 1 (0.0–1.8s) — bare white field, the axis rules itself in ══ */
+      add("#fr01-faster-not-safer-rule",
+        { scaleX: 0, opacity: 0 },
+        { scaleX: 1, opacity: 1, duration: RULE_DUR, ease: "power3.out" },
+        RULE_START);
+
+      add("#fr01-faster-not-safer-ax",
+        dashFrom("fr01-faster-not-safer-ax"),
+        { strokeDashoffset: 0, duration: AXIS_DUR, ease: "none" },
+        AXIS_START);
+
+      /* "AI code volume" sets — after the baseline settles (BRAND_FADE beat) */
+      add("#fr01-faster-not-safer-legvol",
+        { opacity: 0, y: 14 },
+        { opacity: 1, y: 0, duration: LEG_DUR, ease: "power3.out" },
+        LEGVOL_START);
+
+      /* faint value rules arrive just before the climb needs something to read against */
+      ["g1", "g2", "g3", "g4"].forEach(function (k, i) {
+        add("#fr01-faster-not-safer-" + k,
+          { opacity: 0, strokeDashoffset: LEN["fr01-faster-not-safer-" + k] },
+          { opacity: 1, strokeDashoffset: 0, duration: GRID_DUR, ease: "none" },
+          GRID_START + i * GRID_STAGGER);
+      });
+
+      /* ══ SCENE 2 (1.8–3.8s) — the volume line climbs, "Faster." lands ══ */
+      add("#fr01-faster-not-safer-vol",
+        dashFrom("fr01-faster-not-safer-vol"),
+        { strokeDashoffset: 0, duration: VOL_DUR, ease: "power2.out" },
+        VOL_START);
+
+      add("#fr01-faster-not-safer-dotv",
+        { scale: 0, opacity: 0 },
+        { scale: 1, opacity: 1, duration: DOT_DUR, ease: "back.out(2.2)" },
+        DOTV_START);
+
+      /* ── dynamic-content-sequencing · per-word reveal ────────────────
+         Absolute start/end computed ONCE from word length + per-word config;
+         nothing is recomputed per frame. */
+      var WORD_BASE = 0.14, SEC_PER_CHAR = 0.030, WORD_REVEAL_DUR = 0.92;
+      var HEAD_CONTENT = [
+        { id: "fr01-faster-not-safer-w0", text: "Faster.", anchor: 2.08 },  /* Scene 2 */
+        { id: "fr01-faster-not-safer-w1", text: "Not",     anchor: 3.96 },  /* Scene 3 */
+        { id: "fr01-faster-not-safer-w2", text: "safer.",  anchor: null }
+      ];
+      var cursor = 0;
+      var HEAD_TIMELINE = HEAD_CONTENT.map(function (entry) {
+        var start = (entry.anchor === null) ? cursor : entry.anchor;
+        var dur = WORD_BASE + entry.text.length * SEC_PER_CHAR;
+        cursor = start + dur;
+        return { id: entry.id, start: start, end: cursor };
+      });
+
+      HEAD_TIMELINE.forEach(function (entry) {
+        add("#" + entry.id,
+          { yPercent: 118, opacity: 0 },
+          { yPercent: 0, opacity: 1, duration: WORD_REVEAL_DUR, ease: "power4.out" },
+          entry.start);
+      });
+
+      /* ══ SCENE 3 (3.8–5.4s) — review capacity draws flat and level ══ */
+      add("#fr01-faster-not-safer-cap",
+        dashFrom("fr01-faster-not-safer-cap"),
+        { strokeDashoffset: 0, duration: CAP_DUR, ease: "power2.out" },
+        CAP_START);
+
+      add("#fr01-faster-not-safer-dotc",
+        { scale: 0, opacity: 0 },
+        { scale: 1, opacity: 1, duration: DOT_DUR, ease: "back.out(2.0)" },
+        DOTC_START);
+
+      add("#fr01-faster-not-safer-legcap",
+        { opacity: 0, y: 14 },
+        { opacity: 1, y: 0, duration: LEG_DUR, ease: "power3.out" },
+        LEGCAP_START);
+
+      /* ══ SCENE 4 (5.4–6.421s) — the wedge washes cobalt and holds ══ */
+      /* ambient-glow-bloom, Form A / bloom-and-hold (scene < 3s → no breathe) */
+      add("#fr01-faster-not-safer-glow",
+        { opacity: 0, scale: GLOW_START_SCALE },
+        { opacity: GLOW_PEAK_OPACITY, scale: 1, duration: BLOOM_DUR, ease: "power2.out" },
+        BLOOM_START);
+
+      add("#fr01-faster-not-safer-wedge",
+        { opacity: 0 },
+        { opacity: WASH_PEAK_OPACITY, duration: WASH_DUR, ease: "power2.out" },
+        BLOOM_START);
+
+      add("#fr01-faster-not-safer-callout",
+        { opacity: 0, x: -22 },
+        { opacity: 1, x: 0, duration: CALLOUT_DUR, ease: "power3.out" },
+        CALLOUT_START);
+
+      /* sine-wave-loop — low-amplitude jitter on the settled chart only.
+         CYCLES = 0.5 so sin() returns to 0 exactly at the last frame: the
+         frame hands off dead still. Frame stays locked — no camera move. */
+      var chart = q("#fr01-faster-not-safer-chart");
+      var IDLE_DUR = TOTAL - IDLE_START;
+      var CYCLES = 0.5;
+      var Y_AMP_PX = 2;
+      var SCALE_AMP = 0.006;
+      var phase = { p: 0 };
+      tl.to(phase, {
+        p: Math.PI * 2 * CYCLES,
+        duration: IDLE_DUR,
+        ease: "none",
+        onUpdate: function () {
+          if (!chart) { return; }
+          var s = Math.sin(phase.p);
+          chart.style.transform =
+            "translateY(" + (s * Y_AMP_PX).toFixed(3) + "px) scale(" +
+            (1 + s * SCALE_AMP).toFixed(5) + ")";
+        }
+      }, IDLE_START);
+
+      tl.seek(0);
+    })();
+  </script>
+</template>
