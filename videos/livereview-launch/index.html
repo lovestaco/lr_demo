@@ -43,7 +43,7 @@
   <body>
     <div data-hf-id="hf-ruvo" id="root" data-composition-id="main" data-start="0" data-duration="150" data-width="1920" data-height="1080">
       <!-- Stage 5: replace src with assets/plate-atc-150.mp4 once rendered -->
-      <video data-hf-id="hf-2ht7" id="plate-atc" class="clip" data-start="0" data-duration="150" data-track-index="0" muted playsinline preload="auto"></video>
+      <video data-hf-id="hf-2ht7" id="plate-atc" class="clip" data-start="0" data-duration="150" data-track-index="0" muted playsinline preload="auto" src="assets/plate-atc-placeholder.mp4"></video>
 
       <div data-hf-id="hf-zwhe" id="el-01-generation-vs-inspection" class="scene" data-composition-id="01-generation-vs-inspection" data-composition-src="compositions/frames/01-generation-vs-inspection.html" data-start="0" data-duration="8" data-track-index="0"></div>
 
@@ -104,6 +104,52 @@
       <!-- BGM -->
       <audio data-hf-id="hf-uydv" id="el-bgm" src="assets/bgm/bed-150.mp3" data-start="0" data-duration="150" data-track-index="11" data-volume="0.9"></audio>
 
+      <!-- ── ATC Overlay 1: Flight strip panel (54–67s, blast radius) ── -->
+      <div id="atc-flight-strips" class="clip" data-start="54" data-duration="13" data-track-index="20000" style="position:absolute;left:8px;top:350px;width:222px;z-index:50;font-family:'Inter',sans-serif;opacity:0;pointer-events:none;">
+        <div style="font-size:10px;font-weight:700;letter-spacing:0.14em;color:#4d7cff;text-transform:uppercase;padding:0 4px 6px;border-bottom:1px solid rgba(77,124,255,0.28)">ACTIVE STRIPS</div>
+        <!-- Hot PR -->
+        <div id="atc-strip-hot" style="margin-top:7px;padding:8px 10px;background:rgba(220,38,38,0.14);border:1px solid rgba(220,38,38,0.55);border-radius:4px;opacity:0;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+            <span style="font-size:11.5px;font-weight:700;color:#f87171;letter-spacing:0.04em;">PR #4471</span>
+            <span style="font-size:9px;font-weight:800;color:#f87171;background:rgba(220,38,38,0.28);padding:1px 6px;border-radius:3px;letter-spacing:0.1em;">HOT</span>
+          </div>
+          <div style="font-size:9px;color:rgba(232,238,255,0.65);line-height:1.45;font-weight:500;">auth/session.go<br>+312 &minus;8 lines</div>
+        </div>
+        <!-- Affected modules (stagger in) -->
+        <div style="margin-top:5px;padding-left:9px;border-left:2px solid rgba(220,38,38,0.35);">
+          <div id="atc-aff-1" style="padding:5px 8px;margin-top:4px;background:rgba(255,255,255,0.04);border:1px solid rgba(232,238,255,0.08);border-radius:3px;opacity:0;">
+            <div style="font-size:9.5px;font-weight:600;color:#4d7cff;">api/routes.go</div>
+            <div style="font-size:8px;color:rgba(232,238,255,0.4);letter-spacing:0.06em;text-transform:uppercase;">Affected</div>
+          </div>
+          <div id="atc-aff-2" style="padding:5px 8px;margin-top:4px;background:rgba(255,255,255,0.04);border:1px solid rgba(232,238,255,0.08);border-radius:3px;opacity:0;">
+            <div style="font-size:9.5px;font-weight:600;color:#4d7cff;">tests/e2e.spec.ts</div>
+            <div style="font-size:8px;color:rgba(232,238,255,0.4);letter-spacing:0.06em;text-transform:uppercase;">Affected</div>
+          </div>
+          <div id="atc-aff-3" style="padding:5px 8px;margin-top:4px;background:rgba(255,255,255,0.04);border:1px solid rgba(232,238,255,0.08);border-radius:3px;opacity:0;">
+            <div style="font-size:9.5px;font-weight:600;color:#4d7cff;">config/prod.yaml</div>
+            <div style="font-size:8px;color:rgba(232,238,255,0.4);letter-spacing:0.06em;text-transform:uppercase;">Affected</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── ATC Overlay 2: Five-gate clearance rail (88–101s, enforcement) ── -->
+      <div id="atc-gate-rail" class="clip" data-start="88" data-duration="13" data-track-index="21000" style="position:absolute;left:232px;top:338px;width:1456px;height:38px;display:flex;z-index:50;font-family:'Inter',sans-serif;opacity:0;pointer-events:none;">
+        <div id="atc-gate-1" class="atc-gate" data-label="LINT"     style="flex:1;display:flex;align-items:center;justify-content:center;gap:7px;font-size:10.5px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;border-right:1px solid rgba(77,124,255,0.18);background:rgba(0,0,0,0.35);color:rgba(232,238,255,0.3);transition:none;"><span class="gate-dot" style="width:7px;height:7px;border-radius:50%;background:rgba(232,238,255,0.15);display:inline-block;flex-shrink:0;"></span>LINT</div>
+        <div id="atc-gate-2" class="atc-gate" data-label="UNIT"     style="flex:1;display:flex;align-items:center;justify-content:center;gap:7px;font-size:10.5px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;border-right:1px solid rgba(77,124,255,0.18);background:rgba(0,0,0,0.35);color:rgba(232,238,255,0.3);transition:none;"><span class="gate-dot" style="width:7px;height:7px;border-radius:50%;background:rgba(232,238,255,0.15);display:inline-block;flex-shrink:0;"></span>UNIT</div>
+        <div id="atc-gate-3" class="atc-gate" data-label="COVERAGE" style="flex:1;display:flex;align-items:center;justify-content:center;gap:7px;font-size:10.5px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;border-right:1px solid rgba(77,124,255,0.18);background:rgba(0,0,0,0.35);color:rgba(232,238,255,0.3);transition:none;"><span class="gate-dot" style="width:7px;height:7px;border-radius:50%;background:rgba(232,238,255,0.15);display:inline-block;flex-shrink:0;"></span>COVERAGE</div>
+        <div id="atc-gate-4" class="atc-gate" data-label="SECURITY" style="flex:1;display:flex;align-items:center;justify-content:center;gap:7px;font-size:10.5px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;border-right:1px solid rgba(77,124,255,0.18);background:rgba(0,0,0,0.35);color:rgba(232,238,255,0.3);transition:none;"><span class="gate-dot" style="width:7px;height:7px;border-radius:50%;background:rgba(232,238,255,0.15);display:inline-block;flex-shrink:0;"></span>SECURITY</div>
+        <div id="atc-gate-5" class="atc-gate" data-label="DEPLOY"   style="flex:1;display:flex;align-items:center;justify-content:center;gap:7px;font-size:10.5px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;background:rgba(0,0,0,0.35);color:rgba(232,238,255,0.3);transition:none;"><span class="gate-dot" style="width:7px;height:7px;border-radius:50%;background:rgba(232,238,255,0.15);display:inline-block;flex-shrink:0;"></span>DEPLOY</div>
+      </div>
+
+      <!-- ── ATC Overlay 3: Model feed selector (105.5–113s, control) ── -->
+      <div id="atc-model-feed" class="clip" data-start="105.5" data-duration="7.5" data-track-index="22000" style="position:absolute;right:36px;bottom:36px;width:198px;z-index:50;font-family:'Inter',sans-serif;opacity:0;pointer-events:none;">
+        <div style="font-size:9.5px;font-weight:700;letter-spacing:0.14em;color:#4d7cff;text-transform:uppercase;padding:0 2px 6px;border-bottom:1px solid rgba(77,124,255,0.28);margin-bottom:7px;">FEED SOURCE</div>
+        <div id="atc-model-claude"   class="atc-model-row" style="display:flex;align-items:center;gap:9px;padding:6px 8px;border-radius:5px;background:rgba(29,86,240,0.18);border:1px solid rgba(77,124,255,0.6);margin-bottom:4px;"><img src="assets/brand-claude.svg"    width="18" height="18" style="opacity:1;flex-shrink:0;"><span style="font-size:10.5px;font-weight:700;color:#e8eeff;letter-spacing:0.04em;">Claude</span><span style="margin-left:auto;font-size:8px;font-weight:800;color:#4d7cff;letter-spacing:0.1em;text-transform:uppercase;">ACTIVE</span></div>
+        <div id="atc-model-openai"   class="atc-model-row" style="display:flex;align-items:center;gap:9px;padding:6px 8px;border-radius:5px;background:transparent;border:1px solid rgba(232,238,255,0.08);margin-bottom:4px;opacity:0.45;"><img src="assets/brand-openai.svg"   width="18" height="18" style="opacity:0.5;flex-shrink:0;filter:brightness(0.6);"><span style="font-size:10.5px;font-weight:500;color:rgba(232,238,255,0.55);letter-spacing:0.04em;">GPT-4o</span></div>
+        <div id="atc-model-gemini"   class="atc-model-row" style="display:flex;align-items:center;gap:9px;padding:6px 8px;border-radius:5px;background:transparent;border:1px solid rgba(232,238,255,0.08);margin-bottom:4px;opacity:0.45;"><img src="assets/brand-gemini.svg"   width="18" height="18" style="opacity:0.5;flex-shrink:0;filter:brightness(0.6);"><span style="font-size:10.5px;font-weight:500;color:rgba(232,238,255,0.55);letter-spacing:0.04em;">Gemini</span></div>
+        <div id="atc-model-deepseek" class="atc-model-row" style="display:flex;align-items:center;gap:9px;padding:6px 8px;border-radius:5px;background:transparent;border:1px solid rgba(232,238,255,0.08);opacity:0.45;"><img src="assets/brand-deepseek.svg" width="18" height="18" style="opacity:0.5;flex-shrink:0;filter:brightness(0.6);"><span style="font-size:10.5px;font-weight:500;color:rgba(232,238,255,0.55);letter-spacing:0.04em;">DeepSeek</span></div>
+      </div>
+
     </div>
 
     <script>
@@ -120,6 +166,33 @@
         tl.to("#el-20-four-checks", { opacity: 0, duration: 0.5, ease: "power2.inOut" }, 145);
         tl.fromTo("#el-21-cta", { opacity: 0 }, { opacity: 1, duration: 0.5, ease: "power2.inOut" }, 145);
         tl.to({}, { duration: 150 }, 0); // full-span anchor — main.duration() == composition total (Studio master duration)
+
+        // ── ATC Overlay animations ──────────────────────────────────────────
+        // Flight strip panel (54–67s)
+        tl.fromTo("#atc-flight-strips", { opacity: 0, x: -12 }, { opacity: 1, x: 0, duration: 0.5, ease: "power2.out" }, 54);
+        tl.to("#atc-strip-hot",         { opacity: 1, duration: 0.3, ease: "power2.out" }, 54.3);
+        tl.to("#atc-aff-1",             { opacity: 1, duration: 0.25, ease: "power2.out" }, 56.0);
+        tl.to("#atc-aff-2",             { opacity: 1, duration: 0.25, ease: "power2.out" }, 56.5);
+        tl.to("#atc-aff-3",             { opacity: 1, duration: 0.25, ease: "power2.out" }, 57.0);
+        tl.to("#atc-flight-strips",     { opacity: 0, duration: 0.4, ease: "power2.in"  }, 66.6);
+
+        // Gate clearance rail (88–101s) — gates light up one by one
+        tl.fromTo("#atc-gate-rail", { opacity: 0 }, { opacity: 1, duration: 0.4, ease: "power2.out" }, 88.5);
+        tl.to("#atc-gate-1 .gate-dot", { background: "#10b981", duration: 0.2 }, 89.5);
+        tl.to("#atc-gate-1",           { color: "#e8eeff", background: "rgba(5,150,105,0.12)", duration: 0.2 }, 89.5);
+        tl.to("#atc-gate-2 .gate-dot", { background: "#10b981", duration: 0.2 }, 90.8);
+        tl.to("#atc-gate-2",           { color: "#e8eeff", background: "rgba(5,150,105,0.12)", duration: 0.2 }, 90.8);
+        tl.to("#atc-gate-3 .gate-dot", { background: "#10b981", duration: 0.2 }, 92.1);
+        tl.to("#atc-gate-3",           { color: "#e8eeff", background: "rgba(5,150,105,0.12)", duration: 0.2 }, 92.1);
+        tl.to("#atc-gate-4 .gate-dot", { background: "#10b981", duration: 0.2 }, 93.5);
+        tl.to("#atc-gate-4",           { color: "#e8eeff", background: "rgba(5,150,105,0.12)", duration: 0.2 }, 93.5);
+        tl.to("#atc-gate-5 .gate-dot", { background: "#10b981", duration: 0.2 }, 95.0);
+        tl.to("#atc-gate-5",           { color: "#e8eeff", background: "rgba(5,150,105,0.12)", duration: 0.2 }, 95.0);
+        tl.to("#atc-gate-rail",        { opacity: 0, duration: 0.4, ease: "power2.in"  }, 100.6);
+
+        // Model feed selector (105.5–113s)
+        tl.fromTo("#atc-model-feed", { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.5, ease: "power2.out" }, 105.5);
+        tl.to("#atc-model-feed",     { opacity: 0, duration: 0.4, ease: "power2.in"  }, 112.6);
       })();
     </script>
   </body>
