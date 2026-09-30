@@ -1,0 +1,285 @@
+<template>
+  <style>
+    @font-face {
+      font-family: "Inter";
+      src: url("assets/fonts/Inter-var.woff2") format("woff2");
+      font-weight: 100 900;
+      font-style: normal;
+    }
+    #root {
+      position: absolute;
+      inset: 0;
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+      font-family: "Inter", sans-serif;
+      color: #05070b;
+    }
+
+    /* ---- full-bleed ground (clip layer, never on #root) ---- */
+    [id="21-cta-bg"] {
+      position: absolute;
+      inset: 0;
+      background: #ffffff;
+    }
+
+    [id="21-cta-stage"] {
+      position: absolute;
+      inset: 0;
+    }
+
+    /* ---- atmosphere: concentric closing rings (frame.md: closing frames only) ---- */
+    [id="21-cta-ring-inner"],
+    [id="21-cta-ring-outer"] {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      border-radius: 50%;
+      border: 1.5px solid rgba(29, 86, 240, 0.2);
+    }
+    [id="21-cta-ring-inner"] {
+      width: 1152px;
+      height: 1152px;
+      margin-left: -576px;
+      margin-top: -576px;
+    }
+    [id="21-cta-ring-outer"] {
+      width: 1613px;
+      height: 1613px;
+      margin-left: -806.5px;
+      margin-top: -806.5px;
+    }
+
+    /* ---- HANDOFF IN: the four checked 2x2 cells, exact Frame 20 geometry ---- */
+    [id="21-cta-c1"],
+    [id="21-cta-c2"],
+    [id="21-cta-c3"],
+    [id="21-cta-c4"] {
+      position: absolute;
+      width: 588px;
+      height: 268px;
+      box-sizing: border-box;
+      padding: 28px 34px;
+      border: 1.5px solid rgba(5, 150, 105, 0.38);
+      border-radius: 14px;
+      background: rgba(5, 150, 105, 0.05);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+    }
+    [id="21-cta-c1"] { left: 360px; top: 300px; }
+    [id="21-cta-c2"] { left: 972px; top: 300px; }
+    [id="21-cta-c3"] { left: 360px; top: 592px; }
+    [id="21-cta-c4"] { left: 972px; top: 592px; }
+
+    .f21cta-cell-label {
+      font-size: 27px;
+      font-weight: 600;
+      line-height: 1.3;
+      letter-spacing: -0.01em;
+      color: #05070b;
+    }
+    .f21cta-check {
+      flex: 0 0 auto;
+      width: 52px;
+      height: 52px;
+      display: block;
+    }
+
+    /* ---- the lockup: mark + wordmark + URL pill, centered in the top-83% band ---- */
+    [id="21-cta-lockup"] {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 126px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+
+    [id="21-cta-mark"] {
+      width: 500px;
+      height: 500px;
+      display: block;
+      overflow: visible;
+    }
+
+    [id="21-cta-wordmark"] {
+      margin-top: 22px;
+      height: 88px;
+      font-size: 80.64px;
+      font-weight: 700;
+      line-height: 1.08;
+      letter-spacing: -0.02em;
+      color: #05070b;
+      overflow: hidden;
+      white-space: nowrap;
+    }
+    [id="21-cta-wordmark"] span {
+      display: inline-block;
+    }
+
+    /* the one solid cobalt CTA pill (frame.md cta-button) */
+    [id="21-cta-url"] {
+      margin-top: 34px;
+      display: inline-block;
+      background: #1d56f0;
+      color: #ffffff;
+      border-radius: 100px;
+      padding: 20px 56px;
+      font-size: 49.92px;
+      font-weight: 600;
+      line-height: 1.2;
+      letter-spacing: 0;
+      white-space: nowrap;
+    }
+    [id="21-cta-url"] span {
+      display: inline-block;
+    }
+
+    /* ---- persistent progress strip: completes to 100% on the final frame ---- */
+    [id="21-cta-progress"] {
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      height: 3px;
+      width: 96.7%;
+      background: #1d56f0;
+    }
+  </style>
+
+  <div data-hf-id="hf-27ww" id="root" data-composition-id="21-cta" data-width="1920" data-height="1080" data-duration="5">
+    <div data-hf-id="hf-srmt" id="21-cta-bg" class="clip" data-start="0" data-duration="5" data-track-index="0"></div>
+
+    <div data-hf-id="hf-54hz" id="21-cta-stage" class="clip" data-start="0" data-duration="5" data-track-index="1">
+      <div data-hf-id="hf-hsz4" id="21-cta-ring-outer"></div>
+      <div data-hf-id="hf-6b7d" id="21-cta-ring-inner"></div>
+
+      <!-- handoff from frame 20: four checked cells, opacity 1, scale 1, motionless at t=0 -->
+      <div data-hf-id="hf-87mc" id="21-cta-c1">
+        <div data-hf-id="hf-qbnb" class="f21cta-cell-label">The attention problem</div>
+        <svg data-hf-id="hf-2chg" class="f21cta-check" viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle data-hf-id="hf-0zou" cx="26" cy="26" r="24" fill="rgba(5,150,105,0.12)" stroke="#059669" stroke-width="2" />
+          <path data-hf-id="hf-21ei" d="M15 27 L23 35 L37 19" stroke="#059669" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+      </div>
+      <div data-hf-id="hf-j33z" id="21-cta-c2">
+        <div data-hf-id="hf-i1sr" class="f21cta-cell-label">The understanding problem</div>
+        <svg data-hf-id="hf-myfg" class="f21cta-check" viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle data-hf-id="hf-vwdu" cx="26" cy="26" r="24" fill="rgba(5,150,105,0.12)" stroke="#059669" stroke-width="2" />
+          <path data-hf-id="hf-6h8e" d="M15 27 L23 35 L37 19" stroke="#059669" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+      </div>
+      <div data-hf-id="hf-f4zy" id="21-cta-c3">
+        <div data-hf-id="hf-35dn" class="f21cta-cell-label">The enforcement problem</div>
+        <svg data-hf-id="hf-lrid" class="f21cta-check" viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle data-hf-id="hf-waov" cx="26" cy="26" r="24" fill="rgba(5,150,105,0.12)" stroke="#059669" stroke-width="2" />
+          <path data-hf-id="hf-6vjf" d="M15 27 L23 35 L37 19" stroke="#059669" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+      </div>
+      <div data-hf-id="hf-nsvt" id="21-cta-c4">
+        <div data-hf-id="hf-r811" class="f21cta-cell-label">The control and improve problem</div>
+        <svg data-hf-id="hf-m5te" class="f21cta-check" viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle data-hf-id="hf-wozw" cx="26" cy="26" r="24" fill="rgba(5,150,105,0.12)" stroke="#059669" stroke-width="2" />
+          <path data-hf-id="hf-79ug" d="M15 27 L23 35 L37 19" stroke="#059669" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+      </div>
+
+      <div data-hf-id="hf-v5j6" id="21-cta-lockup">
+        <!-- assets/logo.svg, inlined verbatim so the mark can settle as its own element -->
+        <svg data-hf-id="hf-2niu" id="21-cta-mark" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="LiveReview">
+          <circle data-hf-id="hf-6pfy" cx="256" cy="256" r="240" fill="#1E429F" opacity="0.2" />
+          <circle data-hf-id="hf-491n" cx="256" cy="256" r="200" fill="#111827" />
+          <circle data-hf-id="hf-o5go" cx="256" cy="256" r="200" stroke="#3B82F6" stroke-width="16" />
+          <circle data-hf-id="hf-3oyb" cx="256" cy="256" r="100" fill="#60A5FA" />
+          <circle data-hf-id="hf-6oo5" cx="256" cy="256" r="50" fill="#1E40AF" />
+          <path data-hf-id="hf-qwxm" d="M235 220C235 228.284 228.284 235 220 235C211.716 235 205 228.284 205 220C205 211.716 211.716 205 220 205C228.284 205 235 211.716 235 220Z" fill="white" opacity="0.8" />
+          <circle data-hf-id="hf-4cmk" cx="256" cy="256" r="220" stroke="#93C5FD" stroke-width="4" opacity="0.6" />
+        </svg>
+
+        <div data-hf-id="hf-l3pr" id="21-cta-wordmark"><span data-hf-id="hf-hm6v">L</span><span data-hf-id="hf-wbiw">i</span><span data-hf-id="hf-qcxh">v</span><span data-hf-id="hf-xwr0">e</span><span data-hf-id="hf-f8cp">R</span><span data-hf-id="hf-pn38">e</span><span data-hf-id="hf-jrc9">v</span><span data-hf-id="hf-gecw">i</span><span data-hf-id="hf-og65">e</span><span data-hf-id="hf-qr8i">w</span></div>
+
+        <div data-hf-id="hf-wzen" id="21-cta-url"><span data-hf-id="hf-vx7v">h</span><span data-hf-id="hf-ouh6">e</span><span data-hf-id="hf-pkbf">x</span><span data-hf-id="hf-uqas">m</span><span data-hf-id="hf-txoq">o</span><span data-hf-id="hf-scgm">s</span><span data-hf-id="hf-iyzh">.</span><span data-hf-id="hf-ypd2">c</span><span data-hf-id="hf-rzwu">o</span><span data-hf-id="hf-3mn0">m</span><span data-hf-id="hf-jdai">/</span><span data-hf-id="hf-ubzr">l</span><span data-hf-id="hf-f7ft">i</span><span data-hf-id="hf-ky9c">v</span><span data-hf-id="hf-qu0b">e</span><span data-hf-id="hf-ry5l">r</span><span data-hf-id="hf-r8bc">e</span><span data-hf-id="hf-kjyb">v</span><span data-hf-id="hf-flqu">i</span><span data-hf-id="hf-q1e9">e</span><span data-hf-id="hf-kuo6">w</span></div>
+      </div>
+    </div>
+
+    <div data-hf-id="hf-59c5" id="21-cta-progress"></div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+  <script>
+    (function () {
+      var ID = "21-cta";
+      var $ = function (part) { return document.getElementById(ID + "-" + part); };
+
+      var ringInner = $("ring-inner");
+      var ringOuter = $("ring-outer");
+      var mark = $("mark");
+      var wordLetters = Array.prototype.slice.call($("wordmark").querySelectorAll("span"));
+      var urlPill = $("url");
+      var urlChars = Array.prototype.slice.call(urlPill.querySelectorAll("span"));
+      var progress = $("progress");
+
+      // The four handed-off cells, each with its outward vector from the grid centre (960, 580).
+      var cells = [
+        { el: $("c1"), dx: -306, dy: -146 },
+        { el: $("c2"), dx: 306, dy: -146 },
+        { el: $("c3"), dx: -306, dy: 146 },
+        { el: $("c4"), dx: 306, dy: 146 }
+      ];
+
+      var tl = gsap.timeline({ paused: true });
+
+      // ---- Scene 1 (0.0-1.2s): the checked grid clears outward; the mark settles at centre ----
+      // center-outward-expansion run OUTWARD: one shared centre, each cell driven along its own
+      // radial vector (x1.55), scaling down and fading as it goes. Staggered, all gone by ~1.05s.
+      cells.forEach(function (c, i) {
+        tl.fromTo(c.el,
+          { x: 0, y: 0, scale: 1, opacity: 1 },
+          {
+            x: c.dx * 0.55,
+            y: c.dy * 0.55,
+            scale: 0.72,
+            opacity: 0,
+            duration: 0.8,
+            ease: "power2.in"
+          }, 0.05 + i * 0.06);
+      });
+
+      // the mark is ALREADY at centre at t=0 (crossfade in from frame 20) and settles into place
+      tl.fromTo(mark,
+        { opacity: 0.5, scale: 0.92 },
+        { opacity: 1, scale: 1, duration: 1.0, ease: "power2.out" }, 0);
+
+      // closing-ring atmosphere eases open behind the lockup and is at rest well before the hold
+      tl.fromTo(ringInner, { opacity: 0 }, { opacity: 1, duration: 1.0, ease: "power1.out" }, 0.1);
+      tl.fromTo(ringOuter, { opacity: 0 }, { opacity: 0.6, duration: 1.0, ease: "power1.out" }, 0.2);
+      tl.fromTo(ringInner, { scale: 0.94 }, { scale: 1, duration: 2.15, ease: "power2.out" }, 0.1);
+      tl.fromTo(ringOuter, { scale: 0.94 }, { scale: 1, duration: 2.05, ease: "power2.out" }, 0.2);
+
+      // cue 1 - "LiveReview" wordmark rises under the mark to complete the lockup
+      tl.fromTo(wordLetters,
+        { yPercent: 110 },
+        { yPercent: 0, duration: 0.42, ease: "power3.out", stagger: 0.03 }, 0.8);
+
+      // ---- Scene 2 (1.2-2.4s): cue 2 - the cobalt URL pill, typed letter by letter ----
+      tl.fromTo(urlPill,
+        { opacity: 0, scale: 0.9, y: 14 },
+        { opacity: 1, scale: 1, y: 0, duration: 0.5, ease: "power3.out" }, 1.3);
+      tl.fromTo(urlChars,
+        { opacity: 0, y: 8 },
+        { opacity: 1, y: 0, duration: 0.28, ease: "power2.out", stagger: 0.028 }, 1.55);
+
+      // the progress strip completes to 100% and comes to rest as the URL lands
+      tl.fromTo(progress, { width: "96.7%" }, { width: "100%", duration: 2.4, ease: "none" }, 0);
+
+      // ---- Scene 3 (2.4-5.0s): total stillness. Nothing tweens past 2.4s - 2.6s of dead hold,
+      // long enough to read and type the URL. (The music bed fades beneath it at the root.)
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines[ID] = tl;
+    })();
+  </script>
+</template>

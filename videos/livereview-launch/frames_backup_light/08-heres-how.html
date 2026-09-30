@@ -1,0 +1,212 @@
+<template>
+  <style>
+    @font-face {
+      font-family: "Inter";
+      src: url("assets/fonts/Inter-var.woff2") format("woff2");
+      font-weight: 100 900;
+      font-style: normal;
+      font-display: block;
+    }
+    #root {
+      position: absolute;
+      inset: 0;
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+      font-family: "Inter", sans-serif;
+      color: #05070b;
+    }
+    /* full-bleed ground */
+    [id="08-heres-how-bg"] {
+      position: absolute;
+      inset: 0;
+      background: #ffffff;
+    }
+
+    /* ---- inherited 2x2 grid (handoff from frame 07, literal geometry) ----
+       outer box 360,300 1200x560 · cells 588x268 at 360,300 / 972,300 / 360,592 / 972,592
+       the whole group collapses toward the convergence point 960,496            */
+    [id="08-heres-how-grid"] {
+      position: absolute;
+      inset: 0;
+      transform-origin: 960px 496px;
+    }
+    [id="08-heres-how-box"] {
+      position: absolute;
+      left: 360px;
+      top: 300px;
+      width: 1200px;
+      height: 560px;
+      box-sizing: border-box;
+      border: 1.5px solid rgba(29, 86, 240, 0.2);
+      border-radius: 14px;
+    }
+    [class~="08-heres-how-cell"] {
+      position: absolute;
+      width: 588px;
+      height: 268px;
+      box-sizing: border-box;
+      padding: 34px 40px;
+      background: rgba(29, 86, 240, 0.04);
+      border: 1.5px solid rgba(29, 86, 240, 0.2);
+      border-radius: 14px;
+    }
+    [id="08-heres-how-c1"] { left: 360px; top: 300px; }
+    [id="08-heres-how-c2"] { left: 972px; top: 300px; }
+    [id="08-heres-how-c3"] { left: 360px; top: 592px; }
+    [id="08-heres-how-c4"] { left: 972px; top: 592px; }
+    [class~="08-heres-how-cell"] u {
+      display: block;
+      text-decoration: none;
+      font-size: 42px;
+      font-weight: 700;
+      line-height: 1;
+      letter-spacing: -0.02em;
+      color: #1d56f0;
+      font-variant-numeric: tabular-nums;
+    }
+    [class~="08-heres-how-cell"] em {
+      display: block;
+      margin-top: 14px;
+      font-style: normal;
+      font-size: 20px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #1d56f0;
+    }
+    [class~="08-heres-how-cell"] p {
+      margin: 18px 0 0;
+      font-size: 24px;
+      font-weight: 450;
+      line-height: 1.5;
+      color: #1648cf;
+    }
+
+    /* ---- the convergence ring (one-shot energy transfer, not atmosphere) ---- */
+    [id="08-heres-how-ring"] {
+      position: absolute;
+      left: 800px;
+      top: 336px;
+      width: 320px;
+      height: 320px;
+      box-sizing: border-box;
+      border: 2px solid rgba(29, 86, 240, 0.35);
+      border-radius: 50%;
+      transform-origin: 50% 50%;
+    }
+
+    /* ---- the mark: 440px = ~23% of frame width, centred on the convergence point ---- */
+    [id="08-heres-how-mark"] {
+      position: absolute;
+      left: 740px;
+      top: 276px;
+      width: 440px;
+      height: 440px;
+      transform-origin: 50% 50%;
+    }
+
+    /* ---- the line, beneath the mark ---- */
+    [id="08-heres-how-line"] {
+      position: absolute;
+      left: 96px;
+      right: 96px;
+      top: 762px;
+      text-align: center;
+      font-size: 44px;
+      font-weight: 600;
+      line-height: 1.25;
+      letter-spacing: -0.02em;
+      color: #05070b;
+      white-space: nowrap;
+    }
+    [id="08-heres-how-line"] span {
+      display: inline-block;
+    }
+    [id="08-heres-how-hot"] {
+      color: #1d56f0;
+      font-weight: 700;
+    }
+
+    [id="08-heres-how-progress"] {
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      height: 3px;
+      width: 31.3%;
+      background: #1d56f0;
+    }
+  </style>
+
+  <div data-hf-id="hf-ro39" id="root" data-composition-id="08-heres-how" data-width="1920" data-height="1080" data-duration="3">
+    <div data-hf-id="hf-pm4s" id="08-heres-how-bg" class="clip" data-start="0" data-duration="3" data-track-index="0"></div>
+
+    <div data-hf-id="hf-al9v" id="08-heres-how-grid">
+      <div data-hf-id="hf-tgc6" id="08-heres-how-box"></div>
+      <div data-hf-id="hf-tmmq" id="08-heres-how-c1" class="08-heres-how-cell">
+        <u data-hf-id="hf-0jxc">#1</u><em data-hf-id="hf-1kcb">Attention</em>
+        <p data-hf-id="hf-t0ad">Which changes deserve your engineers' scarce attention?</p>
+      </div>
+      <div data-hf-id="hf-poip" id="08-heres-how-c2" class="08-heres-how-cell">
+        <u data-hf-id="hf-zd09">#2</u><em data-hf-id="hf-75xv">Understanding</em>
+        <p data-hf-id="hf-y9cy">How can your engineers maintain intellectual control of the system?</p>
+      </div>
+      <div data-hf-id="hf-owuw" id="08-heres-how-c3" class="08-heres-how-cell">
+        <u data-hf-id="hf-zrba">#3</u><em data-hf-id="hf-9cu7">Enforcement</em>
+        <p data-hf-id="hf-bngo">How do you make good review happen every time without slowing the team down?</p>
+      </div>
+      <div data-hf-id="hf-kyqv" id="08-heres-how-c4" class="08-heres-how-cell">
+        <u data-hf-id="hf-yke7">#4</u><em data-hf-id="hf-5ye9">Control and improve</em>
+        <p data-hf-id="hf-rktc">How to own your IP, your code, your data and your model interactions?</p>
+      </div>
+    </div>
+
+    <div data-hf-id="hf-7zxt" id="08-heres-how-ring"></div>
+    <img data-hf-id="hf-63x6" id="08-heres-how-mark" src="assets/logo.svg" alt="">
+
+    <div data-hf-id="hf-zpdx" id="08-heres-how-line"><span data-hf-id="hf-yxax">Here's</span> <span data-hf-id="hf-tebf" id="08-heres-how-hot">HOW</span> <span data-hf-id="hf-w24r">LiveReview</span> <span data-hf-id="hf-sftx">solves</span> <span data-hf-id="hf-9yqf">them</span> <span data-hf-id="hf-kmhy">all:</span></div>
+
+    <div data-hf-id="hf-vk6a" id="08-heres-how-progress"></div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+  <script>
+    (function () {
+      var ID = "08-heres-how";
+      var $ = function (s) { return document.getElementById(ID + "-" + s); };
+      var grid = $("grid");
+      var cells = grid.querySelectorAll('[class~="08-heres-how-cell"]');
+      var cellText = grid.querySelectorAll('[class~="08-heres-how-cell"] u, [class~="08-heres-how-cell"] em, [class~="08-heres-how-cell"] p');
+      var words = $("line").querySelectorAll("span");
+      var tl = gsap.timeline({ paused: true });
+
+      // Persistent chrome: progress strip 31.3% -> 33.3% across the full 3s.
+      tl.fromTo($("progress"), { width: "31.3%" }, { width: "33.3%", duration: 3, ease: "none" }, 0);
+
+      // ---- Scene 1 (0.0-1.0s): the handoff grid is on stage at opacity 1 / scale 1 and is the
+      // first thing that moves. One heavy ease carries the whole group down and inward onto the
+      // convergence point (960,496); the copy goes first, the borders dissolve last.
+      tl.fromTo(grid, { scale: 1 }, { scale: 0.05, duration: 0.9, ease: "power3.in" }, 0.04);
+      tl.fromTo(cellText, { opacity: 1 }, { opacity: 0, duration: 0.3, ease: "power1.in", stagger: 0.035 }, 0.06);
+      tl.fromTo(cells, { opacity: 1 }, { opacity: 0, duration: 0.46, ease: "power2.in", stagger: 0.03 }, 0.46);
+      tl.fromTo($("box"), { opacity: 1 }, { opacity: 0, duration: 0.46, ease: "power2.in" }, 0.5);
+      tl.set(grid, { opacity: 0 }, 1.0);
+
+      // ---- Scene 2 (1.0-1.8s): the energy lands. A single ring pushes out of the convergence
+      // point and the mark spring-blooms from zero, smooth long-tail settle, no overshoot.
+      tl.set($("ring"), { opacity: 0 }, 0);
+      tl.fromTo($("ring"), { scale: 0.12, opacity: 0.6 },
+        { scale: 2.3, opacity: 0, duration: 0.8, ease: "power2.out" }, 0.94);
+      tl.fromTo($("mark"), { scale: 0, opacity: 0, rotation: -8 },
+        { scale: 1, opacity: 1, rotation: 0, duration: 0.74, ease: "power3.out" }, 0.98);
+
+      // ---- Scene 3 (1.8-3.0s): the line reveals word by word beneath the mark, then the frame
+      // holds dead still. This is the turn -- the stillness is the point.
+      tl.fromTo(words, { opacity: 0, y: 18, filter: "blur(6px)" },
+        { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.45, ease: "power3.out", stagger: 0.105 }, 1.82);
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines[ID] = tl;
+    })();
+  </script>
+</template>

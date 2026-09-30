@@ -1,0 +1,231 @@
+<template>
+  <style>
+    @font-face {
+      font-family: "Inter";
+      src: url("assets/fonts/Inter-var.woff2") format("woff2");
+      font-weight: 100 900;
+      font-style: normal;
+    }
+    #root {
+      position: absolute;
+      inset: 0;
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+      font-family: "Inter", sans-serif;
+      color: #05070b;
+    }
+    [id="20-four-checks-bg"] {
+      position: absolute;
+      inset: 0;
+      background: #ffffff;
+    }
+
+    /* ---- lead band (eyebrow slot above the grid — Frame 7 positions) ---- */
+    [id="20-four-checks-rule"] {
+      position: absolute;
+      left: 360px;
+      top: 176px;
+      width: 60px;
+      height: 4px;
+      border-radius: 2px;
+      background: #1d56f0;
+      transform-origin: 0% 50%;
+    }
+    [id="20-four-checks-lead"] {
+      position: absolute;
+      left: 360px;
+      top: 206px;
+      width: 1200px;
+      font-size: 42px;
+      font-weight: 600;
+      line-height: 1.15;
+      letter-spacing: -0.02em;
+      color: #05070b;
+      white-space: nowrap;
+    }
+
+    /* ---- THE MOTIF (rebuilt from Frame 7): outer box 360,300 1200x560 ---- */
+    [id="20-four-checks-box"] {
+      position: absolute;
+      left: 360px;
+      top: 300px;
+      width: 1200px;
+      height: 560px;
+      box-sizing: border-box;
+      border: 1.5px solid rgba(29, 86, 240, 0.2);
+      border-radius: 14px;
+    }
+
+    /* ---- four cells 588x268 at 360,300 / 972,300 / 360,592 / 972,592 ---- */
+    [id="20-four-checks-c1"],
+    [id="20-four-checks-c2"],
+    [id="20-four-checks-c3"],
+    [id="20-four-checks-c4"] {
+      position: absolute;
+      width: 588px;
+      height: 268px;
+      box-sizing: border-box;
+      padding: 28px 34px;
+      border: 1.5px solid rgba(29, 86, 240, 0.2);
+      border-radius: 14px;
+      background: rgba(29, 86, 240, 0.04);
+    }
+    [id="20-four-checks-c1"] { left: 360px; top: 300px; }
+    [id="20-four-checks-c2"] { left: 972px; top: 300px; }
+    [id="20-four-checks-c3"] { left: 360px; top: 592px; }
+    [id="20-four-checks-c4"] { left: 972px; top: 592px; }
+
+    .f20fc-num {
+      display: block;
+      font-size: 52px;
+      font-weight: 700;
+      line-height: 1;
+      letter-spacing: -0.02em;
+      color: #1d56f0;
+      font-variant-numeric: tabular-nums;
+    }
+    .f20fc-label {
+      display: block;
+      margin-top: 22px;
+      width: 430px;
+      font-size: 32px;
+      font-weight: 600;
+      line-height: 1.3;
+      letter-spacing: -0.02em;
+      color: #909090;
+    }
+    .f20fc-check {
+      position: absolute;
+      right: 30px;
+      top: 96px;
+      width: 76px;
+      height: 76px;
+    }
+    .f20fc-check svg {
+      display: block;
+      width: 76px;
+      height: 76px;
+    }
+
+    [id="20-four-checks-progress"] {
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      height: 3px;
+      width: 91.7%;
+      background: #1d56f0;
+    }
+  </style>
+
+  <div data-hf-id="hf-neu8" id="root" data-composition-id="20-four-checks" data-width="1920" data-height="1080" data-duration="8">
+    <div data-hf-id="hf-ijph" id="20-four-checks-bg" class="clip" data-start="0" data-duration="8" data-track-index="0"></div>
+
+    <div data-hf-id="hf-uwgp" id="20-four-checks-rule"></div>
+    <div data-hf-id="hf-l13t" id="20-four-checks-lead">Here’s what LiveReview solves:</div>
+
+    <div data-hf-id="hf-t8am" id="20-four-checks-box"></div>
+
+    <div data-hf-id="hf-xi6b" id="20-four-checks-c1">
+      <span data-hf-id="hf-nmzx" class="f20fc-num">#1</span>
+      <span data-hf-id="hf-t5rk" class="f20fc-label" id="20-four-checks-l1">The attention problem</span>
+      <div data-hf-id="hf-e6r4" class="f20fc-check" id="20-four-checks-k1">
+        <svg data-hf-id="hf-g12e" viewBox="0 0 76 76" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path data-hf-id="hf-0y3n" d="M16 40.5 L31 55 L60 22" stroke="#059669" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+      </div>
+    </div>
+
+    <div data-hf-id="hf-ouag" id="20-four-checks-c2">
+      <span data-hf-id="hf-otx0" class="f20fc-num">#2</span>
+      <span data-hf-id="hf-qqkl" class="f20fc-label" id="20-four-checks-l2">The understanding problem</span>
+      <div data-hf-id="hf-p28r" class="f20fc-check" id="20-four-checks-k2">
+        <svg data-hf-id="hf-38x6" viewBox="0 0 76 76" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path data-hf-id="hf-ixlv" d="M16 40.5 L31 55 L60 22" stroke="#059669" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+      </div>
+    </div>
+
+    <div data-hf-id="hf-ply9" id="20-four-checks-c3">
+      <span data-hf-id="hf-oflz" class="f20fc-num">#3</span>
+      <span data-hf-id="hf-vaeq" class="f20fc-label" id="20-four-checks-l3">The enforcement problem</span>
+      <div data-hf-id="hf-l44q" class="f20fc-check" id="20-four-checks-k3">
+        <svg data-hf-id="hf-3n87" viewBox="0 0 76 76" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path data-hf-id="hf-ijau" d="M16 40.5 L31 55 L60 22" stroke="#059669" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+      </div>
+    </div>
+
+    <div data-hf-id="hf-gy2e" id="20-four-checks-c4">
+      <span data-hf-id="hf-pmj2" class="f20fc-num">#4</span>
+      <span data-hf-id="hf-sjr9" class="f20fc-label" id="20-four-checks-l4">The control and improve problem</span>
+      <div data-hf-id="hf-2cf1" class="f20fc-check" id="20-four-checks-k4">
+        <svg data-hf-id="hf-41j8" viewBox="0 0 76 76" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path data-hf-id="hf-i4zt" d="M16 40.5 L31 55 L60 22" stroke="#059669" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+      </div>
+    </div>
+
+    <div data-hf-id="hf-5uqy" id="20-four-checks-progress"></div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+  <script>
+    (function () {
+      var ID = "20-four-checks";
+      var $ = function (s) { return document.getElementById(ID + "-" + s); };
+      var cells = [$("c1"), $("c2"), $("c3"), $("c4")];
+      var checks = [$("k1"), $("k2"), $("k3"), $("k4")];
+      var labels = [$("l1"), $("l2"), $("l3"), $("l4")];
+
+      var BORDER_COBALT = "rgba(29, 86, 240, 0.2)";
+      var BORDER_GREEN = "rgba(5, 150, 105, 0.42)";
+      var LABEL_GREY = "#909090";
+      var LABEL_INK = "#05070b";
+
+      var tl = gsap.timeline({ paused: true });
+
+      // Persistent chrome: progress strip 91.7% -> 96.7% across the full 7.5s.
+      tl.fromTo($("progress"), { width: "91.7%" }, { width: "96.7%", duration: 7.5, ease: "none" }, 0);
+
+      // ---- Scene 1 (0.0-1.0s): eyebrow reveals and the Frame 7 2x2 rebuilds
+      // INSTANTLY at the identical geometry, all four labels present and greyed. ----
+      tl.fromTo($("rule"), { scaleX: 0, opacity: 0 },
+        { scaleX: 1, opacity: 1, duration: 0.34, ease: "power3.out" }, 0.0);
+      tl.fromTo($("lead"), { opacity: 0, y: 18, filter: "blur(6px)" },
+        { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.5, ease: "power3.out" }, 0.06);
+
+      // The motif returns as one piece — no re-assembly drama, it is already known.
+      tl.fromTo($("box"), { opacity: 0 }, { opacity: 1, duration: 0.34, ease: "power2.out" }, 0.04);
+      tl.fromTo(cells, { opacity: 0, y: 12 },
+        { opacity: 1, y: 0, duration: 0.38, ease: "power3.out", stagger: 0.04 }, 0.06);
+
+      // Checks are absent until their cell flips.
+      tl.set(checks, { opacity: 0, scale: 0 }, 0);
+
+      // ---- Per-cell flip: label -> near-black, green check spring-pops at the
+      // cell's right edge, the cell border warms from cobalt to green. ----
+      function flipCell(i, t) {
+        tl.fromTo(labels[i], { color: LABEL_GREY },
+          { color: LABEL_INK, duration: 0.42, ease: "power2.out" }, t);
+        tl.fromTo(cells[i], { borderColor: BORDER_COBALT },
+          { borderColor: BORDER_GREEN, duration: 0.55, ease: "power2.out" }, t + 0.06);
+        tl.fromTo(checks[i], { opacity: 0, scale: 0.2 },
+          { opacity: 1, scale: 1, duration: 0.6, ease: "back.out(3)" }, t + 0.1);
+      }
+
+      flipCell(0, 1.02); // Scene 2 (1.0-2.4s) — The attention problem
+      flipCell(1, 2.42); // Scene 3 (2.4-3.8s) — The understanding problem
+      flipCell(2, 3.82); // Scene 4 (3.8-5.2s) — The enforcement problem
+      flipCell(3, 5.22); // Scene 5 (5.2-7.5s) — The control and improve problem
+
+      // ---- Coda: all four checks pulse ONCE together (1.0 -> 1.07 -> 1.0), then the
+      // grid holds completely still from 6.90s to the cut (handoff out to Frame 21). ----
+      tl.fromTo(checks, { scale: 1 }, { scale: 1.07, duration: 0.2, ease: "power2.out" }, 6.45);
+      tl.fromTo(checks, { scale: 1.07 }, { scale: 1, duration: 0.25, ease: "power2.inOut" }, 6.65);
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines[ID] = tl;
+    })();
+  </script>
+</template>

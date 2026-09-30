@@ -1,0 +1,454 @@
+<template>
+  <style>
+    @font-face {
+      font-family: "Inter";
+      src: url("assets/fonts/Inter-var.woff2") format("woff2");
+      font-weight: 100 900;
+      font-style: normal;
+      font-display: block;
+    }
+    #root {
+      position: absolute;
+      inset: 0;
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+      font-family: "Inter", sans-serif;
+      color: #05070b;
+    }
+    /* ---- depth layer 0: full-bleed ground ---- */
+    [id="16-self-host-models-bg"] {
+      position: absolute;
+      inset: 0;
+      background: #ffffff;
+    }
+    /* ---- act pill, top-left ---- */
+    [id="16-self-host-models-act"] {
+      position: absolute;
+      left: 96px;
+      top: 96px;
+      display: inline-flex;
+      align-items: center;
+      font-size: 18.24px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #1d56f0;
+      background: rgba(29, 86, 240, 0.08);
+      border-radius: 100px;
+      padding: 12.5px 19.2px;
+      transform-origin: 0% 50%;
+    }
+    /* ---- recurring motif: the 2x2 act marker, top-right ---- */
+    [id="16-self-host-models-glyph"] {
+      position: absolute;
+      left: 1656px;
+      top: 96px;
+      width: 132px;
+      height: 62px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: 1fr 1fr;
+      gap: 3px;
+    }
+    [id="16-self-host-models-glyph"] i {
+      display: block;
+      box-sizing: border-box;
+      border-radius: 3px;
+    }
+    /* cells 1-3 — earlier acts: 20% cobalt tint */
+    [id="16-self-host-models-c1"],
+    [id="16-self-host-models-c2"],
+    [id="16-self-host-models-c3"] {
+      background: rgba(29, 86, 240, 0.2);
+    }
+    /* cell 4 — THIS act: filled cobalt */
+    [id="16-self-host-models-c4"] {
+      background: #1d56f0;
+    }
+    /* ---- headline block (on-screen copy, no voiceover in this film) ---- */
+    [id="16-self-host-models-rule"] {
+      position: absolute;
+      left: 96px;
+      top: 202px;
+      width: 60px;
+      height: 4px;
+      border-radius: 2px;
+      background: #1d56f0;
+      transform-origin: 0% 50%;
+    }
+    [id="16-self-host-models-copy"] {
+      position: absolute;
+      left: 96px;
+      top: 236px;
+      width: 1300px;
+    }
+    [id="16-self-host-models-lineA"],
+    [id="16-self-host-models-lineB"] {
+      font-size: 46px;
+      line-height: 1.14;
+      letter-spacing: -0.02em;
+      white-space: nowrap;
+    }
+    [id="16-self-host-models-lineA"] {
+      font-weight: 600;
+      color: #05070b;
+    }
+    [id="16-self-host-models-lineB"] {
+      margin-top: 16px;
+      font-weight: 500;
+      color: #1648cf;
+    }
+    [id="16-self-host-models-copy"] span {
+      display: inline-block;
+    }
+    [id="16-self-host-models-copy"] em {
+      font-style: normal;
+      font-weight: 700;
+      color: #1d56f0;
+      transform-origin: 50% 100%;
+    }
+    /* ---- depth layer 1: the boundary drawing (SVG, full canvas coords) ---- */
+    [id="16-self-host-models-svg"] {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1920px;
+      height: 1080px;
+      overflow: visible;
+      z-index: 1;
+    }
+    /* ---- depth layer 2: what lives INSIDE the boundary ---- */
+    [id="16-self-host-models-mark"] {
+      position: absolute;
+      left: 490px;
+      top: 494px;
+      width: 104px;
+      height: 104px;
+      box-sizing: border-box;
+      border-radius: 50%;
+      background: #ffffff;
+      border: 1.5px solid rgba(29, 86, 240, 0.2);
+      display: grid;
+      place-items: center;
+      z-index: 3;
+    }
+    [id="16-self-host-models-mark"] img {
+      display: block;
+      width: 72px;
+      height: 72px;
+    }
+    [id="16-self-host-models-word"] {
+      position: absolute;
+      left: 614px;
+      top: 524px;
+      height: 44px;
+      font-size: 34px;
+      line-height: 44px;
+      font-weight: 650;
+      letter-spacing: -0.02em;
+      color: #05070b;
+      white-space: nowrap;
+      z-index: 3;
+    }
+    [id="16-self-host-models-code"] {
+      position: absolute;
+      left: 490px;
+      top: 636px;
+      width: 540px;
+      z-index: 3;
+    }
+    [id="16-self-host-models-code"] > div {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 26px;
+    }
+    [id="16-self-host-models-code"] > div:last-child {
+      margin-bottom: 0;
+    }
+    [id="16-self-host-models-code"] i {
+      display: block;
+      height: 14px;
+      border-radius: 7px;
+      background: rgba(29, 86, 240, 0.16);
+    }
+    [id="16-self-host-models-code"] i.k {
+      background: rgba(29, 86, 240, 0.42);
+    }
+    /* ---- the boundary label, sitting ON the lower edge ---- */
+    [id="16-self-host-models-tag"] {
+      position: absolute;
+      left: 628px;
+      top: 851px;
+      width: 264px;
+      height: 38px;
+      box-sizing: border-box;
+      border-radius: 100px;
+      background: #1d56f0;
+      color: #ffffff;
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      line-height: 38px;
+      text-align: center;
+      z-index: 4;
+    }
+    /* ---- depth layer 3: the provider marks, OUTSIDE the boundary ---- */
+    [id="16-self-host-models-arcgrp"] {
+      position: absolute;
+      inset: 0;
+      z-index: 4;
+    }
+    .shm16-node {
+      position: absolute;
+      width: 96px;
+      height: 96px;
+      margin-left: -48px;
+      margin-top: -48px;
+    }
+    .shm16-chip {
+      width: 96px;
+      height: 96px;
+      box-sizing: border-box;
+      border-radius: 50%;
+      background: #ffffff;
+      border: 1.5px solid rgba(29, 86, 240, 0.2);
+      display: grid;
+      place-items: center;
+    }
+    .shm16-chip img {
+      display: block;
+      width: 44px;
+      height: 44px;
+      object-fit: contain;
+    }
+    .shm16-label {
+      position: absolute;
+      height: 32px;
+      font-size: 23px;
+      line-height: 32px;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      color: #1648cf;
+      white-space: nowrap;
+    }
+    .shm16-label.on {
+      color: #05070b;
+      font-weight: 700;
+    }
+    /* ---- persistent chrome ---- */
+    [id="16-self-host-models-progress"] {
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      height: 3px;
+      width: 70.3%;
+      background: #1d56f0;
+      z-index: 6;
+    }
+  </style>
+
+  <div data-hf-id="hf-mimt" id="root" data-composition-id="16-self-host-models" data-width="1920" data-height="1080" data-duration="7.5">
+    <div data-hf-id="hf-jhlu" id="16-self-host-models-bg" class="clip" data-start="0" data-duration="7.5" data-track-index="0"></div>
+
+    <div data-hf-id="hf-id3s" id="16-self-host-models-act">#4 · Control and improve</div>
+
+    <div data-hf-id="hf-crxc" id="16-self-host-models-glyph">
+      <i data-hf-id="hf-e1ha" id="16-self-host-models-c1"></i>
+      <i data-hf-id="hf-a3d9" id="16-self-host-models-c2"></i>
+      <i data-hf-id="hf-9bpg" id="16-self-host-models-c3"></i>
+      <i data-hf-id="hf-wt6z" id="16-self-host-models-c4"></i>
+    </div>
+
+    <div data-hf-id="hf-2yzg" id="16-self-host-models-rule"></div>
+
+    <div data-hf-id="hf-z30d" id="16-self-host-models-copy">
+      <div data-hf-id="hf-nf61" id="16-self-host-models-lineA"><span data-hf-id="hf-t08k">Keep</span> <span data-hf-id="hf-ziue">your</span> <span data-hf-id="hf-mjl4">code</span> <span data-hf-id="hf-ftaa">in</span> <span data-hf-id="hf-2obu">your</span> <span data-hf-id="hf-uckh"><em data-hf-id="hf-ps5e" id="16-self-host-models-em">infrastructure</em></span></div>
+      <div data-hf-id="hf-rda2" id="16-self-host-models-lineB"><span data-hf-id="hf-kyh6">and</span> <span data-hf-id="hf-nyfo">choose</span> <span data-hf-id="hf-mzge">which</span> <span data-hf-id="hf-ub7v">AI</span> <span data-hf-id="hf-5gan">models</span> <span data-hf-id="hf-m9gj">inspect</span> <span data-hf-id="hf-b2e6">it.</span></div>
+    </div>
+
+    <!-- the BOUNDARY: dashed cobalt perimeter, the arc guide, the connector that stops at the edge -->
+    <svg data-hf-id="hf-4l2h" id="16-self-host-models-svg" viewBox="0 0 1920 1080" xmlns="http://www.w3.org/2000/svg">
+      <defs data-hf-id="hf-mh0t">
+        <mask data-hf-id="hf-yu07" id="16-self-host-models-bmask" maskUnits="userSpaceOnUse" x="400" y="410" width="720" height="500">
+          <rect data-hf-id="hf-asw0" id="16-self-host-models-bdraw" x="441" y="451" width="638" height="418" rx="20" ry="20" fill="none" stroke="#ffffff" stroke-width="14" />
+        </mask>
+      </defs>
+
+      <!-- inside tint -->
+      <rect data-hf-id="hf-jxjt" id="16-self-host-models-bfill" x="441" y="451" width="638" height="418" rx="20" ry="20" fill="#1d56f0" fill-opacity="0" />
+      <!-- the perimeter itself, revealed by the drawing mask -->
+      <rect data-hf-id="hf-wjd7" id="16-self-host-models-bline" x="441" y="451" width="638" height="418" rx="20" ry="20" fill="none" stroke="#1d56f0" stroke-opacity="0.55" stroke-width="2.5" stroke-dasharray="12 10" mask="url(#16-self-host-models-bmask)" />
+
+      <!-- the arc the provider marks queue along, entirely outside the perimeter -->
+      <path data-hf-id="hf-mtcr" id="16-self-host-models-arc" d="M 1310 476 A 247 247 0 0 1 1310 844" fill="none" stroke="rgba(29,86,240,0.18)" stroke-width="1.5" />
+
+      <!-- chosen model -> perimeter. Ends AT x=1079, the boundary edge. Never inside. -->
+      <line data-hf-id="hf-s1fu" id="16-self-host-models-link" x1="1330" y1="660" x2="1079" y2="660" stroke="#1d56f0" stroke-width="2.5" stroke-linecap="round" />
+      <!-- the wall the connector meets -->
+      <line data-hf-id="hf-kt1m" id="16-self-host-models-wall" x1="1079" y1="628" x2="1079" y2="692" stroke="#1d56f0" stroke-width="4" stroke-linecap="round" opacity="0" />
+      <circle data-hf-id="hf-h9b3" id="16-self-host-models-cap" cx="1079" cy="660" r="6" fill="#1d56f0" opacity="0" />
+      <circle data-hf-id="hf-bi5o" id="16-self-host-models-ping" cx="1079" cy="660" r="6" fill="none" stroke="#1d56f0" stroke-width="2" opacity="0" />
+    </svg>
+
+    <!-- INSIDE the boundary: the LiveReview mark + the code it holds -->
+    <div data-hf-id="hf-n295" id="16-self-host-models-mark"><img data-hf-id="hf-t3bd" src="assets/logo.svg" alt=""></div>
+    <div data-hf-id="hf-3anw" id="16-self-host-models-word">LiveReview</div>
+    <div data-hf-id="hf-loml" id="16-self-host-models-code">
+      <div data-hf-id="hf-yeow"><i data-hf-id="hf-lati" class="k" style="width:102px"></i><i data-hf-id="hf-z8xt" style="width:268px"></i></div>
+      <div data-hf-id="hf-0j50" style="padding-left:48px"><i data-hf-id="hf-5pug" class="k" style="width:76px"></i><i data-hf-id="hf-kvkr" style="width:204px"></i><i data-hf-id="hf-hqll" style="width:152px"></i></div>
+      <div data-hf-id="hf-mnx8" style="padding-left:48px"><i data-hf-id="hf-bp9k" style="width:320px"></i></div>
+      <div data-hf-id="hf-k261" style="padding-left:92px"><i data-hf-id="hf-gick" class="k" style="width:90px"></i><i data-hf-id="hf-crd8" style="width:236px"></i></div>
+      <div data-hf-id="hf-y7yw"><i data-hf-id="hf-hg30" style="width:180px"></i></div>
+    </div>
+
+    <div data-hf-id="hf-t4zs" id="16-self-host-models-tag">Your infrastructure</div>
+
+    <!-- OUTSIDE the boundary: five provider marks on the arc -->
+    <div data-hf-id="hf-xwdv" id="16-self-host-models-arcgrp">
+      <div data-hf-id="hf-grd2" class="shm16-node" id="16-self-host-models-n0" style="left:1310px;top:476px">
+        <div data-hf-id="hf-2dv2" class="shm16-chip"><img data-hf-id="hf-jm41" src="assets/brand-gemini.svg" alt=""></div>
+      </div>
+      <div data-hf-id="hf-2upc" class="shm16-label" id="16-self-host-models-t0" style="left:1372px;top:460px">Gemini</div>
+
+      <div data-hf-id="hf-vcnl" class="shm16-node" id="16-self-host-models-n1" style="left:1374px;top:568px">
+        <div data-hf-id="hf-aqwi" class="shm16-chip"><img data-hf-id="hf-9r06" src="assets/brand-openai.svg" alt=""></div>
+      </div>
+      <div data-hf-id="hf-e8dx" class="shm16-label" id="16-self-host-models-t1" style="left:1436px;top:552px">OpenAI</div>
+
+      <div data-hf-id="hf-90wp" class="shm16-node" id="16-self-host-models-n2" style="left:1392px;top:660px">
+        <div data-hf-id="hf-b57j" class="shm16-chip"><img data-hf-id="hf-tqia" src="assets/brand-claude.svg" alt=""></div>
+      </div>
+      <div data-hf-id="hf-xx7d" class="shm16-label" id="16-self-host-models-t2" style="left:1460px;top:644px">Claude</div>
+
+      <div data-hf-id="hf-nkka" class="shm16-node" id="16-self-host-models-n3" style="left:1374px;top:752px">
+        <div data-hf-id="hf-bjik" class="shm16-chip"><img data-hf-id="hf-k7ba" src="assets/brand-deepseek.svg" alt=""></div>
+      </div>
+      <div data-hf-id="hf-g6rv" class="shm16-label" id="16-self-host-models-t3" style="left:1436px;top:736px">DeepSeek</div>
+
+      <div data-hf-id="hf-gdrh" class="shm16-node" id="16-self-host-models-n4" style="left:1310px;top:844px">
+        <div data-hf-id="hf-bxtl" class="shm16-chip"><img data-hf-id="hf-jllf" src="assets/brand-openrouter.svg" alt=""></div>
+      </div>
+      <div data-hf-id="hf-spd6" class="shm16-label" id="16-self-host-models-t4" style="left:1372px;top:828px">OpenRouter</div>
+    </div>
+
+    <div data-hf-id="hf-ku7r" id="16-self-host-models-progress"></div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+  <script>
+    (function () {
+      var ID = "16-self-host-models";
+      var $ = function (s) { return document.getElementById(ID + "-" + s); };
+      var tl = gsap.timeline({ paused: true });
+
+      var wordsA = $("lineA").querySelectorAll("span");
+      var wordsB = $("lineB").querySelectorAll("span");
+      var codeRows = [].slice.call($("code").children);
+
+      // Persistent chrome: progress strip 70.3% -> 75.3% across the full 7.5s.
+      tl.fromTo($("progress"), { width: "70.3%" }, { width: "75.3%", duration: 7.5, ease: "none" }, 0);
+
+      /* ======================================================================
+         Scene 1 (0.0-1.4s) — cue 1: "Keep your code in your infrastructure"
+         The act chrome lands, the copy reveals per word, the BOUNDARY draws
+         itself on, and the mark + code fade up INSIDE it.
+         ====================================================================== */
+      tl.fromTo($("act"), { opacity: 0, scale: 0.6 },
+        { opacity: 1, scale: 1, duration: 0.45, ease: "back.out(2.2)" }, 0.04);
+      tl.fromTo([$("c1"), $("c2"), $("c3")], { opacity: 0, scale: 0.55 },
+        { opacity: 1, scale: 1, duration: 0.36, ease: "power3.out", stagger: 0.06 }, 0.1);
+      tl.fromTo($("c4"), { opacity: 0, scale: 0.3 },
+        { opacity: 1, scale: 1, duration: 0.55, ease: "back.out(3.2)" }, 0.3);
+
+      tl.fromTo($("rule"), { scaleX: 0, opacity: 0 },
+        { scaleX: 1, opacity: 1, duration: 0.4, ease: "power2.out" }, 0.22);
+      tl.fromTo(wordsA, { opacity: 0, y: 26, filter: "blur(6px)" },
+        { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.5, ease: "power3.out", stagger: 0.085 }, 0.3);
+      // the one cobalt word in the line settles on a small spring
+      tl.fromTo($("em"), { scale: 0.86 }, { scale: 1, duration: 0.7, ease: "back.out(2.6)" }, 0.9);
+
+      // the perimeter draws on (svg-path-draw, via a growing stroke mask)
+      var bdraw = $("bdraw");
+      var blen = (bdraw.getTotalLength ? bdraw.getTotalLength() : 2078) * 1.04;
+      bdraw.style.strokeDasharray = String(blen);
+      bdraw.style.strokeDashoffset = String(blen);
+      tl.fromTo(bdraw, { strokeDashoffset: blen }, { strokeDashoffset: 0, duration: 0.95, ease: "power2.inOut" }, 0.45);
+      tl.fromTo($("bfill"), { attr: { "fill-opacity": 0 } },
+        { attr: { "fill-opacity": 0.03 }, duration: 0.6, ease: "power1.out" }, 1.05);
+
+      // what the boundary holds: the LiveReview mark, then the code
+      tl.fromTo($("mark"), { opacity: 0, scale: 0.45 },
+        { opacity: 1, scale: 1, duration: 0.6, ease: "back.out(1.7)" }, 0.95);
+      tl.fromTo($("word"), { opacity: 0, x: -18 },
+        { opacity: 1, x: 0, duration: 0.5, ease: "power3.out" }, 1.12);
+      tl.fromTo(codeRows, { opacity: 0, x: -22 },
+        { opacity: 1, x: 0, duration: 0.42, ease: "power2.out", stagger: 0.075 }, 1.2);
+
+      /* ======================================================================
+         Scene 2 (1.4-3.4s) — five provider marks spring in one by one along
+         an arc OUTSIDE the perimeter. None of them crosses it.
+         ====================================================================== */
+      var arc = $("arc");
+      var alen = (arc.getTotalLength ? arc.getTotalLength() : 416) * 1.02;
+      arc.style.strokeDasharray = String(alen);
+      arc.style.strokeDashoffset = String(alen);
+      tl.fromTo(arc, { strokeDashoffset: alen }, { strokeDashoffset: 0, duration: 0.7, ease: "power2.out" }, 1.4);
+
+      for (var i = 0; i < 5; i++) {
+        var at = 1.58 + i * 0.3;
+        tl.fromTo($("n" + i), { opacity: 0, scale: 0 },
+          { opacity: 1, scale: 1, duration: 0.6, ease: "back.out(1.65)" }, at);
+        tl.fromTo($("t" + i), { opacity: 0, x: -14 },
+          { opacity: 1, x: 0, duration: 0.42, ease: "power2.out" }, at + 0.16);
+      }
+
+      /* ======================================================================
+         Scene 3 (3.4-5.4s) — cue 2: "and choose which AI models inspect it."
+         One mark is chosen: Claude scales 1.18x, the other four dim to 35%,
+         and a thin connector draws from it and STOPS at the perimeter edge.
+         ====================================================================== */
+      tl.fromTo(wordsB, { opacity: 0, y: 22, filter: "blur(5px)" },
+        { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.5, ease: "power3.out", stagger: 0.08 }, 3.45);
+
+      var dimmed = [$("n0"), $("t0"), $("n1"), $("t1"), $("n3"), $("t3"), $("n4"), $("t4")];
+      tl.fromTo(dimmed, { opacity: 1 }, { opacity: 0.35, duration: 0.6, ease: "power2.out" }, 4.3);
+
+      tl.fromTo($("n2"), { scale: 1 }, { scale: 1.18, duration: 0.7, ease: "back.out(2)" }, 4.42);
+      tl.fromTo($("t2"), { x: 0 }, { x: 10, duration: 0.7, ease: "back.out(2)" }, 4.42);
+      tl.call(function () { $("t2").classList.add("on"); }, null, 4.42);
+
+      // connector: drawn FROM the chip, arriving at x=1079 — the boundary edge.
+      var link = $("link");
+      var llen = Math.abs(1330 - 1079);
+      link.style.strokeDasharray = String(llen);
+      link.style.strokeDashoffset = String(llen);
+      tl.fromTo(link, { strokeDashoffset: llen }, { strokeDashoffset: 0, duration: 0.6, ease: "power2.inOut" }, 4.72);
+
+      // it meets a wall and does not enter: edge cap + a single ping, no loop.
+      tl.fromTo($("wall"), { opacity: 0, attr: { "stroke-width": 2 } },
+        { opacity: 1, attr: { "stroke-width": 4 }, duration: 0.3, ease: "power2.out" }, 5.24);
+      tl.fromTo($("cap"), { opacity: 0, scale: 0.2 },
+        { opacity: 1, scale: 1, duration: 0.28, ease: "back.out(3)", svgOrigin: "1079 660" }, 5.26);
+      tl.fromTo($("ping"), { opacity: 0.75, scale: 1 },
+        { opacity: 0, scale: 3.6, duration: 0.95, ease: "power2.out", svgOrigin: "1079 660" }, 5.32);
+      tl.set($("ping"), { opacity: 0 }, 0);
+
+      /* ======================================================================
+         Scene 4 (5.4-7.5s) — the boundary names itself and the frame holds.
+         ====================================================================== */
+      tl.fromTo($("tag"), { opacity: 0, y: 14, scale: 0.82 },
+        { opacity: 1, y: 0, scale: 1, duration: 0.65, ease: "back.out(2.1)" }, 5.52);
+
+      // one slow, single-pass firming of the perimeter — the argument of the frame,
+      // held rather than repeated. No loop, no exit.
+      tl.fromTo($("bline"), { attr: { "stroke-opacity": 0.55 } },
+        { attr: { "stroke-opacity": 0.78 }, duration: 1.0, ease: "sine.inOut" }, 6.25);
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines[ID] = tl;
+    })();
+  </script>
+</template>

@@ -1,0 +1,470 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LiveReview Storyboard v1</title>
+<style>
+@font-face { font-family: "Inter"; src: url("assets/fonts/Inter-var.woff2") format("woff2"); font-weight: 100 900; }
+:root {
+  --bg: #ffffff; --primary: #1d56f0; --text: #05070b; --muted: #1648cf; --light: #9a9a9a;
+  --accent-light: rgba(29,86,240,.08); --accent-med: rgba(29,86,240,.15);
+  --border: rgba(29,86,240,.2); --card: rgba(29,86,240,.04);
+  --pos: #059669; --neg: #dc2626; --ui: #0e1322; --ui2: #1a2440;
+  --page: #eef2fb; --ink: #05070b;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: Inter, system-ui, sans-serif; background: var(--page); color: var(--ink); padding: 40px 32px 80px; }
+header.sheet { max-width: 1680px; margin: 0 auto 28px; display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; flex-wrap: wrap; }
+header.sheet h1 { font-size: 30px; font-weight: 700; letter-spacing: -.02em; }
+header.sheet h1 small { font-size: 14px; font-weight: 600; color: var(--primary); background: var(--accent-light); border-radius: 100px; padding: 4px 10px; margin-left: 10px; vertical-align: middle; }
+header.sheet p { color: #4b5563; margin-top: 6px; font-size: 15px; max-width: 900px; line-height: 1.5; }
+.tag { font-size: 13px; font-weight: 600; color: var(--primary); background: #fff; border: 1.5px solid var(--border); border-radius: 100px; padding: 6px 14px; }
+.act { max-width: 1680px; margin: 30px auto 14px; display: flex; align-items: center; gap: 12px; font-size: 13px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--primary); }
+.act::after { content: ""; flex: 1; height: 2px; background: var(--border); }
+.grid { max-width: 1680px; margin: 0 auto; display: grid; grid-template-columns: repeat(3, 1fr); gap: 26px; }
+@media (max-width: 1100px) { .grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 700px) { .grid { grid-template-columns: 1fr; } body { padding: 20px 16px; } }
+.cell { background: #fff; border-radius: 14px; overflow: hidden; border: 1.5px solid var(--border); }
+.f { aspect-ratio: 16/9; container-type: inline-size; position: relative; background: var(--bg); overflow: hidden; }
+.meta { padding: 12px 14px 14px; border-top: 1.5px solid var(--border); }
+.meta .row { display: flex; justify-content: space-between; font-size: 12px; font-weight: 700; letter-spacing: .04em; }
+.meta .row span:last-child { color: var(--light); font-weight: 600; }
+.meta p { font-size: 13px; line-height: 1.5; color: #374151; margin-top: 6px; }
+.meta p b { color: var(--ink); }
+.chip { display: inline-block; margin-top: 8px; font-size: 11px; font-weight: 600; color: var(--primary); background: var(--accent-light); border-radius: 100px; padding: 3px 9px; }
+
+/* ---- frame atoms (cqw = 1/100 of a 1920 frame) ---- */
+.pad { position: absolute; inset: 5cqw; }
+.eyebrow { font-size: .9cqw; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--primary); }
+.actlabel { display: inline-flex; align-items: center; gap: .6cqw; font-size: .95cqw; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--primary); background: var(--accent-light); border-radius: 100px; padding: .35cqw 1cqw; }
+.h1 { font-size: 4.2cqw; font-weight: 700; line-height: 1.08; letter-spacing: -.02em; }
+.h2 { font-size: 2.8cqw; font-weight: 650; line-height: 1.12; letter-spacing: -.02em; }
+.h3 { font-size: 1.9cqw; font-weight: 600; line-height: 1.25; letter-spacing: -.02em; }
+.body { font-size: 1.45cqw; line-height: 1.5; color: var(--muted); font-weight: 450; }
+.soft { color: #6b7280; }
+.blue { color: var(--primary); }
+.red { color: var(--neg); }
+.card { background: var(--card); border: 1.5px solid var(--border); border-radius: 12px; }
+.pill { display: inline-block; background: var(--accent-light); color: var(--primary); border-radius: 100px; font-weight: 600; font-size: 1.15cqw; padding: .45cqw 1.2cqw; }
+.pill.solid { background: var(--primary); color: #fff; }
+.progress { position: absolute; left: 0; bottom: 0; height: .25cqw; background: var(--primary); }
+.win { background: var(--ui); border-radius: 12px; border: 1.5px solid var(--ui2); position: relative; overflow: hidden; }
+.win::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 1.6cqw; background: #0a0f1c; border-bottom: 1px solid var(--ui2); }
+.win .dots { position: absolute; top: .55cqw; left: .9cqw; display: flex; gap: .4cqw; }
+.win .dots i { width: .5cqw; height: .5cqw; border-radius: 50%; background: #334155; display: block; }
+.win .lbl { position: absolute; inset: 1.6cqw 0 0; display: grid; place-items: center; text-align: center; color: #8b99b8; font-size: 1.05cqw; font-weight: 600; line-height: 1.4; padding: 1cqw; }
+.win .lbl b { color: #e8eefc; display: block; font-size: 1.25cqw; }
+.logo { width: 4cqw; height: 4cqw; }
+.mark { width: 2.6cqw; height: 2.6cqw; object-fit: contain; }
+.rings { position: absolute; border-radius: 50%; border: 1.5px solid var(--border); }
+.dotgrid { position: absolute; display: grid; grid-template-columns: repeat(3, .5cqw); gap: 1cqw; }
+.dotgrid i { width: .5cqw; height: .5cqw; border-radius: 50%; background: var(--primary); opacity: .35; display: block; }
+.kbd { display: inline-grid; place-items: center; min-width: 7cqw; height: 7cqw; padding: 0 1.6cqw; border-radius: 14px; background: #fff; border: 1.5px solid var(--border); border-bottom-width: .5cqw; font-size: 2.6cqw; font-weight: 700; color: var(--text); }
+.station { display: flex; flex-direction: column; align-items: center; gap: .7cqw; width: 11cqw; }
+.station .c { width: 3.4cqw; height: 3.4cqw; border-radius: 50%; background: var(--primary); color: #fff; display: grid; place-items: center; font-weight: 700; font-size: 1.2cqw; }
+.station .c.off { background: var(--accent-med); color: var(--primary); }
+.station span { font-size: 1.3cqw; font-weight: 650; }
+.dotrow { display: flex; gap: .55cqw; }
+.dotrow i { width: 1.1cqw; height: 1.1cqw; border-radius: 50%; background: var(--accent-med); display: block; }
+.dotrow i.on { background: var(--primary); }
+.diff { background: #fff; border: 1.5px solid var(--border); border-radius: 12px; padding: 1.2cqw; }
+.diff .ln { height: .55cqw; border-radius: 3px; background: var(--accent-light); margin-top: .45cqw; }
+.diff .ln.g { background: rgba(5,150,105,.18); }
+.diff .ln.r { background: rgba(220,38,38,.2); }
+
+/* closing cells */
+.seams { padding: 18px; display: flex; flex-direction: column; gap: 6px; font-size: 12px; }
+.seams div { display: flex; justify-content: space-between; border-bottom: 1px dashed var(--border); padding-bottom: 4px; }
+.seams b { color: var(--primary); }
+.tokens { padding: 18px; font-size: 12px; line-height: 1.6; }
+.sw { display: inline-block; width: 22px; height: 22px; border-radius: 6px; vertical-align: middle; margin-right: 6px; border: 1px solid var(--border); }
+</style>
+</head>
+<body>
+
+<header class="sheet">
+  <div>
+    <h1>LiveReview: Find The Danger <small>v1</small></h1>
+    <p>The v4 deck, told as film: hook, then promise, then three problem-to-answer acts (Capability · Control · Cost), a product tour, recap and CTA. Music only, so every frame carries its own words. Dark boxes stand in for the real demo clips.</p>
+  </div>
+  <span class="tag">1920×1080 · ~150s · 18 beats · Blue Professional</span>
+</header>
+
+<!-- ======================= OPEN ======================= -->
+<div class="act">Open: the danger isn't where the lines are</div>
+<div class="grid">
+
+  <div class="cell" id="frame-01">
+    <div class="f">
+      <div class="pad" style="display:grid;grid-template-columns:1fr 1fr;gap:3cqw;align-items:center">
+        <div>
+          <div class="diff" style="height:26cqw">
+            <div class="eyebrow soft" style="color:#6b7280">ui/SettingsPage.tsx</div>
+            <div class="ln g"></div><div class="ln g"></div><div class="ln"></div><div class="ln g"></div><div class="ln g"></div><div class="ln r"></div><div class="ln g"></div><div class="ln"></div><div class="ln g"></div><div class="ln g"></div><div class="ln g"></div><div class="ln"></div><div class="ln g"></div><div class="ln g"></div><div class="ln r"></div><div class="ln g"></div>
+          </div>
+          <div style="margin-top:1.4cqw"><span class="h2 blue">300</span> <span class="eyebrow" style="color:#6b7280;font-size:1.3cqw">line UI tweak</span></div>
+          <div class="h3" style="margin-top:.3cqw">Breaks one page.</div>
+        </div>
+        <div>
+          <div class="diff" style="height:7cqw;border-color:rgba(220,38,38,.5);box-shadow:0 0 0 1.2cqw rgba(220,38,38,.07),0 0 0 2.6cqw rgba(220,38,38,.04)">
+            <div class="eyebrow red">db/migrations/0042.sql</div>
+            <div class="ln r"></div><div class="ln r"></div><div class="ln g"></div>
+          </div>
+          <div style="margin-top:1.4cqw"><span class="h2 red">3</span> <span class="eyebrow red" style="font-size:1.3cqw">line DB change</span></div>
+          <div class="h3" style="margin-top:.3cqw">Breaks the entire app.</div>
+        </div>
+      </div>
+      <div style="position:absolute;left:5cqw;right:5cqw;bottom:3.2cqw" class="h3">Not all diffs are created equal.</div>
+      <div class="progress" style="width:2%"></div>
+    </div>
+    <div class="meta"><div class="row"><span>01 · NOT ALL DIFFS ARE EQUAL</span><span>comparison-split · 0–9s</span></div>
+      <p><b>The big card enters first and looks scary; the tiny card lands second and its red rings spread</b> until they cover the frame. The payoff line types in at the bottom.</p><span class="chip">in: cold open</span></div>
+  </div>
+
+  <div class="cell" id="frame-02">
+    <div class="f">
+      <div style="position:absolute;right:0;top:0;bottom:0;width:36%;background:var(--accent-light);clip-path:polygon(22% 0,100% 0,100% 100%,0 100%)"></div>
+      <div class="dotgrid" style="right:6cqw;top:6cqw"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+      <div class="pad" style="display:flex;flex-direction:column;justify-content:center;max-width:66cqw">
+        <div style="display:flex;align-items:center;gap:1cqw"><img class="logo" src="assets/logo.svg" alt=""><span class="h3">LiveReview</span></div>
+        <div style="width:60px;height:4px;background:var(--primary);border-radius:2px;margin:2cqw 0 1.6cqw"></div>
+        <div class="h1"><span class="red">Blast-Radius Aware</span> AI Code Review<br>for <span class="blue">Business-Critical Systems</span>.</div>
+        <div class="body" style="margin-top:2cqw;max-width:52cqw">Your team's attention is limited. Spend it where <b style="color:var(--text)">business risk is highest</b>.</div>
+      </div>
+      <div class="progress" style="width:8%"></div>
+    </div>
+    <div class="meta"><div class="row"><span>02 · THE PROMISE</span><span>logo-assemble-lockup · 9–16s</span></div>
+      <p><b>The red rings from 01 collapse into the LiveReview mark</b>, then the title builds clause by clause and the attention line settles last.</p><span class="chip">in: zoom-through</span></div>
+  </div>
+
+  <div class="cell" id="frame-03">
+    <div class="f">
+      <div class="pad">
+        <div class="h1" style="max-width:56cqw;font-size:3.6cqw">AI writes code <span class="blue">far faster</span> than your team can review it.</div>
+      </div>
+      <div style="position:absolute;left:5cqw;bottom:6cqw;display:flex;gap:1.4cqw;align-items:center">
+        <img class="mark" style="width:3.6cqw;height:3.6cqw" src="assets/brand-claude.svg" alt=""><img class="mark" style="width:3.6cqw;height:3.6cqw" src="assets/brand-copilot.svg" alt=""><img class="mark" style="width:3.6cqw;height:3.6cqw" src="assets/brand-openai.svg" alt=""><img class="mark" style="width:3.6cqw;height:3.6cqw" src="assets/brand-gemini.svg" alt="">
+        <span class="body soft" style="margin-left:.6cqw">→ diffs per day</span>
+      </div>
+      <div style="position:absolute;right:5cqw;top:5cqw;bottom:5cqw;width:34cqw;display:grid;grid-template-columns:repeat(4,1fr);gap:.8cqw;align-content:end">
+        <div class="card" style="height:4cqw"></div><div class="card" style="height:4cqw"></div><div class="card" style="height:4cqw"></div><div class="card" style="height:4cqw"></div>
+        <div class="card" style="height:4cqw"></div><div class="card" style="height:4cqw"></div><div class="card" style="height:4cqw"></div><div class="card" style="height:4cqw"></div>
+        <div class="card" style="height:4cqw"></div><div class="card" style="height:4cqw"></div><div class="card" style="height:4cqw"></div><div class="card" style="height:4cqw"></div>
+        <div class="card" style="height:4cqw"></div><div class="card" style="height:4cqw"></div><div class="card" style="height:4cqw"></div><div class="card" style="height:4cqw"></div>
+        <div style="grid-column:1/-1;margin-top:1cqw"><div class="eyebrow" style="margin-bottom:.5cqw">Reviewed</div><div style="height:1.4cqw;background:var(--accent-light);border-radius:6px"><div style="width:22%;height:100%;background:var(--primary);border-radius:6px"></div></div></div>
+      </div>
+      <div class="progress" style="width:13%"></div>
+    </div>
+    <div class="meta"><div class="row"><span>03 · AI OUTPACES REVIEW</span><span>overwhelm-surround · 16–24s</span></div>
+      <p><b>Provider marks emit diff cards that stack up on the right</b>, while the "Reviewed" bar falls further behind. The headline lands before the pile fills.</p><span class="chip">in: crossfade</span></div>
+  </div>
+
+  <div class="cell" id="frame-04">
+    <div class="f">
+      <div class="pad" style="display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center">
+        <div class="h2 soft" style="font-weight:500">So which changes deserve your engineers' <span style="color:var(--text)">scarce attention?</span></div>
+        <div style="width:60px;height:4px;background:var(--primary);border-radius:2px;margin:2.6cqw 0"></div>
+        <div class="h2">LiveReview ranks every hunk<br>by <span class="blue">blast radius</span> and <span class="blue">review priority</span>.</div>
+      </div>
+      <div class="progress" style="width:17%"></div>
+    </div>
+    <div class="meta"><div class="row"><span>04 · WHICH CHANGES DESERVE ATTENTION?</span><span>kinetic-type-beats · 24–30s</span></div>
+      <p><b>The question types in and dims to gray; the answer snaps in beneath it</b>, and the two key terms flash cobalt one after the other.</p><span class="chip">in: crossfade</span></div>
+  </div>
+</div>
+
+<!-- ======================= 01 CAPABILITY ======================= -->
+<div class="act">01 · Capability: read the riskiest code first</div>
+<div class="grid">
+  <div class="cell" id="frame-05">
+    <div class="f">
+      <div class="pad">
+        <span class="actlabel">01 · Capability</span>
+        <div class="h2" style="margin-top:1.2cqw">Blast radius tells you what to read first</div>
+      </div>
+      <div class="win" style="position:absolute;left:12cqw;width:76cqw;bottom:4cqw;aspect-ratio:21/9">
+        <div class="dots"><i></i><i></i><i></i></div>
+        <div class="lbl"><div><b>demo_review_blast_radius.mp4</b>diff by score → "71 High risk" popover → sunburst</div></div>
+      </div>
+      <div class="card" style="position:absolute;right:5cqw;bottom:8cqw;padding:1cqw 1.4cqw;background:#fff"><span class="h3 red">71</span> <span class="eyebrow red">High risk</span></div>
+      <div class="progress" style="width:22%"></div>
+    </div>
+    <div class="meta"><div class="row"><span>05 · BLAST RADIUS, LIVE</span><span>device-surface-showcase · 30–39s</span></div>
+      <p><b>The act pill and title lead; the app window rises from below</b> and the clip plays at 0.5×, with a slow push-in on the risk popover. The "measurable signals" line fades in under the title at 4s.</p><span class="chip">in: zoom-through</span></div>
+  </div>
+
+  <div class="cell" id="frame-06">
+    <div class="f">
+      <div class="pad">
+        <div class="eyebrow">How the score works</div>
+        <div class="h2" style="margin-top:.8cqw">No black box.</div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1.6cqw;margin-top:2.4cqw">
+          <div><div class="win" style="aspect-ratio:4/3"><div class="dots"><i></i><i></i><i></i></div><div class="lbl"><div><b>score-4.webp</b>sunburst</div></div></div><div class="h3" style="margin-top:1cqw;font-size:1.5cqw">Visualize blast radius at a glance</div></div>
+          <div><div class="win" style="aspect-ratio:4/3"><div class="dots"><i></i><i></i><i></i></div><div class="lbl"><div><b>score-2.webp</b>factors</div></div></div><div class="h3" style="margin-top:1cqw;font-size:1.5cqw">Every factor that feeds the score</div></div>
+          <div><div class="win" style="aspect-ratio:4/3;outline:.3cqw solid var(--primary)"><div class="dots"><i></i><i></i><i></i></div><div class="lbl"><div><b>score-3.webp</b>Math Mode</div></div></div><div class="h3" style="margin-top:1cqw;font-size:1.5cqw">The exact math, not a black box</div></div>
+        </div>
+      </div>
+      <div class="progress" style="width:28%"></div>
+    </div>
+    <div class="meta"><div class="row"><span>06 · THE EXACT MATH</span><span>grid-card-assemble · 39–47s</span></div>
+      <p><b>The three cards cascade in from left to right, one per caption</b>. Each gets a slow push-in on its still, and Math Mode ends as the focal card.</p><span class="chip">in: push-slide left</span></div>
+  </div>
+</div>
+
+<!-- ======================= 02 CONTROL ======================= -->
+<div class="act">02 · Control: standards that hold without anyone remembering</div>
+<div class="grid">
+  <div class="cell" id="frame-07">
+    <div class="f">
+      <div class="pad" style="display:flex;flex-direction:column;justify-content:center">
+        <span class="actlabel" style="align-self:flex-start">02 · Control</span>
+        <div class="h1" style="margin-top:2cqw;max-width:78cqw;font-size:3.6cqw">A standard is useless when every engineer must remember to enforce it.</div>
+        <div class="h3 soft" style="margin-top:2.4cqw;font-weight:500">How do you make good review happen every time, without slowing the team down?</div>
+      </div>
+      <div class="progress" style="width:33%"></div>
+    </div>
+    <div class="meta"><div class="row"><span>07 · A STANDARD NOBODY ENFORCES</span><span>kinetic-type-beats · 47–53s</span></div>
+      <p><b>The claim lands in two halves</b> ("A standard is useless" / "when every engineer must remember…"), then the question fades in lighter beneath it.</p><span class="chip">in: zoom-through</span></div>
+  </div>
+
+  <div class="cell" id="frame-08">
+    <div class="f">
+      <div class="pad">
+        <div class="eyebrow">Five checkpoints</div>
+        <div style="position:relative;margin-top:3cqw;display:flex;justify-content:space-between">
+          <div style="position:absolute;left:5.5cqw;right:5.5cqw;top:1.7cqw;height:.3cqw;background:var(--border)"></div>
+          <div class="station"><div class="c">1</div><span>Commit</span></div>
+          <div class="station"><div class="c">2</div><span>Push</span></div>
+          <div class="station"><div class="c">3</div><span>MR / PR</span></div>
+          <div class="station"><div class="c">4</div><span>CI/CD</span></div>
+          <div class="station"><div class="c">5</div><span class="blue">Scheduled</span></div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1.25fr;gap:2.4cqw;margin-top:3cqw;align-items:center">
+          <div class="h2" style="font-size:2.4cqw">Checks that enforce your standards on <span class="blue">every change</span>.</div>
+          <div class="win" style="aspect-ratio:21/9"><div class="dots"><i></i><i></i><i></i></div><div class="lbl"><div><b>demo_schedule_review.mp4</b>Scheduled Reviews, per-repo toggles</div></div></div>
+        </div>
+      </div>
+      <div class="progress" style="width:39%"></div>
+    </div>
+    <div class="meta"><div class="row"><span>08 · FIVE CHECKPOINTS</span><span>spatial-pan-stations · 53–62s</span></div>
+      <p><b>The camera pans along the pipeline, lighting one station per second</b>. At "Scheduled" the clip window grows out of the station, then the payoff line lands.</p><span class="chip">in: crossfade</span></div>
+  </div>
+
+  <div class="cell" id="frame-09">
+    <div class="f">
+      <div class="pad">
+        <div class="eyebrow">Review depth</div>
+        <div class="h2" style="margin-top:.6cqw;font-size:2.4cqw">Pick the right depth for your shipping speed.</div>
+        <div style="display:flex;flex-direction:column;gap:1cqw;margin-top:2.2cqw">
+          <div class="card" style="display:flex;align-items:center;gap:2cqw;padding:1cqw 1.6cqw"><div class="dotrow"><i class="on"></i><i></i><i></i><i></i><i></i></div><div class="body" style="color:var(--text)"><b>Commit only</b> · fastest, lightest net</div></div>
+          <div class="card" style="display:flex;align-items:center;gap:2cqw;padding:1cqw 1.6cqw"><div class="dotrow"><i class="on"></i><i></i><i></i><i></i><i class="on"></i></div><div class="body" style="color:var(--text)"><b>Commit + Scheduled</b> · the startup pick</div></div>
+          <div class="card" style="display:flex;align-items:center;gap:2cqw;padding:1cqw 1.6cqw"><div class="dotrow"><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i></div><div class="body" style="color:var(--text)"><b>Commit + Push + MR/PR</b> · the standard team flow</div></div>
+          <div class="card" style="display:flex;align-items:center;gap:2cqw;padding:1cqw 1.6cqw;border-color:var(--primary)"><div class="dotrow"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></div><div class="body" style="color:var(--text)"><b>All five</b> · payments, auth, core infra</div></div>
+        </div>
+      </div>
+      <div class="progress" style="width:45%"></div>
+    </div>
+    <div class="meta"><div class="row"><span>09 · PICK YOUR REVIEW DEPTH</span><span>grid-card-assemble · 62–71s</span></div>
+      <p><b>The rows stack in one at a time (~2s each), and each row's dots light up</b> from left to right. The last row, All five, takes the cobalt border.</p><span class="chip">in: push-slide left</span></div>
+  </div>
+
+  <div class="cell" id="frame-10">
+    <div class="f">
+      <div class="pad">
+        <div class="h2">A gate your pipeline can call</div>
+        <div style="display:grid;grid-template-columns:1.5fr 1fr;gap:2.4cqw;margin-top:2cqw;align-items:center">
+          <div class="win" style="aspect-ratio:21/9"><div class="dots"><i></i><i></i><i></i></div><div class="lbl"><div><b>demo_cicd_gates.mp4</b>ruleset → jq expression highlighted</div></div></div>
+          <div>
+            <div class="body">Write a jq rule over a review's findings.</div>
+            <div class="body" style="margin-top:1cqw">Call <b style="color:var(--text)">one URL</b> from any CI/CD pipeline.</div>
+            <div style="display:flex;gap:1cqw;margin-top:2cqw"><span class="pill" style="background:rgba(220,38,38,.1);color:var(--neg)">✕ BLOCK</span><span class="pill" style="background:rgba(5,150,105,.1);color:var(--pos)">✓ ALLOW</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="progress" style="width:51%"></div>
+    </div>
+    <div class="meta"><div class="row"><span>10 · A GATE YOUR PIPELINE CAN CALL</span><span>video-text-pivot · 71–79s</span></div>
+      <p><b>The clip plays centered first, then slides left</b> to make room for the two lines and the BLOCK / ALLOW verdict. Red and green are used here only as the pass/fail verdict.</p><span class="chip">in: crossfade</span></div>
+  </div>
+
+  <div class="cell" id="frame-11">
+    <div class="f">
+      <div class="pad">
+        <div class="h2">The review reads like a briefing</div>
+        <div class="body" style="margin-top:.6cqw">What was implemented, why, and which risks were flagged.</div>
+        <div style="display:grid;grid-template-columns:1.6fr 1fr;gap:2.4cqw;margin-top:2cqw;align-items:center">
+          <div class="win" style="aspect-ratio:21/9"><div class="dots"><i></i><i></i><i></i></div><div class="lbl"><div><b>demo_review_slides.mp4 → demo_review_quiz.mp4</b>summary deck pages → quiz</div></div></div>
+          <div style="display:flex;flex-direction:column;gap:1cqw">
+            <span class="pill">✓ 60-second slide summary</span>
+            <span class="pill">✓ Copy-paste PR summary</span>
+            <span class="pill">✓ Quiz on the diff</span>
+          </div>
+        </div>
+      </div>
+      <div class="progress" style="width:57%"></div>
+    </div>
+    <div class="meta"><div class="row"><span>11 · READS LIKE A BRIEFING</span><span>device-surface-showcase · 79–88s</span></div>
+      <p><b>The summary deck flies into the window and pages through its slides</b>, then hard-cuts to the quiz. The chips tick in on the right as each one is shown.</p><span class="chip">in: zoom-through</span></div>
+  </div>
+</div>
+
+<!-- ======================= 03 COST ======================= -->
+<div class="act">03 · Cost: your code, your infrastructure, your bill</div>
+<div class="grid">
+  <div class="cell" id="frame-12">
+    <div class="f">
+      <div class="pad">
+        <span class="actlabel">03 · Cost</span>
+        <div class="h3" style="margin-top:1cqw;max-width:40cqw">Other reviewers send your code outside your infrastructure, and seat-based pricing gets expensive.</div>
+        <div style="display:flex;flex-direction:column;gap:.9cqw;margin-top:2.2cqw;max-width:38cqw">
+          <span class="pill" style="align-self:flex-start">Pay per reviewed LOC, not per seat</span>
+          <span class="pill" style="align-self:flex-start">Adaptive Reviews cut AI cost 40–50%</span>
+          <span class="pill" style="align-self:flex-start">CLI · IDE · MCP · API</span>
+        </div>
+      </div>
+      <div style="position:absolute;right:5cqw;top:6cqw;width:40cqw;height:40cqw;border:2px dashed var(--border);border-radius:24px">
+        <div class="eyebrow" style="position:absolute;left:1.4cqw;top:1.2cqw">Your infrastructure</div>
+        <div style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:9cqw;height:9cqw;border-radius:50%;background:var(--accent-light);display:grid;place-items:center"><img class="logo" src="assets/logo.svg" alt=""></div>
+        <div class="rings" style="left:50%;top:50%;width:26cqw;height:26cqw;transform:translate(-50%,-50%)"></div>
+        <img class="mark" src="assets/brand-claude.svg" style="position:absolute;left:18cqw;top:4cqw" alt="">
+        <img class="mark" src="assets/brand-openai.svg" style="position:absolute;right:5cqw;top:16cqw" alt="">
+        <img class="mark" src="assets/brand-gemini.svg" style="position:absolute;left:18cqw;bottom:4cqw" alt="">
+        <img class="mark" src="assets/brand-deepseek.svg" style="position:absolute;left:5cqw;top:16cqw" alt="">
+        <img class="mark" src="assets/version_control_logos_github-logo-dark.png" style="position:absolute;left:6cqw;top:6cqw" alt="">
+        <img class="mark" src="assets/version_control_logos_gitlab-logo.png" style="position:absolute;right:7cqw;top:6cqw" alt="">
+        <img class="mark" src="assets/extensions_vscode-logo.png" style="position:absolute;right:7cqw;bottom:6cqw" alt="">
+        <img class="mark" src="assets/extensions_cursor-logo.png" style="position:absolute;left:6cqw;bottom:6cqw" alt="">
+      </div>
+      <div style="position:absolute;right:5cqw;bottom:3.4cqw;width:40cqw;text-align:center" class="body"><b style="color:var(--text)">Self-host:</b> your code goes straight to the AI provider you choose.</div>
+      <div class="progress" style="width:64%"></div>
+    </div>
+    <div class="meta"><div class="row"><span>12 · YOUR CODE, YOUR BILL</span><span>constellation-hub · 88–99s</span></div>
+      <p><b>The problem line lands first. Then the dashed "your infrastructure" boundary draws itself</b>, the mark pops in the center, AI and Git/IDE logos spring into orbit, and the three pills stack in on the left.</p><span class="chip">in: zoom-through</span></div>
+  </div>
+</div>
+
+<!-- ======================= TOUR ======================= -->
+<div class="act">In the product: visibility, speed, answers, proof</div>
+<div class="grid">
+  <div class="cell" id="frame-13">
+    <div class="f">
+      <div class="pad">
+        <div class="h2">Every review, every repo, in one place.</div>
+        <div class="win" style="margin-top:2cqw;aspect-ratio:21/9"><div class="dots"><i></i><i></i><i></i></div><div class="lbl"><div><b>demo_list_reviews.mp4 → demo_dashboard.mp4</b>review list → pipeline Sankey → treemap → radar</div></div></div>
+      </div>
+      <div class="progress" style="width:70%"></div>
+    </div>
+    <div class="meta"><div class="row"><span>13 · EVERY REVIEW IN ONE PLACE</span><span>device-surface-showcase · 99–109s</span></div>
+      <p><b>The title leads; the window fills most of the frame</b>. The review list loads, then cuts to the dashboard, where "See where the issues pile up." replaces the title.</p><span class="chip">in: zoom-through</span></div>
+  </div>
+
+  <div class="cell" id="frame-14">
+    <div class="f">
+      <div class="pad" style="display:grid;grid-template-columns:1fr 1.7fr;gap:2.6cqw;align-items:center">
+        <div>
+          <div style="display:flex;align-items:center;gap:1cqw"><span class="kbd">Ctrl</span><span class="h2 soft">+</span><span class="kbd" style="border-color:var(--primary);color:var(--primary)">K</span></div>
+          <div class="h2" style="margin-top:2cqw">Jump anywhere.</div>
+          <div class="body" style="margin-top:1cqw">Reviews, repositories and MRs, AI &amp; Git providers, reports and settings, one keystroke away.</div>
+        </div>
+        <div class="win" style="aspect-ratio:21/9"><div class="dots"><i></i><i></i><i></i></div><div class="lbl"><div><b>demo_all_features_navigation.mp4</b>command palette → Git providers → settings</div></div></div>
+      </div>
+      <div class="progress" style="width:76%"></div>
+    </div>
+    <div class="meta"><div class="row"><span>14 · CTRL + K</span><span>cursor-ui-demo · 109–117s</span></div>
+      <p><b>The keycaps press down one after the other</b>, and the palette clip opens in the window as K lands. The body line reveals in three phrases.</p><span class="chip">in: push-slide left</span></div>
+  </div>
+
+  <div class="cell" id="frame-15">
+    <div class="f">
+      <div class="pad">
+        <div style="display:flex;align-items:center;gap:1.2cqw"><img src="assets/lrbot_lrbot.png" style="width:4.4cqw;height:4.4cqw;border-radius:50%" alt=""><div class="h2">An AI chatbot for your engineering data</div></div>
+        <div style="display:grid;grid-template-columns:1fr 1.6fr;gap:2.4cqw;margin-top:2.2cqw;align-items:center">
+          <div>
+            <div class="card" style="padding:1.2cqw 1.4cqw;border-radius:14px;background:var(--primary)"><div class="body" style="color:#fff">Are engineers actually incorporating reviews into their daily workflow?</div></div>
+            <div class="body" style="margin-top:1.6cqw">Answers with a chart from your own data. No dashboards to build, no SQL to write.</div>
+          </div>
+          <div class="win" style="aspect-ratio:21/9"><div class="dots"><i></i><i></i><i></i></div><div class="lbl"><div><b>demo_livi_chat_bot.mp4</b>question → review activity chart → adoption levels</div></div></div>
+        </div>
+      </div>
+      <div class="progress" style="width:82%"></div>
+    </div>
+    <div class="meta"><div class="row"><span>15 · ASK LIVI</span><span>prompt-type-submit-generate · 117–127s</span></div>
+      <p><b>The Livi avatar pops in and the question types into the bubble</b>. On submit the clip plays, and the answer line lands once the chart appears.</p><span class="chip">in: crossfade</span></div>
+  </div>
+
+  <div class="cell" id="frame-16">
+    <div class="f">
+      <div class="pad" style="display:grid;grid-template-columns:1.6fr 1fr;gap:2.6cqw;align-items:center">
+        <div class="win" style="aspect-ratio:21/9"><div class="dots"><i></i><i></i><i></i></div><div class="lbl"><div><b>demo_onboarding_report.mp4</b>report generating → activity → repo trends → top engineers</div></div></div>
+        <div>
+          <div style="font-size:9cqw;font-weight:700;line-height:1;color:var(--primary);letter-spacing:-.03em">57</div>
+          <div class="h3">charts, zero dashboards to build</div>
+          <div class="body" style="margin-top:1cqw">7 sections · one click · PDF / HTML</div>
+          <div class="body soft" style="margin-top:1cqw;font-size:1.2cqw">Adoption · growth · review quality · cost · engagement</div>
+        </div>
+      </div>
+      <div class="progress" style="width:88%"></div>
+    </div>
+    <div class="meta"><div class="row"><span>16 · 57 CHARTS</span><span>video-text-pivot · 127–137s</span></div>
+      <p><b>The report plays centered, then slides left</b>. "57" counts up from 0, and the three facts tick in beneath it.</p><span class="chip">in: push-slide left</span></div>
+  </div>
+</div>
+
+<!-- ======================= CLOSE ======================= -->
+<div class="act">Close</div>
+<div class="grid">
+  <div class="cell" id="frame-17">
+    <div class="f">
+      <div class="pad">
+        <div class="h1" style="font-size:3.6cqw">Three problems. One reviewer.</div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1.6cqw;margin-top:3cqw">
+          <div class="card" style="padding:2.4cqw 2cqw;min-height:22cqw"><div class="eyebrow" style="font-size:1.3cqw">01</div><div class="h2" style="margin-top:.8cqw">Capability</div><div class="body" style="margin-top:1.2cqw;font-size:1.6cqw">Review as deep as the change warrants.</div></div>
+          <div class="card" style="padding:2.4cqw 2cqw;min-height:22cqw"><div class="eyebrow" style="font-size:1.3cqw">02</div><div class="h2" style="margin-top:.8cqw">Control</div><div class="body" style="margin-top:1.2cqw;font-size:1.6cqw">Standards that actually block a merge.</div></div>
+          <div class="card" style="padding:2.4cqw 2cqw;min-height:22cqw"><div class="eyebrow" style="font-size:1.3cqw">03</div><div class="h2" style="margin-top:.8cqw">Cost</div><div class="body" style="margin-top:1.2cqw;font-size:1.6cqw">Pay per reviewed LOC. Adaptive Reviews cut AI cost 40–50%.</div></div>
+        </div>
+      </div>
+      <div class="progress" style="width:94%"></div>
+    </div>
+    <div class="meta"><div class="row"><span>17 · THREE PROBLEMS. ONE REVIEWER.</span><span>grid-card-assemble · 137–145s</span></div>
+      <p><b>The title lands, then the three cards cascade in (01 → 02 → 03)</b>, each reusing its act pill's label and its one-line answer.</p><span class="chip">in: zoom-through</span></div>
+  </div>
+
+  <div class="cell" id="frame-18">
+    <div class="f">
+      <div class="rings" style="left:50%;top:50%;width:60cqw;height:60cqw;transform:translate(-50%,-50%)"></div>
+      <div class="rings" style="left:50%;top:50%;width:84cqw;height:84cqw;transform:translate(-50%,-50%);opacity:.6"></div>
+      <div class="pad" style="display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center">
+        <img src="assets/logo.svg" style="width:7cqw;height:7cqw" alt="">
+        <div class="h1" style="margin-top:1.4cqw">LiveReview</div>
+        <div class="body" style="margin-top:1cqw">Start free: 30k LOC every month.</div>
+        <span class="pill solid" style="margin-top:2cqw;font-size:1.6cqw;padding:.8cqw 2.2cqw">hexmos.com/livereview</span>
+      </div>
+      <div class="progress" style="width:100%"></div>
+    </div>
+    <div class="meta"><div class="row"><span>18 · START FREE</span><span>logo-assemble-lockup · 145–150s</span></div>
+      <p><b>The cards clear off the edges, the mark draws on inside the rings</b>, and the wordmark, free-tier line and URL pill settle, holding to the end as the music fades out.</p><span class="chip">in: crossfade</span></div>
+  </div>
+
+  <div class="cell">
+    <div class="seams">
+      <div><span><b>Seam map</b></span><span>transition_in</span></div>
+      <div><span>01 → 02</span><span>zoom-through (red rings → mark)</span></div>
+      <div><span>02 → 03 → 04</span><span>crossfade</span></div>
+      <div><span>04 → 05 · 06 → 07 · 10 → 11 · 11 → 12</span><span>zoom-through (act turns)</span></div>
+      <div><span>05 → 06 · 08 → 09 · 13 → 14 · 15 → 16</span><span>push-slide left</span></div>
+      <div><span>07 → 08 · 09 → 10 · 14 → 15</span><span>crossfade</span></div>
+      <div><span>12 → 13 · 16 → 17</span><span>zoom-through</span></div>
+      <div><span>17 → 18</span><span>crossfade</span></div>
+    </div>
+    <div class="tokens">
+      <div><span class="sw" style="background:#fff"></span>bg #ffffff <span class="sw" style="background:#1d56f0;margin-left:10px"></span>primary #1d56f0 <span class="sw" style="background:#05070b;margin-left:10px"></span>text #05070b</div>
+      <div style="margin-top:6px"><span class="sw" style="background:#0e1322"></span>app window (clip frame) <span class="sw" style="background:#dc2626;margin-left:10px"></span>danger, only the 3-line change / BLOCK</div>
+      <div style="margin-top:6px"><b>Type:</b> Inter. Headlines near-black −0.02em · eyebrows cobalt uppercase .08em · numerals cobalt.</div>
+      <div><b>Bans:</b> no shadows on content, no second accent, no cropped UI, no old-cut story (Rickover, horses, five-pillar loop).</div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

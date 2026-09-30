@@ -1,0 +1,246 @@
+<template>
+  <style>
+    @font-face {
+      font-family: "Inter";
+      src: url("assets/fonts/Inter-var.woff2") format("woff2");
+      font-weight: 100 900;
+      font-style: normal;
+    }
+    #root {
+      position: absolute;
+      inset: 0;
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+      font-family: "Inter", sans-serif;
+      color: #05070b;
+    }
+    /* ---- full-bleed ground (track 0) ---- */
+    [id="01-generation-vs-inspection-bg"] {
+      position: absolute;
+      inset: 0;
+      background: #ffffff;
+    }
+    /* ---- AI provider mark field (track 1, behind the type) ---- */
+    [id="01-generation-vs-inspection-marks"] {
+      position: absolute;
+      inset: 0;
+    }
+    [id="01-generation-vs-inspection-marks"] > div {
+      position: absolute;
+      inset: 0;
+    }
+    [id="01-generation-vs-inspection-marks"] img {
+      position: absolute;
+      display: block;
+      transform-origin: 50% 50%;
+    }
+    /* ---- eyebrow ---- */
+    [id="01-generation-vs-inspection-eyebrow"] {
+      position: absolute;
+      left: 96px;
+      top: 96px;
+      display: inline-flex;
+      align-items: center;
+      font-size: 19px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #1d56f0;
+      background: rgba(29, 86, 240, 0.08);
+      border-radius: 100px;
+      padding: 7px 20px;
+      transform-origin: 0% 50%;
+    }
+    /* ---- lead line (the swapped token slot) ---- */
+    [id="01-generation-vs-inspection-lead-a"],
+    [id="01-generation-vs-inspection-lead-b"] {
+      position: absolute;
+      left: 96px;
+      right: 96px;
+      top: 336px;
+      text-align: center;
+      font-size: 62px;
+      font-weight: 500;
+      line-height: 1.15;
+      letter-spacing: -0.02em;
+      color: #05070b;
+      white-space: nowrap;
+    }
+    [id="01-generation-vs-inspection-lead-a"] span {
+      display: inline-block;
+    }
+    [id="01-generation-vs-inspection-lead-b"] b {
+      font-weight: 700;
+      color: #1d56f0;
+    }
+    /* ---- the centre line: generation, then (vacated) inspection ---- */
+    [id="01-generation-vs-inspection-centre"] {
+      position: absolute;
+      left: 96px;
+      right: 96px;
+      top: 452px;
+      height: 170px;
+    }
+    [id="01-generation-vs-inspection-gen"],
+    [id="01-generation-vs-inspection-insp"] {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 0;
+      height: 170px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      white-space: nowrap;
+    }
+    [id="01-generation-vs-inspection-gen-in"] {
+      display: inline-block;
+      transform-origin: 50% 50%;
+      font-size: 88px;
+      font-weight: 700;
+      line-height: 1;
+      letter-spacing: -0.03em;
+      color: #1d56f0;
+    }
+    [id="01-generation-vs-inspection-insp"] {
+      font-size: 106px;
+      line-height: 1;
+      letter-spacing: -0.03em;
+      color: #05070b;
+      font-variation-settings: "wght" 700;
+    }
+    [id="01-generation-vs-inspection-insp"] span {
+      display: inline-block;
+      white-space: pre;
+    }
+    [id="01-generation-vs-inspection-insp-q"] {
+      transform-origin: 50% 70%;
+      color: #1d56f0;
+    }
+    /* ---- persistent cobalt progress strip ---- */
+    [id="01-generation-vs-inspection-progress"] {
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      height: 3px;
+      width: 0%;
+      background: #1d56f0;
+    }
+  </style>
+
+  <div data-hf-id="hf-q4c2" id="root" data-composition-id="01-generation-vs-inspection" data-width="1920" data-height="1080" data-duration="8">
+    <div data-hf-id="hf-yacp" id="01-generation-vs-inspection-bg" class="clip" data-start="0" data-duration="8" data-track-index="0"></div>
+
+    <div data-hf-id="hf-06b9" id="01-generation-vs-inspection-marks" class="clip" data-start="0" data-duration="8" data-track-index="1">
+      <div data-hf-id="hf-2j4s" id="01-generation-vs-inspection-w0"><img data-hf-id="hf-6c0h" id="01-generation-vs-inspection-m0" src="assets/brand-claude.svg" alt="" style="left: 232px; top: 208px; width: 132px; height: 132px;"></div>
+      <div data-hf-id="hf-3asl" id="01-generation-vs-inspection-w1"><img data-hf-id="hf-5074" id="01-generation-vs-inspection-m1" src="assets/brand-openai.svg" alt="" style="left: 1540px; top: 252px; width: 112px; height: 112px;"></div>
+      <div data-hf-id="hf-78wm" id="01-generation-vs-inspection-w2"><img data-hf-id="hf-mq4h" id="01-generation-vs-inspection-m2" src="assets/brand-copilot.svg" alt="" style="left: 336px; top: 676px; width: 116px; height: 116px;"></div>
+      <div data-hf-id="hf-demf" id="01-generation-vs-inspection-w3"><img data-hf-id="hf-e8ni" id="01-generation-vs-inspection-m3" src="assets/brand-gemini.svg" alt="" style="left: 1556px; top: 636px; width: 128px; height: 128px;"></div>
+      <div data-hf-id="hf-hcqg" id="01-generation-vs-inspection-w4"><img data-hf-id="hf-f0by" id="01-generation-vs-inspection-m4" src="assets/brand-deepseek.svg" alt="" style="left: 946px; top: 762px; width: 96px; height: 96px;"></div>
+    </div>
+
+    <div data-hf-id="hf-88wj" id="01-generation-vs-inspection-eyebrow">01 · The gap</div>
+
+    <div data-hf-id="hf-3hlz" id="01-generation-vs-inspection-lead-a" class="clip" data-start="0" data-duration="3.8" data-track-index="2"><span data-hf-id="hf-71e8">You</span> <span data-hf-id="hf-mhjn">already</span> <span data-hf-id="hf-5yhc">do</span> <span data-hf-id="hf-zhz4">a</span> <span data-hf-id="hf-xqr8">lot</span> <span data-hf-id="hf-6uva">of…</span></div>
+    <div data-hf-id="hf-1432" id="01-generation-vs-inspection-lead-b" class="clip" data-start="3.8" data-duration="4.2" data-track-index="3">But do you do <b data-hf-id="hf-ga09">enough</b> of…</div>
+
+    <div data-hf-id="hf-e2gg" id="01-generation-vs-inspection-centre">
+      <div data-hf-id="hf-h7oh" id="01-generation-vs-inspection-gen" class="clip" data-start="0" data-duration="3.8" data-track-index="4"><span data-hf-id="hf-56zu" id="01-generation-vs-inspection-gen-in">AI-Assisted code generation</span></div>
+      <div data-hf-id="hf-sjl5" id="01-generation-vs-inspection-insp"></div>
+    </div>
+
+    <div data-hf-id="hf-2ezo" id="01-generation-vs-inspection-progress"></div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+  <script>
+    (function () {
+      var ID = "01-generation-vs-inspection";
+      var $ = function (s) { return document.getElementById(ID + "-" + s); };
+      var tl = gsap.timeline({ paused: true });
+
+      /* ---------- Scene 4 copy is built as per-character slots up front ---------- */
+      var INSP = "AI-Assisted Code Inspection?";
+      var inspEl = $("insp");
+      var chars = [];
+      for (var i = 0; i < INSP.length; i++) {
+        var sp = document.createElement("span");
+        sp.textContent = INSP.charAt(i);
+        if (i === INSP.length - 1) { sp.id = ID + "-insp-q"; }
+        inspEl.appendChild(sp);
+        chars.push(sp);
+      }
+      var qMark = chars[chars.length - 1];
+      var bodyChars = chars.slice(0, chars.length - 1);
+
+      /* ---------- mark field geometry: outward drift vectors from frame centre ---------- */
+      var MARKS = [
+        { k: "m0", w: "w0", dx: -37, dy: -15, s: 1.00 },
+        { k: "m1", w: "w1", dx: 32, dy: -12, s: 0.92 },
+        { k: "m2", w: "w2", dx: -36, dy: 12, s: 0.96 },
+        { k: "m3", w: "w3", dx: 35, dy: 8, s: 1.04 },
+        { k: "m4", w: "w4", dx: 4, dy: 30, s: 0.88 }
+      ];
+
+      /* ---------- persistent chrome: 0.0% -> 5.3% across the full shot ---------- */
+      tl.fromTo($("progress"), { width: "0%" }, { width: "5.3%", duration: 8, ease: "none" }, 0);
+
+      /* ================= Scene 1 (0.0-2.2s) — white field, lead builds, marks drift ================= */
+      // eyebrow pops first so the hero cluster is alive well before t=0.5s
+      tl.fromTo($("eyebrow"), { opacity: 0, scale: 0.72 },
+        { opacity: 1, scale: 1, duration: 0.42, ease: "power3.out" }, 0.0);
+
+      // per-word staggered fade/blur reveal of the lead (kinetic-beat-slam, one shared cadence)
+      tl.fromTo($("lead-a").querySelectorAll("span"),
+        { opacity: 0, y: 26, filter: "blur(7px)" },
+        { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.5, ease: "power3.out", stagger: 0.075 }, 0.16);
+
+      // provider marks fade up to 22% at layered depth...
+      MARKS.forEach(function (m, i) {
+        tl.fromTo($(m.k), { opacity: 0, scale: m.s * 0.86 },
+          { opacity: 0.22, scale: m.s, duration: 0.75, ease: "power2.out" }, 0.4 + i * 0.09);
+        // ...then drift slowly outward and STOP as the payoff line arrives (2.4s)
+        tl.fromTo($(m.k), { x: 0, y: 0 },
+          { x: m.dx, y: m.dy, duration: 1.5, ease: "none" }, 0.9);
+      });
+
+      /* ================= Scene 2 (2.2-3.8s) — the payoff line scale-pops in cobalt ================= */
+      tl.fromTo($("gen-in"), { opacity: 0, scale: 0.68 },
+        { opacity: 1, scale: 1, duration: 0.6, ease: "power3.out" }, 2.2);
+
+      /* ================= Scene 3 (3.8-5.4s) — hard beat: token swap + marks clear ================= */
+      // the marks clear outward and vanish
+      // (the clear rides the wrapper, so it never shares a property with the fade-up/drift above)
+      MARKS.forEach(function (m, i) {
+        tl.fromTo($(m.w), { x: 0, y: 0, opacity: 1 },
+          { x: m.dx * 3.6, y: m.dy * 3.6, opacity: 0, duration: 0.7, ease: "power2.in" }, 3.8 + i * 0.05);
+      });
+
+      // discrete state director: the lead line and the centre line swap IN PLACE at a
+      // threshold (discrete-text-sequence) — no fade-out/fade-in drift on the swap.
+      // The hard-cut swap at 3.8s is owned by the framework's clip gating on
+      // lead-a / lead-b / gen (data-start + data-duration above), so nothing
+      // writes a persistent inline style that could outlive this frame's window.
+
+      /* ================= Scene 4 (5.4-8.0s) — inspection types in, weight-first, then holds ======== */
+      // the line's weight axis climbs as the characters land
+      var wght = { w: 300 };
+      tl.fromTo(wght, { w: 300 }, {
+        w: 700, duration: 1.3, ease: "power2.out",
+        onUpdate: function () { inspEl.style.fontVariationSettings = '"wght" ' + Math.round(wght.w); }
+      }, 5.4);
+
+      // character-by-character type-on
+      tl.fromTo(bodyChars, { opacity: 0 },
+        { opacity: 1, duration: 0.1, ease: "none", stagger: 0.042 }, 5.42);
+
+      // the "?" lands last — a spring-pop punctuation snap, then the frame holds still
+      tl.fromTo(qMark, { opacity: 0, scale: 0 },
+        { opacity: 1, scale: 1, duration: 0.5, ease: "power3.out" }, 6.58);
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines[ID] = tl;
+    })();
+  </script>
+</template>

@@ -1,0 +1,433 @@
+<template>
+  <style>
+    @font-face {
+      font-family: "Inter";
+      src: url("assets/fonts/Inter-var.woff2") format("woff2");
+      font-weight: 100 900;
+      font-style: normal;
+      font-display: block;
+    }
+    #root {
+      position: absolute;
+      inset: 0;
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+      font-family: "Inter", sans-serif;
+      color: #05070b;
+    }
+    /* ---- full-bleed ground (clip layer, never the root) ---- */
+    [id="14-enforcement-answer-bg"] {
+      position: absolute;
+      inset: 0;
+      background: #ffffff;
+    }
+
+    /* ---- act chrome: pill top-left, 2x2 quadrant glyph top-right ---- */
+    [id="14-enforcement-answer-act"] {
+      position: absolute;
+      left: 96px;
+      top: 96px;
+      display: inline-flex;
+      align-items: center;
+      font-size: 18.24px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #1d56f0;
+      background: rgba(29, 86, 240, 0.08);
+      border-radius: 100px;
+      padding: 6.7px 19.2px;
+      transform-origin: 0% 50%;
+    }
+    [id="14-enforcement-answer-glyph"] {
+      position: absolute;
+      left: 1656px;
+      top: 96px;
+      width: 132px;
+      height: 62px;
+    }
+    [id="14-enforcement-answer-glyph"] u {
+      position: absolute;
+      display: block;
+      width: 63px;
+      height: 28px;
+      border-radius: 4px;
+      box-sizing: border-box;
+      text-decoration: none;
+    }
+    [id="14-enforcement-answer-q1"] { left: 0; top: 0; background: rgba(29, 86, 240, 0.2); }
+    [id="14-enforcement-answer-q2"] { left: 69px; top: 0; background: rgba(29, 86, 240, 0.2); }
+    [id="14-enforcement-answer-q3"] { left: 0; top: 34px; background: #1d56f0; }
+    [id="14-enforcement-answer-q4"] { left: 69px; top: 34px; background: transparent; border: 1.5px solid rgba(29, 86, 240, 0.2); }
+
+    /* ---- title + sub-line ---- */
+    [id="14-enforcement-answer-title"] {
+      position: absolute;
+      left: 96px;
+      top: 136px;
+      width: 1500px;
+      font-size: 67.2px;
+      font-weight: 600;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      color: #05070b;
+      white-space: nowrap;
+    }
+    [id="14-enforcement-answer-title"] span { display: inline-block; }
+    [id="14-enforcement-answer-sub"] {
+      position: absolute;
+      left: 96px;
+      top: 214px;
+      width: 1500px;
+      font-size: 27.84px;
+      font-weight: 450;
+      line-height: 1.5;
+      color: #1648cf;
+      white-space: nowrap;
+    }
+    [id="14-enforcement-answer-sub"] b { font-weight: 600; color: #05070b; }
+
+    /* ---- the five-stop rail (commit / push / PR / CI/CD / schedule) ----
+       Scene 1: full width at scale 1. Scene 2: scales to 0.62 from its top-left
+       and docks under the title, where it holds for the rest of the frame. ---- */
+    [id="14-enforcement-answer-rail"] {
+      position: absolute;
+      left: 96px;
+      top: 268px;
+      width: 1728px;
+      height: 82px;
+      transform-origin: 0% 0%;
+    }
+    [id="14-enforcement-answer-track"],
+    [id="14-enforcement-answer-fill"] {
+      position: absolute;
+      left: 60px;
+      top: 11px;
+      width: 1608px;
+      height: 4px;
+      border-radius: 2px;
+      transform-origin: 0% 50%;
+    }
+    [id="14-enforcement-answer-track"] { background: rgba(29, 86, 240, 0.2); }
+    [id="14-enforcement-answer-fill"] { background: #1d56f0; }
+    [id="14-enforcement-answer-rail"] .hf14-halo {
+      position: absolute;
+      top: -9px;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      box-sizing: border-box;
+      background: rgba(29, 86, 240, 0.08);
+      border: 1.5px solid rgba(29, 86, 240, 0.2);
+    }
+    [id="14-enforcement-answer-rail"] .hf14-off,
+    [id="14-enforcement-answer-rail"] .hf14-on {
+      position: absolute;
+      top: 0;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      box-sizing: border-box;
+    }
+    [id="14-enforcement-answer-rail"] .hf14-off {
+      background: #ffffff;
+      border: 1.5px solid rgba(29, 86, 240, 0.2);
+    }
+    [id="14-enforcement-answer-rail"] .hf14-on { background: #1d56f0; }
+    [id="14-enforcement-answer-rail"] .hf14-label {
+      position: absolute;
+      top: 40px;
+      width: 260px;
+      text-align: center;
+      font-size: 33.6px;
+      line-height: 40px;
+      font-weight: 650;
+      letter-spacing: -0.01em;
+      color: #05070b;
+      white-space: nowrap;
+    }
+    /* travelling focus marker, in page space beneath the docked rail */
+    [id="14-enforcement-answer-marker"] {
+      position: absolute;
+      left: 832.92px;
+      top: 323.6px;
+      width: 96px;
+      height: 4px;
+      border-radius: 2px;
+      background: #1d56f0;
+      transform-origin: 50% 50%;
+    }
+    [id="14-enforcement-answer-ping"] {
+      position: absolute;
+      left: 872.92px;
+      top: 268.06px;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      box-sizing: border-box;
+      border: 1.5px solid #1d56f0;
+    }
+
+    /* ---- app window shell: 230,346 1460x658; content rect 232,379 1456x623 ---- */
+    [id="14-enforcement-answer-win"] {
+      position: absolute;
+      left: 230px;
+      top: 346px;
+      width: 1460px;
+      height: 658px;
+      box-sizing: border-box;
+      background: #0e1322;
+      border: 1.5px solid #1a2440;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    [id="14-enforcement-answer-bar"] {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 0;
+      height: 31px;
+      box-sizing: border-box;
+      background: #0a0f1c;
+      border-bottom: 1px solid #1a2440;
+    }
+    [id="14-enforcement-answer-dots"] {
+      position: absolute;
+      top: 10.5px;
+      left: 17px;
+      display: flex;
+      gap: 7.7px;
+    }
+    [id="14-enforcement-answer-dots"] i {
+      display: block;
+      width: 9.6px;
+      height: 9.6px;
+      border-radius: 50%;
+      background: #334155;
+    }
+
+    /* ---- the seal: "The Enforcement Problem -> Solved" ---- */
+    [id="14-enforcement-answer-seal"] {
+      position: absolute;
+      left: 96px;
+      width: 1728px;
+      top: 500px;
+      text-align: center;
+      white-space: nowrap;
+      font-size: 0;
+    }
+    [id="14-enforcement-answer-seal-a"],
+    [id="14-enforcement-answer-seal-b"] {
+      display: inline-block;
+      vertical-align: middle;
+      font-size: 67.2px;
+      line-height: 1.15;
+      letter-spacing: -0.02em;
+    }
+    [id="14-enforcement-answer-seal-a"] { font-weight: 600; color: #05070b; }
+    [id="14-enforcement-answer-seal-b"] { font-weight: 700; color: #059669; margin-left: 30px; }
+    [id="14-enforcement-answer-seal-c"] {
+      display: inline-block;
+      vertical-align: middle;
+      width: 60px;
+      height: 60px;
+      margin-left: 26px;
+      border-radius: 50%;
+      box-sizing: border-box;
+      background: rgba(5, 150, 105, 0.1);
+      border: 1.5px solid #059669;
+    }
+    [id="14-enforcement-answer-tick"] {
+      fill: none;
+      stroke: #059669;
+      stroke-width: 4;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    [id="14-enforcement-answer-progress"] {
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      height: 3px;
+      width: 58.7%;
+      background: #1d56f0;
+    }
+  </style>
+
+  <div data-hf-id="hf-re9c" id="root" data-composition-id="14-enforcement-answer" data-width="1920" data-height="1080" data-duration="13">
+    <div data-hf-id="hf-g1q7" id="14-enforcement-answer-bg" class="clip" data-start="0" data-duration="13" data-track-index="0"></div>
+
+    <span data-hf-id="hf-1t6h" id="14-enforcement-answer-act">#3 · Enforcement</span>
+
+    <div data-hf-id="hf-cr9f" id="14-enforcement-answer-glyph">
+      <u data-hf-id="hf-frz5" id="14-enforcement-answer-q1"></u>
+      <u data-hf-id="hf-jq36" id="14-enforcement-answer-q2"></u>
+      <u data-hf-id="hf-no77" id="14-enforcement-answer-q3"></u>
+      <u data-hf-id="hf-06po" id="14-enforcement-answer-q4"></u>
+    </div>
+
+    <div data-hf-id="hf-865j" id="14-enforcement-answer-title"><span data-hf-id="hf-w24r">LiveReview</span> <span data-hf-id="hf-f0i2">reviews</span> <span data-hf-id="hf-ypng">at</span></div>
+    <div data-hf-id="hf-aq39" id="14-enforcement-answer-sub">— <b data-hf-id="hf-nn24">enforcing your rules.</b></div>
+
+    <!-- five-stop rail: the frame's signature. Lights left to right, then docks. -->
+    <div data-hf-id="hf-essn" id="14-enforcement-answer-rail">
+      <div data-hf-id="hf-omtk" id="14-enforcement-answer-track"></div>
+      <div data-hf-id="hf-zd2s" id="14-enforcement-answer-fill"></div>
+
+      <div data-hf-id="hf-1zfb" id="14-enforcement-answer-halo1" class="hf14-halo" style="left: 38px" data-layout-allow-overlap=""></div>
+      <div data-hf-id="hf-zpqh" class="hf14-off" style="left: 47px"></div>
+      <div data-hf-id="hf-8f3b" id="14-enforcement-answer-on1" class="hf14-on" style="left: 47px" data-layout-allow-overlap=""></div>
+      <div data-hf-id="hf-igxt" id="14-enforcement-answer-lb1" class="hf14-label" style="left: -70px">commit</div>
+
+      <div data-hf-id="hf-3uxh" id="14-enforcement-answer-halo2" class="hf14-halo" style="left: 440px" data-layout-allow-overlap=""></div>
+      <div data-hf-id="hf-9rgn" class="hf14-off" style="left: 449px"></div>
+      <div data-hf-id="hf-s31y" id="14-enforcement-answer-on2" class="hf14-on" style="left: 449px" data-layout-allow-overlap=""></div>
+      <div data-hf-id="hf-s97n" id="14-enforcement-answer-lb2" class="hf14-label" style="left: 332px">push</div>
+
+      <div data-hf-id="hf-99he" id="14-enforcement-answer-halo3" class="hf14-halo" style="left: 842px" data-layout-allow-overlap=""></div>
+      <div data-hf-id="hf-8yqk" class="hf14-off" style="left: 851px"></div>
+      <div data-hf-id="hf-w0wc" id="14-enforcement-answer-on3" class="hf14-on" style="left: 851px" data-layout-allow-overlap=""></div>
+      <div data-hf-id="hf-eivu" id="14-enforcement-answer-lb3" class="hf14-label" style="left: 734px">PR</div>
+
+      <div data-hf-id="hf-iei4" id="14-enforcement-answer-halo4" class="hf14-halo" style="left: 1244px" data-layout-allow-overlap=""></div>
+      <div data-hf-id="hf-obeb" class="hf14-off" style="left: 1253px"></div>
+      <div data-hf-id="hf-wjci" id="14-enforcement-answer-on4" class="hf14-on" style="left: 1253px" data-layout-allow-overlap=""></div>
+      <div data-hf-id="hf-c8c0" id="14-enforcement-answer-lb4" class="hf14-label" style="left: 1136px">CI/CD</div>
+
+      <div data-hf-id="hf-r6xp" id="14-enforcement-answer-halo5" class="hf14-halo" style="left: 1646px" data-layout-allow-overlap=""></div>
+      <div data-hf-id="hf-x0ep" class="hf14-off" style="left: 1655px"></div>
+      <div data-hf-id="hf-4sxf" id="14-enforcement-answer-on5" class="hf14-on" style="left: 1655px" data-layout-allow-overlap=""></div>
+      <div data-hf-id="hf-xccy" id="14-enforcement-answer-lb5" class="hf14-label" style="left: 1538px">schedule</div>
+    </div>
+
+    <div data-hf-id="hf-k4ad" id="14-enforcement-answer-marker" data-layout-allow-overlap=""></div>
+    <div data-hf-id="hf-jiwj" id="14-enforcement-answer-ping" data-layout-allow-overlap=""></div>
+
+    <!-- static window shell: rises once, lands before 2.9s, never moves again -->
+    <div data-hf-id="hf-s8t3" id="14-enforcement-answer-win">
+      <div data-hf-id="hf-yy96" id="14-enforcement-answer-bar">
+        <div data-hf-id="hf-51pj" id="14-enforcement-answer-dots"><i data-hf-id="hf-wt6k"></i><i data-hf-id="hf-zeb8"></i><i data-hf-id="hf-y7e5"></i></div>
+      </div>
+    </div>
+
+    <!-- approved frame video hoisted by assemble-index -->
+
+    <!-- approved frame video hoisted by assemble-index -->
+
+    <div data-hf-id="hf-pwrw" id="14-enforcement-answer-seal">
+      <span data-hf-id="hf-ue2h" id="14-enforcement-answer-seal-a">The Enforcement Problem</span>
+      <span data-hf-id="hf-hl7p" id="14-enforcement-answer-seal-b">→ Solved</span>
+      <span data-hf-id="hf-0v6b" id="14-enforcement-answer-seal-c">
+        <svg data-hf-id="hf-eiby" width="57" height="57" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg">
+          <path data-hf-id="hf-6suj" id="14-enforcement-answer-tick" d="M 18 31 L 26 39 L 43 21" />
+        </svg>
+      </span>
+    </div>
+
+    <div data-hf-id="hf-suw6" id="14-enforcement-answer-progress"></div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+  <script>
+    (function () {
+      var ID = "14-enforcement-answer";
+      var $ = function (s) { return document.getElementById(ID + "-" + s); };
+      var tl = gsap.timeline({ paused: true });
+
+      var COBALT = "#1d56f0";
+      var INK = "#05070b";
+
+      // Persistent chrome: progress strip 58.7% -> 67.3% across the full 13s.
+      tl.fromTo($("progress"), { width: "58.7%" }, { width: "67.3%", duration: 13, ease: "none" }, 0);
+
+      // ---- Scene 1 (0.0-2.0s) — cue A. Act chrome, the title, then the five stops
+      // light left to right on a 0.3s stagger, each label fading up as its dot fills.
+      tl.fromTo($("act"), { opacity: 0, scale: 0.6 }, { opacity: 1, scale: 1, duration: 0.45, ease: "back.out(2.2)" }, 0);
+
+      var cells = [$("q1"), $("q2"), $("q3"), $("q4")];
+      tl.fromTo(cells, { opacity: 0, scale: 0.55 },
+        { opacity: 1, scale: 1, duration: 0.4, ease: "back.out(2)", stagger: 0.06 }, 0.05);
+
+      tl.fromTo($("title").querySelectorAll("span"), { opacity: 0, y: 28, filter: "blur(6px)" },
+        { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.5, ease: "power3.out", stagger: 0.07 }, 0.1);
+
+      // the grey connector draws first, the cobalt fill then travels stop to stop
+      tl.fromTo($("track"), { scaleX: 0 }, { scaleX: 1, duration: 0.5, ease: "power2.out" }, 0.22);
+      tl.set($("fill"), { scaleX: 0 }, 0);
+      tl.fromTo($("rail").querySelectorAll(".hf14-off"), { opacity: 0, scale: 0.7 },
+        { opacity: 1, scale: 1, duration: 0.32, ease: "power3.out", stagger: 0.07 }, 0.3);
+
+      for (var i = 0; i < 5; i++) {
+        var at = 0.45 + i * 0.3;
+        tl.fromTo($("on" + (i + 1)), { opacity: 0, scale: 0.35 },
+          { opacity: 1, scale: 1, duration: 0.36, ease: "back.out(3)" }, at);
+        tl.fromTo($("lb" + (i + 1)), { opacity: 0, y: 16 },
+          { opacity: 1, y: 0, duration: 0.42, ease: "power3.out" }, at + 0.05);
+        if (i < 4) {
+          tl.fromTo($("fill"), { scaleX: i / 4 },
+            { scaleX: (i + 1) / 4, duration: 0.3, ease: "power2.inOut", immediateRender: false }, at + 0.05);
+        }
+      }
+
+      // all five halos start dark; only the active stop ever shows one
+      tl.set([$("halo1"), $("halo2"), $("halo3"), $("halo4"), $("halo5")], { opacity: 0 }, 0);
+      tl.set($("marker"), { opacity: 0 }, 0);
+      tl.set($("ping"), { opacity: 0 }, 0);
+
+      // ---- Scene 2 (2.0-2.9s) — cue B. The rail shrinks and docks under the title,
+      // the sub-line lands, and the window shell rises into 230,346 1460x658.
+      tl.fromTo($("rail"), { scale: 1 }, { scale: 0.62, duration: 0.6, ease: "power3.inOut" }, 2.0);
+      tl.fromTo($("sub"), { opacity: 0, y: 18, filter: "blur(5px)" },
+        { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.55, ease: "power3.out" }, 2.05);
+      // lands fully at rest at 2.87s — before the first clip's data-start (2.9s) — and never moves again
+      tl.fromTo($("win"), { opacity: 0, y: 150 }, { opacity: 1, y: 0, duration: 0.72, ease: "expo.out" }, 2.15);
+
+      // ---- Scene 3 (2.9-6.9s) — clip08_schedule plays in the window rect.
+      // The "schedule" stop carries the highlight; the frame is otherwise still.
+      tl.fromTo($("halo5"), { opacity: 0, scale: 0.6 },
+        { opacity: 1, scale: 1, duration: 0.45, ease: "power3.out", immediateRender: false }, 2.95);
+      tl.fromTo($("lb5"), { color: INK }, { color: COBALT, duration: 0.35, ease: "none", immediateRender: false }, 2.95);
+      tl.fromTo($("marker"), { opacity: 0, scaleX: 0.25, x: 249.24 },
+        { opacity: 1, scaleX: 1, x: 249.24, duration: 0.42, ease: "power3.out", immediateRender: false }, 2.98);
+
+      // ---- Scene 4 (6.9-11.9s) — HARD CUT inside the window to clip10_cicd at rate 1.333.
+      // The highlight travels from "schedule" back to "CI/CD" on the cut. The shell does not move.
+      tl.fromTo($("halo5"), { opacity: 1 }, { opacity: 0, duration: 0.28, ease: "power2.out", immediateRender: false }, 5.9);
+      tl.fromTo($("lb5"), { color: COBALT }, { color: INK, duration: 0.3, ease: "none", immediateRender: false }, 5.9);
+      tl.fromTo($("marker"), { x: 249.24 }, { x: 0, duration: 0.5, ease: "power3.inOut", immediateRender: false }, 5.9);
+      tl.fromTo($("halo4"), { opacity: 0, scale: 0.6 },
+        { opacity: 1, scale: 1, duration: 0.45, ease: "power3.out", immediateRender: false }, 5.98);
+      tl.fromTo($("lb4"), { color: INK }, { color: COBALT, duration: 0.35, ease: "none", immediateRender: false }, 5.98);
+
+      // one-shot ping on the active stop, mid-clip (not a loop)
+      tl.fromTo($("ping"), { opacity: 0.65, scale: 1 },
+        { opacity: 0, scale: 4.5, duration: 1.2, ease: "power2.out", immediateRender: false }, 9.5);
+
+      // ---- Scene 5 (11.0-13.0s) — cue C. The window fades down and the seal resolves
+      // in the established position, then holds still.
+      tl.fromTo($("win"), { opacity: 1, scale: 1 },
+        { opacity: 0, scale: 0.965, duration: 0.3, ease: "power2.in", immediateRender: false }, 11.0);
+
+      tl.fromTo($("seal-a"), { opacity: 0, y: 26, filter: "blur(6px)" },
+        { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.48, ease: "power3.out" }, 11.05);
+      tl.fromTo($("seal-b"), { opacity: 0, scale: 0.6 },
+        { opacity: 1, scale: 1, duration: 0.42, ease: "back.out(2.4)" }, 11.45);
+      tl.fromTo($("seal-c"), { opacity: 0, scale: 0 },
+        { opacity: 1, scale: 1, duration: 0.36, ease: "back.out(3)" }, 11.58);
+
+      var tick = $("tick");
+      var L = 36;
+      try { var m = tick.getTotalLength(); if (m && isFinite(m) && m > 0) L = m; } catch (e) {}
+      tick.style.strokeDasharray = String(L);
+      tl.fromTo(tick, { strokeDashoffset: L }, { strokeDashoffset: 0, duration: 0.3, ease: "power2.out" }, 11.68);
+
+      // hold to the full frame length
+      tl.set({}, {}, 13);
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines[ID] = tl;
+    })();
+  </script>
+</template>

@@ -1,63 +1,60 @@
 # Asset inventory
 
-Assembled on the **no-capture path**. `hyperframes capture` hung on
-https://hexmos.com/livereview/ (~15 min, zero bytes written, no BLOCKED.md) while a
-direct fetch of the same origin returned 47KB in 0.49s — the crawler stalled, the
-network did not. The brief supplied the page text up front (three full scrapes the user
-placed in the working directory), so the source material is first-party, not reconstructed.
-Every file below was fetched directly from hexmos.com and verified (HTTP 200, non-trivial size).
-Brand tokens in `tokens.json` were read out of the site's own stylesheets and markup.
+Rebuilt 2026-09-25 for the v4-deck cut. The previous cut's story-only assets (Rickover portrait,
+horse hero images, role comic) remain on disk but are **not** part of this story — do not use them.
 
-All paths are relative to `capture/assets/`.
+Paths are relative to `capture/assets/` unless they start with `assets/` (brand kit already staged
+in the project's `assets/`).
 
-## Story assets — WHY
+## Product demo clips — the new footage (primary)
 
-| File | What it is | Use |
-| --- | --- | --- |
-| `transform_role-benefits-comic.png` | 1480x704. Illustrated 7-role before/after grid. Each role gets a PAIN panel (worried figure + speech bubble) and an AFTER panel. Roles: Business Leadership (CEO, head in hands, production server on fire), CTO/VP Eng ("AI is making us faster. Is it also making us sloppier?"), Engineering Manager, Product Manager, Project Manager, Team/Tech Lead, Developer ("Why didn't I know this before opening the PR?"). | The WHY section's visual vocabulary. **Resolution limit: a single cropped panel is only ~350x200 — usable as a card/inset, never full-bleed.** |
-| `hero_wild-horse.webp` | 121KB. Wild, untamed horse — the site's "AI Speed / raw power, uncontrolled behavior" image. | The WHY metaphor: AI generating code unchecked. |
-| `hero_domesticated-horse.webp` | 72KB. Bridled horse under human control — "Human Control / guided, focused, reliable". | Pairs with the above for the before/after turn into WHAT. |
+All are 2520x1080 (21:9), 30fps, dark-theme LiveReview UI, with a thin blue/orange glow on the
+outer edges. Show them whole inside a framed app window on the 16:9 canvas; never crop the UI.
+Audio tracks are present but unused (music bed only).
 
-## Story assets — WHAT
+| File | Dur | What it shows | Deck slide |
+| --- | --- | --- | --- |
+| `demo_review_blast_radius.mp4` | 4s | Review diff ordered by score → hover a hunk: "71 High risk" popover with Blast Radius / Review Priority bars and factors (cyclomatic, cognitive, test coverage, fan-out) → breakdown panel with the red sunburst call-graph chart. | 3 |
+| `demo_schedule_review.mp4` | 2s | Ctrl+K menu → "Schedule Review" → Scheduled Reviews table: repos, provider, branch, per-repo toggle, schedule, last run. | 4–5 |
+| `demo_cicd_gates.mp4` | 4s | CI/CD Gates ruleset list → "Edit ruleset: High-confidence critical issues" → jq expression `[.findings[] \| select(.severity == "critical" and .confidence == "high")] \| length > 0` highlighted, presets row, live results. | 6 |
+| `demo_review_slides.mp4` | 4s | Summary deck zooms in from 3D perspective → title slide "Restrict JSON Fallback Decoding and Update Cron Schedule Helpers" → red "Technical highlights" slide → "Review complete" with "Take the Quiz". | 7 |
+| `demo_review_quiz.mp4` | 2s | Quiz on the diff: multiple-choice questions about the change, "Check My Answers". | 7 |
+| `demo_list_reviews.mp4` | 2s | Ctrl+K → List Reviews → loading → table of reviews (branch, repo, source GitHub/CLI, status Completed, author). | 9 |
+| `demo_dashboard.mp4` | 10s | Dashboard: review pipeline Sankey (pre-commit → categories) → issue-distribution treemap → radar of categories (Security, Reliability, Correctness…) with counts → contribution heatmap + recent activity. | 9 |
+| `demo_all_features_navigation.mp4` | 10s | Ctrl+K command palette: Reviews / Explore / Providers / Reports / Settings columns; drills into Git Providers → Connect Git (GitHub, GitLab, Bitbucket, Gitea, Azure DevOps); Settings → Manage Team / AI / Billing. | 10 |
+| `demo_livi_chat_bot.mp4` | 11s | "Hello there! How can I help you?" with suggested questions → user asks "Are engineers actually incorporating reviews into their daily workflow?" → Livi answers with a Daily Review Activity chart → Engineer Adoption Levels bar chart. | 11 |
+| `demo_onboarding_report.mp4` | 15s | Onboarding Report generating (7 sections progress) → Engineer Review Activity Distribution bars → repository trend lines + Pareto → Top Engineers by Reviews. | 12 |
 
-| File | What it is | Use |
-| --- | --- | --- |
-| `rickover_rickover-portrait.jpg` | 164KB. Portrait of Admiral Hyman G. Rickover, U.S. Navy. | The anchor quote beat: "You get what you inspect, not what you expect." |
-| `logo.svg` | 895B. LiveReview wordmark/mark. | Product intro and the close. |
-| `transform_ai-logos_deepseek-logo.svg`, `transform_ai-logos_openrouter-logo.svg` | AI provider marks. | The "sits above your AI stack" beat. Claude / OpenAI / Gemini are wordmarks on the page, not files — set them as type. |
-
-## Story assets — HOW (blast radius)
-
-**The existing MP4 contains no blast-radius footage.** These are the only sources for the
-video's largest section.
+## Supporting product media (kept from the site)
 
 | File | What it is | Use |
 | --- | --- | --- |
-| `risk-score_risk-score-demo-compressed.mp4` | **1600x758, 51.3s.** The blast-radius UI running. Beats: code diff with severity findings (0-10s), Blast Radius + Review Priority factor panels (~14s, ~35s), **the sunburst call-graph chart, orange-to-red rings (~21s)**, stacked risk visualization (~28s), **Math Mode showing the exact formulas (~42s)**. | Hero footage for HOW. The sunburst and Math Mode are the two money shots. |
-| `risk-score_new-risk-score-3.webp` | 48KB. Blast Radius and Review Priority scores broken down step by step in Math Mode. | "The exact math, not a black box." |
-| `risk-score_new-risk-score-4.webp` | 57KB. Sunburst chart visualizing a function's blast radius across the call graph. | "Visualize blast radius at a glance." |
-| `risk-score_new-risk-score-2.webp` | 54KB. Full breakdown of every factor feeding both scores. | "Every factor that feeds the score." |
+| `risk-score_risk-score-demo-compressed.mp4` | 1600x758, 51.3s. Blast-radius UI: diff with findings (0-10s), factor panels (~14s, ~35s), sunburst chart (~21s), Math Mode formulas (~42s). | Extra blast-radius footage — Math Mode for "the exact math". |
+| `risk-score_new-risk-score-3.webp` | Math Mode: score broken down step by step. | "The exact math, not a black box." |
+| `risk-score_new-risk-score-4.webp` | Sunburst chart of a function's blast radius across the call graph. | "Visualize blast radius at a glance." |
+| `risk-score_new-risk-score-2.webp` | Every factor feeding Blast Radius + Review Priority. | "Every factor that feeds the score." |
+| `git-lrc_summary-deck-compressed.mp4` | 1280x1008, 15.9s. Summary deck walkthrough. | Backup for the briefing beat. |
+| `quiz-coverage_quiz-coverage-demo-compressed.mp4` | 1280x718, 19.7s. PR quiz mode. | Backup for the quiz beat. |
+| `git-lrc_issue-navigator-compressed.mp4` | 1280x840, 20.6s. Issue Navigator. | Optional. |
+| `features_detailed_mr_summaries.png` | AI-generated PR summary screen. | "Ready to copy-paste PR summary." |
 
-## Story assets — WHEN/WHERE (the five pillars)
+## Brand kit (icons & logos)
 
-| File | What it is | Pillar |
+| File | What it is | Use |
 | --- | --- | --- |
-| `git-lrc_summary-deck-compressed.mp4` | 1280x1008, 15.9s. Summary Deck — a generated slide walkthrough of a change. | Understand |
-| `git-lrc_issue-navigator-compressed.mp4` | 1280x840, 20.6s. Issue Navigator — filter findings by severity/category, send to an agent. | Understand |
-| `quiz-coverage_quiz-coverage-demo-compressed.mp4` | 1280x718, 19.7s. PR Quiz / Cognitive Coverage mode. | Understand |
-| `features_detailed_mr_summaries.png` | 135KB. AI-generated pull request summary screen. | Understand |
-| `features_clarification_question.png` | 56KB. Asking the AI for clarification / debating a change. | Understand |
-| `lrbot_lrbot.png` | 23KB. Livi, the analytics chatbot avatar. | Improve |
-| `version_control_logos_*.png` | GitHub (dark), GitLab, Bitbucket, Azure DevOps, Gitea. 5 files. | Connect |
-| `extensions_*.png` | VS Code, Cursor, Antigravity. 3 files. | Connect |
+| `logo.svg` | LiveReview mark. | Wordmark lockups, the close. |
+| `lrbot_lrbot.png` | Livi avatar. | Livi beat. |
+| `version_control_logos_github-logo-dark.png`, `…gitlab-logo.png`, `…bitbucket-logo.png`, `…azure-devops-logo.png`, `…gitea_logo.png` | Git provider logos. | "Fits your workflow" / self-host beat. |
+| `extensions_vscode-logo.png`, `extensions_cursor-logo.png`, `extensions_antigravity-logo.png` | IDE logos. | "CLI, IDE, MCP and API fit your workflow." |
+| `assets/brand-claude.svg`, `assets/brand-openai.svg`, `assets/brand-gemini.svg`, `assets/brand-anthropic.svg`, `assets/brand-copilot.svg`, `assets/brand-deepseek.svg`, `assets/brand-openrouter.svg` | AI provider marks. | "Choose which AI models inspect it" / AI writes the code. |
+| `assets/brand-slack.svg`, `assets/brand-teams.svg`, `assets/brand-discord.svg` | Chat platform marks. | Optional, Livi "where your team talks". |
+| `assets/fonts/Inter-var.woff2` | Inter variable font. | All type. |
+| `assets/bgm/track.loop.mp3` | Kept BGM loop. | The music bed. |
 
-## Not captured — build these, don't hunt for them
+## Not captured — build these
 
-- **The five-pillar cycle graph.** Review -> Understand -> Enforce -> Improve -> Connect with the
-  Improve->Review return edge. The site renders it as a nav list and five prose cards, not as a
-  graph. This is a designed beat.
-- **The 300-vs-3 blast-radius contrast.** On the site it is a two-cell HTML table. It gets its
-  own built moment, per the brief.
-- **The AI-code-volume before/after curves.** Site-rendered charts, no image file.
-- **Product UI screens for Review / Enforce / Improve / Connect** — these come from the user's
-  own `Ws66OKXUwwE.mp4`; see `../../footage-map.md` for the timecode-to-pillar map.
+- The 300-line vs 3-line contrast (deck slide 1) — a designed beat.
+- "AI writes code far faster than your team can review it" — a designed volume/pressure beat.
+- The four review-depth tiers (slide 5) and the five checkpoints (slide 4) — designed.
+- Pricing / self-host beat (slide 8) — designed with logos.
+- "Three problems. One reviewer." Capability · Control · Cost close (slide 13) — designed.

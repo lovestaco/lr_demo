@@ -1,0 +1,184 @@
+<template>
+  <style>
+    @font-face {
+      font-family: "Inter";
+      src: url("assets/fonts/Inter-var.woff2") format("woff2");
+      font-weight: 100 900;
+      font-style: normal;
+    }
+    #root {
+      position: absolute;
+      inset: 0;
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+      font-family: "Inter", sans-serif;
+      color: #e8eeff;
+    }
+    /* ---- full-bleed ground (never on #root) ---- */
+    [id="02-belief-bg"] {
+      position: absolute;
+      inset: 0;
+      background: transparent;
+    }
+    /* ---- Scene 1: lead line, upper third, near-black ---- */
+    [id="02-belief-lead"] {
+      position: absolute;
+      left: 0;
+      top: 292px;
+      width: 1920px;
+      text-align: center;
+      font-size: 49.92px;
+      font-weight: 600;
+      line-height: 1.15;
+      letter-spacing: -0.02em;
+      color: #e8eeff;
+      white-space: nowrap;
+    }
+    [id="02-belief-lead"] span {
+      display: inline-block;
+    }
+    [id="02-belief-lead"] span.key {
+      font-weight: 700;
+    }
+    /* ---- the cycling reason slot: three lines share ONE baseline + ONE size ---- */
+    [id="02-belief-slot"] {
+      position: absolute;
+      left: 0;
+      top: 452px;
+      width: 1920px;
+      height: 70px;
+    }
+    [id="02-belief-slot"] > div {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1920px;
+      text-align: center;
+      font-size: 53.76px;
+      font-weight: 500;
+      line-height: 1.3;
+      letter-spacing: -0.02em;
+      color: #e8eeff;
+      white-space: nowrap;
+      opacity: 0;
+    }
+    [id="02-belief-r1"] span {
+      display: inline-block;
+    }
+    /* ---- the thin cobalt rule: the fixed divider ---- */
+    [id="02-belief-rule"] {
+      position: absolute;
+      left: 660px;
+      top: 592px;
+      width: 600px;
+      height: 2px;
+      background: #1d56f0;
+      transform-origin: 0% 50%;
+    }
+    /* ---- the anchor: enters once, never moves ---- */
+    [id="02-belief-anchor"] {
+      position: absolute;
+      left: 0;
+      top: 648px;
+      width: 1920px;
+      text-align: center;
+      font-size: 80.64px;
+      font-weight: 700;
+      line-height: 1.15;
+      letter-spacing: -0.02em;
+      color: #1d56f0;
+      white-space: nowrap;
+      transform-origin: 50% 50%;
+      will-change: transform;
+    }
+    [id="02-belief-progress"] {
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      height: 3px;
+      width: 5.3%;
+      background: #1d56f0;
+    }
+  </style>
+
+  <div data-hf-id="hf-8c7z" id="root" data-composition-id="02-belief" data-width="1920" data-height="1080" data-duration="7.5">
+    <div data-hf-id="hf-6its" id="02-belief-bg" class="clip" data-start="0" data-duration="7.5" data-track-index="0"></div>
+
+    <div data-hf-id="hf-rez2" id="02-belief-lead"><span data-hf-id="hf-iipn">Here’s</span> <span data-hf-id="hf-43uj">what</span> <span data-hf-id="hf-72th">we</span> <span data-hf-id="hf-ds5k" class="key">BELIEVE:</span></div>
+
+    <div data-hf-id="hf-resg" id="02-belief-slot">
+      <div data-hf-id="hf-xdsb" id="02-belief-r1"><span data-hf-id="hf-71e8">You</span> <span data-hf-id="hf-kkhy">owe</span> <span data-hf-id="hf-ziue">your</span> <span data-hf-id="hf-09nr">users</span> <span data-hf-id="hf-kyh6">and</span> <span data-hf-id="hf-60ka">customers</span></div>
+      <div data-hf-id="hf-3c6d" id="02-belief-r2">If you are professional</div>
+      <div data-hf-id="hf-f6t0" id="02-belief-r3">For the sake of your business reputation</div>
+    </div>
+
+    <div data-hf-id="hf-gys6" id="02-belief-rule"></div>
+
+    <div data-hf-id="hf-3xwa" id="02-belief-anchor">an AI-assisted inspection layer</div>
+
+    <div data-hf-id="hf-axzx" id="02-belief-progress"></div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+  <script>
+    (function () {
+      var ID = "02-belief";
+      var $ = function (s) { return document.getElementById(ID + "-" + s); };
+      var tl = gsap.timeline({ paused: true });
+
+      // Persistent chrome: progress strip 5.3% -> 10.3% across the whole frame.
+      tl.fromTo($("progress"), { width: "5.3%" }, { width: "10.3%", duration: 7.5, ease: "none" }, 0);
+
+      /* ---------- Scene 1 (0.0-1.4s) ----------
+         "Here's what we BELIEVE:" reveals per word; the cobalt rule draws
+         left-to-right; the anchor fades up beneath it and never moves again. */
+      tl.fromTo($("lead").querySelectorAll("span"),
+        { opacity: 0, y: 26, filter: "blur(7px)" },
+        { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.48, ease: "power3.out", stagger: 0.11 }, 0.05);
+
+      tl.fromTo($("rule"), { scaleX: 0 }, { scaleX: 1, duration: 0.55, ease: "power2.out" }, 0.62);
+
+      tl.fromTo($("anchor"),
+        { opacity: 0, y: 22 },
+        { opacity: 1, y: 0, duration: 0.62, ease: "power3.out" }, 0.86);
+
+      /* ---------- Scenes 2-4: the fixed-anchor cycle ----------
+         One discrete-text-sequence driver owns the reason slot: whole-line
+         state swaps at hard time thresholds (no roll, no blur, no crossfade),
+         so reason 2 and reason 3 take the SAME slot by instant cut. */
+      var reasons = [$("r1"), $("r2"), $("r3")];
+      var CUTS = [1.40, 3.20, 4.80]; // Scene 2 / Scene 3 / Scene 4 thresholds
+      function activeAt(t) {
+        for (var i = CUTS.length - 1; i >= 0; i--) { if (t >= CUTS[i]) return i; }
+        return -1;
+      }
+      var driver = { t: 0 };
+      tl.fromTo(driver, { t: 0 }, {
+        t: 7.5, duration: 7.5, ease: "none",
+        onUpdate: function () {
+          var a = activeAt(driver.t);
+          for (var i = 0; i < reasons.length; i++) {
+            reasons[i].style.opacity = (i === a) ? "1" : "0";
+          }
+        }
+      }, 0);
+
+      // Scene 2 (1.4-3.2s): reason 1 reveals per word into the slot.
+      tl.fromTo($("r1").querySelectorAll("span"),
+        { opacity: 0, y: 18, filter: "blur(6px)" },
+        { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.42, ease: "power3.out", stagger: 0.06 }, 1.42);
+
+      /* Scene 3 (3.2-4.8s) and Scene 4 (4.8s) are the driver's hard cuts —
+         same baseline, same size, a swap not a transition. */
+
+      // Scene 4 (4.8-7.5s): the three-reason build completes, the anchor
+      // scale-pops once (1.0 -> 1.06 -> 1.0) in place, then holds still.
+      tl.fromTo($("anchor"), { scale: 1 }, { scale: 1.06, duration: 0.26, ease: "power2.out" }, 5.05);
+      tl.to($("anchor"), { scale: 1, duration: 0.5, ease: "power3.out" }, 5.31);
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines[ID] = tl;
+    })();
+  </script>
+</template>

@@ -1,0 +1,164 @@
+<template>
+  <style>
+    @font-face {
+      font-family: "Inter";
+      src: url("assets/fonts/Inter-var.woff2") format("woff2");
+      font-weight: 100 900;
+      font-style: normal;
+    }
+    #root {
+      position: absolute;
+      inset: 0;
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+      font-family: "Inter", sans-serif;
+      color: #e8eeff;
+    }
+    [id="04-you-still-must-bg"] {
+      position: absolute;
+      inset: 0;
+      background: transparent;
+    }
+    /* ---- lead line: upper third, left, 5cqw pad ---- */
+    [id="04-you-still-must-lead"] {
+      position: absolute;
+      left: 96px;
+      top: 116px;
+      width: 1728px;
+      font-size: 49.92px;
+      font-weight: 600;
+      line-height: 1.15;
+      letter-spacing: -0.02em;
+      color: #e8eeff;
+      white-space: nowrap;
+    }
+    [id="04-you-still-must-lead"] span {
+      display: inline-block;
+    }
+    /* ---- accumulating stack: asymmetric 60/40, cards left, open white right ---- */
+    [id="04-you-still-must-stack"] {
+      position: absolute;
+      left: 96px;
+      top: 236px;
+      width: 1160px;
+      height: 636px;
+    }
+    .r04ysm-row {
+      position: absolute;
+      left: 0;
+      width: 1160px;
+      height: 144px;
+      box-sizing: border-box;
+      display: flex;
+      align-items: center;
+      background: rgba(29, 86, 240, 0.04);
+      border: 1.5px solid rgba(29, 86, 240, 0.2);
+      border-radius: 14px;
+    }
+    .r04ysm-num {
+      flex: 0 0 auto;
+      width: 72px;
+      margin-left: 44px;
+      font-size: 26px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      line-height: 1;
+      color: #1d56f0;
+      font-variant-numeric: tabular-nums;
+      transform-origin: 50% 50%;
+    }
+    .r04ysm-txt {
+      flex: 1 1 auto;
+      font-size: 40px;
+      font-weight: 500;
+      line-height: 1.2;
+      letter-spacing: -0.01em;
+      color: #e8eeff;
+      white-space: nowrap;
+    }
+    [id="04-you-still-must-row1"] { top: 0px; }
+    [id="04-you-still-must-row2"] { top: 164px; }
+    [id="04-you-still-must-row3"] { top: 328px; }
+    [id="04-you-still-must-row4"] { top: 492px; }
+    [id="04-you-still-must-progress"] {
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      height: 3px;
+      width: 14.3%;
+      background: #1d56f0;
+    }
+  </style>
+
+  <div data-hf-id="hf-4uin" id="root" data-composition-id="04-you-still-must" data-width="1920" data-height="1080" data-duration="8.5">
+    <div data-hf-id="hf-jvsu" id="04-you-still-must-bg" class="clip" data-start="0" data-duration="8.5" data-track-index="0"></div>
+
+    <div data-hf-id="hf-7t97" id="04-you-still-must-lead"><span data-hf-id="hf-a2ne">And</span> <span data-hf-id="hf-920g">you</span> <span data-hf-id="hf-9919">still</span> <span data-hf-id="hf-6vft">need</span> <span data-hf-id="hf-1jhc">to</span> <span data-hf-id="hf-53hm">deliver</span> <span data-hf-id="hf-wows">faster,</span> <span data-hf-id="hf-jxwq">safer,</span> <span data-hf-id="hf-166y">higher</span> <span data-hf-id="hf-oagk">quality.</span></div>
+
+    <div data-hf-id="hf-gzb7" id="04-you-still-must-stack">
+      <div data-hf-id="hf-ilcr" class="r04ysm-row" id="04-you-still-must-row1">
+        <span data-hf-id="hf-8ds2" class="r04ysm-num">01</span>
+        <span data-hf-id="hf-mfyd" class="r04ysm-txt">Reduce production incidents</span>
+      </div>
+      <div data-hf-id="hf-7pv4" class="r04ysm-row" id="04-you-still-must-row2">
+        <span data-hf-id="hf-8s33" class="r04ysm-num">02</span>
+        <span data-hf-id="hf-a74k" class="r04ysm-txt">Reduce security incidents</span>
+      </div>
+      <div data-hf-id="hf-8hix" class="r04ysm-row" id="04-you-still-must-row3">
+        <span data-hf-id="hf-96e4" class="r04ysm-num">03</span>
+        <span data-hf-id="hf-h61n" class="r04ysm-txt">Reduce performance regressions</span>
+      </div>
+      <div data-hf-id="hf-ztn2" class="r04ysm-row" id="04-you-still-must-row4">
+        <span data-hf-id="hf-9kp5" class="r04ysm-num">04</span>
+        <span data-hf-id="hf-7w9k" class="r04ysm-txt">Deliver stellar customer experiences</span>
+      </div>
+    </div>
+
+    <div data-hf-id="hf-ntmw" id="04-you-still-must-progress"></div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+  <script>
+    (function () {
+      var ID = "04-you-still-must";
+      var $ = function (s) { return document.getElementById(ID + "-" + s); };
+      var tl = gsap.timeline({ paused: true });
+
+      // Persistent cobalt progress strip: 14.3% -> 19.7% across the full 8s.
+      tl.fromTo($("progress"), { width: "14.3%" }, { width: "19.7%", duration: 8, ease: "none" }, 0);
+
+      // ---- Scene 1 (0.0-1.6s): lead line fills in word by word, upper third, white ground.
+      tl.fromTo(
+        $("lead").querySelectorAll("span"),
+        { opacity: 0, y: 24, filter: "blur(6px)" },
+        { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.5, ease: "power3.out", stagger: 0.075 },
+        0.05
+      );
+
+      // ---- Scenes 2-5: staggered self-assembling vertical list. Each row slides UP into its
+      // slot (short path, straight into place), cobalt index numeral spring-pops, label
+      // mask-wipes left-to-right. Every row stays on screen: weight accumulates.
+      var rowCues = [1.6, 3.0, 4.2, 5.4];
+      for (var i = 0; i < rowCues.length; i++) {
+        var t = rowCues[i];
+        var row = $("row" + (i + 1));
+        tl.fromTo(row, { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 0.58, ease: "power3.out" }, t);
+        tl.fromTo(row.querySelector(".r04ysm-num"),
+          { opacity: 0, scale: 0.35 },
+          { opacity: 1, scale: 1, duration: 0.42, ease: "back.out(2.6)" }, t + 0.12);
+        tl.fromTo(row.querySelector(".r04ysm-txt"),
+          { opacity: 0, clipPath: "inset(0% 100% 0% 0%)" },
+          { opacity: 1, clipPath: "inset(0% 0% 0% 0%)", duration: 0.52, ease: "power2.out" }, t + 0.18);
+      }
+
+      // ---- Scene 5 tail (6.5-6.9s): all four rows settle together with one weight shift
+      // downward -- the finished stack visibly gets heavier -- then holds to the end.
+      tl.fromTo($("stack"), { y: 0 }, { y: 16, duration: 0.3, ease: "power2.in" }, 6.5);
+      tl.fromTo($("stack"), { y: 16 }, { y: 11, duration: 0.34, ease: "power2.out" }, 6.8);
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines[ID] = tl;
+    })();
+  </script>
+</template>

@@ -1,0 +1,199 @@
+<template>
+  <style>
+    @font-face {
+      font-family: "Inter";
+      src: url("assets/fonts/Inter-var.woff2") format("woff2");
+      font-weight: 100 900;
+      font-style: normal;
+      font-display: block;
+    }
+    #root {
+      position: absolute;
+      inset: 0;
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+      font-family: "Inter", sans-serif;
+      color: #05070b;
+    }
+    /* full-bleed ground — bare canvas, act opener */
+    [id="11-problem-understanding-bg"] {
+      position: absolute;
+      inset: 0;
+      background: #ffffff;
+    }
+    /* ---- act pill, top-left ---- */
+    [id="11-problem-understanding-act"] {
+      position: absolute;
+      left: 96px;
+      top: 96px;
+      display: inline-flex;
+      align-items: center;
+      font-size: 18.24px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #1d56f0;
+      background: rgba(29, 86, 240, 0.08);
+      border-radius: 100px;
+      padding: 6.7px 19.2px;
+      transform-origin: 0% 50%;
+    }
+    /* ---- recurring motif: the 2x2 act marker, top-right ---- */
+    [id="11-problem-understanding-glyph"] {
+      position: absolute;
+      left: 1656px;
+      top: 96px;
+      width: 132px;
+      height: 62px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: 1fr 1fr;
+      gap: 3px;
+    }
+    [id="11-problem-understanding-glyph"] i {
+      display: block;
+      box-sizing: border-box;
+      border-radius: 3px;
+    }
+    /* cell 1 — act 1, already solved: 20% cobalt tint */
+    [id="11-problem-understanding-c1"] {
+      background: rgba(29, 86, 240, 0.2);
+    }
+    /* cell 2 — THIS act: filled cobalt */
+    [id="11-problem-understanding-c2"] {
+      background: #1d56f0;
+    }
+    /* cells 3 + 4 — not yet: 1.5px cobalt-20% outline, unfilled */
+    [id="11-problem-understanding-c3"],
+    [id="11-problem-understanding-c4"] {
+      border: 1.5px solid rgba(29, 86, 240, 0.2);
+    }
+    /* ---- the centred statement ---- */
+    [id="11-problem-understanding-q"] {
+      position: absolute;
+      left: 96px;
+      right: 96px;
+      top: 420px;
+      text-align: center;
+    }
+    [id="11-problem-understanding-rule"] {
+      width: 60px;
+      height: 4px;
+      margin: 0 auto 34px;
+      border-radius: 2px;
+      background: #1d56f0;
+    }
+    [id="11-problem-understanding-l1"],
+    [id="11-problem-understanding-l2"],
+    [id="11-problem-understanding-l3"] {
+      font-size: 49.92px;
+      font-weight: 600;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      color: #05070b;
+      white-space: nowrap;
+    }
+    [id="11-problem-understanding-l2"] {
+      margin-top: 8px;
+    }
+    [id="11-problem-understanding-l3"] {
+      margin-top: 32px;
+      font-weight: 500;
+      color: #1648cf;
+    }
+    [id="11-problem-understanding-q"] span {
+      display: inline-block;
+    }
+    [id="11-problem-understanding-l3"] em {
+      font-style: normal;
+      font-weight: 700;
+      color: #1d56f0;
+      transform-origin: 50% 100%;
+    }
+    /* ---- persistent chrome ---- */
+    [id="11-problem-understanding-progress"] {
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      height: 3px;
+      width: 44.7%;
+      background: #1d56f0;
+    }
+  </style>
+
+  <div data-hf-id="hf-egta" id="root" data-composition-id="11-problem-understanding" data-width="1920" data-height="1080" data-duration="4">
+    <div data-hf-id="hf-y5oj" id="11-problem-understanding-bg" class="clip" data-start="0" data-duration="4" data-track-index="0"></div>
+
+    <div data-hf-id="hf-4gkl" id="11-problem-understanding-act">#2 · Understanding</div>
+
+    <div data-hf-id="hf-irix" id="11-problem-understanding-glyph">
+      <i data-hf-id="hf-m89p" id="11-problem-understanding-c1"></i>
+      <i data-hf-id="hf-q6dq" id="11-problem-understanding-c2"></i>
+      <i data-hf-id="hf-u4hr" id="11-problem-understanding-c3"></i>
+      <i data-hf-id="hf-y2ls" id="11-problem-understanding-c4"></i>
+    </div>
+
+    <div data-hf-id="hf-1ubm" id="11-problem-understanding-q">
+      <div data-hf-id="hf-1ljb" id="11-problem-understanding-rule"></div>
+      <div data-hf-id="hf-nxy4" id="11-problem-understanding-l1"><span data-hf-id="hf-ida9">How</span> <span data-hf-id="hf-5yhc">do</span> <span data-hf-id="hf-vtb9">engineers</span> <span data-hf-id="hf-ue1g">keep</span> <span data-hf-id="hf-q4az">intellectual</span></div>
+      <div data-hf-id="hf-wltz" id="11-problem-understanding-l2"><span data-hf-id="hf-z3l5">understanding</span> <span data-hf-id="hf-ah8k">of</span> <span data-hf-id="hf-3tds">the</span> <span data-hf-id="hf-ii2o">system</span></div>
+      <div data-hf-id="hf-snpy" id="11-problem-understanding-l3"><span data-hf-id="hf-53zj">—</span> <span data-hf-id="hf-kyh6">and</span> <span data-hf-id="hf-pupu">take</span> <span data-hf-id="hf-d0e2"><em data-hf-id="hf-hag4" id="11-problem-understanding-climax">responsibility</em>?</span></div>
+    </div>
+
+    <div data-hf-id="hf-o5ys" id="11-problem-understanding-progress"></div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+  <script>
+    (function () {
+      var ID = "11-problem-understanding";
+      var $ = function (s) { return document.getElementById(ID + "-" + s); };
+      var tl = gsap.timeline({ paused: true });
+
+      var statementWords = [].concat(
+        [].slice.call($("l1").querySelectorAll("span")),
+        [].slice.call($("l2").querySelectorAll("span"))
+      );
+      var closerWords = $("l3").querySelectorAll("span");
+
+      // Persistent chrome: progress strip 44.7% -> 47.3% across the full 4s.
+      tl.fromTo($("progress"), { width: "44.7%" }, { width: "47.3%", duration: 4, ease: "none" }, 0);
+
+      // ---- Scene 1 (0.0-0.9s) — cue 1: "#2 UNDERSTANDING" ----
+      // The act pill pops top-left; the 2x2 marker redraws top-right.
+      tl.fromTo($("act"), { opacity: 0, scale: 0.6 },
+        { opacity: 1, scale: 1, duration: 0.45, ease: "back.out(2.2)" }, 0.05);
+
+      // Cell 1 (solved) and the two empty outlines draw in first, quiet and small.
+      tl.fromTo([$("c1"), $("c3"), $("c4")], { opacity: 0, scale: 0.55 },
+        { opacity: 1, scale: 1, duration: 0.38, ease: "power3.out", stagger: 0.07 }, 0.12);
+
+      // Cell 2 — THIS act — lands last and hardest: a spring pop onto the filled cobalt.
+      tl.fromTo($("c2"), { opacity: 0, scale: 0.3 },
+        { opacity: 1, scale: 1, duration: 0.55, ease: "back.out(3.2)" }, 0.34);
+
+      // The cobalt accent rule draws out from centre under the marker beat.
+      tl.fromTo($("rule"), { scaleX: 0, opacity: 0 },
+        { scaleX: 1, opacity: 1, duration: 0.42, ease: "power2.out" }, 0.62);
+
+      // ---- Scene 2 (0.9-2.2s) — cue 2a: the question builds per word ----
+      // kinetic-beat-slam register: each word its own staggered fade / rise / de-blur.
+      tl.fromTo(statementWords, { opacity: 0, y: 24, filter: "blur(6px)" },
+        { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.46, ease: "power3.out", stagger: 0.095 }, 0.9);
+
+      // ---- Scene 3 (2.2-4.0s) — cue 2b: the closer reveals beneath, then holds ----
+      tl.fromTo(closerWords, { opacity: 0, y: 20, filter: "blur(5px)" },
+        { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.5, ease: "power3.out", stagger: 0.13 }, 2.2);
+
+      // The climax word settles on a small spring — the only cobalt in the statement.
+      tl.fromTo($("climax"), { scale: 0.86 },
+        { scale: 1, duration: 0.7, ease: "back.out(2.6)" }, 2.62);
+
+      // 3.3-4.0s: full stillness. Nothing moves but the progress strip. No exit.
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines[ID] = tl;
+    })();
+  </script>
+</template>

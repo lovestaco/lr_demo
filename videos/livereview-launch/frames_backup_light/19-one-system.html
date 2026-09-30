@@ -1,0 +1,178 @@
+<template>
+  <style>
+    @font-face {
+      font-family: "Inter";
+      src: url("assets/fonts/Inter-var.woff2") format("woff2");
+      font-weight: 100 900;
+      font-style: normal;
+      font-display: block;
+    }
+    #root {
+      position: absolute;
+      inset: 0;
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+      font-family: "Inter", sans-serif;
+      color: #05070b;
+    }
+
+    /* ---- full-bleed ground (clip layer, never on #root) ---- */
+    [id="19-one-system-bg"] {
+      position: absolute;
+      inset: 0;
+      background: #ffffff;
+    }
+
+    /* ---- the claim: upper third, left-aligned to the window edge, clear of y=346 ---- */
+    [id="19-one-system-rule"] {
+      position: absolute;
+      left: 230px;
+      top: 106px;
+      width: 60px;
+      height: 4px;
+      border-radius: 2px;
+      background: #1d56f0;
+      transform-origin: 0% 50%;
+    }
+    [id="19-one-system-l1"],
+    [id="19-one-system-l2"],
+    [id="19-one-system-l3"] {
+      position: absolute;
+      left: 230px;
+      width: 1460px;
+      font-size: 52px;
+      line-height: 1.15;
+      letter-spacing: -0.02em;
+      white-space: nowrap;
+    }
+    [id="19-one-system-l1"] { top: 136px; font-weight: 600; color: #05070b; }
+    [id="19-one-system-l2"] { top: 196px; font-weight: 600; color: #05070b; }
+    [id="19-one-system-l3"] { top: 256px; font-weight: 700; color: #1d56f0; }
+    [id="19-one-system-l1"] span,
+    [id="19-one-system-l2"] span {
+      display: inline-block;
+    }
+
+    /* ---- app window shell: 230,346 1460x658 · content rect 232,379 1456x623 ---- */
+    [id="19-one-system-win"] {
+      position: absolute;
+      left: 230px;
+      top: 346px;
+      width: 1460px;
+      height: 658px;
+      box-sizing: border-box;
+      background: #0e1322;
+      border: 1.5px solid #1a2440;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    [id="19-one-system-bar"] {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 0;
+      height: 31px;
+      box-sizing: border-box;
+      background: #0a0f1c;
+      border-bottom: 1px solid #1a2440;
+    }
+    [id="19-one-system-dots"] {
+      position: absolute;
+      top: 10.5px;
+      left: 17px;
+      display: flex;
+      gap: 7.7px;
+    }
+    [id="19-one-system-dots"] i {
+      display: block;
+      width: 9.6px;
+      height: 9.6px;
+      border-radius: 50%;
+      background: #334155;
+    }
+    [id="19-one-system-skel"] {
+      position: absolute;
+      left: 40px;
+      right: 40px;
+      top: 68px;
+    }
+    [id="19-one-system-skel"] i {
+      display: block;
+      height: 12px;
+      border-radius: 6px;
+      background: rgba(139, 153, 184, 0.14);
+      margin-bottom: 26px;
+    }
+
+    /* ---- persistent cobalt progress strip ---- */
+    [id="19-one-system-progress"] {
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      height: 3px;
+      width: 87%;
+      background: #1d56f0;
+    }
+  </style>
+
+  <div data-hf-id="hf-5ci1" id="root" data-composition-id="19-one-system" data-width="1920" data-height="1080" data-duration="7">
+    <div data-hf-id="hf-ke9c" id="19-one-system-bg" class="clip" data-start="0" data-duration="7" data-track-index="0"></div>
+
+    <div data-hf-id="hf-wa9x" id="19-one-system-rule"></div>
+    <div data-hf-id="hf-fwym" id="19-one-system-l1"><span data-hf-id="hf-w24r">LiveReview</span> <span data-hf-id="hf-k6nl">is</span> <span data-hf-id="hf-3tds">the</span> <span data-hf-id="hf-finv">only</span> <span data-hf-id="hf-ed52">platform</span></div>
+    <div data-hf-id="hf-byul" id="19-one-system-l2"><span data-hf-id="hf-dfoo">that</span> <span data-hf-id="hf-sftx">solves</span> <span data-hf-id="hf-jf5k">all</span> <span data-hf-id="hf-5u2g">the</span> <span data-hf-id="hf-ess6">major</span> <span data-hf-id="hf-m5h1">issues</span></div>
+    <div data-hf-id="hf-0l42" id="19-one-system-l3">in one unified system</div>
+
+    <div data-hf-id="hf-ldbb" id="19-one-system-win">
+      <div data-hf-id="hf-oxtm" id="19-one-system-bar">
+        <div data-hf-id="hf-fbuf" id="19-one-system-dots"><i data-hf-id="hf-wt6k"></i><i data-hf-id="hf-zeb8"></i><i data-hf-id="hf-y7e5"></i></div>
+      </div>
+      <div data-hf-id="hf-jzfm" id="19-one-system-skel"><i data-hf-id="hf-7rho" style="width: 42%"></i><i data-hf-id="hf-gae1" style="width: 74%"></i><i data-hf-id="hf-rohn" style="width: 61%"></i><i data-hf-id="hf-z6l3" style="width: 83%"></i><i data-hf-id="hf-pa8u" style="width: 57%"></i></div>
+    </div>
+
+    <!-- approved frame video hoisted by assemble-index -->
+
+    <div data-hf-id="hf-cyty" id="19-one-system-progress"></div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+  <script>
+    (function () {
+      var ID = "19-one-system";
+      var $ = function (s) { return document.getElementById(ID + "-" + s); };
+      var claimWords = [].concat(
+        [].slice.call($("l1").querySelectorAll("span")),
+        [].slice.call($("l2").querySelectorAll("span"))
+      );
+      var tl = gsap.timeline({ paused: true });
+
+      // Persistent chrome: progress strip 87.0% -> 91.7% across the full 7s.
+      tl.fromTo($("progress"), { width: "87%" }, { width: "91.7%", duration: 7, ease: "none" }, 0);
+
+      // ---- Scene 1 (0.0-0.8s): the app window rises into 230,346 1460x658 and lands at rest.
+      // Fast (the film is closing) and fully settled at t=0.67s, before the clip's data-start (0.8s).
+      // Never moves again: handoff_out demands opacity 1, scale 1, motionless at the cut.
+      tl.fromTo($("win"), { opacity: 0, y: 118 },
+        { opacity: 1, y: 0, duration: 0.62, ease: "expo.out" }, 0.05);
+      tl.fromTo($("skel").children, { opacity: 0, x: -20 },
+        { opacity: 1, x: 0, duration: 0.3, ease: "power2.out", stagger: 0.045 }, 0.34);
+
+      // cobalt accent rule draws in above the claim
+      tl.fromTo($("rule"), { scaleX: 0, opacity: 0 },
+        { scaleX: 1, opacity: 1, duration: 0.42, ease: "power2.out" }, 0.95);
+
+      // ---- Scene 2a (1.4-2.9s): the claim reveals per word, upper third, clear of the window.
+      tl.fromTo(claimWords, { opacity: 0, y: 26, filter: "blur(7px)" },
+        { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.5, ease: "power3.out", stagger: 0.085 }, 1.40);
+
+      // ---- Scene 2b (3.6s): "in one unified system" lands in cobalt. Nothing moves after this;
+      // the dashboard's own motion carries the rest of the frame.
+      tl.fromTo($("l3"), { opacity: 0, y: 22, filter: "blur(8px)" },
+        { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.66, ease: "power3.out" }, 3.60);
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines[ID] = tl;
+    })();
+  </script>
+</template>

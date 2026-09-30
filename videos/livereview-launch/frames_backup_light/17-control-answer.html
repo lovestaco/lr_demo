@@ -1,0 +1,424 @@
+<template>
+  <style>
+    @font-face {
+      font-family: "Inter";
+      src: url("assets/fonts/Inter-var.woff2") format("woff2");
+      font-weight: 100 900;
+      font-display: block;
+    }
+    #root {
+      position: absolute;
+      inset: 0;
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+      font-family: "Inter", sans-serif;
+      color: #05070b;
+    }
+    [id="17-control-answer-bg"] {
+      position: absolute;
+      inset: 0;
+      background: #ffffff;
+    }
+
+    /* ---- act pill, top-left (carries over from Frame 15) ---- */
+    [id="17-control-answer-act"] {
+      position: absolute;
+      left: 96px;
+      top: 96px;
+      display: inline-flex;
+      align-items: center;
+      font-size: 18.24px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #1d56f0;
+      background: rgba(29, 86, 240, 0.08);
+      border-radius: 100px;
+      padding: 6.7px 19.2px;
+      transform-origin: 0% 50%;
+    }
+
+    /* ---- recurring motif: the 2x2 act marker, 132x62 at 1656,96 ---- */
+    [id="17-control-answer-glyph"] {
+      position: absolute;
+      left: 1656px;
+      top: 96px;
+      width: 132px;
+      height: 62px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: 1fr 1fr;
+      gap: 3px;
+    }
+    [id="17-control-answer-glyph"] i {
+      display: block;
+      box-sizing: border-box;
+      border-radius: 3px;
+    }
+    /* cells 1-3 — acts already solved: 20% cobalt tint */
+    [id="17-control-answer-c1"],
+    [id="17-control-answer-c2"],
+    [id="17-control-answer-c3"] {
+      background: rgba(29, 86, 240, 0.2);
+    }
+    /* cell 4 — THIS act: filled cobalt */
+    [id="17-control-answer-c4"] {
+      background: #1d56f0;
+    }
+
+    /* ---- Scene 1: the three capability lines, upper-left ---- */
+    [id="17-control-answer-list"] {
+      position: absolute;
+      left: 230px;
+      top: 284px;
+      width: 1500px;
+      transform-origin: 0% 0%;
+    }
+    [id="17-control-answer-list"] > div {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      margin-bottom: 52px;
+    }
+    [id="17-control-answer-list"] > div > i {
+      display: block;
+      flex: none;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: #1d56f0;
+    }
+    [id="17-control-answer-list"] > div > span {
+      font-size: 54px;
+      font-weight: 600;
+      line-height: 1.2;
+      letter-spacing: -0.02em;
+      color: #05070b;
+      white-space: nowrap;
+    }
+    [id="17-control-answer-list"] img {
+      display: block;
+      height: 42px;
+      width: auto;
+      margin-left: 18px;
+    }
+
+    /* ---- Scene 2: the condensed docked line above the window ---- */
+    [id="17-control-answer-cond"] {
+      position: absolute;
+      left: 230px;
+      top: 258px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      transform-origin: 0% 50%;
+    }
+    [id="17-control-answer-cond"] > span {
+      font-size: 28px;
+      font-weight: 600;
+      line-height: 1.2;
+      letter-spacing: -0.01em;
+      color: #05070b;
+      white-space: nowrap;
+    }
+    [id="17-control-answer-cond"] > em {
+      font-style: normal;
+      font-size: 28px;
+      font-weight: 700;
+      color: #1d56f0;
+    }
+    [id="17-control-answer-cond"] img {
+      display: block;
+      height: 26px;
+      width: auto;
+      margin-left: 6px;
+    }
+
+    /* ---- the app window shell: 230,346 1460x658 (content rect 232,379 1456x623) ---- */
+    [id="17-control-answer-win"] {
+      position: absolute;
+      left: 230px;
+      top: 346px;
+      width: 1460px;
+      height: 658px;
+      box-sizing: border-box;
+      background: #0e1322;
+      border: 1.5px solid #1a2440;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    [id="17-control-answer-topbar"] {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 0;
+      height: 31px;
+      box-sizing: border-box;
+      background: #0a0f1c;
+      border-bottom: 1px solid #1a2440;
+    }
+    [id="17-control-answer-dots"] {
+      position: absolute;
+      top: 10.5px;
+      left: 17px;
+      display: flex;
+      gap: 7.7px;
+    }
+    [id="17-control-answer-dots"] i {
+      display: block;
+      width: 9.6px;
+      height: 9.6px;
+      border-radius: 50%;
+      background: #334155;
+    }
+    [id="17-control-answer-think"] {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 31px;
+      bottom: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+    }
+    [id="17-control-answer-think"] i {
+      display: block;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: #8b99b8;
+      opacity: 0.3;
+    }
+
+    /* ---- Livi avatar chip, pinned at the window's upper-left corner ---- */
+    [id="17-control-answer-livi"] {
+      position: absolute;
+      left: 126px;
+      top: 302px;
+      width: 92px;
+      height: 92px;
+      transform-origin: 50% 50%;
+    }
+    [id="17-control-answer-livi-img"] {
+      position: absolute;
+      inset: 0;
+      display: block;
+      width: 92px;
+      height: 92px;
+      box-sizing: border-box;
+      border-radius: 50%;
+      background: #ffffff;
+      border: 1.5px solid rgba(29, 86, 240, 0.2);
+    }
+    [id="17-control-answer-livi-ring"] {
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      border: 2px solid #1d56f0;
+      opacity: 0;
+    }
+    [id="17-control-answer-livi-tag"] {
+      position: absolute;
+      left: 126px;
+      top: 408px;
+      width: 92px;
+      text-align: center;
+      font-size: 17.28px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #1d56f0;
+    }
+
+    /* ---- Scene 4: the fourth and final seal ---- */
+    [id="17-control-answer-seal"] {
+      position: absolute;
+      left: 120px;
+      right: 120px;
+      top: 504px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 34px;
+    }
+    [id="17-control-answer-seal-a"] {
+      font-size: 60px;
+      font-weight: 650;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      color: #05070b;
+      white-space: nowrap;
+    }
+    [id="17-control-answer-seal-a"] span {
+      display: inline-block;
+    }
+    [id="17-control-answer-seal-b"] {
+      display: inline-flex;
+      align-items: center;
+      gap: 14px;
+      font-size: 60px;
+      font-weight: 700;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      color: #059669;
+      white-space: nowrap;
+      transform-origin: 50% 50%;
+    }
+    [id="17-control-answer-check"] {
+      display: block;
+      flex: none;
+    }
+
+    [id="17-control-answer-progress"] {
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      height: 3px;
+      width: 75.3%;
+      background: #1d56f0;
+    }
+  </style>
+
+  <div data-hf-id="hf-fuyy" id="root" data-composition-id="17-control-answer" data-width="1920" data-height="1080" data-duration="13">
+    <div data-hf-id="hf-372x" id="17-control-answer-bg" class="clip" data-start="0" data-duration="13" data-track-index="0"></div>
+
+    <div data-hf-id="hf-4q1p" id="17-control-answer-act">#4 · Control and Improve</div>
+
+    <div data-hf-id="hf-iich" id="17-control-answer-glyph">
+      <i data-hf-id="hf-7fq5" id="17-control-answer-c1"></i>
+      <i data-hf-id="hf-bdu6" id="17-control-answer-c2"></i>
+      <i data-hf-id="hf-fby7" id="17-control-answer-c3"></i>
+      <i data-hf-id="hf-ja28" id="17-control-answer-c4"></i>
+    </div>
+
+    <div data-hf-id="hf-ffft" id="17-control-answer-list">
+      <div data-hf-id="hf-i1aq" id="17-control-answer-r1"><i data-hf-id="hf-wt6k"></i><span data-hf-id="hf-fhel">Adaptive Reviews cut AI cost.</span></div>
+      <div data-hf-id="hf-e36p" id="17-control-answer-r2"><i data-hf-id="hf-zeb8"></i><span data-hf-id="hf-w6vm">Livi learns from your reviews.</span></div>
+      <div data-hf-id="hf-b3x4" id="17-control-answer-r3"><i data-hf-id="hf-y7e5"></i><span data-hf-id="hf-w3kj">CLI, IDE, MCP and API fit your workflow.</span><img data-hf-id="hf-i1s5" id="17-control-answer-vs" src="assets/extensions_vscode-logo.png" alt=""><img data-hf-id="hf-jixs" id="17-control-answer-cu" src="assets/extensions_cursor-logo.png" alt=""></div>
+    </div>
+
+    <div data-hf-id="hf-94el" id="17-control-answer-cond">
+      <span data-hf-id="hf-ixvc">Adaptive cost</span><em data-hf-id="hf-7mao">·</em><span data-hf-id="hf-5031">Learns from you</span><em data-hf-id="hf-kp08">·</em><span data-hf-id="hf-teqd">CLI</span><em data-hf-id="hf-ji35">·</em><span data-hf-id="hf-umhv">IDE</span><em data-hf-id="hf-jwe6">·</em><span data-hf-id="hf-hd3j">MCP</span><em data-hf-id="hf-enhz">·</em><span data-hf-id="hf-qa8r">API</span><img data-hf-id="hf-otfv" id="17-control-answer-vs2" src="assets/extensions_vscode-logo.png" alt=""><img data-hf-id="hf-4jmg" id="17-control-answer-cu2" src="assets/extensions_cursor-logo.png" alt="">
+    </div>
+
+    <div data-hf-id="hf-jsfd" id="17-control-answer-win">
+      <div data-hf-id="hf-1h6h" id="17-control-answer-topbar">
+        <div data-hf-id="hf-gnzh" id="17-control-answer-dots"><i data-hf-id="hf-ylp6"></i><i data-hf-id="hf-0l8b"></i><i data-hf-id="hf-0zjc"></i></div>
+      </div>
+      <div data-hf-id="hf-5riv" id="17-control-answer-think"><i data-hf-id="hf-zsm9"></i><i data-hf-id="hf-06xa"></i><i data-hf-id="hf-26gf"></i></div>
+    </div>
+
+    <!-- approved frame video hoisted by assemble-index -->
+
+    <div data-hf-id="hf-sutr" id="17-control-answer-livi">
+      <div data-hf-id="hf-mv8u" id="17-control-answer-livi-ring"></div>
+      <img data-hf-id="hf-2pjc" id="17-control-answer-livi-img" src="assets/lrbot_lrbot.png" alt="">
+    </div>
+    <div data-hf-id="hf-q8di" id="17-control-answer-livi-tag">Livi</div>
+
+    <div data-hf-id="hf-2yry" id="17-control-answer-seal">
+      <span data-hf-id="hf-97fj" id="17-control-answer-seal-a"><span data-hf-id="hf-sxk0">The</span> <span data-hf-id="hf-nmcq">Control</span> <span data-hf-id="hf-kyh6">and</span> <span data-hf-id="hf-2lgv">Improve</span> <span data-hf-id="hf-p0n4">Problem</span></span>
+      <span data-hf-id="hf-0jjo" id="17-control-answer-seal-b">
+        <span data-hf-id="hf-muft" id="17-control-answer-seal-word">→ Solved</span>
+        <svg data-hf-id="hf-bkqg" id="17-control-answer-check" width="48" height="48" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+          <circle data-hf-id="hf-2gsv" id="17-control-answer-check-ring" cx="24" cy="24" r="22" fill="none" stroke="#059669" stroke-width="3" />
+          <path data-hf-id="hf-ufrh" id="17-control-answer-tick" d="M14 25 L21 32 L34 17" fill="none" stroke="#059669" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+      </span>
+    </div>
+
+    <div data-hf-id="hf-4a3w" id="17-control-answer-progress"></div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+  <script>
+    (function () {
+      var ID = "17-control-answer";
+      var DURATION = 12.5;
+      var $ = function (s) { return document.getElementById(ID + "-" + s); };
+
+      var rows = [$("r1"), $("r2"), $("r3")];
+      var glyph = [$("c1"), $("c2"), $("c3"), $("c4")];
+      var sealWords = $("seal-a").querySelectorAll("span");
+
+      var tl = gsap.timeline({ paused: true });
+
+      // ---- persistent chrome: the 3px cobalt progress strip, 75.3% -> 83.7% ----
+      tl.fromTo($("progress"), { width: "75.3%" }, { width: "83.7%", duration: DURATION, ease: "none" }, 0);
+
+      // act pill + quadrant glyph carry over from Frame 15: they settle, they do not re-introduce.
+      tl.fromTo($("act"), { opacity: 0, scale: 0.7 },
+        { opacity: 1, scale: 1, duration: 0.38, ease: "back.out(2.2)" }, 0);
+      tl.fromTo(glyph, { opacity: 0, scale: 0.8 },
+        { opacity: 1, scale: 1, duration: 0.3, ease: "power3.out", stagger: 0.055 }, 0);
+
+      // ================= Scene 1 (0.0-2.0s) =================
+      // Three capability lines accumulate as a staggered vertical list, each on its own reading cue.
+      tl.fromTo(rows[0], { opacity: 0, y: 34, filter: "blur(7px)" },
+        { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.52, ease: "power3.out" }, 0.15);
+      tl.fromTo(rows[0].querySelector("i"), { scale: 0 },
+        { scale: 1, duration: 0.4, ease: "back.out(3)" }, 0.18);
+
+      tl.fromTo(rows[1], { opacity: 0, y: 34, filter: "blur(7px)" },
+        { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.52, ease: "power3.out" }, 0.8);
+      tl.fromTo(rows[1].querySelector("i"), { scale: 0 },
+        { scale: 1, duration: 0.4, ease: "back.out(3)" }, 0.83);
+
+      tl.fromTo(rows[2], { opacity: 0, y: 34, filter: "blur(7px)" },
+        { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.52, ease: "power3.out" }, 1.42);
+      tl.fromTo(rows[2].querySelector("i"), { scale: 0 },
+        { scale: 1, duration: 0.4, ease: "back.out(3)" }, 1.45);
+      // the VS Code + Cursor marks fade up small beside the third line
+      tl.fromTo([$("vs"), $("cu")], { opacity: 0, scale: 0.55 },
+        { opacity: 1, scale: 1, duration: 0.36, ease: "back.out(2)", stagger: 0.09 }, 1.78);
+
+      // ================= Scene 2 (2.0-2.9s) =================
+      // The list DOCKS: it compresses upward and hands its weight to a single condensed line.
+      tl.to($("list"), { y: -38, scale: 0.7, opacity: 0, filter: "blur(6px)", duration: 0.42, ease: "power2.in" }, 2.02);
+      tl.fromTo($("cond"), { opacity: 0, y: 22, scale: 0.94 },
+        { opacity: 1, y: 0, scale: 1, duration: 0.42, ease: "power3.out" }, 2.2);
+
+      // The window rises into 230,346 1460x658 and LANDS fully at rest before the clip (t=2.9).
+      tl.fromTo($("win"), { opacity: 0, y: 140 },
+        { opacity: 1, y: 0, duration: 0.72, ease: "expo.out" }, 2.02);
+      tl.fromTo($("think").children, { opacity: 0 },
+        { opacity: 0.3, duration: 0.3, ease: "power2.out", stagger: 0.05 }, 2.4);
+
+      // The Livi avatar chip pops at the window's upper-left corner, with a single ping.
+      tl.fromTo($("livi"), { opacity: 0, scale: 0.35 },
+        { opacity: 1, scale: 1, duration: 0.4, ease: "back.out(2)" }, 2.4);
+      tl.set($("livi-ring"), { opacity: 0 }, 0);
+      tl.fromTo($("livi-ring"), { opacity: 0.55, scale: 1 },
+        { opacity: 0, scale: 1.7, duration: 0.42, ease: "power2.out" }, 2.48);
+      tl.fromTo($("livi-tag"), { opacity: 0, y: 10 },
+        { opacity: 1, y: 0, duration: 0.3, ease: "power2.out" }, 2.58);
+
+      // ================= Scene 3 (2.9-11.03s) =================
+      // clip15_livi.mp4 plays whole in the rect. The frame is otherwise still — the clip is the
+      // only motion; nothing is tweened across this window.
+
+      // ================= Scene 4 (11.03-12.5s) =================
+      // Weight transfer: the window and the avatar recede and the seal resolves in the space
+      // they vacate — the fourth and final seal.
+      tl.to($("win"), { opacity: 0, scale: 0.965, duration: 0.5, ease: "power2.inOut" }, 11.03);
+      tl.to([$("livi"), $("livi-tag")], { opacity: 0, duration: 0.42, ease: "power2.inOut" }, 11.03);
+
+      tl.fromTo(sealWords, { opacity: 0, y: 26, filter: "blur(6px)" },
+        { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.46, ease: "power3.out", stagger: 0.07 }, 11.26);
+
+      tl.fromTo($("seal-b"), { opacity: 0, scale: 0.55 },
+        { opacity: 1, scale: 1, duration: 0.52, ease: "back.out(2.6)" }, 11.86);
+      tl.fromTo($("check-ring"), { opacity: 0 }, { opacity: 1, duration: 0.24, ease: "power2.out" }, 11.9);
+      tl.fromTo($("tick"), { strokeDasharray: 36, strokeDashoffset: 36 },
+        { strokeDashoffset: 0, duration: 0.4, ease: "power2.out" }, 12.02);
+
+      // hold the seal to the end of the frame
+      tl.to({}, { duration: DURATION }, 0);
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines[ID] = tl;
+    })();
+  </script>
+</template>

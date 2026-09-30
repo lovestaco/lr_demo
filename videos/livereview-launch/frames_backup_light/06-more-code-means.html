@@ -1,0 +1,299 @@
+<template>
+  <style>
+    @font-face {
+      font-family: "Inter";
+      src: url("assets/fonts/Inter-var.woff2") format("woff2");
+      font-weight: 100 900;
+      font-style: normal;
+      font-display: block;
+    }
+    #root {
+      position: absolute;
+      inset: 0;
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+      font-family: "Inter", sans-serif;
+      color: #05070b;
+    }
+    /* ---- depth layer 0: full-bleed ground ---- */
+    [id="06-more-code-means-bg"] {
+      position: absolute;
+      inset: 0;
+      background: #ffffff;
+    }
+    /* ---- depth layer 1: faint cobalt wash under the graph region ---- */
+    [id="06-more-code-means-wash"] {
+      position: absolute;
+      left: 720px;
+      top: 0;
+      width: 1200px;
+      height: 1080px;
+      background: radial-gradient(
+        62% 58% at 62% 45%,
+        rgba(29, 86, 240, 0.07) 0%,
+        rgba(29, 86, 240, 0.03) 48%,
+        rgba(29, 86, 240, 0) 100%
+      );
+    }
+    /* ---- depth layer 2: the node graph ---- */
+    [id="06-more-code-means-svg"] {
+      position: absolute;
+      inset: 0;
+      width: 1920px;
+      height: 1080px;
+    }
+    [id="06-more-code-means-svg"] line {
+      stroke: #1d56f0;
+      stroke-width: 2;
+      stroke-linecap: round;
+    }
+    [id="06-more-code-means-svg"] circle {
+      fill: #1d56f0;
+      transform-box: fill-box;
+      transform-origin: 50% 50%;
+    }
+    /* ---- depth layer 3: the pinned anchor + the cycling consequence ---- */
+    [id="06-more-code-means-rule"] {
+      position: absolute;
+      left: 96px;
+      top: 396px;
+      width: 60px;
+      height: 4px;
+      border-radius: 2px;
+      background: #1d56f0;
+      transform-origin: 0% 50%;
+    }
+    [id="06-more-code-means-anchor"] {
+      position: absolute;
+      left: 96px;
+      top: 432px;
+      width: 760px;
+      font-size: 80.64px;
+      font-weight: 700;
+      line-height: 1.08;
+      letter-spacing: -0.02em;
+      color: #05070b;
+      white-space: nowrap;
+    }
+    [id="06-more-code-means-slot"] {
+      position: absolute;
+      left: 96px;
+      top: 580px;
+      width: 760px;
+      height: 60px;
+    }
+    [id="06-more-code-means-slot"] > div {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 760px;
+      font-size: 42.24px;
+      font-weight: 600;
+      line-height: 1.35;
+      letter-spacing: -0.01em;
+      color: #1d56f0;
+      white-space: nowrap;
+    }
+    [id="06-more-code-means-anchor"] span,
+    [id="06-more-code-means-slot"] span {
+      display: inline-block;
+    }
+    [id="06-more-code-means-progress"] {
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      height: 3px;
+      width: 22.3%;
+      background: #1d56f0;
+    }
+  </style>
+
+  <div data-hf-id="hf-1b9a" id="root" data-composition-id="06-more-code-means" data-width="1920" data-height="1080" data-duration="6">
+    <div data-hf-id="hf-ofyj" id="06-more-code-means-bg" class="clip" data-start="0" data-duration="6" data-track-index="0"></div>
+    <div data-hf-id="hf-6wqu" id="06-more-code-means-wash"></div>
+
+    <svg data-hf-id="hf-ryae" id="06-more-code-means-svg" viewBox="0 0 1920 1080" xmlns="http://www.w3.org/2000/svg">
+      <g data-hf-id="hf-uvnj" id="06-more-code-means-graph">
+        <!-- Scene 1: 6 sparse links between the 9 seed nodes -->
+        <g data-hf-id="hf-p1u8" id="06-more-code-means-la">
+          <line data-hf-id="hf-9icu" x1="900" y1="300" x2="1120" y2="220" />
+          <line data-hf-id="hf-m99q" x1="1120" y1="220" x2="1330" y2="320" />
+          <line data-hf-id="hf-2kll" x1="1330" y1="320" x2="1560" y2="250" />
+          <line data-hf-id="hf-v4m4" x1="1560" y1="250" x2="1760" y2="380" />
+          <line data-hf-id="hf-ohic" x1="950" y1="540" x2="1180" y2="470" />
+          <line data-hf-id="hf-vr9p" x1="1180" y1="470" x2="1420" y2="560" />
+        </g>
+        <!-- Scene 2: 6 NEW links between the SAME nodes — connections, not nodes -->
+        <g data-hf-id="hf-zxbv" id="06-more-code-means-lb">
+          <line data-hf-id="hf-1npt" x1="900" y1="300" x2="950" y2="540" />
+          <line data-hf-id="hf-cha9" x1="1120" y1="220" x2="1180" y2="470" />
+          <line data-hf-id="hf-xl8b" x1="1330" y1="320" x2="1180" y2="470" />
+          <line data-hf-id="hf-k960" x1="1760" y1="380" x2="1660" y2="640" />
+          <line data-hf-id="hf-l4zr" x1="1420" y1="560" x2="1660" y2="640" />
+          <line data-hf-id="hf-u9m3" x1="1560" y1="250" x2="1420" y2="560" />
+        </g>
+        <!-- Scene 3: the tangle — 18 links knitting the 9 new nodes into the old 9 -->
+        <g data-hf-id="hf-trm2" id="06-more-code-means-lc">
+          <line data-hf-id="hf-02fy" x1="950" y1="540" x2="1030" y2="700" />
+          <line data-hf-id="hf-6c3t" x1="1030" y1="700" x2="1270" y2="750" />
+          <line data-hf-id="hf-whfj" x1="1270" y1="750" x2="1500" y2="740" />
+          <line data-hf-id="hf-xj5c" x1="1500" y1="740" x2="1740" y2="720" />
+          <line data-hf-id="hf-yios" x1="1740" y1="720" x2="1760" y2="380" />
+          <line data-hf-id="hf-fnym" x1="860" y1="420" x2="900" y2="300" />
+          <line data-hf-id="hf-r2hr" x1="860" y1="420" x2="950" y2="540" />
+          <line data-hf-id="hf-fta2" x1="1080" y1="380" x2="900" y2="300" />
+          <line data-hf-id="hf-akt0" x1="1080" y1="380" x2="1120" y2="220" />
+          <line data-hf-id="hf-c4ib" x1="1080" y1="380" x2="1180" y2="470" />
+          <line data-hf-id="hf-p23s" x1="1240" y1="620" x2="1180" y2="470" />
+          <line data-hf-id="hf-c3m9" x1="1240" y1="620" x2="1420" y2="560" />
+          <line data-hf-id="hf-x9if" x1="1240" y1="620" x2="1270" y2="750" />
+          <line data-hf-id="hf-qldq" x1="1620" y1="460" x2="1560" y2="250" />
+          <line data-hf-id="hf-hdfl" x1="1620" y1="460" x2="1420" y2="560" />
+          <line data-hf-id="hf-yqgi" x1="1620" y1="460" x2="1740" y2="720" />
+          <line data-hf-id="hf-o4q0" x1="1450" y1="200" x2="1330" y2="320" />
+          <line data-hf-id="hf-2jop" x1="1450" y1="200" x2="1560" y2="250" />
+        </g>
+        <!-- 9 seed nodes -->
+        <g data-hf-id="hf-jvn6" id="06-more-code-means-na">
+          <circle data-hf-id="hf-0buw" cx="900" cy="300" r="8" />
+          <circle data-hf-id="hf-2d1k" cx="1120" cy="220" r="8" />
+          <circle data-hf-id="hf-8xna" cx="1330" cy="320" r="8" />
+          <circle data-hf-id="hf-4ks9" cx="1560" cy="250" r="8" />
+          <circle data-hf-id="hf-0qf9" cx="1760" cy="380" r="8" />
+          <circle data-hf-id="hf-ljbb" cx="950" cy="540" r="8" />
+          <circle data-hf-id="hf-4pv7" cx="1180" cy="470" r="8" />
+          <circle data-hf-id="hf-g6m4" cx="1420" cy="560" r="8" />
+          <circle data-hf-id="hf-upqn" cx="1660" cy="640" r="8" />
+        </g>
+        <!-- 9 more nodes — the count doubles in Scene 3 -->
+        <g data-hf-id="hf-f5vc" id="06-more-code-means-nc">
+          <circle data-hf-id="hf-bmg9" cx="1030" cy="700" r="8" />
+          <circle data-hf-id="hf-eucc" cx="1270" cy="750" r="8" />
+          <circle data-hf-id="hf-s0x1" cx="1500" cy="740" r="8" />
+          <circle data-hf-id="hf-3f2p" cx="1740" cy="720" r="8" />
+          <circle data-hf-id="hf-w9p4" cx="860" cy="420" r="8" />
+          <circle data-hf-id="hf-mfvr" cx="1240" cy="620" r="8" />
+          <circle data-hf-id="hf-penb" cx="1620" cy="460" r="8" />
+          <circle data-hf-id="hf-23xm" cx="1080" cy="380" r="8" />
+          <circle data-hf-id="hf-a7ay" cx="1450" cy="200" r="8" />
+        </g>
+      </g>
+    </svg>
+
+    <div data-hf-id="hf-jfql" id="06-more-code-means-rule"></div>
+
+    <!-- the ANCHOR: enters once, then never moves again -->
+    <div data-hf-id="hf-smlk" id="06-more-code-means-anchor"><span data-hf-id="hf-n710">More</span> <span data-hf-id="hf-mjl4">code</span> <span data-hf-id="hf-t5dt">means:</span></div>
+
+    <!-- the cycling slot: two consequences share one fixed rectangle -->
+    <div data-hf-id="hf-xjs7" id="06-more-code-means-slot">
+      <div data-hf-id="hf-x5cf" id="06-more-code-means-c1"><span data-hf-id="hf-b4g1">Bigger</span> <span data-hf-id="hf-92rj">systems,</span> <span data-hf-id="hf-zlit">inter</span> <span data-hf-id="hf-jdvu">connections</span></div>
+      <div data-hf-id="hf-m9us" id="06-more-code-means-c2"><span data-hf-id="hf-4vho">More</span> <span data-hf-id="hf-njir">complexity,</span> <span data-hf-id="hf-4g7q">bugs,</span> <span data-hf-id="hf-m5h1">issues</span></div>
+    </div>
+
+    <div data-hf-id="hf-0cim" id="06-more-code-means-progress"></div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+  <script>
+    (function () {
+      var ID = "06-more-code-means";
+      var $ = function (s) { return document.getElementById(ID + "-" + s); };
+      var kids = function (s) { return Array.prototype.slice.call($(s).children); };
+
+      // Deterministic dash length per link, computed from its hardcoded endpoints.
+      var prep = function (group) {
+        var lines = kids(group);
+        lines.forEach(function (ln) {
+          var len = Math.hypot(
+            +ln.getAttribute("x2") - +ln.getAttribute("x1"),
+            +ln.getAttribute("y2") - +ln.getAttribute("y1")
+          );
+          ln.setAttribute("data-len", len);
+          ln.style.strokeDasharray = len;
+          ln.style.strokeDashoffset = len;
+        });
+        return lines;
+      };
+      var linksA = prep("la");
+      var linksB = prep("lb");
+      var linksC = prep("lc");
+      var nodesA = kids("na");
+      var nodesC = kids("nc");
+
+      var drawIn = function (tl, lines, at, dur, stagger) {
+        lines.forEach(function (ln, i) {
+          var len = +ln.getAttribute("data-len");
+          tl.fromTo(ln,
+            { strokeDashoffset: len, opacity: 0 },
+            { strokeDashoffset: 0, opacity: 1, duration: dur, ease: "power2.out" },
+            at + i * stagger);
+        });
+      };
+
+      var anchorWords = $("anchor").querySelectorAll("span");
+      var c1Words = $("c1").querySelectorAll("span");
+      var c2Words = $("c2").querySelectorAll("span");
+
+      var tl = gsap.timeline({ paused: true });
+
+      // Persistent chrome: progress strip 22.3% -> 26.0% across the whole frame.
+      tl.fromTo($("progress"), { width: "22.3%" }, { width: "26.0%", duration: 5.5, ease: "none" }, 0);
+
+      // Pre-states for the Scene-3 waterfall entry (so un-started words never sit visible).
+      tl.set(c2Words, { opacity: 0, x: 230 }, 0);
+
+      // ---------------------------------------------------------------
+      // Scene 1 (0.0-1.2s) — the anchor lands and PINS; sparse graph at 18%.
+      // ---------------------------------------------------------------
+      tl.fromTo($("wash"), { opacity: 0 }, { opacity: 1, duration: 1.6, ease: "power2.out" }, 0);
+      tl.fromTo($("rule"), { scaleX: 0, opacity: 0 },
+        { scaleX: 1, opacity: 1, duration: 0.4, ease: "power3.out" }, 0.04);
+      // word-by-word build of the anchor line — it holds this position for the rest of the clip
+      tl.fromTo(anchorWords,
+        { opacity: 0, y: 28, filter: "blur(8px)" },
+        { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.55, ease: "power3.out", stagger: 0.1 }, 0.12);
+      // the graph field itself sits at 18% behind the right two-thirds
+      tl.fromTo($("graph"), { opacity: 0 }, { opacity: 0.18, duration: 0.7, ease: "power2.out" }, 0.4);
+      tl.fromTo(nodesA, { opacity: 0, scale: 0 },
+        { opacity: 1, scale: 1, duration: 0.35, ease: "back.out(2.4)", stagger: 0.055 }, 0.45);
+      drawIn(tl, linksA, 0.55, 0.45, 0.07);
+
+      // ---------------------------------------------------------------
+      // Scene 2 (1.2-3.0s) — consequence 1 reveals in the slot; the graph
+      // grows LINKS between the existing nodes (no new nodes here).
+      // ---------------------------------------------------------------
+      tl.fromTo(c1Words,
+        { opacity: 0, y: 22, filter: "blur(6px)" },
+        { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.5, ease: "power3.out", stagger: 0.08 }, 1.25);
+      drawIn(tl, linksB, 1.55, 0.5, 0.2);
+
+      // ---------------------------------------------------------------
+      // Scene 3 (3.0-5.5s) — waterfall cut at t=3.0: consequence 1 rips out
+      // word by word, consequence 2 cascades in mid-flight in the SAME slot.
+      // Behind it the node count doubles and the links tangle to ~28%.
+      // ---------------------------------------------------------------
+      // exit half of the cut — each word ramps left on power4.in, fading early
+      tl.fromTo(c1Words, { x: 0 },
+        { x: -230, duration: 0.34, ease: "power4.in", stagger: 0.022 }, 2.75);
+      tl.fromTo(c1Words, { opacity: 1 },
+        { opacity: 0, duration: 0.18, ease: "power1.in", stagger: 0.022 }, 2.75);
+      // entry half — mirrored velocity, cascade with shrinking gaps
+      var gaps = [0, 0.05, 0.092, 0.1273];
+      Array.prototype.forEach.call(c2Words, function (w, i) {
+        tl.fromTo(w, { x: 230, opacity: 0.35 },
+          { x: 0, opacity: 1, duration: 0.3, ease: "power4.out" }, 3.0 + gaps[i]);
+      });
+
+      // the world densifies around the unmoved anchor
+      tl.fromTo($("graph"), { opacity: 0.18 }, { opacity: 0.28, duration: 1.0, ease: "power1.inOut" }, 3.0);
+      tl.fromTo(nodesC, { opacity: 0, scale: 0 },
+        { opacity: 1, scale: 1, duration: 0.32, ease: "back.out(2.4)", stagger: 0.1 }, 3.1);
+      drawIn(tl, linksC, 3.25, 0.5, 0.095);
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines[ID] = tl;
+    })();
+  </script>
+</template>

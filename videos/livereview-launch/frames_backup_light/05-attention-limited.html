@@ -1,0 +1,118 @@
+<template>
+  <style>
+    @font-face {
+      font-family: "Inter";
+      src: url("assets/fonts/Inter-var.woff2") format("woff2");
+      font-weight: 100 900;
+      font-style: normal;
+      font-display: block;
+    }
+    #root {
+      position: absolute;
+      inset: 0;
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+      font-family: "Inter", sans-serif;
+      color: #05070b;
+    }
+    /* full-bleed ground — the emptiest frame in the film: warm cream, nothing else */
+    [id="05-attention-limited-bg"] {
+      position: absolute;
+      inset: 0;
+      background: #ffffff;
+    }
+    /* ---- Scene 1: the small grey lead-in, upper third, centered ---- */
+    [id="05-attention-limited-lead"] {
+      position: absolute;
+      left: 96px;
+      right: 96px;
+      top: 344px;
+      text-align: center;
+    }
+    [id="05-attention-limited-rule"] {
+      width: 60px;
+      height: 4px;
+      margin: 0 auto 26px;
+      border-radius: 2px;
+      background: #1d56f0;
+    }
+    [id="05-attention-limited-lead-text"] {
+      font-size: 35.52px;
+      font-weight: 450;
+      line-height: 1.5;
+      letter-spacing: 0.01em;
+      color: #9a9a9a;
+      white-space: nowrap;
+    }
+    /* ---- Scene 2: the centre line at h1 scale ---- */
+    [id="05-attention-limited-head"] {
+      position: absolute;
+      left: 96px;
+      right: 96px;
+      top: 486px;
+      text-align: center;
+      font-size: 80.64px;
+      font-weight: 700;
+      line-height: 1.08;
+      letter-spacing: -0.02em;
+      color: #05070b;
+      white-space: nowrap;
+    }
+    [id="05-attention-limited-head"] em {
+      font-style: normal;
+      color: #1d56f0;
+    }
+    /* ---- persistent chrome ---- */
+    [id="05-attention-limited-progress"] {
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      height: 3px;
+      width: 19.7%;
+      background: #1d56f0;
+    }
+  </style>
+
+  <div data-hf-id="hf-ywg2" id="root" data-composition-id="05-attention-limited" data-width="1920" data-height="1080" data-duration="4">
+    <div data-hf-id="hf-xn9b" id="05-attention-limited-bg" class="clip" data-start="0" data-duration="4" data-track-index="0"></div>
+
+    <div data-hf-id="hf-ca1v" id="05-attention-limited-lead">
+      <div data-hf-id="hf-zobn" id="05-attention-limited-rule"></div>
+      <div data-hf-id="hf-1z6s" id="05-attention-limited-lead-text">And let’s remember:</div>
+    </div>
+
+    <div data-hf-id="hf-x34o" id="05-attention-limited-head">Human attention is still <em data-hf-id="hf-l7b7">limited</em></div>
+
+    <div data-hf-id="hf-km7k" id="05-attention-limited-progress"></div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+  <script>
+    (function () {
+      var ID = "05-attention-limited";
+      var $ = function (s) { return document.getElementById(ID + "-" + s); };
+      var tl = gsap.timeline({ paused: true });
+
+      // Persistent chrome: progress strip 19.7% -> 22.3% across the full 4s.
+      tl.fromTo($("progress"), { width: "19.7%" }, { width: "22.3%", duration: 4, ease: "none" }, 0);
+
+      // Scene 1 (0.0-1.2s) — cue 1. The lead-in (cobalt rule + small grey line) fades up
+      // as ONE unit in the upper third. Visible well before t = 0.5s.
+      tl.fromTo($("lead"), { opacity: 0, y: 14 },
+        { opacity: 1, y: 0, duration: 0.7, ease: "power3.out" }, 0.1);
+
+      // Scene 2 (1.2-2.4s) — cue 2. THE one restrained move: a single slide-up crossfade
+      // brings the h1 centre line up from below into its final centred position.
+      // (discrete-text-sequence handoff register: translate-up + crossfade, one line only.)
+      tl.fromTo($("head"), { opacity: 0, y: 52, filter: "blur(7px)" },
+        { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.95, ease: "power3.out" }, 1.2);
+
+      // Scene 3 (2.4-4.0s) — total stillness. Nothing animates but the progress strip.
+      // The hold IS the deliverable: no second phase, no breathing, no drift, no exit.
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines[ID] = tl;
+    })();
+  </script>
+</template>

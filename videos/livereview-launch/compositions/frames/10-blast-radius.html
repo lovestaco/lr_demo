@@ -1,0 +1,372 @@
+<template>
+  <style>
+    @font-face {
+      font-family: "Inter";
+      src: url("assets/fonts/Inter-var.woff2") format("woff2");
+      font-weight: 100 900;
+      font-style: normal;
+      font-display: block;
+    }
+    #root {
+      position: absolute;
+      inset: 0;
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+      font-family: "Inter", sans-serif;
+      color: #e8eeff;
+    }
+    /* ---- full-bleed ground (clip layer, never #root) ---- */
+    [id="10-blast-radius-bg"] {
+      position: absolute;
+      inset: 0;
+      background: transparent;
+    }
+    /* ---- act chrome: pill top-left, quadrant glyph top-right ---- */
+    [id="10-blast-radius-act"] {
+      position: absolute;
+      left: 96px;
+      top: 96px;
+      display: inline-flex;
+      align-items: center;
+      font-size: 18.24px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #1d56f0;
+      background: rgba(29, 86, 240, 0.08);
+      border-radius: 100px;
+      padding: 6.7px 19.2px;
+      transform-origin: 0% 50%;
+    }
+    [id="10-blast-radius-quad"] {
+      position: absolute;
+      left: 1656px;
+      top: 96px;
+      width: 132px;
+      height: 62px;
+      display: grid;
+      grid-template-columns: 63px 63px;
+      grid-template-rows: 28px 28px;
+      gap: 6px;
+    }
+    [id="10-blast-radius-quad"] i {
+      display: block;
+      box-sizing: border-box;
+      border-radius: 4px;
+    }
+    [id="10-blast-radius-quad"] i.on {
+      background: #1d56f0;
+    }
+    [id="10-blast-radius-quad"] i.off {
+      border: 1.5px solid rgba(29, 86, 240, 0.2);
+    }
+    /* ---- Scene 1: the answer line, upper third, centred over the window ---- */
+    [id="10-blast-radius-head"] {
+      position: absolute;
+      left: 96px;
+      right: 96px;
+      top: 208px;
+      text-align: center;
+      font-size: 46px;
+      font-weight: 600;
+      line-height: 1.12;
+      letter-spacing: -0.02em;
+      color: #e8eeff;
+      white-space: nowrap;
+    }
+    [id="10-blast-radius-head"] span {
+      display: inline-block;
+    }
+    [id="10-blast-radius-head"] span.key {
+      color: #1d56f0;
+      font-weight: 600;
+    }
+    /* ---- Scene 2: the app window shell — final slot 230,346 1460x658 ---- */
+    [id="10-blast-radius-win"] {
+      position: absolute;
+      left: 230px;
+      top: 346px;
+      width: 1460px;
+      height: 658px;
+      box-sizing: border-box;
+      background: #0e1322;
+      border: 1.5px solid #1a2440;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    [id="10-blast-radius-bar"] {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 0;
+      height: 31px;
+      box-sizing: border-box;
+      background: #0a0f1c;
+      border-bottom: 1px solid #1a2440;
+    }
+    [id="10-blast-radius-dots"] {
+      position: absolute;
+      top: 10.5px;
+      left: 17px;
+      display: flex;
+      gap: 7.7px;
+    }
+    [id="10-blast-radius-dots"] i {
+      display: block;
+      width: 9.6px;
+      height: 9.6px;
+      border-radius: 50%;
+      background: #334155;
+    }
+    [id="10-blast-radius-skel"] {
+      position: absolute;
+      left: 40px;
+      right: 40px;
+      top: 64px;
+    }
+    [id="10-blast-radius-skel"] i {
+      display: block;
+      height: 12px;
+      border-radius: 6px;
+      background: rgba(139, 153, 184, 0.14);
+      margin-bottom: 26px;
+    }
+    /* ---- Scene 3: the risk chip, beside the window's lower-right edge ---- */
+    [id="10-blast-radius-chip"] {
+      position: absolute;
+      left: 1706px;
+      top: 790px;
+      width: 174px;
+      box-sizing: border-box;
+      padding: 16px 20px 18px;
+      background: transparent;
+      border: 1.5px solid rgba(29, 86, 240, 0.2);
+      border-radius: 12px;
+      text-align: left;
+      transform-origin: 0% 50%;
+    }
+    [id="10-blast-radius-num"] {
+      display: block;
+      font-size: 46px;
+      font-weight: 700;
+      line-height: 1;
+      letter-spacing: -0.02em;
+      color: #dc2626;
+      font-variant-numeric: tabular-nums;
+    }
+    [id="10-blast-radius-label"] {
+      display: block;
+      margin-top: 7px;
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #dc2626;
+      white-space: nowrap;
+    }
+    [id="10-blast-radius-lead"] {
+      position: absolute;
+      left: 1696px;
+      top: 840px;
+      width: 10px;
+      height: 2px;
+      background: #dc2626;
+      transform-origin: 0% 50%;
+    }
+    [id="10-blast-radius-pin"],
+    [id="10-blast-radius-ring"] {
+      position: absolute;
+      left: 1686px;
+      top: 836px;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      box-sizing: border-box;
+    }
+    [id="10-blast-radius-pin"] {
+      background: #dc2626;
+    }
+    [id="10-blast-radius-ring"] {
+      border: 1.5px solid #dc2626;
+      opacity: 0;
+    }
+    /* ---- Scene 4: the act seal, centred in the vacated window area ---- */
+    [id="10-blast-radius-seal"] {
+      position: absolute;
+      left: 96px;
+      right: 96px;
+      top: 578px;
+      height: 104px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 28px;
+      white-space: nowrap;
+    }
+    [id="10-blast-radius-seal-a"] {
+      font-size: 72px;
+      font-weight: 700;
+      line-height: 1.08;
+      letter-spacing: -0.02em;
+      color: #e8eeff;
+    }
+    [id="10-blast-radius-seal-arrow"] {
+      font-size: 56px;
+      font-weight: 500;
+      line-height: 1;
+      color: #9a9a9a;
+    }
+    [id="10-blast-radius-seal-b"] {
+      display: inline-flex;
+      align-items: center;
+      gap: 20px;
+      transform-origin: 50% 50%;
+    }
+    [id="10-blast-radius-check"] {
+      display: block;
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: #059669;
+    }
+    [id="10-blast-radius-seal-word"] {
+      font-size: 72px;
+      font-weight: 700;
+      line-height: 1.08;
+      letter-spacing: -0.02em;
+      color: #059669;
+    }
+    /* ---- persistent chrome ---- */
+    [id="10-blast-radius-progress"] {
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      height: 3px;
+      width: 36%;
+      background: #1d56f0;
+    }
+  </style>
+
+  <div data-hf-id="hf-tch4" id="root" data-composition-id="10-blast-radius" data-width="1920" data-height="1080" data-duration="13">
+    <div data-hf-id="hf-2jhf" id="10-blast-radius-bg" class="clip" data-start="0" data-duration="13" data-track-index="0"></div>
+
+    <span data-hf-id="hf-cjiv" id="10-blast-radius-act">#1 · Attention</span>
+
+    <div data-hf-id="hf-y9l2" id="10-blast-radius-quad">
+      <i data-hf-id="hf-l5u7" class="on"></i><i data-hf-id="hf-zwm3" class="off"></i><i data-hf-id="hf-4oij" class="off"></i><i data-hf-id="hf-4a7i" class="off"></i>
+    </div>
+
+    <div data-hf-id="hf-jd8d" id="10-blast-radius-head"><span data-hf-id="hf-w24r">LiveReview</span> <span data-hf-id="hf-uox4">ranks</span> <span data-hf-id="hf-fv40">every</span> <span data-hf-id="hf-a451">hunk</span> <span data-hf-id="hf-66m8">by</span> <span data-hf-id="hf-8xw8" class="key">blast</span> <span data-hf-id="hf-37c8" class="key">radius</span> <span data-hf-id="hf-kyh6">and</span> <span data-hf-id="hf-8anm" class="key">review</span> <span data-hf-id="hf-rss0" class="key">priority.</span></div>
+
+    <div data-hf-id="hf-w24v" id="10-blast-radius-win">
+      <div data-hf-id="hf-snoi" id="10-blast-radius-bar">
+        <div data-hf-id="hf-8yan" id="10-blast-radius-dots"><i data-hf-id="hf-wt6k"></i><i data-hf-id="hf-zeb8"></i><i data-hf-id="hf-y7e5"></i></div>
+      </div>
+      <div data-hf-id="hf-7jwa" id="10-blast-radius-skel"><i data-hf-id="hf-1ill" style="width: 38%"></i><i data-hf-id="hf-722z" style="width: 72%"></i><i data-hf-id="hf-cf2g" style="width: 64%"></i><i data-hf-id="hf-frld" style="width: 81%"></i><i data-hf-id="hf-dp8c" style="width: 55%"></i><i data-hf-id="hf-m2cj" style="width: 69%"></i></div>
+    </div>
+
+    <!-- approved frame video hoisted by assemble-index -->
+
+    <div data-hf-id="hf-ozvp" id="10-blast-radius-ring"></div>
+    <div data-hf-id="hf-sszs" id="10-blast-radius-pin"></div>
+    <div data-hf-id="hf-npkp" id="10-blast-radius-lead"></div>
+    <div data-hf-id="hf-9sqh" id="10-blast-radius-chip">
+      <span data-hf-id="hf-9j9c" id="10-blast-radius-num">0</span>
+      <span data-hf-id="hf-vl8l" id="10-blast-radius-label">High risk</span>
+    </div>
+
+    <div data-hf-id="hf-2jwk" id="10-blast-radius-seal">
+      <span data-hf-id="hf-ftut" id="10-blast-radius-seal-a">The Attention Problem</span>
+      <span data-hf-id="hf-lqun" id="10-blast-radius-seal-arrow">→</span>
+      <span data-hf-id="hf-mldy" id="10-blast-radius-seal-b">
+        <svg data-hf-id="hf-wib6" id="10-blast-radius-check" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <circle data-hf-id="hf-pxxn" cx="30" cy="30" r="30" fill="#059669" />
+          <path data-hf-id="hf-pfzf" id="10-blast-radius-tick" d="M17 30.5 L26.5 40 L43 22" fill="none" stroke="#ffffff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+        <span data-hf-id="hf-lwll" id="10-blast-radius-seal-word">Solved</span>
+      </span>
+    </div>
+
+    <div data-hf-id="hf-zw5a" id="10-blast-radius-progress"></div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+  <script>
+    (function () {
+      var ID = "10-blast-radius";
+      var $ = function (s) { return document.getElementById(ID + "-" + s); };
+      var words = $("head").querySelectorAll("span");
+      var cells = $("quad").querySelectorAll("i");
+      var tl = gsap.timeline({ paused: true });
+
+      // ---- persistent chrome: the 3px cobalt strip, 36.0% -> 44.7% across the full 13s.
+      tl.fromTo($("progress"), { width: "36%" }, { width: "44.7%", duration: 13, ease: "none" }, 0);
+
+      // Scene 4 pieces start hidden (set at t=0 so a seek to any earlier frame is correct).
+      tl.set([$("seal-a"), $("seal-arrow"), $("seal-b")], { opacity: 0 }, 0);
+      tl.set([$("chip"), $("pin"), $("lead")], { opacity: 0 }, 0);
+      tl.set($("ring"), { opacity: 0 }, 0);
+      tl.set($("tick"), { strokeDasharray: 48, strokeDashoffset: 48 }, 0);
+
+      // ================= Scene 1 (0.0-1.0s) — the answer line =================
+      // Act chrome carried over from Frame 9: pill pops, quadrant cells tick in.
+      tl.fromTo($("act"), { opacity: 0, scale: 0.6 },
+        { opacity: 1, scale: 1, duration: 0.42, ease: "back.out(2.2)" }, 0.0);
+      tl.fromTo(cells, { opacity: 0, scale: 0.5 },
+        { opacity: 1, scale: 1, duration: 0.34, ease: "back.out(2)", stagger: 0.05 }, 0.06);
+      // The answer line reveals per word (blur-lift stagger) — hero readable well before 0.5s.
+      tl.fromTo(words, { opacity: 0, y: 24, filter: "blur(6px)" },
+        { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.46, ease: "power3.out", stagger: 0.048 }, 0.12);
+
+      // ================= Scene 2 (1.0-2.0s) — the window rises and LANDS =================
+      // Long-tail expo settle finishing at 1.85s: fully at rest, opacity 1, no transform,
+      // a clear beat before the clip's data-start at 2.0s. The window never moves again.
+      tl.fromTo($("win"), { opacity: 0, y: 170 },
+        { opacity: 1, y: 0, duration: 0.85, ease: "expo.out" }, 1.0);
+      tl.fromTo($("skel").children, { opacity: 0, x: -22 },
+        { opacity: 1, x: 0, duration: 0.3, ease: "power2.out", stagger: 0.042 }, 1.35);
+
+      // ================= Scene 3 (2.0-10.0s) — the clip is the only motion =================
+      // clip05_blast.mp4 plays whole in 232,379 1456x623 (contain). The frame holds still.
+      // At 6.2s the risk chip springs in beside the window's lower-right edge, then holds.
+      tl.fromTo($("pin"), { opacity: 0, scale: 0 },
+        { opacity: 1, scale: 1, duration: 0.28, ease: "back.out(3)" }, 6.2);
+      tl.fromTo($("lead"), { opacity: 1, scaleX: 0 },
+        { opacity: 1, scaleX: 1, duration: 0.22, ease: "power2.out" }, 6.32);
+      tl.fromTo($("chip"), { opacity: 0, scale: 0.4, x: -16 },
+        { opacity: 1, scale: 1, x: 0, duration: 0.62, ease: "back.out(2.4)" }, 6.42);
+      var counter = { v: 0 };
+      tl.fromTo(counter, { v: 0 }, {
+        v: 71, duration: 0.75, ease: "power2.out",
+        onUpdate: function () { $("num").textContent = String(Math.round(counter.v)); }
+      }, 6.5);
+      tl.fromTo($("label"), { opacity: 0, y: 8 },
+        { opacity: 1, y: 0, duration: 0.32, ease: "power2.out" }, 6.8);
+      // One-shot pin ping — a single fromTo, then stillness until Scene 4.
+      tl.fromTo($("ring"), { opacity: 0.7, scale: 1 },
+        { opacity: 0, scale: 3.4, duration: 1.05, ease: "power2.out" }, 7.0);
+
+      // ================= Scene 4 (10.0-13.0s) — the act seal =================
+      // Within-frame swap (not a frame exit): the window + chip hand their weight to the
+      // seal that takes the space they vacate. The frame's landed state is the seal, held.
+      tl.to([$("win"), $("chip"), $("pin"), $("lead")],
+        { opacity: 0, duration: 0.55, ease: "power2.inOut" }, 10.0);
+      tl.to($("win"), { scale: 0.965, duration: 0.6, ease: "power2.in" }, 10.0);
+
+      // "The Attention Problem" reveals centred in the vacated area.
+      tl.fromTo($("seal-a"), { opacity: 0, y: 30, filter: "blur(7px)" },
+        { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.7, ease: "power3.out" }, 10.45);
+      tl.fromTo($("seal-arrow"), { opacity: 0, x: -14 },
+        { opacity: 1, x: 0, duration: 0.35, ease: "power2.out" }, 11.15);
+      // "-> Solved" scale-pops beside it in positive green, the check drawing a beat behind.
+      tl.fromTo($("seal-b"), { opacity: 0, scale: 0.68 },
+        { opacity: 1, scale: 1, duration: 0.6, ease: "back.out(2.1)" }, 11.35);
+      tl.to($("tick"), { strokeDashoffset: 0, duration: 0.42, ease: "power2.out" }, 11.7);
+      // 12.12-13.0s: holds still. No exit — the root transition owns the handoff out.
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines[ID] = tl;
+    })();
+  </script>
+</template>
