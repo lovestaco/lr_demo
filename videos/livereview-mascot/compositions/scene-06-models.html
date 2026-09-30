@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="UTF-8"></head>
+<body>
+<template>
+<style>
+  @font-face { font-family: "Inter"; src: url("assets/fonts/Inter-var.woff2") format("woff2"); font-weight: 100 900; }
+  #s06-root { position: absolute; inset: 0; background: #080b12; overflow: hidden; font-family: Inter, system-ui, sans-serif; }
+  #s06-livi-wrap { position: absolute; left: 0; top: 0; width: 560px; height: 1080px; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 24px; }
+  #s06-bubble { background: #ffffff; border: 2px solid #1d56f0; border-radius: 20px; padding: 16px 22px; max-width: 380px; opacity: 0; position: relative; }
+  #s06-bubble-text { font-size: 19px; color: #1a1a2e; line-height: 1.45; }
+  #s06-right { position: absolute; left: 580px; top: 0; right: 0; height: 1080px; display: flex; flex-direction: column; justify-content: center; padding: 0 80px; gap: 40px; }
+  #s06-eyebrow { font-size: 13px; font-weight: 600; color: #1d56f0; text-transform: uppercase; letter-spacing: 0.12em; opacity: 0; }
+  #s06-h2 { font-size: 56px; font-weight: 800; color: #e8eeff; letter-spacing: -0.02em; line-height: 1.12; margin: 0; opacity: 0; }
+  #s06-logos { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; max-width: 760px; }
+  .s06-logo-card { background: #0e1622; border: 1px solid #1a2440; border-radius: 16px; padding: 28px 36px; display: flex; align-items: center; gap: 20px; opacity: 0; transition: border-color 0.3s; }
+  .s06-logo-card:hover { border-color: #1d56f0; }
+  .s06-logo-img { width: 44px; height: 44px; object-fit: contain; flex-shrink: 0; filter: brightness(0) invert(1); }
+  .s06-logo-name { font-size: 22px; font-weight: 600; color: #e8eeff; }
+  #s06-no-lock { font-size: 20px; color: #4d7cff; font-weight: 500; opacity: 0; }
+  #s06-solved { display: inline-flex; align-items: center; gap: 10px; background: rgba(16,185,129,0.15); border: 1px solid #10b981; color: #10b981; font-size: 18px; font-weight: 700; padding: 10px 22px; border-radius: 8px; letter-spacing: 0.04em; text-transform: uppercase; opacity: 0; align-self: flex-start; }
+</style>
+
+<div data-hf-id="hf-tyww" id="s06-root" data-composition-id="scene-06" data-width="1920" data-height="1080">
+  <div data-hf-id="hf-ob92" id="s06-livi-wrap">
+    <!-- happy livi: squinting eyes, wings slightly raised -->
+    <svg data-hf-id="hf-kl3d" viewBox="0 0 300 380" xmlns="http://www.w3.org/2000/svg" style="width:270px;height:342px">
+      <ellipse data-hf-id="hf-1y66" cx="150" cy="370" rx="78" ry="13" fill="rgba(29,86,240,0.12)" />
+      <ellipse data-hf-id="hf-anfh" cx="150" cy="245" rx="95" ry="108" fill="#F2EDE4" />
+      <!-- wings slightly raised -->
+      <path data-hf-id="hf-14yw" d="M62 195 Q16 248 44 302 Q73 276 95 250 Z" fill="#1A2B4E" />
+      <path data-hf-id="hf-ko3n" d="M238 195 Q284 248 256 302 Q227 276 205 250 Z" fill="#1A2B4E" />
+      <path data-hf-id="hf-hn9k" d="M108 338 Q150 360 192 338 Q175 317 150 321 Q125 317 108 338 Z" fill="#1A2B4E" />
+      <path data-hf-id="hf-dgal" d="M110 235 Q130 229 150 235 Q170 241 190 235" stroke="#1d56f0" stroke-width="3.5" fill="none" stroke-linecap="round" />
+      <path data-hf-id="hf-t2de" d="M113 255 Q132 249 150 255 Q168 261 187 255" stroke="#1d56f0" stroke-width="3" fill="none" stroke-linecap="round" />
+      <path data-hf-id="hf-ef0q" d="M117 275 Q135 269 150 275 Q165 281 183 275" stroke="#1d56f0" stroke-width="2.5" fill="none" stroke-linecap="round" />
+      <circle data-hf-id="hf-4ewd" cx="150" cy="138" r="82" fill="#F2EDE4" />
+      <path data-hf-id="hf-5f1f" d="M95 70 Q79 35 90 16 Q103 37 112 63 Z" fill="#1A2B4E" />
+      <path data-hf-id="hf-vldb" d="M205 70 Q221 35 210 16 Q197 37 188 63 Z" fill="#1A2B4E" />
+      <!-- happy squinting eyes: arcs instead of full circles -->
+      <g data-hf-id="hf-jicb" id="s06-eye-l">
+        <circle data-hf-id="hf-k0by" cx="112" cy="142" r="31" fill="white" />
+        <circle data-hf-id="hf-qbp8" cx="112" cy="142" r="24" fill="#1d56f0" />
+        <circle data-hf-id="hf-26if" cx="112" cy="142" r="13" fill="#080b12" />
+        <!-- happy squint arc overlay -->
+        <path data-hf-id="hf-jtv0" d="M81 132 Q112 116 143 132" fill="#F2EDE4" />
+        <circle data-hf-id="hf-n5og" cx="104" cy="135" r="5" fill="white" />
+        <circle data-hf-id="hf-heb3" cx="112" cy="142" r="31" fill="none" stroke="#1A2B4E" stroke-width="3" />
+        <path data-hf-id="hf-jwi7" d="M82 133 Q112 117 142 133" fill="none" stroke="#1A2B4E" stroke-width="2" />
+      </g>
+      <g data-hf-id="hf-73b9" id="s06-eye-r">
+        <circle data-hf-id="hf-hw8p" cx="188" cy="142" r="31" fill="white" />
+        <circle data-hf-id="hf-vdrj" cx="188" cy="142" r="24" fill="#1d56f0" />
+        <circle data-hf-id="hf-722c" cx="188" cy="142" r="13" fill="#080b12" />
+        <path data-hf-id="hf-gvib" d="M157 132 Q188 116 219 132" fill="#F2EDE4" />
+        <circle data-hf-id="hf-wu0k" cx="180" cy="135" r="5" fill="white" />
+        <circle data-hf-id="hf-fl7a" cx="188" cy="142" r="31" fill="none" stroke="#1A2B4E" stroke-width="3" />
+        <path data-hf-id="hf-kyfa" d="M158 133 Q188 117 218 133" fill="none" stroke="#1A2B4E" stroke-width="2" />
+      </g>
+      <path data-hf-id="hf-x04s" d="M133 168 L150 188 L167 168 Q150 160 133 168 Z" fill="#E8A020" />
+      <g data-hf-id="hf-dri4" fill="#E8A020">
+        <rect data-hf-id="hf-v1fq" x="95" y="346" width="10" height="26" rx="5" />
+        <rect data-hf-id="hf-fken" x="108" y="346" width="10" height="26" rx="5" />
+        <rect data-hf-id="hf-ke6g" x="121" y="346" width="10" height="26" rx="5" />
+        <rect data-hf-id="hf-nfe9" x="93" y="340" width="42" height="12" rx="6" />
+        <rect data-hf-id="hf-2wc9" x="168" y="346" width="10" height="26" rx="5" />
+        <rect data-hf-id="hf-lntm" x="181" y="346" width="10" height="26" rx="5" />
+        <rect data-hf-id="hf-sunk" x="194" y="346" width="10" height="26" rx="5" />
+        <rect data-hf-id="hf-3fv0" x="166" y="340" width="42" height="12" rx="6" />
+      </g>
+    </svg>
+    <div data-hf-id="hf-mfe9" id="s06-bubble"><p data-hf-id="hf-keqe" id="s06-bubble-text">Your team picks the AI model. Claude, GPT-4o, Gemini, DeepSeek — or host your own.</p></div>
+  </div>
+
+  <div data-hf-id="hf-fjur" id="s06-right">
+    <p data-hf-id="hf-58p9" id="s06-eyebrow">Your Model, Your Choice</p>
+    <h2 data-hf-id="hf-hwta" id="s06-h2">No vendor lock-in.<br data-hf-id="hf-x5px">Ever.</h2>
+    <div data-hf-id="hf-qkvh" id="s06-logos">
+      <div data-hf-id="hf-tqq2" class="s06-logo-card" id="s06-lc1">
+        <img data-hf-id="hf-zct9" class="s06-logo-img" src="assets/logos/brand-claude.svg" alt="Claude">
+        <span data-hf-id="hf-3j0c" class="s06-logo-name">Claude</span>
+      </div>
+      <div data-hf-id="hf-psm1" class="s06-logo-card" id="s06-lc2">
+        <img data-hf-id="hf-9toy" class="s06-logo-img" src="assets/logos/brand-openai.svg" alt="GPT-4o">
+        <span data-hf-id="hf-jqt7" class="s06-logo-name">GPT-4o</span>
+      </div>
+      <div data-hf-id="hf-p0y8" class="s06-logo-card" id="s06-lc3">
+        <img data-hf-id="hf-u5kn" class="s06-logo-img" src="assets/logos/brand-gemini.svg" alt="Gemini">
+        <span data-hf-id="hf-zp9x" class="s06-logo-name">Gemini</span>
+      </div>
+      <div data-hf-id="hf-l2u7" class="s06-logo-card" id="s06-lc4">
+        <img data-hf-id="hf-kszx" class="s06-logo-img" src="assets/logos/brand-deepseek.svg" alt="DeepSeek">
+        <span data-hf-id="hf-by70" class="s06-logo-name">DeepSeek</span>
+      </div>
+    </div>
+    <p data-hf-id="hf-k6zy" id="s06-no-lock">+ bring your own self-hosted model</p>
+    <div data-hf-id="hf-pv57" id="s06-solved">✓ Problem #4 Solved: Control &amp; Improve</div>
+  </div>
+</div>
+
+<script>
+  const tl = gsap.timeline({ paused: true });
+  tl.fromTo("#s06-livi-wrap", { x: -60, opacity: 0 }, { x: 0, opacity: 1, duration: 0.7, ease: "power2.out" }, 0.2);
+  tl.fromTo("#s06-eyebrow", { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5 }, 0.5);
+  tl.fromTo("#s06-h2", { y: 30, opacity: 0 }, { y: 0, opacity: 1, duration: 0.7, ease: "power3.out" }, 0.9);
+  // Logo cards stagger in
+  ["#s06-lc1","#s06-lc2","#s06-lc3","#s06-lc4"].forEach((id, i) => {
+    tl.fromTo(id, { y: 30, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5, ease: "back.out(1.4)" }, 2.0 + i * 0.35);
+  });
+  tl.fromTo("#s06-no-lock", { opacity: 0 }, { opacity: 1, duration: 0.5 }, 3.8);
+  tl.fromTo("#s06-bubble", { scale: 0.7, opacity: 0, transformOrigin: "center top" },
+    { scale: 1, opacity: 1, duration: 0.5, ease: "back.out(1.7)" }, 4.5);
+  tl.fromTo("#s06-solved", { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.6, ease: "back.out(1.4)" }, 19);
+  window.__timelines["scene-06"] = tl;
+</script>
+</template>
+</body>
+</html>

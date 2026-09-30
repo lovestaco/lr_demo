@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=1920, height=1080">
+    <title>LiveReview — Mascot Demo</title>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      @font-face {
+        font-family: "Inter";
+        src: url("assets/fonts/Inter-var.woff2") format("woff2");
+        font-weight: 100 900;
+        font-display: block;
+      }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body {
+        margin: 0;
+        width: 1920px;
+        height: 1080px;
+        overflow: hidden;
+        background: #080b12;
+      }
+      #root {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        font-family: Inter, system-ui, sans-serif;
+        background: #080b12;
+      }
+    </style>
+  </head>
+  <body>
+    <div data-hf-id="hf-9g1j" id="root" data-composition-id="main" data-start="0" data-width="1920" data-height="1080" data-duration="210">
+
+      <!-- ── BGM Audio ── -->
+      <!-- Track A: 0–152s -->
+      <audio data-hf-id="hf-qmdu" id="bgm-a" src="assets/bgm/bed-150.mp3" data-start="0" data-duration="152" data-volume="0.65" data-track-index="100"></audio>
+      <!-- Track B: re-enters at 148s from 20s into the file, for seamless continuation -->
+      <audio data-hf-id="hf-2q3q" id="bgm-b" src="assets/bgm/bed-150.mp3" data-start="148" data-media-start="20" data-duration="62" data-volume="0.65" data-track-index="101"></audio>
+
+      <!-- ── Scene 01 — Opening (0–12s) ── -->
+      <div data-hf-id="hf-c0cu" id="scene-01" class="clip" data-composition-id="scene-01" data-composition-src="compositions/scene-01-opening.html" data-start="0" data-duration="12" data-width="1920" data-height="1080" data-track-index="0"></div>
+
+      <!-- ── Scene 02 — The Problem (12–38s) ── -->
+      <div data-hf-id="hf-153o" id="scene-02" class="clip" data-composition-id="scene-02" data-composition-src="compositions/scene-02-problem.html" data-start="12" data-duration="26" data-width="1920" data-height="1080" data-track-index="0"></div>
+
+      <!-- ── Scene 03 — Blast Radius (38–68s) ── -->
+      <div data-hf-id="hf-3er1" id="scene-03" class="clip" data-composition-id="scene-03" data-composition-src="compositions/scene-03-blast.html" data-start="38" data-duration="30" data-width="1920" data-height="1080" data-track-index="0"></div>
+
+      <!-- ── Scene 04 — PR Quiz (68–95s) ── -->
+      <div data-hf-id="hf-eilc" id="scene-04" class="clip" data-composition-id="scene-04" data-composition-src="compositions/scene-04-quiz.html" data-start="68" data-duration="27" data-width="1920" data-height="1080" data-track-index="0"></div>
+
+      <!-- ── Scene 05 — CI/CD Gates (95–125s) ── -->
+      <div data-hf-id="hf-y1vl" id="scene-05" class="clip" data-composition-id="scene-05" data-composition-src="compositions/scene-05-cicd.html" data-start="95" data-duration="30" data-width="1920" data-height="1080" data-track-index="0"></div>
+
+      <!-- ── Scene 06 — Model Freedom (125–148s) ── -->
+      <div data-hf-id="hf-4e6j" id="scene-06" class="clip" data-composition-id="scene-06" data-composition-src="compositions/scene-06-models.html" data-start="125" data-duration="23" data-width="1920" data-height="1080" data-track-index="0"></div>
+
+      <!-- ── Scene 07 — Livi Chat (148–170s) ── -->
+      <div data-hf-id="hf-9zlb" id="scene-07" class="clip" data-composition-id="scene-07" data-composition-src="compositions/scene-07-livi-chat.html" data-start="148" data-duration="22" data-width="1920" data-height="1080" data-track-index="0"></div>
+
+      <!-- ── Scene 08 — Dashboard (170–190s) ── -->
+      <div data-hf-id="hf-0k3g" id="scene-08" class="clip" data-composition-id="scene-08" data-composition-src="compositions/scene-08-dashboard.html" data-start="170" data-duration="20" data-width="1920" data-height="1080" data-track-index="0"></div>
+
+      <!-- ── Scene 09 — CTA (190–210s) ── -->
+      <div data-hf-id="hf-82bj" id="scene-09" class="clip" data-composition-id="scene-09" data-composition-src="compositions/scene-09-cta.html" data-start="190" data-duration="20" data-width="1920" data-height="1080" data-track-index="0"></div>
+
+    </div>
+
+    <script>
+      // Main timeline: sub-comp timelines are auto-nested by the runtime.
+      // Nothing to animate at the root level.
+      const tl = gsap.timeline({ paused: true });
+      window.__timelines["main"] = tl;
+    </script>
+  </body>
+</html>

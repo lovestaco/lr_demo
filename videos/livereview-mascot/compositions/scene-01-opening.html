@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="UTF-8"></head>
+<body>
+<template>
+<style>
+  @font-face {
+    font-family: "Inter";
+    src: url("assets/fonts/Inter-var.woff2") format("woff2");
+    font-weight: 100 900;
+  }
+  #s01-root {
+    position: absolute;
+    inset: 0;
+    background: #080b12;
+    overflow: hidden;
+    font-family: Inter, system-ui, sans-serif;
+  }
+  #s01-logo {
+    position: absolute;
+    top: 48px;
+    right: 64px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    opacity: 0;
+  }
+  #s01-logo-mark {
+    width: 52px;
+    height: 52px;
+  }
+  #s01-logo-text {
+    font-size: 28px;
+    font-weight: 700;
+    color: #e8eeff;
+    letter-spacing: -0.02em;
+  }
+  #s01-logo-dot {
+    color: #1d56f0;
+  }
+  #s01-livi-wrap {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 760px;
+    height: 1080px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+  }
+  #s01-livi-inner {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  #s01-bubble {
+    position: absolute;
+    left: 290px;
+    top: 80px;
+    background: #ffffff;
+    border: 2px solid #1d56f0;
+    border-radius: 20px;
+    padding: 18px 24px;
+    max-width: 420px;
+    opacity: 0;
+  }
+  #s01-bubble::before {
+    content: "";
+    position: absolute;
+    left: -18px;
+    top: 50%;
+    transform: translateY(-50%);
+    border: 9px solid transparent;
+    border-right-color: #1d56f0;
+  }
+  #s01-bubble::after {
+    content: "";
+    position: absolute;
+    left: -14px;
+    top: 50%;
+    transform: translateY(-50%);
+    border: 7px solid transparent;
+    border-right-color: #ffffff;
+  }
+  #s01-bubble-text {
+    font-size: 22px;
+    font-weight: 400;
+    color: #1a1a2e;
+    line-height: 1.5;
+  }
+  #s01-tagline-wrap {
+    position: absolute;
+    right: 80px;
+    bottom: 140px;
+    text-align: left;
+    opacity: 0;
+  }
+  #s01-eyebrow {
+    font-size: 13px;
+    font-weight: 600;
+    color: #1d56f0;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    margin-bottom: 12px;
+  }
+  #s01-headline {
+    font-size: 52px;
+    font-weight: 800;
+    color: #e8eeff;
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+    max-width: 640px;
+  }
+  #s01-cobalt-bar {
+    width: 0;
+    height: 4px;
+    background: #1d56f0;
+    border-radius: 2px;
+    margin-top: 18px;
+  }
+</style>
+
+<div data-hf-id="hf-dop4" id="s01-root" data-composition-id="scene-01" data-width="1920" data-height="1080">
+
+  <!-- Logo top-right -->
+  <div data-hf-id="hf-witv" id="s01-logo">
+    <img data-hf-id="hf-88cw" id="s01-logo-mark" src="assets/logos/logo.svg" alt="LiveReview">
+    <span data-hf-id="hf-1u56" id="s01-logo-text">LiveReview<span data-hf-id="hf-0nq8" id="s01-logo-dot">.</span></span>
+  </div>
+
+  <!-- Livi character + bubble -->
+  <div data-hf-id="hf-17bp" id="s01-livi-wrap">
+    <div data-hf-id="hf-xgwr" id="s01-livi-inner">
+      <!-- Livi SVG Owl -->
+      <svg data-hf-id="hf-igqt" id="s01-livi-svg" viewBox="0 0 300 380" xmlns="http://www.w3.org/2000/svg" style="width:320px;height:405px">
+        <ellipse data-hf-id="hf-7h1e" id="s01-shadow" cx="150" cy="370" rx="78" ry="13" fill="rgba(29,86,240,0.15)" />
+        <ellipse data-hf-id="hf-gc12" id="s01-body" cx="150" cy="245" rx="95" ry="108" fill="#F2EDE4" />
+        <!-- wings -->
+        <path data-hf-id="hf-rkxr" id="s01-wing-l" d="M62 205 Q16 256 44 308 Q73 284 95 256 Z" fill="#1A2B4E" />
+        <path data-hf-id="hf-tkd6" id="s01-wing-r" d="M238 205 Q284 256 256 308 Q227 284 205 256 Z" fill="#1A2B4E" />
+        <!-- tail -->
+        <path data-hf-id="hf-3xuq" id="s01-tail" d="M108 340 Q150 362 192 340 Q175 319 150 323 Q125 319 108 340 Z" fill="#1A2B4E" />
+        <!-- belly stripes -->
+        <path data-hf-id="hf-dgal" d="M110 235 Q130 229 150 235 Q170 241 190 235" stroke="#1d56f0" stroke-width="3.5" fill="none" stroke-linecap="round" />
+        <path data-hf-id="hf-t2de" d="M113 255 Q132 249 150 255 Q168 261 187 255" stroke="#1d56f0" stroke-width="3" fill="none" stroke-linecap="round" />
+        <path data-hf-id="hf-ef0q" d="M117 275 Q135 269 150 275 Q165 281 183 275" stroke="#1d56f0" stroke-width="2.5" fill="none" stroke-linecap="round" />
+        <!-- head -->
+        <circle data-hf-id="hf-sta4" id="s01-head" cx="150" cy="138" r="82" fill="#F2EDE4" />
+        <!-- ear tufts -->
+        <path data-hf-id="hf-jxb2" id="s01-tuft-l" d="M95 70 Q79 35 90 16 Q103 37 112 63 Z" fill="#1A2B4E" />
+        <path data-hf-id="hf-xwzg" id="s01-tuft-r" d="M205 70 Q221 35 210 16 Q197 37 188 63 Z" fill="#1A2B4E" />
+        <!-- left eye -->
+        <g data-hf-id="hf-ezi4" id="s01-eye-l">
+          <circle data-hf-id="hf-s6vh" cx="112" cy="138" r="31" fill="white" />
+          <circle data-hf-id="hf-s62r" cx="112" cy="138" r="24" fill="#1d56f0" />
+          <circle data-hf-id="hf-mz3e" id="s01-pupil-l" cx="112" cy="138" r="13" fill="#080b12" />
+          <circle data-hf-id="hf-ntpu" cx="104" cy="129" r="6" fill="white" />
+          <circle data-hf-id="hf-q0sq" cx="112" cy="138" r="31" fill="none" stroke="#1A2B4E" stroke-width="3" />
+        </g>
+        <!-- right eye -->
+        <g data-hf-id="hf-m0h6" id="s01-eye-r">
+          <circle data-hf-id="hf-8xom" cx="188" cy="138" r="31" fill="white" />
+          <circle data-hf-id="hf-r178" cx="188" cy="138" r="24" fill="#1d56f0" />
+          <circle data-hf-id="hf-3thh" id="s01-pupil-r" cx="188" cy="138" r="13" fill="#080b12" />
+          <circle data-hf-id="hf-xhv2" cx="180" cy="129" r="6" fill="white" />
+          <circle data-hf-id="hf-qaon" cx="188" cy="138" r="31" fill="none" stroke="#1A2B4E" stroke-width="3" />
+        </g>
+        <!-- beak -->
+        <path data-hf-id="hf-56gt" id="s01-beak" d="M133 164 L150 186 L167 164 Q150 156 133 164 Z" fill="#E8A020" />
+        <!-- feet -->
+        <g data-hf-id="hf-dri4" fill="#E8A020">
+          <rect data-hf-id="hf-v1fq" x="95" y="346" width="10" height="26" rx="5" />
+          <rect data-hf-id="hf-fken" x="108" y="346" width="10" height="26" rx="5" />
+          <rect data-hf-id="hf-ke6g" x="121" y="346" width="10" height="26" rx="5" />
+          <rect data-hf-id="hf-nfe9" x="93" y="340" width="42" height="12" rx="6" />
+          <rect data-hf-id="hf-2wc9" x="168" y="346" width="10" height="26" rx="5" />
+          <rect data-hf-id="hf-lntm" x="181" y="346" width="10" height="26" rx="5" />
+          <rect data-hf-id="hf-sunk" x="194" y="346" width="10" height="26" rx="5" />
+          <rect data-hf-id="hf-3fv0" x="166" y="340" width="42" height="12" rx="6" />
+        </g>
+      </svg>
+      <!-- Speech bubble -->
+      <div data-hf-id="hf-egfk" id="s01-bubble">
+        <p data-hf-id="hf-tt30" id="s01-bubble-text">Hey! I'm Livi — your AI review companion from LiveReview.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Right tagline -->
+  <div data-hf-id="hf-h8vt" id="s01-tagline-wrap">
+    <p data-hf-id="hf-9q7f" id="s01-eyebrow">Meet Livi</p>
+    <h1 data-hf-id="hf-b1wy" id="s01-headline">The inspection layer your team has been waiting for.</h1>
+    <div data-hf-id="hf-etlr" id="s01-cobalt-bar"></div>
+  </div>
+
+</div>
+
+<script>
+  const tl = gsap.timeline({ paused: true });
+
+  // t=0–1.5: logo fades in
+  tl.to("#s01-logo", { opacity: 1, y: 0, duration: 0.8, ease: "power2.out" }, 0.3);
+
+  // t=0–2.5: Livi slides in from left
+  tl.fromTo("#s01-livi-wrap",
+    { x: -320, opacity: 0 },
+    { x: 0, opacity: 1, duration: 1.2, ease: "back.out(1.4)" },
+    0.2
+  );
+
+  // t=2.5: speech bubble pops in
+  tl.fromTo("#s01-bubble",
+    { scale: 0.6, opacity: 0, transformOrigin: "left center" },
+    { scale: 1, opacity: 1, duration: 0.5, ease: "back.out(1.7)" },
+    2.5
+  );
+
+  // t=3: tagline fades in
+  tl.fromTo("#s01-tagline-wrap",
+    { x: 40, opacity: 0 },
+    { x: 0, opacity: 1, duration: 0.8, ease: "power3.out" },
+    3.2
+  );
+
+  // t=4: cobalt bar sweeps
+  tl.to("#s01-cobalt-bar", { width: 380, duration: 0.7, ease: "power2.inOut" }, 4.2);
+
+  // Idle: gentle head sway (loops within scene)
+  tl.to("#s01-head", { rotation: 4, transformOrigin: "center bottom", duration: 1.8, ease: "sine.inOut", yoyo: true, repeat: 3 }, 3);
+  tl.to("#s01-tuft-l, #s01-tuft-r", { rotation: 3, transformOrigin: "center bottom", duration: 1.8, ease: "sine.inOut", yoyo: true, repeat: 3 }, 3);
+
+  // Blink at t=5
+  tl.to("#s01-pupil-l, #s01-pupil-r", { scaleY: 0.05, transformOrigin: "center center", duration: 0.07 }, 5);
+  tl.to("#s01-pupil-l, #s01-pupil-r", { scaleY: 1, transformOrigin: "center center", duration: 0.1 }, 5.1);
+
+  // Blink again at t=9
+  tl.to("#s01-pupil-l, #s01-pupil-r", { scaleY: 0.05, transformOrigin: "center center", duration: 0.07 }, 9);
+  tl.to("#s01-pupil-l, #s01-pupil-r", { scaleY: 1, transformOrigin: "center center", duration: 0.1 }, 9.1);
+
+  window.__timelines["scene-01"] = tl;
+</script>
+</template>
+</body>
+</html>

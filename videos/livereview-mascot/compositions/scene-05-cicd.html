@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="UTF-8"></head>
+<body>
+<template>
+<style>
+  @font-face { font-family: "Inter"; src: url("assets/fonts/Inter-var.woff2") format("woff2"); font-weight: 100 900; }
+  #s05-root { position: absolute; inset: 0; background: #080b12; overflow: hidden; font-family: Inter, system-ui, sans-serif; }
+  #s05-livi-wrap { position: absolute; left: 0; top: 0; width: 560px; height: 1080px; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 24px; }
+  #s05-bubble { background: #ffffff; border: 2px solid #1d56f0; border-radius: 20px; padding: 16px 22px; max-width: 380px; opacity: 0; position: relative; }
+  #s05-bubble-text { font-size: 20px; color: #1a1a2e; line-height: 1.4; }
+  #s05-right { position: absolute; left: 580px; top: 0; right: 0; height: 1080px; display: flex; flex-direction: column; justify-content: center; padding: 0 60px; gap: 24px; }
+  #s05-eyebrow { font-size: 13px; font-weight: 600; color: #1d56f0; text-transform: uppercase; letter-spacing: 0.12em; opacity: 0; }
+  #s05-h2 { font-size: 46px; font-weight: 700; color: #e8eeff; letter-spacing: -0.02em; line-height: 1.18; max-width: 680px; opacity: 0; margin: 0; }
+  #s05-gates { display: flex; align-items: center; gap: 12px; flex-wrap: nowrap; opacity: 0; }
+  .s05-gate { display: flex; align-items: center; gap: 8px; background: #0e1622; border: 1px solid #1a2440; border-radius: 8px; padding: 10px 18px; }
+  .s05-gate-icon { width: 20px; height: 20px; border-radius: 50%; background: #1a2440; display: flex; align-items: center; justify-content: center; font-size: 12px; flex-shrink: 0; }
+  .s05-gate-icon.pass { background: rgba(16,185,129,0.2); color: #10b981; }
+  .s05-gate-label { font-size: 16px; font-weight: 600; color: #e8eeff; white-space: nowrap; }
+  .s05-gate-arrow { color: #1d56f0; font-size: 20px; font-weight: 300; }
+  #s05-app-window { width: 100%; max-width: 1100px; background: #0e1322; border: 1px solid #1a2440; border-radius: 12px; overflow: hidden; opacity: 0; }
+  #s05-app-bar { height: 31px; background: #1a2440; display: flex; align-items: center; gap: 7px; padding: 0 14px; }
+  .s05-dot { width: 10px; height: 10px; border-radius: 50%; }
+  .s05-dot.red { background: #dc2626; } .s05-dot.yellow { background: #f59e0b; } .s05-dot.green { background: #10b981; }
+  #s05-video { display: block; width: 100%; height: auto; max-height: 460px; object-fit: contain; background: #0a0e1a; }
+  #s05-solved { display: inline-flex; align-items: center; gap: 10px; background: rgba(16,185,129,0.15); border: 1px solid #10b981; color: #10b981; font-size: 18px; font-weight: 700; padding: 10px 22px; border-radius: 8px; letter-spacing: 0.04em; text-transform: uppercase; opacity: 0; align-self: flex-start; }
+</style>
+
+<div data-hf-id="hf-um20" id="s05-root" data-composition-id="scene-05" data-width="1920" data-height="1080">
+  <div data-hf-id="hf-ldc9" id="s05-livi-wrap">
+    <svg data-hf-id="hf-kl3d" viewBox="0 0 300 380" xmlns="http://www.w3.org/2000/svg" style="width:270px;height:342px">
+      <ellipse data-hf-id="hf-1y66" cx="150" cy="370" rx="78" ry="13" fill="rgba(29,86,240,0.12)" />
+      <ellipse data-hf-id="hf-anfh" cx="150" cy="245" rx="95" ry="108" fill="#F2EDE4" />
+      <path data-hf-id="hf-fmno" d="M62 205 Q16 256 44 308 Q73 284 95 256 Z" fill="#1A2B4E" />
+      <path data-hf-id="hf-wusb" d="M238 205 Q284 256 256 308 Q227 284 205 256 Z" fill="#1A2B4E" />
+      <path data-hf-id="hf-vfnt" d="M108 340 Q150 362 192 340 Q175 319 150 323 Q125 319 108 340 Z" fill="#1A2B4E" />
+      <path data-hf-id="hf-dgal" d="M110 235 Q130 229 150 235 Q170 241 190 235" stroke="#1d56f0" stroke-width="3.5" fill="none" stroke-linecap="round" />
+      <path data-hf-id="hf-t2de" d="M113 255 Q132 249 150 255 Q168 261 187 255" stroke="#1d56f0" stroke-width="3" fill="none" stroke-linecap="round" />
+      <path data-hf-id="hf-ef0q" d="M117 275 Q135 269 150 275 Q165 281 183 275" stroke="#1d56f0" stroke-width="2.5" fill="none" stroke-linecap="round" />
+      <circle data-hf-id="hf-io7k" id="s05-head" cx="150" cy="138" r="82" fill="#F2EDE4" />
+      <path data-hf-id="hf-5f1f" d="M95 70 Q79 35 90 16 Q103 37 112 63 Z" fill="#1A2B4E" />
+      <path data-hf-id="hf-vldb" d="M205 70 Q221 35 210 16 Q197 37 188 63 Z" fill="#1A2B4E" />
+      <g data-hf-id="hf-hcw0" id="s05-eye-l">
+        <circle data-hf-id="hf-s6vh" cx="112" cy="138" r="31" fill="white" />
+        <circle data-hf-id="hf-s62r" cx="112" cy="138" r="24" fill="#1d56f0" />
+        <circle data-hf-id="hf-zkfq" id="s05-pupil-l" cx="112" cy="138" r="13" fill="#080b12" />
+        <circle data-hf-id="hf-ntpu" cx="104" cy="129" r="6" fill="white" />
+        <circle data-hf-id="hf-q0sq" cx="112" cy="138" r="31" fill="none" stroke="#1A2B4E" stroke-width="3" />
+      </g>
+      <g data-hf-id="hf-i12e" id="s05-eye-r">
+        <circle data-hf-id="hf-8xom" cx="188" cy="138" r="31" fill="white" />
+        <circle data-hf-id="hf-r178" cx="188" cy="138" r="24" fill="#1d56f0" />
+        <circle data-hf-id="hf-vz15" id="s05-pupil-r" cx="188" cy="138" r="13" fill="#080b12" />
+        <circle data-hf-id="hf-xhv2" cx="180" cy="129" r="6" fill="white" />
+        <circle data-hf-id="hf-qaon" cx="188" cy="138" r="31" fill="none" stroke="#1A2B4E" stroke-width="3" />
+      </g>
+      <path data-hf-id="hf-dj2r" d="M133 164 L150 186 L167 164 Q150 156 133 164 Z" fill="#E8A020" />
+      <g data-hf-id="hf-dri4" fill="#E8A020">
+        <rect data-hf-id="hf-v1fq" x="95" y="346" width="10" height="26" rx="5" />
+        <rect data-hf-id="hf-fken" x="108" y="346" width="10" height="26" rx="5" />
+        <rect data-hf-id="hf-ke6g" x="121" y="346" width="10" height="26" rx="5" />
+        <rect data-hf-id="hf-nfe9" x="93" y="340" width="42" height="12" rx="6" />
+        <rect data-hf-id="hf-2wc9" x="168" y="346" width="10" height="26" rx="5" />
+        <rect data-hf-id="hf-lntm" x="181" y="346" width="10" height="26" rx="5" />
+        <rect data-hf-id="hf-sunk" x="194" y="346" width="10" height="26" rx="5" />
+        <rect data-hf-id="hf-3fv0" x="166" y="340" width="42" height="12" rx="6" />
+      </g>
+    </svg>
+    <div data-hf-id="hf-4o04" id="s05-bubble"><p data-hf-id="hf-uidc" id="s05-bubble-text">Set your checkpoints. I enforce them at every commit, push, and PR.</p></div>
+  </div>
+
+  <div data-hf-id="hf-z1kg" id="s05-right">
+    <p data-hf-id="hf-5qc4" id="s05-eyebrow">Automated Enforcement</p>
+    <h2 data-hf-id="hf-bwnk" id="s05-h2">Every gate, automated.<br data-hf-id="hf-x5px">Nothing slips through.</h2>
+    <div data-hf-id="hf-ogsm" id="s05-gates">
+      <div data-hf-id="hf-swdn" class="s05-gate" id="s05-g1"><div data-hf-id="hf-gbt0" class="s05-gate-icon">L</div><span data-hf-id="hf-azyj" class="s05-gate-label">Lint</span></div>
+      <div data-hf-id="hf-5jnh" class="s05-gate-arrow" id="s05-a1">→</div>
+      <div data-hf-id="hf-i0w0" class="s05-gate" id="s05-g2"><div data-hf-id="hf-cr1r" class="s05-gate-icon">U</div><span data-hf-id="hf-o72k" class="s05-gate-label">Unit</span></div>
+      <div data-hf-id="hf-5rxw" class="s05-gate-arrow" id="s05-a2">→</div>
+      <div data-hf-id="hf-l05l" class="s05-gate" id="s05-g3"><div data-hf-id="hf-jwk9" class="s05-gate-icon">C</div><span data-hf-id="hf-xl7s" class="s05-gate-label">Coverage</span></div>
+      <div data-hf-id="hf-l06v" class="s05-gate-arrow" id="s05-a3">→</div>
+      <div data-hf-id="hf-a4ny" class="s05-gate" id="s05-g4"><div data-hf-id="hf-djnt" class="s05-gate-icon">S</div><span data-hf-id="hf-v0ms" class="s05-gate-label">Security</span></div>
+      <div data-hf-id="hf-jskm" class="s05-gate-arrow" id="s05-a4">→</div>
+      <div data-hf-id="hf-e2rz" class="s05-gate" id="s05-g5"><div data-hf-id="hf-ji98" class="s05-gate-icon">D</div><span data-hf-id="hf-sp3d" class="s05-gate-label">Deploy</span></div>
+    </div>
+    <div data-hf-id="hf-i0ww" id="s05-app-window">
+      <div data-hf-id="hf-wnor" id="s05-app-bar">
+        <div data-hf-id="hf-0eu5" class="s05-dot red"></div><div data-hf-id="hf-ddjc" class="s05-dot yellow"></div><div data-hf-id="hf-t3bd" class="s05-dot green"></div>
+      </div>
+      <video data-hf-id="hf-nu2g" id="s05-video" src="assets/clips/clip10_cicd.mp4" muted playsinline data-start="0" data-duration="30" data-has-audio="false"></video>
+    </div>
+    <div data-hf-id="hf-g956" id="s05-solved">✓ Problem #3 Solved: Enforcement</div>
+  </div>
+</div>
+
+<script>
+  const tl = gsap.timeline({ paused: true });
+  tl.fromTo("#s05-livi-wrap", { x: -60, opacity: 0 }, { x: 0, opacity: 1, duration: 0.7, ease: "power2.out" }, 0.2);
+  tl.fromTo("#s05-eyebrow", { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5 }, 0.5);
+  tl.fromTo("#s05-h2", { y: 30, opacity: 0 }, { y: 0, opacity: 1, duration: 0.7, ease: "power3.out" }, 0.9);
+
+  // Gates chain animates in sequence
+  tl.fromTo("#s05-gates", { opacity: 0 }, { opacity: 1, duration: 0.3 }, 2.0);
+  const gateIds = ["#s05-g1","#s05-a1","#s05-g2","#s05-a2","#s05-g3","#s05-a3","#s05-g4","#s05-a4","#s05-g5"];
+  gateIds.forEach((id, i) => {
+    tl.fromTo(id, { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.35, ease: "back.out(1.4)" }, 2.2 + i * 0.28);
+  });
+  // Gates turn green one by one
+  const gateEls = ["#s05-g1","#s05-g2","#s05-g3","#s05-g4","#s05-g5"];
+  gateEls.forEach((id, i) => {
+    tl.to(id + " .s05-gate-icon", { backgroundColor: "rgba(16,185,129,0.2)", color: "#10b981", duration: 0.3 }, 4.5 + i * 0.7);
+    tl.to(id + " .s05-gate-icon", {}, 4.5 + i * 0.7, "+=0");
+    // Add ✓ text
+    tl.call(() => {
+      const el = document.querySelector(id + " .s05-gate-icon");
+      if (el) el.textContent = "✓";
+    }, null, 4.5 + i * 0.7 + 0.1);
+  });
+
+  tl.fromTo("#s05-app-window", { y: 40, opacity: 0 }, { y: 0, opacity: 1, duration: 0.8, ease: "power2.out" }, 2.0);
+  tl.fromTo("#s05-bubble", { scale: 0.7, opacity: 0, transformOrigin: "center top" },
+    { scale: 1, opacity: 1, duration: 0.5, ease: "back.out(1.7)" }, 4.0);
+  tl.fromTo("#s05-solved", { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.6, ease: "back.out(1.4)" }, 27);
+
+  // Blinks
+  tl.to("#s05-pupil-l, #s05-pupil-r", { scaleY: 0.08, transformOrigin: "center center", duration: 0.07 }, 8);
+  tl.to("#s05-pupil-l, #s05-pupil-r", { scaleY: 1, transformOrigin: "center center", duration: 0.1 }, 8.1);
+  tl.to("#s05-pupil-l, #s05-pupil-r", { scaleY: 0.08, transformOrigin: "center center", duration: 0.07 }, 20);
+  tl.to("#s05-pupil-l, #s05-pupil-r", { scaleY: 1, transformOrigin: "center center", duration: 0.1 }, 20.1);
+
+  window.__timelines["scene-05"] = tl;
+</script>
+</template>
+</body>
+</html>
