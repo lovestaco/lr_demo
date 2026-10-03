@@ -1,7 +1,9 @@
 """Export the unmasked T-pose Miles (armature root.003) as a single textured mesh FBX for Mixamo."""
-import bpy, os
-ROOT = os.path.dirname(bpy.data.filepath)
-OUT = os.path.join(ROOT, "mixamo", "miles_for_mixamo.fbx")
+"""Run: blender -b miles.blend --python scripts/01_export_for_mixamo.py"""
+import bpy, os, sys
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from pipeline import paths
+OUT = paths.MIXAMO_UPLOAD
 arm = bpy.data.objects["root.003"]
 parts = [o for o in bpy.data.objects if o.type == "MESH" and
          any(m.type == "ARMATURE" and m.object == arm for m in o.modifiers)]
