@@ -1,0 +1,168 @@
+<template>
+  <style>
+    @font-face {
+      font-family: "Playfair Display";
+      src: url("assets/fonts/PlayfairDisplay-var.woff2") format("woff2");
+      font-weight: 400 900;
+      font-style: normal;
+    }
+    @font-face {
+      font-family: "Playfair Display";
+      src: url("assets/fonts/PlayfairDisplay-italic-var.woff2") format("woff2");
+      font-weight: 400 700;
+      font-style: italic;
+    }
+    #root {
+      position: absolute;
+      inset: 0;
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+      background: #0b0a08;
+      font-family: "Playfair Display", Georgia, serif;
+      color: #ede4d0;
+    }
+
+    /* ---- split-left: the portrait plate occupies 0 -> 900 ---- */
+    [id="07-professional-gate"] {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 900px;
+      height: 1080px;
+      overflow: hidden;
+    }
+    [id="07-professional-plate"] {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 900px;
+      height: 1080px;
+      object-fit: cover;
+      object-position: 50% 30%;
+      transform-origin: 50% 50%;
+    }
+    [id="07-professional-rule"] {
+      position: absolute;
+      left: 899px;
+      top: 0;
+      width: 1px;
+      height: 1080px;
+      background: #8a7f68;
+    }
+
+    /* ---- scrim over the plate column so the slug clears AA ---- */
+    [id="07-professional-scrim"] {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 900px;
+      height: 1080px;
+      background: linear-gradient(180deg, rgba(11, 10, 8, 0) 34%, rgba(11, 10, 8, 0.9) 100%);
+    }
+
+    /* ---- the two fixtures ---- */
+    [id="07-professional-act"] {
+      position: absolute;
+      right: 96px;
+      top: 88px;
+      font-size: 20px;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: rgba(237, 228, 208, 0.55);
+      font-weight: 500;
+    }
+    [id="07-professional-slug"] {
+      position: absolute;
+      left: 96px;
+      bottom: 74px;
+      font-size: 17px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: rgba(237, 228, 208, 0.42);
+      font-weight: 500;
+    }
+
+    /* ---- right field text block, centred on the mid-line ---- */
+    [id="07-professional-lead"] {
+      position: absolute;
+      left: 1060px;
+      top: 388px;
+      width: 760px;
+      font-size: 48px;
+      font-weight: 400;
+      line-height: 1.2;
+      color: #ede4d0;
+    }
+    [id="07-professional-key"] {
+      position: absolute;
+      left: 1060px;
+      top: 474px;
+      width: 760px;
+      font-size: 62px;
+      font-weight: 700;
+      line-height: 1.1;
+      letter-spacing: 0.005em;
+      color: #ede4d0;
+    }
+    [id="07-professional-tail"] {
+      position: absolute;
+      left: 1060px;
+      top: 586px;
+      width: 760px;
+      font-size: 38px;
+      font-weight: 400;
+      line-height: 1.42;
+      color: #c9bfa8;
+    }
+    [id="07-professional-lead"] span,
+    [id="07-professional-key"] span {
+      display: inline-block;
+    }
+  </style>
+
+  <div data-hf-id="hf-y0qb" id="root" data-composition-id="07-professional" data-duration="8.5" data-width="1920" data-height="1080">
+    <div data-hf-id="hf-s19s" id="07-professional-gate">
+      <img data-hf-id="hf-az37" id="07-professional-plate" src="assets/plates_graded/p10_concrete_ctrl.G0.jpg" alt="Personnel of concrete testing laboratory, 1933" class="clip" data-start="0" data-duration="8.5" data-track-index="0">
+    </div>
+    <div data-hf-id="hf-93za" id="07-professional-scrim" class="clip" data-start="0" data-duration="8.5" data-track-index="1"></div>
+    <div data-hf-id="hf-wsdl" id="07-professional-rule" class="clip" data-start="0" data-duration="8.5" data-track-index="2"></div>
+
+    <div data-hf-id="hf-wvqv" id="07-professional-act" class="clip" data-start="0" data-duration="8.5" data-track-index="3">II · The Belief</div>
+    <div data-hf-id="hf-7thn" id="07-professional-slug" class="clip" data-start="0" data-duration="8.5" data-track-index="3">Concrete testing laboratory · personnel · 1933</div>
+
+    <div data-hf-id="hf-4frz" id="07-professional-lead" class="clip" data-start="0" data-duration="8.5" data-track-index="4"><span data-hf-id="hf-gku2">If</span> <span data-hf-id="hf-920g">you</span> <span data-hf-id="hf-t0vd">are</span> <span data-hf-id="hf-rgge">professional</span> <span data-hf-id="hf-53zj">—</span></div>
+    <div data-hf-id="hf-9j1h" id="07-professional-key" class="clip" data-start="0" data-duration="8.5" data-track-index="5"><span data-hf-id="hf-ze4o">you</span> <span data-hf-id="hf-0wbw">must</span> <span data-hf-id="hf-r2x9">adopt</span> <span data-hf-id="hf-b2e6">it.</span></div>
+    <div data-hf-id="hf-lff6" id="07-professional-tail" class="clip" data-start="0" data-duration="8.5" data-track-index="6">For the sake of your business reputation.</div>
+  </div>
+
+  <script>
+    (function () {
+      var ID = "07-professional";
+      var tl = gsap.timeline({ paused: true });
+      function $(s) { return document.getElementById(ID + "-" + s); }
+
+      /* Ken Burns on the portrait plate: transform only, seek-safe, no repeat. */
+      tl.fromTo($("plate"), { scale: 1.055 }, { scale: 1.0, duration: 8.5, ease: "none" }, 0);
+
+      /* Fixtures ease in once and hold. */
+      tl.fromTo([$("act"), $("slug")], { opacity: 0 }, { opacity: 1, duration: 0.7, ease: "power2.out" }, 0.2);
+
+      /* 0.6s — lead line, per word. */
+      tl.fromTo($("lead").querySelectorAll("span"),
+        { opacity: 0, y: 18, filter: "blur(6px)" },
+        { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.42, ease: "power3.out", stagger: 0.06 }, 0.6);
+
+      /* 2.4s — the key line, per word, heavier. */
+      tl.fromTo($("key").querySelectorAll("span"),
+        { opacity: 0, y: 26, filter: "blur(8px)" },
+        { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.52, ease: "power3.out", stagger: 0.09 }, 2.4);
+
+      /* 4.8s — the reputation line; holds to the cut. */
+      tl.fromTo($("tail"), { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: 0.6, ease: "power3.out" }, 4.8);
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines[ID] = tl;
+    })();
+  </script>
+</template>

@@ -1,0 +1,158 @@
+<template>
+  <style>
+    @font-face {
+      font-family: "Playfair Display";
+      src: url("assets/fonts/PlayfairDisplay-var.woff2") format("woff2");
+      font-weight: 400 900;
+      font-style: normal;
+    }
+    @font-face {
+      font-family: "Playfair Display";
+      src: url("assets/fonts/PlayfairDisplay-italic-var.woff2") format("woff2");
+      font-weight: 400 700;
+      font-style: italic;
+    }
+    #root {
+      position: absolute;
+      inset: 0;
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+      background: #0b0a08;
+      font-family: "Playfair Display", Georgia, serif;
+      color: #ede4d0;
+    }
+
+    /* ---- split-right: portrait plate occupies x 1020 -> 1920 ---- */
+    [id="03-the-inspection-gate"] {
+      position: absolute;
+      left: 1020px;
+      top: 0;
+      width: 900px;
+      height: 1080px;
+      overflow: hidden;
+    }
+    [id="03-the-inspection-plate"] {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 900px;
+      height: 1080px;
+      object-fit: cover;
+      transform-origin: 50% 50%;
+    }
+    /* 1px rule hairline on the seam, full height */
+    [id="03-the-inspection-seam"] {
+      position: absolute;
+      left: 1020px;
+      top: 0;
+      width: 1px;
+      height: 1080px;
+      background: #8a7f68;
+    }
+
+    /* ---- the two fixtures ---- */
+    [id="03-the-inspection-act"] {
+      position: absolute;
+      right: 96px;
+      top: 88px;
+      font-size: 20px;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: rgba(237, 228, 208, 0.55);
+      font-weight: 500;
+    }
+    [id="03-the-inspection-slug"] {
+      position: absolute;
+      left: 96px;
+      bottom: 74px;
+      font-size: 17px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: rgba(237, 228, 208, 0.42);
+      font-weight: 500;
+    }
+
+    /* ---- text block: left field, centred on the 540 mid-line ---- */
+    [id="03-the-inspection-lead"] {
+      position: absolute;
+      left: 140px;
+      top: 352px;
+      width: 780px;
+      font-size: 50px;
+      font-weight: 400;
+      line-height: 1.2;
+      color: #ede4d0;
+    }
+    [id="03-the-inspection-key"] {
+      position: absolute;
+      left: 140px;
+      top: 452px;
+      width: 780px;
+      font-size: 68px;
+      font-weight: 700;
+      line-height: 1.1;
+      letter-spacing: 0.005em;
+      color: #ede4d0;
+    }
+    [id="03-the-inspection-quote"] {
+      position: absolute;
+      left: 140px;
+      top: 686px;
+      width: 780px;
+      font-size: 30px;
+      font-style: italic;
+      font-weight: 400;
+      line-height: 1.42;
+      color: #c9bfa8;
+    }
+    [id="03-the-inspection-lead"] span,
+    [id="03-the-inspection-key"] span {
+      display: inline-block;
+    }
+  </style>
+
+  <div data-hf-id="hf-k3r0" id="root" data-composition-id="03-the-inspection" data-duration="9.5" data-width="1920" data-height="1080">
+    <div data-hf-id="hf-k3r1" id="03-the-inspection-gate">
+      <img data-hf-id="hf-k3r2" id="03-the-inspection-plate" src="assets/plates_graded/p07_highscaler2.G0.jpg" alt="High scalers on the Arizona abutment, 1932" class="clip" data-start="0" data-duration="9.5" data-track-index="0">
+    </div>
+    <div data-hf-id="hf-k3r3" id="03-the-inspection-seam" class="clip" data-start="0" data-duration="9.5" data-track-index="1"></div>
+
+    <div data-hf-id="hf-k3r4" id="03-the-inspection-act" class="clip" data-start="0" data-duration="9.5" data-track-index="3">I · The River</div>
+    <div data-hf-id="hf-k3r5" id="03-the-inspection-slug" class="clip" data-start="0" data-duration="9.5" data-track-index="3">High scalers · Arizona abutment · 1932</div>
+
+    <div data-hf-id="hf-k3r6" id="03-the-inspection-lead" class="clip" data-start="0" data-duration="9.5" data-track-index="4"><span data-hf-id="hf-k3r7">But</span> <span data-hf-id="hf-k3r8">do</span> <span data-hf-id="hf-k3r9">you</span> <span data-hf-id="hf-k3ra">do</span> <span data-hf-id="hf-k3rb">enough</span> <span data-hf-id="hf-k3rc">of</span> <span data-hf-id="hf-k3rd">—</span></div>
+    <div data-hf-id="hf-k3re" id="03-the-inspection-key" class="clip" data-start="0" data-duration="9.5" data-track-index="5"><span data-hf-id="hf-k3rf">AI-ASSISTED</span> <span data-hf-id="hf-k3rg">CODE</span> <span data-hf-id="hf-k3rh">INSPECTION?</span></div>
+    <div data-hf-id="hf-k3ri" id="03-the-inspection-quote" class="clip" data-start="0" data-duration="9.5" data-track-index="6">Two men. A mile of wall. One rope each.</div>
+  </div>
+
+  <script>
+    (function () {
+      var ID = "03-the-inspection";
+      var tl = gsap.timeline({ paused: true });
+      function $(s) { return document.getElementById(ID + "-" + s); }
+
+      /* Ken Burns on the portrait plate: transform only, seek-safe, no repeat. */
+      tl.fromTo($("plate"), { scale: 1.05 }, { scale: 1.0, duration: 9.5, ease: "none" }, 0);
+
+      /* Fixtures ease in once and hold. */
+      tl.fromTo([$("act"), $("slug")], { opacity: 0 }, { opacity: 1, duration: 0.7, ease: "power2.out" }, 0.2);
+
+      /* 0.6s — lead line, per word. */
+      tl.fromTo($("lead").querySelectorAll("span"),
+        { opacity: 0, y: 18, filter: "blur(6px)" },
+        { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.42, ease: "power3.out", stagger: 0.06 }, 0.6);
+
+      /* 2.6s — the key line, per word, heavier; answers frame 01. */
+      tl.fromTo($("key").querySelectorAll("span"),
+        { opacity: 0, y: 26, filter: "blur(8px)" },
+        { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.52, ease: "power3.out", stagger: 0.09 }, 2.6);
+
+      /* 5.6s — the allegory line; holds to the cut. */
+      tl.fromTo($("quote"), { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: 0.7, ease: "power3.out" }, 5.6);
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines[ID] = tl;
+    })();
+  </script>
+</template>

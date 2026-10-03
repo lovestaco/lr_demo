@@ -1,0 +1,152 @@
+<template>
+  <style>
+    @font-face {
+      font-family: "Playfair Display";
+      src: url("assets/fonts/PlayfairDisplay-var.woff2") format("woff2");
+      font-weight: 400 900;
+      font-style: normal;
+    }
+    @font-face {
+      font-family: "Playfair Display";
+      src: url("assets/fonts/PlayfairDisplay-italic-var.woff2") format("woff2");
+      font-weight: 400 700;
+      font-style: italic;
+    }
+    #root {
+      position: absolute;
+      inset: 0;
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+      background: #0b0a08;
+      font-family: "Playfair Display", Georgia, serif;
+      color: #ede4d0;
+    }
+
+    /* ---- film gate: the 1440x1080 archive plate, pillarboxed ---- */
+    [id="04-the-scalers-gate"] {
+      position: absolute;
+      left: 240px;
+      top: 0;
+      width: 1440px;
+      height: 1080px;
+      overflow: hidden;
+      background: #0b0a08;
+    }
+    [id="04-the-scalers-card"],
+    [id="04-the-scalers-plate"] {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1440px;
+      height: 1080px;
+      object-fit: cover;
+      transform-origin: 50% 50%;
+    }
+    [id="04-the-scalers-edge-l"],
+    [id="04-the-scalers-edge-r"] {
+      position: absolute;
+      top: 0;
+      width: 1px;
+      height: 1080px;
+      background: rgba(237, 228, 208, 0.2);
+    }
+    [id="04-the-scalers-edge-l"] { left: 240px; }
+    [id="04-the-scalers-edge-r"] { left: 1679px; }
+
+    /* ---- bottom scrim so type clears AA over the live-action plate ---- */
+    [id="04-the-scalers-scrim"] {
+      position: absolute;
+      inset: 0;
+      width: 1920px;
+      height: 1080px;
+      background: linear-gradient(180deg, rgba(11, 10, 8, 0) 34%, rgba(11, 10, 8, 0.9) 100%);
+    }
+
+    /* ---- the two fixtures ---- */
+    [id="04-the-scalers-act"] {
+      position: absolute;
+      right: 96px;
+      top: 88px;
+      font-size: 20px;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: rgba(237, 228, 208, 0.55);
+      font-weight: 500;
+    }
+    [id="04-the-scalers-slug"] {
+      position: absolute;
+      left: 96px;
+      bottom: 74px;
+      font-size: 17px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: rgba(237, 228, 208, 0.42);
+      font-weight: 500;
+    }
+
+    /* ---- the single gloss line, over the film ---- */
+    [id="04-the-scalers-gloss"] {
+      position: absolute;
+      left: 140px;
+      top: 818px;
+      width: 1500px;
+      font-size: 40px;
+      font-weight: 400;
+      line-height: 1.24;
+      color: #ede4d0;
+    }
+    [id="04-the-scalers-gloss"] span {
+      display: inline-block;
+    }
+  </style>
+
+  <div data-hf-id="hf-sc00" id="root" data-composition-id="04-the-scalers" data-duration="8.0" data-width="1920" data-height="1080">
+    <div data-hf-id="hf-sc01" id="04-the-scalers-gate">
+      <video data-hf-id="hf-sc02" id="04-the-scalers-card" class="clip" data-start="0" data-duration="3.6" data-track-index="0" muted playsinline preload="auto" src="assets/archive_graded/t_scalers_card.G0.mp4"></video>
+      <video data-hf-id="hf-sc03" id="04-the-scalers-plate" class="clip" data-start="3.4" data-duration="4.6" data-track-index="1" muted playsinline preload="auto" src="assets/archive_graded/v_scalers_b.G0.mp4"></video>
+    </div>
+    <div data-hf-id="hf-sc04" id="04-the-scalers-edge-l" class="clip" data-start="0" data-duration="8.0" data-track-index="2"></div>
+    <div data-hf-id="hf-sc05" id="04-the-scalers-edge-r" class="clip" data-start="0" data-duration="8.0" data-track-index="2"></div>
+    <div data-hf-id="hf-sc06" id="04-the-scalers-scrim" class="clip" data-start="3.4" data-duration="4.6" data-track-index="3"></div>
+
+    <div data-hf-id="hf-sc07" id="04-the-scalers-act" class="clip" data-start="0" data-duration="8.0" data-track-index="4">I · The River</div>
+    <div data-hf-id="hf-sc08" id="04-the-scalers-slug" class="clip" data-start="0" data-duration="8.0" data-track-index="4">Boulder Dam: The Official Picture · 1931</div>
+
+    <div data-hf-id="hf-sc09" id="04-the-scalers-gloss" class="clip" data-start="4.4" data-duration="3.6" data-track-index="5"><span data-hf-id="hf-sc10">Somebody</span> <span data-hf-id="hf-sc11">has</span> <span data-hf-id="hf-sc12">to</span> <span data-hf-id="hf-sc13">walk</span> <span data-hf-id="hf-sc14">the</span> <span data-hf-id="hf-sc15">wall</span> <span data-hf-id="hf-sc16">before</span> <span data-hf-id="hf-sc17">the</span> <span data-hf-id="hf-sc18">concrete</span> <span data-hf-id="hf-sc19">goes</span> <span data-hf-id="hf-sc20">in.</span></div>
+  </div>
+
+  <script>
+    (function () {
+      var ID = "04-the-scalers";
+      var tl = gsap.timeline({ paused: true });
+      function $(s) { return document.getElementById(ID + "-" + s); }
+
+      /* Fixtures ease in once and hold to the cut. */
+      tl.fromTo([$("act"), $("slug")], { opacity: 0 }, { opacity: 1, duration: 0.7, ease: "power2.out" }, 0.2);
+
+      /* 0.0 — the 1931 intertitle card holds alone, no overlay type. It reads itself. */
+      tl.set($("card"), { opacity: 1 }, 0);
+
+      /* 3.4 — cross-dissolve out of the card and into the live-action plate.
+         The card's clip window closes at 3.6, so its fade lands exactly there;
+         the incoming film rises over the stated 0.5s. No pop, no dip. */
+      tl.to($("card"), { opacity: 0, duration: 0.2, ease: "power1.inOut" }, 3.4);
+      tl.fromTo($("plate"), { opacity: 0 }, { opacity: 1, duration: 0.5, ease: "power1.inOut" }, 3.4);
+
+      /* The bottom scrim arrives with the film — it never sits over the black card. */
+      tl.fromTo($("scrim"), { opacity: 0 }, { opacity: 1, duration: 0.5, ease: "power1.inOut" }, 3.4);
+
+      /* Ken Burns on the live-action plate only, across its 4.6s on screen. */
+      tl.fromTo($("plate"), { scale: 1.055 }, { scale: 1.0, duration: 4.6, ease: "none" }, 3.4);
+
+      /* 4.4 — the single gloss line, per word, and it holds to the cut. */
+      tl.fromTo($("gloss").querySelectorAll("span"),
+        { opacity: 0, y: 18, filter: "blur(6px)" },
+        { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.42, ease: "power3.out", stagger: 0.06 }, 4.4);
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines[ID] = tl;
+    })();
+  </script>
+</template>

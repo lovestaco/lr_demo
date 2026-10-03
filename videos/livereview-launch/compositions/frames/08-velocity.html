@@ -1,0 +1,172 @@
+<template>
+  <style>
+    @font-face {
+      font-family: "Playfair Display";
+      src: url("assets/fonts/PlayfairDisplay-var.woff2") format("woff2");
+      font-weight: 400 900;
+      font-style: normal;
+    }
+    @font-face {
+      font-family: "Playfair Display";
+      src: url("assets/fonts/PlayfairDisplay-italic-var.woff2") format("woff2");
+      font-weight: 400 700;
+      font-style: italic;
+    }
+    #root {
+      position: absolute;
+      inset: 0;
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+      background: #0b0a08;
+      font-family: "Playfair Display", Georgia, serif;
+      color: #ede4d0;
+    }
+
+    /* ---- film gate: the 1440x1080 archive plate, pillarboxed ---- */
+    [id="08-velocity-gate"] {
+      position: absolute;
+      left: 240px;
+      top: 0;
+      width: 1440px;
+      height: 1080px;
+      overflow: hidden;
+    }
+    [id="08-velocity-plate"] {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1440px;
+      height: 1080px;
+      object-fit: cover;
+      transform-origin: 50% 50%;
+    }
+    [id="08-velocity-edge-l"],
+    [id="08-velocity-edge-r"] {
+      position: absolute;
+      top: 0;
+      width: 1px;
+      height: 1080px;
+      background: rgba(237, 228, 208, 0.2);
+    }
+    [id="08-velocity-edge-l"] { left: 240px; }
+    [id="08-velocity-edge-r"] { left: 1679px; }
+
+    /* ---- bottom scrim so type clears AA over any plate ---- */
+    [id="08-velocity-scrim"] {
+      position: absolute;
+      inset: 0;
+      width: 1920px;
+      height: 1080px;
+      background: linear-gradient(180deg, rgba(11, 10, 8, 0) 34%, rgba(11, 10, 8, 0.9) 100%);
+    }
+
+    /* ---- the two fixtures ---- */
+    [id="08-velocity-act"] {
+      position: absolute;
+      right: 96px;
+      top: 88px;
+      font-size: 20px;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: rgba(237, 228, 208, 0.55);
+      font-weight: 500;
+    }
+    [id="08-velocity-slug"] {
+      position: absolute;
+      left: 96px;
+      bottom: 74px;
+      font-size: 17px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: rgba(237, 228, 208, 0.42);
+      font-weight: 500;
+    }
+
+    /* ---- text block ---- */
+    [id="08-velocity-kicker"] {
+      position: absolute;
+      left: 140px;
+      top: 648px;
+      width: 1400px;
+      font-size: 24px;
+      letter-spacing: 0.34em;
+      text-transform: uppercase;
+      line-height: 1.2;
+      color: rgba(237, 228, 208, 0.7);
+      font-weight: 500;
+    }
+    [id="08-velocity-key"] {
+      position: absolute;
+      left: 140px;
+      top: 706px;
+      width: 1500px;
+      font-size: 68px;
+      font-weight: 700;
+      line-height: 1.1;
+      letter-spacing: 0.005em;
+      color: #ede4d0;
+    }
+    [id="08-velocity-quote"] {
+      position: absolute;
+      left: 140px;
+      top: 830px;
+      width: 1240px;
+      font-size: 30px;
+      font-style: italic;
+      font-weight: 400;
+      line-height: 1.42;
+      color: #c9bfa8;
+    }
+    [id="08-velocity-kicker"] span,
+    [id="08-velocity-key"] span {
+      display: inline-block;
+    }
+  </style>
+
+  <div data-hf-id="hf-9v41" id="root" data-composition-id="08-velocity" data-duration="8.0" data-width="1920" data-height="1080">
+    <div data-hf-id="hf-4kq2" id="08-velocity-gate">
+      <video data-hf-id="hf-7tzr" id="08-velocity-plate" muted playsinline preload="auto" src="assets/archive_graded/v_cableway_car.G0.mp4" class="clip" data-start="0" data-duration="8.0" data-track-index="0"></video>
+    </div>
+    <div data-hf-id="hf-2sxe" id="08-velocity-edge-l" class="clip" data-start="0" data-duration="8.0" data-track-index="1"></div>
+    <div data-hf-id="hf-bm0d" id="08-velocity-edge-r" class="clip" data-start="0" data-duration="8.0" data-track-index="1"></div>
+    <div data-hf-id="hf-ue6l" id="08-velocity-scrim" class="clip" data-start="0" data-duration="8.0" data-track-index="2"></div>
+
+    <div data-hf-id="hf-p3aw" id="08-velocity-act" class="clip" data-start="0" data-duration="8.0" data-track-index="3">III · The Rising Water</div>
+    <div data-hf-id="hf-xc59" id="08-velocity-slug" class="clip" data-start="0" data-duration="8.0" data-track-index="3">Eight-yard bucket on the cableway · 1933</div>
+
+    <div data-hf-id="hf-j1ko" id="08-velocity-kicker" class="clip" data-start="0" data-duration="8.0" data-track-index="4"><span data-hf-id="hf-r8dt">Here</span> <span data-hf-id="hf-5ynq">is</span> <span data-hf-id="hf-gz7b">why</span></div>
+    <div data-hf-id="hf-w0hi" id="08-velocity-key" class="clip" data-start="0" data-duration="8.0" data-track-index="5"><span data-hf-id="hf-6fue">Code</span> <span data-hf-id="hf-lq3m">accumulates</span> <span data-hf-id="hf-a7vs">at</span> <span data-hf-id="hf-d2nc">great</span> <span data-hf-id="hf-tb84">VELOCITY</span></div>
+    <div data-hf-id="hf-e5yj" id="08-velocity-quote" class="clip" data-start="0" data-duration="8.0" data-track-index="6">Eight cubic yards at a time. Every few minutes. For two years.</div>
+  </div>
+
+  <script>
+    (function () {
+      var ID = "08-velocity";
+      var tl = gsap.timeline({ paused: true });
+      function $(s) { return document.getElementById(ID + "-" + s); }
+
+      /* Ken Burns on the gate plate: transform only, seek-safe, no repeat. */
+      tl.fromTo($("plate"), { scale: 1.055 }, { scale: 1.0, duration: 8.0, ease: "none" }, 0);
+
+      /* Fixtures ease in once and hold. */
+      tl.fromTo([$("act"), $("slug")], { opacity: 0 }, { opacity: 1, duration: 0.7, ease: "power2.out" }, 0.2);
+
+      /* 0.4s — kicker, per word. */
+      tl.fromTo($("kicker").querySelectorAll("span"),
+        { opacity: 0, y: 18, filter: "blur(6px)" },
+        { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.42, ease: "power3.out", stagger: 0.06 }, 0.4);
+
+      /* 1.6s — the key line, per word, heavier. */
+      tl.fromTo($("key").querySelectorAll("span"),
+        { opacity: 0, y: 26, filter: "blur(8px)" },
+        { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.52, ease: "power3.out", stagger: 0.09 }, 1.6);
+
+      /* 4.6s — the archival gloss; holds to the cut. */
+      tl.fromTo($("quote"), { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: 0.7, ease: "power3.out" }, 4.6);
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines[ID] = tl;
+    })();
+  </script>
+</template>

@@ -1,0 +1,146 @@
+<template>
+  <style>
+    @font-face {
+      font-family: "Playfair Display";
+      src: url("assets/fonts/PlayfairDisplay-var.woff2") format("woff2");
+      font-weight: 400 900;
+      font-style: normal;
+    }
+    @font-face {
+      font-family: "Playfair Display";
+      src: url("assets/fonts/PlayfairDisplay-italic-var.woff2") format("woff2");
+      font-weight: 400 700;
+      font-style: italic;
+    }
+    #root {
+      position: absolute;
+      inset: 0;
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+      background: #0b0a08;
+      font-family: "Playfair Display", Georgia, serif;
+      color: #ede4d0;
+    }
+
+    /* ---- film gate: the 1440x1080 archive plate, pillarboxed ---- */
+    [id="13-bigger-systems-gate"] {
+      position: absolute;
+      left: 240px;
+      top: 0;
+      width: 1440px;
+      height: 1080px;
+      overflow: hidden;
+    }
+    [id="13-bigger-systems-card"],
+    [id="13-bigger-systems-plate"] {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1440px;
+      height: 1080px;
+      object-fit: cover;
+      transform-origin: 50% 50%;
+    }
+    [id="13-bigger-systems-edge-l"],
+    [id="13-bigger-systems-edge-r"] {
+      position: absolute;
+      top: 0;
+      width: 1px;
+      height: 1080px;
+      background: rgba(237, 228, 208, 0.2);
+    }
+    [id="13-bigger-systems-edge-l"] { left: 240px; }
+    [id="13-bigger-systems-edge-r"] { left: 1679px; }
+
+    /* ---- bottom scrim so type clears AA over any plate ---- */
+    [id="13-bigger-systems-scrim"] {
+      position: absolute;
+      inset: 0;
+      width: 1920px;
+      height: 1080px;
+      background: linear-gradient(180deg, rgba(11, 10, 8, 0) 34%, rgba(11, 10, 8, 0.9) 100%);
+    }
+
+    /* ---- the two fixtures ---- */
+    [id="13-bigger-systems-act"] {
+      position: absolute;
+      right: 96px;
+      top: 88px;
+      font-size: 20px;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: rgba(237, 228, 208, 0.55);
+      font-weight: 500;
+    }
+    [id="13-bigger-systems-slug"] {
+      position: absolute;
+      left: 96px;
+      bottom: 74px;
+      font-size: 17px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: rgba(237, 228, 208, 0.42);
+      font-weight: 500;
+    }
+
+    /* ---- the single gloss line, over the film ---- */
+    [id="13-bigger-systems-gloss"] {
+      position: absolute;
+      left: 140px;
+      top: 812px;
+      width: 1400px;
+      font-size: 44px;
+      font-weight: 400;
+      line-height: 1.2;
+      color: #ede4d0;
+    }
+  </style>
+
+  <div data-hf-id="hf-7phm" id="root" data-composition-id="13-bigger-systems" data-duration="8.5" data-width="1920" data-height="1080">
+    <div data-hf-id="hf-h8ff" id="13-bigger-systems-gate">
+      <video data-hf-id="hf-8qd6" id="13-bigger-systems-card" class="clip" data-start="0" data-duration="3.8" data-track-index="1" muted playsinline preload="auto" src="assets/archive_graded/t_blocks_card.G0.mp4"></video>
+      <video data-hf-id="hf-b02m" id="13-bigger-systems-plate" class="clip" data-start="3.6" data-duration="4.9" data-track-index="1" muted playsinline preload="auto" src="assets/archive_graded/v_blocks.G0.mp4"></video>
+    </div>
+    <div data-hf-id="hf-m7hc" id="13-bigger-systems-edge-l" class="clip" data-start="0" data-duration="8.5" data-track-index="2"></div>
+    <div data-hf-id="hf-mvnq" id="13-bigger-systems-edge-r" class="clip" data-start="0" data-duration="8.5" data-track-index="2"></div>
+    <div data-hf-id="hf-bn2m" id="13-bigger-systems-scrim" class="clip" data-start="3.6" data-duration="4.9" data-track-index="3"></div>
+
+    <div data-hf-id="hf-eu7m" id="13-bigger-systems-act" class="clip" data-start="0" data-duration="8.5" data-track-index="4">IV · The Cracks</div>
+    <div data-hf-id="hf-4cfj" id="13-bigger-systems-slug" class="clip" data-start="0" data-duration="8.5" data-track-index="4">Boulder Dam: The Official Picture · 1931</div>
+
+    <div data-hf-id="hf-4ash" id="13-bigger-systems-gloss" class="clip" data-start="4.6" data-duration="3.9" data-track-index="5">More code means bigger systems — and more interconnections.</div>
+  </div>
+
+  <script>
+    (function () {
+      var ID = "13-bigger-systems";
+      var tl = gsap.timeline({ paused: true });
+      function $(s) { return document.getElementById(ID + "-" + s); }
+
+      /* Fixtures ease in once and hold to the cut. */
+      tl.fromTo([$("act"), $("slug")], { opacity: 0 }, { opacity: 1, duration: 0.7, ease: "power2.out" }, 0.2);
+
+      /* The 1931 intertitle card holds flat — it reads itself, no overlay. */
+
+      /* 3.3s -> 4.1s — cross-dissolve: card out, live-action film in.
+         The card's fade lands exactly on its 3.8 gate-out so nothing pops;
+         the eased pair keeps luminance up across the handover. */
+      tl.fromTo($("card"), { opacity: 1 }, { opacity: 0, duration: 0.5, ease: "power2.in" }, 3.3);
+      tl.fromTo($("plate"), { opacity: 0 }, { opacity: 1, duration: 0.5, ease: "power2.out" }, 3.6);
+
+      /* Ken Burns on the film plate across its whole span: transform only, seek-safe. */
+      tl.fromTo($("plate"), { scale: 1.055 }, { scale: 1.0, duration: 4.9, ease: "none" }, 3.6);
+
+      /* Scrim rises with the film so the gloss line clears AA over the block grid. */
+      tl.fromTo($("scrim"), { opacity: 0 }, { opacity: 1, duration: 0.5, ease: "power2.out" }, 3.6);
+
+      /* 4.6s — the one gloss line; it holds to the cut. */
+      tl.fromTo($("gloss"), { opacity: 0, y: 18, filter: "blur(6px)" },
+        { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.52, ease: "power3.out" }, 4.6);
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines[ID] = tl;
+    })();
+  </script>
+</template>

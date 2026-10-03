@@ -1,0 +1,12 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "livereview-launch",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["--yes", "hyperframes@0.8.92", "preview", "--background"],
+      "port": 3000,
+      "url": "http://localhost:3000"
+    }
+  ]
+}

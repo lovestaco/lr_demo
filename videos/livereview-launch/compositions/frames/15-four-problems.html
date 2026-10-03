@@ -1,0 +1,285 @@
+<template>
+  <style>
+    @font-face {
+      font-family: "Playfair Display";
+      src: url("assets/fonts/PlayfairDisplay-var.woff2") format("woff2");
+      font-weight: 400 900;
+      font-style: normal;
+    }
+    @font-face {
+      font-family: "Playfair Display";
+      src: url("assets/fonts/PlayfairDisplay-italic-var.woff2") format("woff2");
+      font-weight: 400 700;
+      font-style: italic;
+    }
+    #root {
+      position: absolute;
+      inset: 0;
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+      background: #0b0a08;
+      font-family: "Playfair Display", Georgia, serif;
+      color: #ede4d0;
+    }
+
+    /* ---- four bleed plates, stacked; each fades up over the one below ---- */
+    [id="15-four-problems-plate-1"],
+    [id="15-four-problems-plate-2"],
+    [id="15-four-problems-plate-3"],
+    [id="15-four-problems-plate-4"] {
+      position: absolute;
+      inset: 0;
+      width: 1920px;
+      height: 1080px;
+      object-fit: cover;
+      transform-origin: 50% 50%;
+    }
+
+    /* ---- bottom scrim so type clears AA over any plate; spans the frame ---- */
+    [id="15-four-problems-scrim"] {
+      position: absolute;
+      inset: 0;
+      width: 1920px;
+      height: 1080px;
+      background: linear-gradient(180deg, rgba(11, 10, 8, 0) 34%, rgba(11, 10, 8, 0.9) 100%);
+    }
+
+    /* ---- the two fixtures ---- */
+    [id="15-four-problems-act"] {
+      position: absolute;
+      right: 96px;
+      top: 88px;
+      font-size: 20px;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: rgba(237, 228, 208, 0.55);
+      font-weight: 500;
+    }
+    [id="15-four-problems-slug-1"],
+    [id="15-four-problems-slug-2"],
+    [id="15-four-problems-slug-3"],
+    [id="15-four-problems-slug-4"] {
+      position: absolute;
+      left: 96px;
+      bottom: 74px;
+      font-size: 17px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: rgba(237, 228, 208, 0.42);
+      font-weight: 500;
+    }
+
+    /* ---- the tally: four marks, one per beat, never going out ----
+       Row is 4 x 28px with 10px gaps = 142px, flush right at 96px.
+       The lit marks are positioned from the same right edge so they
+       land exactly on their dim counterparts. */
+    [id="15-four-problems-tally"] {
+      position: absolute;
+      right: 96px;
+      top: 150px;
+      width: 142px;
+      height: 3px;
+    }
+    [id="15-four-problems-tally"] i {
+      position: absolute;
+      top: 0;
+      width: 28px;
+      height: 3px;
+      background: rgba(237, 228, 208, 0.22);
+    }
+    [id="15-four-problems-tally"] i:nth-child(1) { left: 0; }
+    [id="15-four-problems-tally"] i:nth-child(2) { left: 38px; }
+    [id="15-four-problems-tally"] i:nth-child(3) { left: 76px; }
+    [id="15-four-problems-tally"] i:nth-child(4) { left: 114px; }
+
+    [id="15-four-problems-mark-1"],
+    [id="15-four-problems-mark-2"],
+    [id="15-four-problems-mark-3"],
+    [id="15-four-problems-mark-4"] {
+      position: absolute;
+      top: 150px;
+      width: 28px;
+      height: 3px;
+      background: #c2703a;
+    }
+    [id="15-four-problems-mark-1"] { right: 210px; }
+    [id="15-four-problems-mark-2"] { right: 172px; }
+    [id="15-four-problems-mark-3"] { right: 134px; }
+    [id="15-four-problems-mark-4"] { right: 96px; }
+
+    /* ---- per-beat text layer: a transparent full-frame group so the
+       beat's two lines can dissolve out together on one tween ---- */
+    [id="15-four-problems-beat-1"],
+    [id="15-four-problems-beat-2"],
+    [id="15-four-problems-beat-3"],
+    [id="15-four-problems-beat-4"] {
+      position: absolute;
+      inset: 0;
+      width: 1920px;
+      height: 1080px;
+    }
+
+    /* ---- numeral + title ---- */
+    [id="15-four-problems-title-1"],
+    [id="15-four-problems-title-2"],
+    [id="15-four-problems-title-3"],
+    [id="15-four-problems-title-4"] {
+      position: absolute;
+      left: 140px;
+      top: 688px;
+      width: 1500px;
+      font-size: 26px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: #c2703a;
+      font-weight: 500;
+      line-height: 1.2;
+    }
+
+    /* ---- the question: two authored lines, ending near top 880 ---- */
+    [id="15-four-problems-q-1"],
+    [id="15-four-problems-q-2"],
+    [id="15-four-problems-q-3"],
+    [id="15-four-problems-q-4"] {
+      position: absolute;
+      left: 140px;
+      top: 756px;
+      width: 1500px;
+      font-size: 52px;
+      font-weight: 600;
+      line-height: 1.18;
+      color: #ede4d0;
+    }
+  </style>
+
+  <div data-hf-id="hf-5rso" id="root" data-composition-id="15-four-problems" data-duration="36.0" data-width="1920" data-height="1080">
+    <!-- Plates. Windows overlap 0.5s: the incoming plate fades up over the
+         outgoing one, which is still fully opaque underneath, so the handover
+         holds its luminance and there is never a black gap. -->
+    <img data-hf-id="hf-bsvm" id="15-four-problems-plate-1" class="clip" data-start="0" data-duration="8.5" data-track-index="0" src="assets/plates_graded/p16_cleavage.G0.jpg" alt="">
+    <img data-hf-id="hf-oxll" id="15-four-problems-plate-2" class="clip" data-start="8" data-duration="9.5" data-track-index="0" src="assets/plates_graded/p18_drillbit.G0.jpg" alt="">
+    <img data-hf-id="hf-z35x" id="15-four-problems-plate-3" class="clip" data-start="17" data-duration="10.0" data-track-index="0" src="assets/plates_graded/p11_recorders.G0.jpg" alt="">
+    <img data-hf-id="hf-v6bn" id="15-four-problems-plate-4" class="clip" data-start="26.5" data-duration="9.5" data-track-index="0" src="assets/plates_graded/p19_controltower.G0.jpg" alt="">
+
+    <div data-hf-id="hf-vfml" id="15-four-problems-scrim" class="clip" data-start="0" data-duration="36.0" data-track-index="1"></div>
+
+    <div data-hf-id="hf-yl10" id="15-four-problems-act" class="clip" data-start="0" data-duration="36.0" data-track-index="2">V · Four Questions</div>
+
+    <!-- Slugs swap cleanly at 8.0 / 17.0 / 26.5 — no overlap. -->
+    <div data-hf-id="hf-alxq" id="15-four-problems-slug-1" class="clip" data-start="0" data-duration="8.0" data-track-index="3">Pressure cleavage in the canyon wall · 1932</div>
+    <div data-hf-id="hf-4zfn" id="15-four-problems-slug-2" class="clip" data-start="8" data-duration="9.0" data-track-index="3">Diamond drill bit lost in hole D200 W147 · 1922</div>
+    <div data-hf-id="hf-xywl" id="15-four-problems-slug-3" class="clip" data-start="17" data-duration="9.5" data-track-index="3">Concrete control · testing laboratory · 1933</div>
+    <div data-hf-id="hf-mpkm" id="15-four-problems-slug-4" class="clip" data-start="26.5" data-duration="9.5" data-track-index="3">From the head tower of the 150-ton cableway · 1934</div>
+
+    <!-- The tally: dim row for the whole frame, then one lit mark per beat,
+         each running from its beat's start to the end of the frame. -->
+    <div data-hf-id="hf-ps2k" id="15-four-problems-tally" class="clip" data-start="0" data-duration="36.0" data-track-index="4"><i data-hf-id="hf-wt6k"></i><i data-hf-id="hf-zeb8"></i><i data-hf-id="hf-y7e5"></i><i data-hf-id="hf-ylp6"></i></div>
+    <div data-hf-id="hf-6ehg" id="15-four-problems-mark-1" class="clip" data-start="0" data-duration="36.0" data-track-index="5"></div>
+    <div data-hf-id="hf-6ovg" id="15-four-problems-mark-2" class="clip" data-start="8" data-duration="28.0" data-track-index="5"></div>
+    <div data-hf-id="hf-qmg3" id="15-four-problems-mark-3" class="clip" data-start="17" data-duration="19.0" data-track-index="5"></div>
+    <div data-hf-id="hf-4e8i" id="15-four-problems-mark-4" class="clip" data-start="26.5" data-duration="9.5" data-track-index="5"></div>
+
+    <!-- Beat 1 · 0.0 → 8.0, group holds to 8.5 for the dissolve -->
+    <div data-hf-id="hf-51v0" id="15-four-problems-beat-1" class="clip" data-start="0" data-duration="8.5" data-track-index="6">
+      <div data-hf-id="hf-cxfj" id="15-four-problems-title-1" class="clip" data-start="0.6" data-duration="7.9" data-track-index="7">No. 1 · The Attention Problem</div>
+      <div data-hf-id="hf-txmm" id="15-four-problems-q-1" class="clip" data-start="1.8" data-duration="6.7" data-track-index="8"><div data-hf-id="hf-g08t">Which changes deserve your</div><div data-hf-id="hf-cvh9">engineers’ scarce attention?</div></div>
+    </div>
+
+    <!-- Beat 2 · 8.0 → 17.0, group holds to 17.5 for the dissolve -->
+    <div data-hf-id="hf-zkhb" id="15-four-problems-beat-2" class="clip" data-start="8" data-duration="9.5" data-track-index="6">
+      <div data-hf-id="hf-g5w7" id="15-four-problems-title-2" class="clip" data-start="8.6" data-duration="8.9" data-track-index="7">No. 2 · The Understanding Problem</div>
+      <div data-hf-id="hf-xg51" id="15-four-problems-q-2" class="clip" data-start="9.8" data-duration="7.7" data-track-index="8"><div data-hf-id="hf-f93q">How can your engineers keep</div><div data-hf-id="hf-qw3p">intellectual control of the system?</div></div>
+    </div>
+
+    <!-- Beat 3 · 17.0 → 26.5, group holds to 27.0 for the dissolve -->
+    <div data-hf-id="hf-lbgx" id="15-four-problems-beat-3" class="clip" data-start="17" data-duration="10.0" data-track-index="6">
+      <div data-hf-id="hf-3c36" id="15-four-problems-title-3" class="clip" data-start="17.6" data-duration="9.4" data-track-index="7">No. 3 · The Enforcement Problem</div>
+      <div data-hf-id="hf-bxop" id="15-four-problems-q-3" class="clip" data-start="18.5" data-duration="8.5" data-track-index="8"><div data-hf-id="hf-eyv5">How do you make good review happen every time —</div><div data-hf-id="hf-l3k4">without slowing the team down?</div></div>
+    </div>
+
+    <!-- Beat 4 · 26.5 → 36.0 — holds to the cut, no exit dissolve -->
+    <div data-hf-id="hf-3m0g" id="15-four-problems-beat-4" class="clip" data-start="26.5" data-duration="9.5" data-track-index="6">
+      <div data-hf-id="hf-0r6t" id="15-four-problems-title-4" class="clip" data-start="27.1" data-duration="8.9" data-track-index="7">No. 4 · The Control &amp; Improve Problem</div>
+      <div data-hf-id="hf-047s" id="15-four-problems-q-4" class="clip" data-start="28.3" data-duration="7.7" data-track-index="8"><div data-hf-id="hf-wgx8">How do you own your IP, your code,</div><div data-hf-id="hf-nns1">your data, your model interactions?</div></div>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      var ID = "15-four-problems";
+      var tl = gsap.timeline({ paused: true });
+      function $(s) { return document.getElementById(ID + "-" + s); }
+
+      /* Four sub-beats of 8.0 / 9.0 / 9.5 / 9.5s across 36.0s. The three
+         longer beats buy back the reading time the 32.0s cut could not give
+         questions 2-4. Every time below is a literal that matches the markup's
+         data-start exactly — no arithmetic, so no drift.
+           n      the beat index
+           at     plate / group in       (beat boundaries 0 / 8 / 17 / 26.5)
+           dur    plate window length; runs 0.5s past the next beat's start so
+                  the incoming plate has something to fade up over
+           title  numeral + title entrance   (at + 0.6)
+           quest  question entrance          (at + 1.8; beat 3 is the one
+                  exception, at + 1.5 — its 14-word question needs 7.28s of
+                  hold under the reading floor and at + 1.8 gave only 7.09s)
+           exit   group cross-dissolve out, on the next beat's boundary; null on
+                  the last beat, which holds all the way to the cut. */
+      var BEATS = [
+        { n: 1, at: 0,    dur: 8.5,  title: 0.6,  quest: 1.8,  exit: 8 },
+        { n: 2, at: 8,    dur: 9.5,  title: 8.6,  quest: 9.8,  exit: 17 },
+        { n: 3, at: 17,   dur: 10.0, title: 17.6, quest: 18.5, exit: 26.5 },
+        { n: 4, at: 26.5, dur: 9.5,  title: 27.1, quest: 28.3, exit: null }
+      ];
+
+      /* Fixtures + the tally row + the first mark ease in once, together, and
+         hold. Beat 1 is already the live beat at frame open, so its mark comes
+         up lit with the row rather than lighting later. */
+      tl.fromTo([$("act"), $("slug-1"), $("tally"), $("mark-1")],
+        { opacity: 0 }, { opacity: 1, duration: 0.7, ease: "power2.out" }, 0.2);
+
+      for (var i = 0; i < BEATS.length; i++) {
+        var b = BEATS[i];
+
+        /* Ken Burns across this plate's own window: transform only, seek-safe. */
+        tl.fromTo($("plate-" + b.n), { scale: 1.055 },
+          { scale: 1.0, duration: b.dur, ease: "none" }, b.at);
+
+        /* The dissolve. Plate 1 opens the frame already up; plates 2-4 fade in
+           over the outgoing plate across the 0.5s window overlap. One opacity
+           tween per plate, so a backwards seek can never fight itself. */
+        if (b.n > 1) {
+          tl.fromTo($("plate-" + b.n), { opacity: 0 },
+            { opacity: 1, duration: 0.5, ease: "power2.out" }, b.at);
+
+          /* This beat's slug and its tally mark arrive with the plate. */
+          tl.fromTo([$("slug-" + b.n), $("mark-" + b.n)], { opacity: 0 },
+            { opacity: 1, duration: 0.45, ease: "power2.out" }, b.at);
+        }
+
+        /* + 0.6 — numeral + title, one unit (the .22em tracking reads as a
+           single tracked-out caption, so it does not enter per word). */
+        tl.fromTo($("title-" + b.n),
+          { opacity: 0, y: 18, filter: "blur(6px)" },
+          { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.42, ease: "power3.out" }, b.title);
+
+        /* + 1.8 — the question, the heavy key line, its two authored lines
+           staggered. It holds for the rest of the beat. */
+        tl.fromTo($("q-" + b.n).querySelectorAll("div"),
+          { opacity: 0, y: 26, filter: "blur(8px)" },
+          { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.52, ease: "power3.out", stagger: 0.09 }, b.quest);
+
+        /* Beat end — title and question leave together on the group, riding out
+           on the same 0.5s as the plate dissolve. The next beat's title does not
+           enter until 0.6s later, so no two questions are ever on screen. */
+        if (b.exit !== null) {
+          tl.fromTo($("beat-" + b.n), { opacity: 1 },
+            { opacity: 0, duration: 0.5, ease: "power2.in" }, b.exit);
+        }
+      }
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines[ID] = tl;
+    })();
+  </script>
+</template>

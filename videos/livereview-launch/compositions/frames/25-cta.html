@@ -1,0 +1,150 @@
+<template>
+  <style>
+    @font-face {
+      font-family: "Inter";
+      src: url("assets/fonts/Inter-var.woff2") format("woff2");
+      font-weight: 100 900;
+      font-style: normal;
+    }
+    #root {
+      position: absolute;
+      inset: 0;
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+      background: #0b0a08;
+      font-family: "Inter", "Helvetica Neue", Arial, sans-serif;
+      color: #e8eeff;
+    }
+
+    /* ---- bleed: the reservoir today, full frame, in colour ---- */
+    [id="25-cta-plate"] {
+      position: absolute;
+      inset: 0;
+      width: 1920px;
+      height: 1080px;
+      object-fit: cover;
+      transform-origin: 50% 50%;
+    }
+
+    /* ---- bottom scrim so type clears AA over the water ---- */
+    [id="25-cta-scrim"] {
+      position: absolute;
+      inset: 0;
+      width: 1920px;
+      height: 1080px;
+      background: linear-gradient(180deg, rgba(11,10,8,0.30) 0%, rgba(11,10,8,0.62) 32%, rgba(11,10,8,0.80) 58%, rgba(11,10,8,0.92) 100%);
+    }
+
+    /* ---- the two fixtures ---- */
+    [id="25-cta-act"] {
+      position: absolute;
+      right: 96px;
+      top: 88px;
+      font-size: 20px;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: rgba(237, 228, 208, 0.55);
+      font-weight: 500;
+    }
+    [id="25-cta-slug"] {
+      position: absolute;
+      left: 96px;
+      bottom: 74px;
+      font-size: 17px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: rgba(232, 238, 255, 0.42);
+      font-weight: 500;
+    }
+
+    /* ---- centred text block ---- */
+    [id="25-cta-mark"] {
+      position: absolute;
+      left: 0;
+      top: 406px;
+      width: 1920px;
+      text-align: center;
+    }
+    [id="25-cta-mark"] img {
+      height: 64px;
+      width: auto;
+      display: inline-block;
+      vertical-align: middle;
+    }
+    [id="25-cta-url"] {
+      position: absolute;
+      left: 0;
+      top: 512px;
+      width: 1920px;
+      text-align: center;
+      font-size: 70px;
+      font-weight: 700;
+      line-height: 1.1;
+      letter-spacing: -0.005em;
+      color: #e8eeff;
+    }
+    [id="25-cta-payoff"] {
+      position: absolute;
+      left: 0;
+      top: 628px;
+      width: 1920px;
+      text-align: center;
+      font-size: 30px;
+      font-style: italic;
+      font-weight: 400;
+      line-height: 1.42;
+      color: rgba(232,238,255,0.86);
+    }
+    [id="25-cta-mark"] img { height: 72px; }
+    [id="25-cta-wordmark"] {
+      display: inline-block;
+      vertical-align: middle;
+      margin-left: 22px;
+      font-size: 58px;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      color: #e8eeff;
+    }
+  </style>
+
+  <div id="root" data-composition-id="25-cta" data-duration="7.5" data-width="1920" data-height="1080">
+    <img id="25-cta-plate" class="clip" data-start="0" data-duration="7.5" data-track-index="0" src="assets/plates/p41_lake_today.jpg" alt="">
+    <div id="25-cta-scrim" class="clip" data-start="0" data-duration="7.5" data-track-index="1"></div>
+
+    <div id="25-cta-act" class="clip" data-start="0" data-duration="7.5" data-track-index="2">VII · The Dam Holds</div>
+    <div id="25-cta-slug" class="clip" data-start="0" data-duration="7.5" data-track-index="2">Lake Mead · the water, put to work</div>
+
+    <div id="25-cta-mark"><img src="assets/logo.svg" alt="LiveReview" class="clip" data-start="0" data-duration="7.5" data-track-index="0"><span id="25-cta-wordmark">LiveReview</span></div>
+    <div id="25-cta-url" class="clip" data-start="0" data-duration="7.5" data-track-index="4">hexmos.com/livereview</div>
+    <div id="25-cta-payoff" class="clip" data-start="0" data-duration="7.5" data-track-index="5">The water still comes. Now something is watching the wall.</div>
+  </div>
+
+  <script>
+    (function () {
+      var ID = "25-cta";
+      var tl = gsap.timeline({ paused: true });
+      function $(s) { return document.getElementById(ID + "-" + s); }
+
+      /* Ken Burns on the plate: transform only, seek-safe, no repeat. */
+      tl.fromTo($("plate"), { scale: 1.04 }, { scale: 1.0, duration: 7.5, ease: "none" }, 0);
+
+      /* Fixtures ease in once and hold. */
+      tl.fromTo([$("act"), $("slug")], { opacity: 0 }, { opacity: 1, duration: 0.7, ease: "power2.out" }, 0.2);
+
+      /* 0.8s — the mark. */
+      tl.fromTo($("mark"), { opacity: 0 }, { opacity: 1, duration: 0.7, ease: "power2.out" }, 0.8);
+
+      /* 2.2s — the address, the one thing to remember. */
+      tl.fromTo($("url"),
+        { opacity: 0, y: 26, filter: "blur(8px)" },
+        { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.52, ease: "power3.out" }, 2.2);
+
+      /* 4.4s — the payoff of the allegory. Clean fade, no blur, no stagger. */
+      tl.fromTo($("payoff"), { opacity: 0 }, { opacity: 1, duration: 0.7, ease: "power2.out" }, 4.4);
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines[ID] = tl;
+    })();
+  </script>
+</template>

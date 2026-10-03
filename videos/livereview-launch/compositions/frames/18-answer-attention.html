@@ -1,0 +1,229 @@
+<template>
+  <style>
+    @font-face {
+      font-family: "Inter";
+      src: url("assets/fonts/Inter-var.woff2") format("woff2");
+      font-weight: 100 900;
+      font-style: normal;
+    }
+    @font-face {
+      font-family: "Playfair Display";
+      src: url("assets/fonts/PlayfairDisplay-var.woff2") format("woff2");
+      font-weight: 400 900;
+      font-style: normal;
+    }
+    @font-face {
+      font-family: "Playfair Display";
+      src: url("assets/fonts/PlayfairDisplay-italic-var.woff2") format("woff2");
+      font-weight: 400 700;
+      font-style: italic;
+    }
+    #root {
+      position: absolute;
+      inset: 0;
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+      background: #0b0a08;
+      font-family: "Inter", "Helvetica Neue", Arial, sans-serif;
+      color: #e8eeff;
+    }
+
+    /* ---- the app window shell (answer layout) ---- */
+    [id="18-answer-attention-window"] {
+      position: absolute;
+      left: 230px;
+      top: 346px;
+      width: 1460px;
+      height: 658px;
+      background: #0e1322;
+      border: 1.5px solid #1a2440;
+      border-radius: 12px;
+      overflow: hidden;
+      transform-origin: 50% 50%;
+    }
+    [id="18-answer-attention-topbar"] {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 31px;
+      background: #0e1322;
+      border-bottom: 1px solid #1a2440;
+    }
+    [id="18-answer-attention-dot-1"],
+    [id="18-answer-attention-dot-2"],
+    [id="18-answer-attention-dot-3"] {
+      position: absolute;
+      top: 11px;
+      width: 8px;
+      height: 8px;
+      background: #1a2440;
+      border-radius: 50%;
+    }
+    [id="18-answer-attention-dot-1"] { left: 14px; }
+    [id="18-answer-attention-dot-2"] { left: 32px; }
+    [id="18-answer-attention-dot-3"] { left: 50px; }
+
+    /* product UI is never cropped — 2520x1080 clip letterboxed inside the shell.
+       Stage-level sibling of the shell (a timed <video class="clip" data-start="0" data-duration="17.5" data-track-index="0"> may not sit inside a
+       timed wrapper), at the shell-relative rect left:2 top:33 => x:232 y:379. */
+    [id="18-answer-attention-clip"] {
+      position: absolute;
+      left: 232px;
+      top: 379px;
+      width: 1456px;
+      height: 623px;
+      object-fit: contain;
+      background: #0e1322;
+    }
+
+    /* ---- the two fixtures ---- */
+    [id="18-answer-attention-act"] {
+      position: absolute;
+      right: 96px;
+      top: 88px;
+      font-size: 20px;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: rgba(237, 228, 208, 0.55);
+      font-weight: 500;
+    }
+    [id="18-answer-attention-slug"] {
+      position: absolute;
+      left: 96px;
+      bottom: 74px;
+      font-size: 17px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: rgba(232, 238, 255, 0.42);
+      font-weight: 500;
+    }
+
+    /* ---- statement card above the window ---- */
+    [id="18-answer-attention-statement"] {
+      position: absolute;
+      left: 230px;
+      top: 196px;
+      width: 1460px;
+      font-size: 42px;
+      font-weight: 600;
+      line-height: 1.24;
+      letter-spacing: 0.002em;
+      color: #e8eeff;
+    }
+    [id="18-answer-attention-statement"] span {
+      display: inline-block;
+    }
+
+    /* ---- allegory tie-line below the window ---- */
+    [id="18-answer-attention-tie"] {
+      position: absolute;
+      left: 230px;
+      top: 1022px;
+      width: 1000px;
+      font-family: "Playfair Display", Georgia, serif;
+      font-size: 26px;
+      font-style: italic;
+      font-weight: 400;
+      line-height: 1.34;
+      color: rgba(237, 228, 208, 0.62);
+    }
+
+    /* ---- the "solved" seal ---- */
+    [id="18-answer-attention-seal"] {
+      position: absolute;
+      right: 230px;
+      top: 1016px;
+      text-align: right;
+      font-size: 40px;
+      font-weight: 700;
+      line-height: 1.1;
+      letter-spacing: 0.005em;
+      color: #e8eeff;
+      transform-origin: 100% 50%;
+      white-space: nowrap;
+    }
+
+    /* ---- archival ghost: the problem's own plate, recovering colour ---- */
+    [id="18-answer-attention-ghost"] {
+      position: absolute;
+      inset: 0;
+      width: 1920px;
+      height: 1080px;
+      object-fit: cover;
+      opacity: 0.26;
+      transform-origin: 50% 50%;
+    }
+    [id="18-answer-attention-ghostscrim"] {
+      position: absolute;
+      inset: 0;
+      width: 1920px;
+      height: 1080px;
+      background: radial-gradient(ellipse at 50% 52%,
+        rgba(11, 10, 8, 0.86) 0%, rgba(11, 10, 8, 0.96) 72%);
+    }
+  </style>
+
+  <div data-hf-id="hf-zdkb" id="root" data-composition-id="18-answer-attention" data-duration="17.5" data-width="1920" data-height="1080">
+    <img data-hf-id="hf-k5wo" id="18-answer-attention-ghost" class="clip" data-start="0" data-duration="17.5" data-track-index="0" src="assets/plates_graded/p16_cleavage.G1.jpg" alt="">
+    <div data-hf-id="hf-eygy" id="18-answer-attention-ghostscrim" class="clip" data-start="0" data-duration="17.5" data-track-index="0"></div>
+    <div data-hf-id="hf-h82s" id="18-answer-attention-act" class="clip" data-start="0" data-duration="17.5" data-track-index="1">VI · The Inspection Layer</div>
+    <div data-hf-id="hf-6vbu" id="18-answer-attention-slug" class="clip" data-start="0" data-duration="17.5" data-track-index="1">LiveReview · blast radius &amp; review priority</div>
+
+    <div data-hf-id="hf-tivw" id="18-answer-attention-statement" class="clip" data-start="0" data-duration="17.5" data-track-index="2"><span data-hf-id="hf-w24r">LiveReview</span> <span data-hf-id="hf-uox4">ranks</span> <span data-hf-id="hf-fv40">every</span> <span data-hf-id="hf-a451">hunk</span> <span data-hf-id="hf-66m8">by</span> <span data-hf-id="hf-0iwt">blast</span> <span data-hf-id="hf-v3en">radius</span> <span data-hf-id="hf-kyh6">and</span> <span data-hf-id="hf-wsl9">review</span> <span data-hf-id="hf-iwmp">priority.</span></div>
+
+    <div data-hf-id="hf-5238" id="18-answer-attention-window" class="clip" data-start="1.4" data-duration="16.1" data-track-index="3">
+      <div data-hf-id="hf-qnn1" id="18-answer-attention-topbar"></div>
+      <div data-hf-id="hf-qcro" id="18-answer-attention-dot-1"></div>
+      <div data-hf-id="hf-z0nj" id="18-answer-attention-dot-2"></div>
+      <div data-hf-id="hf-v2ji" id="18-answer-attention-dot-3"></div>
+    </div>
+    <video data-hf-id="hf-3yea" id="18-answer-attention-clip" class="clip" data-start="2.0" data-duration="8.0" data-track-index="4" muted playsinline preload="auto" src="assets/clip05_blast.mp4"></video>
+
+    <div data-hf-id="hf-nt46" id="18-answer-attention-tie" class="clip" data-start="0" data-duration="17.5" data-track-index="5">The wall, mapped. The dangerous sections lit.</div>
+    <div data-hf-id="hf-t2hq" id="18-answer-attention-seal" class="clip" data-start="0" data-duration="17.5" data-track-index="6">The Attention Problem → Solved ✓</div>
+  </div>
+
+  <script>
+    (function () {
+      var ID = "18-answer-attention";
+      var tl = gsap.timeline({ paused: true });
+      function $(s) { return document.getElementById(ID + "-" + s); }
+
+      /* Fixtures ease in together once and hold to the cut. */
+      tl.fromTo([$("act"), $("slug")], { opacity: 0 }, { opacity: 1, duration: 0.7, ease: "power2.out" }, 0.2);
+
+      /* 0.4s — statement card, per word. */
+      tl.fromTo($("statement").querySelectorAll("span"),
+        { opacity: 0, y: 18, filter: "blur(6px)" },
+        { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.42, ease: "power3.out", stagger: 0.06 }, 0.4);
+
+      /* 1.4s — the app window opens. */
+      tl.fromTo($("window"),
+        { scale: 0.965, opacity: 0 },
+        { scale: 1, opacity: 1, duration: 0.5, ease: "power3.out" }, 1.4);
+
+      /* 10.8s — the allegory tie-line. */
+      tl.fromTo($("tie"), { opacity: 0, y: 16, filter: "blur(6px)" },
+        { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.6, ease: "power3.out" }, 10.8);
+
+      /* 12.4s — the seal, then one scale pop that settles well before 14.2. */
+      tl.fromTo($("seal"), { opacity: 0, y: 14 },
+        { opacity: 1, y: 0, duration: 0.5, ease: "power3.out" }, 12.4);
+      tl.to($("seal"), { scale: 1.05, duration: 0.32, ease: "power2.out" }, 13.0);
+      tl.to($("seal"), { scale: 1, duration: 0.42, ease: "power2.inOut" }, 13.32);
+      /* Ghost backdrop drifts slowly; it is atmosphere, never a focal point. */
+      tl.fromTo($("ghost"), { scale: 1.06 }, { scale: 1.0, duration: 17.5, ease: "none" }, 0);
+      /* The demo is over at 10.00s; the window dissolves rather than
+         sitting empty for the rest of the frame. The seal then lands on
+         the archival plate itself. */
+      tl.to($("window"), { opacity: 0, scale: 0.985, duration: 0.65, ease: "power2.inOut" }, 10.15);
+      tl.to($("ghost"), { opacity: 0.62, duration: 0.9, ease: "power2.out" }, 10.15);
+      tl.to($("ghostscrim"), { opacity: 0.40, duration: 0.9, ease: "power2.out" }, 10.15);
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines[ID] = tl;
+    })();
+  </script>
+</template>

@@ -1,0 +1,198 @@
+<template>
+  <style>
+    @font-face {
+      font-family: "Playfair Display";
+      src: url("assets/fonts/PlayfairDisplay-var.woff2") format("woff2");
+      font-weight: 400 900;
+      font-style: normal;
+    }
+    @font-face {
+      font-family: "Playfair Display";
+      src: url("assets/fonts/PlayfairDisplay-italic-var.woff2") format("woff2");
+      font-weight: 400 700;
+      font-style: italic;
+    }
+    #root {
+      position: absolute;
+      inset: 0;
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+      background: #0b0a08;
+      font-family: "Playfair Display", Georgia, serif;
+      color: #ede4d0;
+    }
+
+    /* ---- film gate: the 1440x1080 archive plate, pillarboxed ---- */
+    [id="12-attention-limited-gate"] {
+      position: absolute;
+      left: 240px;
+      top: 0;
+      width: 1440px;
+      height: 1080px;
+      overflow: hidden;
+    }
+    [id="12-attention-limited-plate"] {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1440px;
+      height: 1080px;
+      object-fit: cover;
+      transform-origin: 50% 50%;
+    }
+    [id="12-attention-limited-edge-l"],
+    [id="12-attention-limited-edge-r"] {
+      position: absolute;
+      top: 0;
+      width: 1px;
+      height: 1080px;
+      background: rgba(237, 228, 208, 0.2);
+    }
+    [id="12-attention-limited-edge-l"] { left: 240px; }
+    [id="12-attention-limited-edge-r"] { left: 1679px; }
+
+    /* ---- the lamp beat: darkening field over the gate only ---- */
+    [id="12-attention-limited-dark"] {
+      position: absolute;
+      left: 240px;
+      top: 0;
+      width: 1440px;
+      height: 1080px;
+      background: rgba(11, 10, 8, 0.55);
+    }
+    [id="12-attention-limited-lamp-a"],
+    [id="12-attention-limited-lamp-b"] {
+      position: absolute;
+      width: 184px;
+      height: 184px;
+      background: radial-gradient(circle, rgba(237, 228, 208, 0.26) 0%, rgba(237, 228, 208, 0) 70%);
+    }
+    [id="12-attention-limited-lamp-a"] { left: 560px; top: 300px; }
+    [id="12-attention-limited-lamp-b"] { left: 1180px; top: 620px; }
+
+    /* ---- bottom scrim so type clears AA over any plate ---- */
+    [id="12-attention-limited-scrim"] {
+      position: absolute;
+      inset: 0;
+      width: 1920px;
+      height: 1080px;
+      background: linear-gradient(180deg, rgba(11, 10, 8, 0) 34%, rgba(11, 10, 8, 0.9) 100%);
+    }
+
+    /* ---- the two fixtures ---- */
+    [id="12-attention-limited-act"] {
+      position: absolute;
+      right: 96px;
+      top: 88px;
+      font-size: 20px;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: rgba(237, 228, 208, 0.55);
+      font-weight: 500;
+    }
+    [id="12-attention-limited-slug"] {
+      position: absolute;
+      left: 96px;
+      bottom: 74px;
+      font-size: 17px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: rgba(237, 228, 208, 0.42);
+      font-weight: 500;
+    }
+
+    /* ---- text block ---- */
+    [id="12-attention-limited-lead"] {
+      position: absolute;
+      left: 140px;
+      top: 556px;
+      width: 1400px;
+      font-size: 48px;
+      font-weight: 400;
+      line-height: 1.2;
+      color: #ede4d0;
+    }
+    [id="12-attention-limited-key"] {
+      position: absolute;
+      left: 140px;
+      top: 640px;
+      width: 1500px;
+      font-size: 80px;
+      font-weight: 700;
+      line-height: 1.1;
+      letter-spacing: 0.005em;
+      color: #ede4d0;
+    }
+    [id="12-attention-limited-quote"] {
+      position: absolute;
+      left: 140px;
+      top: 856px;
+      width: 1240px;
+      font-size: 28px;
+      font-style: italic;
+      font-weight: 400;
+      line-height: 1.42;
+      color: #c9bfa8;
+    }
+    [id="12-attention-limited-lead"] span,
+    [id="12-attention-limited-key"] span {
+      display: inline-block;
+    }
+  </style>
+
+  <div data-hf-id="hf-12a0" id="root" data-composition-id="12-attention-limited" data-duration="10.5" data-width="1920" data-height="1080">
+    <div data-hf-id="hf-12a1" id="12-attention-limited-gate">
+      <video data-hf-id="hf-12a2" id="12-attention-limited-plate" muted playsinline preload="auto" src="assets/archive_graded/v_scalers.G0.mp4" class="clip" data-start="0" data-duration="10.5" data-track-index="0"></video>
+    </div>
+
+    <div data-hf-id="hf-12a3" id="12-attention-limited-dark" class="clip" data-start="5.4" data-duration="5.1" data-track-index="1"></div>
+    <div data-hf-id="hf-12a4" id="12-attention-limited-lamp-a" class="clip" data-start="5.4" data-duration="5.1" data-track-index="2"></div>
+    <div data-hf-id="hf-12a5" id="12-attention-limited-lamp-b" class="clip" data-start="5.4" data-duration="5.1" data-track-index="2"></div>
+
+    <div data-hf-id="hf-12a6" id="12-attention-limited-edge-l" class="clip" data-start="0" data-duration="10.5" data-track-index="3"></div>
+    <div data-hf-id="hf-12a7" id="12-attention-limited-edge-r" class="clip" data-start="0" data-duration="10.5" data-track-index="3"></div>
+    <div data-hf-id="hf-12a8" id="12-attention-limited-scrim" class="clip" data-start="0" data-duration="10.5" data-track-index="4"></div>
+
+    <div data-hf-id="hf-12a9" id="12-attention-limited-act" class="clip" data-start="0" data-duration="10.5" data-track-index="5">III · The Rising Water</div>
+    <div data-hf-id="hf-12aa" id="12-attention-limited-slug" class="clip" data-start="0" data-duration="10.5" data-track-index="5">High scalers · 1,000-foot cliffs · 1932</div>
+
+    <div data-hf-id="hf-12ab" id="12-attention-limited-lead" class="clip" data-start="0" data-duration="10.5" data-track-index="6"><span data-hf-id="hf-12ac">And</span> <span data-hf-id="hf-12ad">let's</span> <span data-hf-id="hf-12ae">remember</span> <span data-hf-id="hf-12af">—</span></div>
+    <div data-hf-id="hf-12ag" id="12-attention-limited-key" class="clip" data-start="0" data-duration="10.5" data-track-index="7"><div data-hf-id="hf-12ah"><span data-hf-id="hf-12ai">HUMAN</span> <span data-hf-id="hf-12aj">ATTENTION</span></div><div data-hf-id="hf-12ak"><span data-hf-id="hf-12al">IS</span> <span data-hf-id="hf-12am">STILL</span> <span data-hf-id="hf-12an">LIMITED</span></div></div>
+    <div data-hf-id="hf-12ao" id="12-attention-limited-quote" class="clip" data-start="0" data-duration="10.5" data-track-index="8">Two lamps. One thousand feet of rock.</div>
+  </div>
+
+  <script>
+    (function () {
+      var ID = "12-attention-limited";
+      var tl = gsap.timeline({ paused: true });
+      function $(s) { return document.getElementById(ID + "-" + s); }
+
+      /* Ken Burns on the gate plate: transform only, seek-safe, no repeat. */
+      tl.fromTo($("plate"), { scale: 1.055 }, { scale: 1.0, duration: 10.5, ease: "none" }, 0);
+
+      /* Fixtures ease in once and hold. */
+      tl.fromTo([$("act"), $("slug")], { opacity: 0 }, { opacity: 1, duration: 0.7, ease: "power2.out" }, 0.2);
+
+      /* 0.8s — lead line, per word. */
+      tl.fromTo($("lead").querySelectorAll("span"),
+        { opacity: 0, y: 18, filter: "blur(6px)" },
+        { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.42, ease: "power3.out", stagger: 0.06 }, 0.8);
+
+      /* 2.8s — the key line across two lines, per word, heavier. */
+      tl.fromTo($("key").querySelectorAll("span"),
+        { opacity: 0, y: 26, filter: "blur(8px)" },
+        { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.52, ease: "power3.out", stagger: 0.09 }, 2.8);
+
+      /* 5.4s — the lamp beat: the wall goes dark, two small pools remain. */
+      tl.fromTo([$("dark"), $("lamp-a"), $("lamp-b")],
+        { opacity: 0 }, { opacity: 1, duration: 0.8, ease: "power2.out" }, 5.4);
+
+      /* 7.6s — the gloss; holds to the cut. */
+      tl.fromTo($("quote"), { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: 0.7, ease: "power3.out" }, 7.6);
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines[ID] = tl;
+    })();
+  </script>
+</template>

@@ -1,0 +1,154 @@
+<template>
+  <style>
+    @font-face {
+      font-family: "Inter";
+      src: url("assets/fonts/Inter-var.woff2") format("woff2");
+      font-weight: 100 900;
+      font-style: normal;
+    }
+    @font-face {
+      font-family: "Playfair Display";
+      src: url("assets/fonts/PlayfairDisplay-var.woff2") format("woff2");
+      font-weight: 400 900;
+      font-style: normal;
+    }
+    @font-face {
+      font-family: "Playfair Display";
+      src: url("assets/fonts/PlayfairDisplay-italic-var.woff2") format("woff2");
+      font-weight: 400 700;
+      font-style: italic;
+    }
+    #root {
+      position: absolute;
+      inset: 0;
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+      background: #0b0a08;
+      font-family: "Inter", "Helvetica Neue", Arial, sans-serif;
+      color: #e8eeff;
+    }
+
+    /* ---- the app window shell (modern `answer` layout) ---- */
+    [id="23-one-system-shell"] {
+      position: absolute;
+      left: 230px;
+      top: 346px;
+      width: 1460px;
+      height: 658px;
+      background: #0e1322;
+      border: 1.5px solid #1a2440;
+      border-radius: 12px;
+      overflow: hidden;
+      transform-origin: 50% 50%;
+    }
+    [id="23-one-system-topbar"] {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 31px;
+      background: #0e1322;
+      border-bottom: 1px solid #1a2440;
+    }
+    [id="23-one-system-dot-1"],
+    [id="23-one-system-dot-2"],
+    [id="23-one-system-dot-3"] {
+      position: absolute;
+      top: 11px;
+      width: 8px;
+      height: 8px;
+      background: #1a2440;
+      border-radius: 50%;
+    }
+    [id="23-one-system-dot-1"] { left: 14px; }
+    [id="23-one-system-dot-2"] { left: 32px; }
+    [id="23-one-system-dot-3"] { left: 50px; }
+
+    /* ---- product UI: 2520x1080 (21:9), never cropped ---- */
+    [id="23-one-system-clip"] {
+      position: absolute;
+      left: 2px;
+      top: 33px;
+      width: 1456px;
+      height: 623px;
+      object-fit: contain;
+      background: #0e1322;
+    }
+
+    /* ---- the two fixtures ---- */
+    [id="23-one-system-act"] {
+      position: absolute;
+      right: 96px;
+      top: 88px;
+      font-size: 20px;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: rgba(237, 228, 208, 0.55);
+      font-weight: 500;
+    }
+    [id="23-one-system-slug"] {
+      position: absolute;
+      left: 96px;
+      bottom: 74px;
+      font-size: 17px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: rgba(232, 238, 255, 0.42);
+      font-weight: 500;
+    }
+
+    /* ---- statement card, above the window ---- */
+    [id="23-one-system-statement"] {
+      position: absolute;
+      left: 230px;
+      top: 196px;
+      width: 1460px;
+      font-size: 42px;
+      font-weight: 600;
+      line-height: 1.24;
+      letter-spacing: 0.002em;
+      color: #e8eeff;
+    }
+    [id="23-one-system-statement"] span {
+      display: inline-block;
+    }
+  </style>
+
+  <div id="root" data-composition-id="23-one-system" data-duration="7.5" data-width="1920" data-height="1080">
+    <div id="23-one-system-act" class="clip" data-start="0" data-duration="7.5" data-track-index="0">VII &middot; The Dam Holds</div>
+    <div id="23-one-system-slug" class="clip" data-start="0" data-duration="7.5" data-track-index="0">LiveReview &middot; one unified system</div>
+
+    <div id="23-one-system-statement" class="clip" data-start="0" data-duration="7.5" data-track-index="1"><span>The</span> <span>only</span> <span>platform</span> <span>that</span> <span>solves</span> <span>all</span> <span>four</span> <span>&mdash;</span> <span>in</span> <span>one</span> <span>unified</span> <span>system.</span></div>
+
+    <div id="23-one-system-shell">
+      <div id="23-one-system-topbar"></div>
+      <div id="23-one-system-dot-1"></div>
+      <div id="23-one-system-dot-2"></div>
+      <div id="23-one-system-dot-3"></div>
+      <video id="23-one-system-clip" class="clip" data-start="1.4" data-duration="6.1" data-track-index="3" muted playsinline preload="auto" src="assets/clip13_dashboard.mp4"></video>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      var ID = "23-one-system";
+      var tl = gsap.timeline({ paused: true });
+      function $(s) { return document.getElementById(ID + "-" + s); }
+
+      /* Fixtures ease in once and hold to the cut. */
+      tl.fromTo([$("act"), $("slug")], { opacity: 0 }, { opacity: 1, duration: 0.7, ease: "power2.out" }, 0.2);
+
+      /* 0.4s — the statement card, per word. */
+      tl.fromTo($("statement").querySelectorAll("span"),
+        { opacity: 0, y: 18, filter: "blur(6px)" },
+        { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.42, ease: "power3.out", stagger: 0.06 }, 0.4);
+
+      /* 1.0s — the app window opens; product UI starts at 1.4 and holds to the cut. */
+      tl.fromTo($("shell"), { scale: 0.965, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.5, ease: "power3.out" }, 1.0);
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines[ID] = tl;
+    })();
+  </script>
+</template>

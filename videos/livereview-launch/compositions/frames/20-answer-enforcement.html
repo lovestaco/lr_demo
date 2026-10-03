@@ -1,0 +1,236 @@
+<template>
+  <style>
+    @font-face {
+      font-family: "Inter";
+      src: url("assets/fonts/Inter-var.woff2") format("woff2");
+      font-weight: 100 900;
+      font-style: normal;
+    }
+    @font-face {
+      font-family: "Playfair Display";
+      src: url("assets/fonts/PlayfairDisplay-var.woff2") format("woff2");
+      font-weight: 400 900;
+      font-style: normal;
+    }
+    @font-face {
+      font-family: "Playfair Display";
+      src: url("assets/fonts/PlayfairDisplay-italic-var.woff2") format("woff2");
+      font-weight: 400 700;
+      font-style: italic;
+    }
+    #root {
+      position: absolute;
+      inset: 0;
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+      background: #0b0a08;
+      font-family: "Inter", "Helvetica Neue", Arial, sans-serif;
+      color: #e8eeff;
+    }
+
+    /* ---- the two fixtures ---- */
+    [id="20-answer-enforcement-act"] {
+      position: absolute;
+      right: 96px;
+      top: 88px;
+      font-size: 20px;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: rgba(237, 228, 208, 0.55);
+      font-weight: 500;
+    }
+    [id="20-answer-enforcement-slug"] {
+      position: absolute;
+      left: 96px;
+      bottom: 74px;
+      font-size: 17px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: rgba(232, 238, 255, 0.42);
+      font-weight: 500;
+    }
+
+    /* ---- statement card, above the window ---- */
+    [id="20-answer-enforcement-statement"] {
+      position: absolute;
+      left: 230px;
+      top: 196px;
+      width: 1460px;
+      font-size: 42px;
+      font-weight: 600;
+      line-height: 1.25;
+      color: #e8eeff;
+    }
+    [id="20-answer-enforcement-statement"] span {
+      display: inline-block;
+    }
+
+    /* ---- the app window shell ---- */
+    [id="20-answer-enforcement-shell"] {
+      position: absolute;
+      left: 230px;
+      top: 346px;
+      width: 1460px;
+      height: 658px;
+      background: #0e1322;
+      border: 1.5px solid #1a2440;
+      border-radius: 12px;
+      overflow: hidden;
+      transform-origin: 50% 50%;
+    }
+    [id="20-answer-enforcement-topbar"] {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 31px;
+      background: #0e1322;
+      border-bottom: 1px solid #1a2440;
+    }
+    [id="20-answer-enforcement-dot-1"],
+    [id="20-answer-enforcement-dot-2"],
+    [id="20-answer-enforcement-dot-3"] {
+      position: absolute;
+      top: 11px;
+      width: 8px;
+      height: 8px;
+      background: #1a2440;
+      border-radius: 50%;
+    }
+    [id="20-answer-enforcement-dot-1"] { left: 14px; }
+    [id="20-answer-enforcement-dot-2"] { left: 32px; }
+    [id="20-answer-enforcement-dot-3"] { left: 50px; }
+
+    /* ---- product UI: 2520x1080 (21:9) — contain, never crop ---- */
+    [id="20-answer-enforcement-clip-schedule"],
+    [id="20-answer-enforcement-clip-cicd"] {
+      position: absolute;
+      left: 2px;
+      top: 33px;
+      width: 1456px;
+      height: 623px;
+      object-fit: contain;
+      background: #0e1322;
+    }
+
+    /* ---- allegory tie-line, below the window ---- */
+    [id="20-answer-enforcement-tie"] {
+      position: absolute;
+      left: 230px;
+      top: 1022px;
+      width: 1000px;
+      font-family: "Playfair Display", Georgia, serif;
+      font-size: 26px;
+      font-style: italic;
+      font-weight: 400;
+      line-height: 1.3;
+      color: rgba(237, 228, 208, 0.62);
+    }
+
+    /* ---- the seal ---- */
+    [id="20-answer-enforcement-seal"] {
+      position: absolute;
+      right: 230px;
+      top: 1016px;
+      text-align: right;
+      font-size: 40px;
+      font-weight: 700;
+      line-height: 1.1;
+      color: #e8eeff;
+      white-space: nowrap;
+    }
+    [id="20-answer-enforcement-seal"] span {
+      display: inline-block;
+    }
+    [id="20-answer-enforcement-seal-check"] {
+      margin-left: 14px;
+      transform-origin: 50% 50%;
+    }
+
+    /* ---- archival ghost: the problem's own plate, recovering colour ---- */
+    [id="20-answer-enforcement-ghost"] {
+      position: absolute;
+      inset: 0;
+      width: 1920px;
+      height: 1080px;
+      object-fit: cover;
+      opacity: 0.26;
+      transform-origin: 50% 50%;
+    }
+    [id="20-answer-enforcement-ghostscrim"] {
+      position: absolute;
+      inset: 0;
+      width: 1920px;
+      height: 1080px;
+      background: radial-gradient(ellipse at 50% 52%,
+        rgba(11, 10, 8, 0.86) 0%, rgba(11, 10, 8, 0.96) 72%);
+    }
+  </style>
+
+  <div data-hf-id="hf-a20r" id="root" data-composition-id="20-answer-enforcement" data-duration="17.5" data-width="1920" data-height="1080">
+    <img data-hf-id="hf-b1az" id="20-answer-enforcement-ghost" class="clip" data-start="0" data-duration="17.5" data-track-index="0" src="assets/plates_graded/p11_recorders.G3.jpg" alt="">
+    <div data-hf-id="hf-8a33" id="20-answer-enforcement-ghostscrim" class="clip" data-start="0" data-duration="17.5" data-track-index="0"></div>
+    <div data-hf-id="hf-a20a" id="20-answer-enforcement-act" class="clip" data-start="0" data-duration="17.5" data-track-index="3">VI · The Inspection Layer</div>
+    <div data-hf-id="hf-a20g" id="20-answer-enforcement-slug" class="clip" data-start="0" data-duration="17.5" data-track-index="3">LiveReview · scheduled reviews &amp; CI/CD gates</div>
+
+    <div data-hf-id="hf-a20st" id="20-answer-enforcement-statement" class="clip" data-start="0" data-duration="17.5" data-track-index="4"><span data-hf-id="hf-a20s1">LiveReview</span> <span data-hf-id="hf-a20s2">reviews</span> <span data-hf-id="hf-a20s3">at</span> <span data-hf-id="hf-a20s4">commit,</span> <span data-hf-id="hf-a20s5">push,</span> <span data-hf-id="hf-a20s6">PR,</span> <span data-hf-id="hf-a20s7">CI/CD</span> <span data-hf-id="hf-a20s8">and</span> <span data-hf-id="hf-a20s9">on</span> <span data-hf-id="hf-a20s10">schedule</span> <span data-hf-id="hf-a20s11">—</span> <span data-hf-id="hf-a20s12">enforcing</span> <span data-hf-id="hf-a20s13">your</span> <span data-hf-id="hf-a20s14">rules.</span></div>
+
+    <div data-hf-id="hf-a20sh" id="20-answer-enforcement-shell">
+      <div data-hf-id="hf-a20tb" id="20-answer-enforcement-topbar">
+        <div data-hf-id="hf-a20d1" id="20-answer-enforcement-dot-1"></div>
+        <div data-hf-id="hf-a20d2" id="20-answer-enforcement-dot-2"></div>
+        <div data-hf-id="hf-a20d3" id="20-answer-enforcement-dot-3"></div>
+      </div>
+      <video data-hf-id="hf-a20v1" id="20-answer-enforcement-clip-schedule" class="clip" data-start="2.0" data-duration="4.0" data-track-index="1" muted playsinline preload="auto" src="assets/clip08_schedule.mp4"></video>
+      <video data-hf-id="hf-a20v2" id="20-answer-enforcement-clip-cicd" class="clip" data-start="6.0" data-duration="4.7" data-track-index="2" data-playback-rate="1.4191" muted playsinline preload="auto" src="assets/clip10_cicd.mp4"></video>
+    </div>
+
+    <div data-hf-id="hf-a20ti" id="20-answer-enforcement-tie" class="clip" data-start="0" data-duration="17.5" data-track-index="5">Not a promise to inspect. A gate that will not open.</div>
+
+    <div data-hf-id="hf-a20se" id="20-answer-enforcement-seal" class="clip" data-start="0" data-duration="17.5" data-track-index="6"><span data-hf-id="hf-a20sw" id="20-answer-enforcement-seal-words"><span data-hf-id="hf-a20w1">The</span> <span data-hf-id="hf-a20w2">Enforcement</span> <span data-hf-id="hf-a20w3">Problem</span> <span data-hf-id="hf-a20w4">→</span> <span data-hf-id="hf-a20w5">Solved</span></span><span data-hf-id="hf-a20ck" id="20-answer-enforcement-seal-check">✓</span></div>
+  </div>
+
+  <script>
+    (function () {
+      var ID = "20-answer-enforcement";
+      var tl = gsap.timeline({ paused: true });
+      function $(s) { return document.getElementById(ID + "-" + s); }
+
+      /* Fixtures ease in together and hold to the cut. */
+      tl.fromTo([$("act"), $("slug")], { opacity: 0 }, { opacity: 1, duration: 0.7, ease: "power2.out" }, 0.2);
+
+      /* 0.4s — the statement card, per word. Wraps to two lines; holds. */
+      tl.fromTo($("statement").querySelectorAll("span"),
+        { opacity: 0, y: 18, filter: "blur(6px)" },
+        { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.42, ease: "power3.out", stagger: 0.06 }, 0.4);
+
+      /* 1.4s — the window opens. Transform + opacity only. */
+      tl.fromTo($("shell"),
+        { scale: 0.965, opacity: 0 },
+        { scale: 1, opacity: 1, duration: 0.5, ease: "power3.out" }, 1.4);
+
+      /* 10.9s — the allegory tie-line. Holds. */
+      tl.fromTo($("tie"), { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: 0.7, ease: "power3.out" }, 10.9);
+
+      /* 12.4s — the seal: words first, then the check. Resolves by ~13.8. */
+      tl.fromTo($("seal-words").querySelectorAll("span"),
+        { opacity: 0, y: 18, filter: "blur(6px)" },
+        { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.42, ease: "power3.out", stagger: 0.06 }, 12.4);
+      tl.fromTo($("seal-check"),
+        { opacity: 0, scale: 0.72 },
+        { opacity: 1, scale: 1, duration: 0.44, ease: "power3.out" }, 13.3);
+      /* Ghost backdrop drifts slowly; it is atmosphere, never a focal point. */
+      tl.fromTo($("ghost"), { scale: 1.06 }, { scale: 1.0, duration: 17.5, ease: "none" }, 0);
+      /* The demo is over at 10.70s; the window dissolves rather than
+         sitting empty for the rest of the frame. The seal then lands on
+         the archival plate itself. */
+      tl.to($("shell"), { opacity: 0, scale: 0.985, duration: 0.65, ease: "power2.inOut" }, 10.85);
+      tl.to($("ghost"), { opacity: 0.62, duration: 0.9, ease: "power2.out" }, 10.85);
+      tl.to($("ghostscrim"), { opacity: 0.40, duration: 0.9, ease: "power2.out" }, 10.85);
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines[ID] = tl;
+    })();
+  </script>
+</template>

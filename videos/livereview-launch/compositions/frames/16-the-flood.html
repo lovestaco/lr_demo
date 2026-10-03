@@ -1,0 +1,178 @@
+<template>
+  <style>
+    @font-face {
+      font-family: "Playfair Display";
+      src: url("assets/fonts/PlayfairDisplay-var.woff2") format("woff2");
+      font-weight: 400 900;
+      font-style: normal;
+    }
+    @font-face {
+      font-family: "Playfair Display";
+      src: url("assets/fonts/PlayfairDisplay-italic-var.woff2") format("woff2");
+      font-weight: 400 700;
+      font-style: italic;
+    }
+    #root {
+      position: absolute;
+      inset: 0;
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+      background: #0b0a08;
+      font-family: "Playfair Display", Georgia, serif;
+      color: #ede4d0;
+    }
+
+    /* ---- element 1: the 1931 intertitle card, in the 1440x1080 film gate ---- */
+    [id="16-the-flood-gate"] {
+      position: absolute;
+      left: 240px;
+      top: 0;
+      width: 1440px;
+      height: 1080px;
+      overflow: hidden;
+    }
+    [id="16-the-flood-card"] {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1440px;
+      height: 1080px;
+      object-fit: cover;
+      transform-origin: 50% 50%;
+    }
+    [id="16-the-flood-edge-l"],
+    [id="16-the-flood-edge-r"] {
+      position: absolute;
+      top: 0;
+      width: 1px;
+      height: 1080px;
+      background: rgba(237, 228, 208, 0.2);
+    }
+    [id="16-the-flood-edge-l"] { left: 240px; }
+    [id="16-the-flood-edge-r"] { left: 1679px; }
+
+    /* ---- element 2: the flood plate, FULL BLEED (not in the gate) ---- */
+    [id="16-the-flood-plate"] {
+      position: absolute;
+      inset: 0;
+      width: 1920px;
+      height: 1080px;
+      object-fit: cover;
+      transform-origin: 50% 50%;
+    }
+
+    /* ---- bottom scrim so type clears AA over the plate ---- */
+    [id="16-the-flood-scrim"] {
+      position: absolute;
+      inset: 0;
+      width: 1920px;
+      height: 1080px;
+      background: linear-gradient(180deg, rgba(11,10,8,0.30) 0%, rgba(11,10,8,0.18) 22%, rgba(11,10,8,0.72) 58%, rgba(11,10,8,0.94) 100%);
+    }
+
+    /* ---- the two fixtures ---- */
+    [id="16-the-flood-act"] {
+      position: absolute;
+      right: 96px;
+      top: 88px;
+      font-size: 20px;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: rgba(237, 228, 208, 0.55);
+      font-weight: 500;
+    }
+    [id="16-the-flood-slug-a"],
+    [id="16-the-flood-slug-b"] {
+      position: absolute;
+      left: 96px;
+      bottom: 74px;
+      font-size: 17px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: rgba(237, 228, 208, 0.42);
+      font-weight: 500;
+    }
+
+    /* ---- text block over the plate ---- */
+    [id="16-the-flood-date"] {
+      position: absolute;
+      left: 140px;
+      top: 736px;
+      width: 1360px;
+      font-size: 72px;
+      font-weight: 700;
+      line-height: 1.1;
+      letter-spacing: 0.02em;
+      color: #c2703a;
+    }
+    [id="16-the-flood-line"] {
+      position: absolute;
+      left: 140px;
+      top: 872px;
+      width: 1360px;
+      font-size: 38px;
+      font-weight: 400;
+      line-height: 1.42;
+      color: #ede4d0;
+    }
+    [id="16-the-flood-date"] span,
+    [id="16-the-flood-line"] span {
+      display: inline-block;
+    }
+  </style>
+
+  <div data-hf-id="hf-d4b9" id="root" data-composition-id="16-the-flood" data-duration="9.5" data-width="1920" data-height="1080">
+    <div data-hf-id="hf-pucx" id="16-the-flood-gate">
+      <video data-hf-id="hf-csb4" id="16-the-flood-card" muted playsinline preload="auto" src="assets/archive_graded/t_menace_card.G0.mp4" class="clip" data-start="0" data-duration="3.6" data-track-index="0"></video>
+    </div>
+    <div data-hf-id="hf-3p03" id="16-the-flood-edge-l" class="clip" data-start="0" data-duration="3.6" data-track-index="1"></div>
+    <div data-hf-id="hf-8erx" id="16-the-flood-edge-r" class="clip" data-start="0" data-duration="3.6" data-track-index="1"></div>
+
+    <img data-hf-id="hf-k1a2" id="16-the-flood-plate" class="clip" data-start="3.4" data-duration="6.1" data-track-index="2" src="assets/plates_graded/p21_flood_portal.G0.jpg" alt="">
+    <div data-hf-id="hf-52rw" id="16-the-flood-scrim" class="clip" data-start="3.4" data-duration="6.1" data-track-index="3"></div>
+
+    <div data-hf-id="hf-cf4d" id="16-the-flood-act" class="clip" data-start="0" data-duration="9.5" data-track-index="4">V · Four Questions</div>
+    <div data-hf-id="hf-yl16" id="16-the-flood-slug-a" class="clip" data-start="0" data-duration="3.4" data-track-index="5">Boulder Dam: The Official Picture · 1931</div>
+    <div data-hf-id="hf-c81e" id="16-the-flood-slug-b" class="clip" data-start="3.4" data-duration="6.1" data-track-index="5">Flash flood · outlet portal, diversion tunnel No. 2</div>
+
+    <div data-hf-id="hf-gg41" id="16-the-flood-date" class="clip" data-start="3.4" data-duration="6.1" data-track-index="6"><span data-hf-id="hf-27pk">AUGUST</span> <span data-hf-id="hf-12qz">31,</span> <span data-hf-id="hf-5wge">1932</span></div>
+    <div data-hf-id="hf-thrk" id="16-the-flood-line" class="clip" data-start="3.4" data-duration="6.1" data-track-index="7"><span data-hf-id="hf-sxk0">The</span> <span data-hf-id="hf-vbos">water</span> <span data-hf-id="hf-tnyj">found</span> <span data-hf-id="hf-3tds">the</span> <span data-hf-id="hf-i3n3">gap.</span> <span data-hf-id="hf-4dd6">Nobody</span> <span data-hf-id="hf-9eke">was</span> <span data-hf-id="hf-3h8c">watching</span> <span data-hf-id="hf-dfoo">that</span> <span data-hf-id="hf-o2mi">section.</span></div>
+  </div>
+
+  <script>
+    (function () {
+      var ID = "16-the-flood";
+      var tl = gsap.timeline({ paused: true });
+      function $(s) { return document.getElementById(ID + "-" + s); }
+
+      /* Fixtures ease in once and hold. Slug A rides with the card. */
+      tl.fromTo([$("act"), $("slug-a")], { opacity: 0 }, { opacity: 1, duration: 0.7, ease: "power2.out" }, 0.2);
+
+      /* 3.4s — the card and its gate hairlines dissolve out together, resolved
+         to zero by their shared 3.6 out-point. */
+      tl.to([$("gate"), $("edge-l"), $("edge-r")], { opacity: 0, duration: 0.2, ease: "none" }, 3.4);
+      tl.to($("slug-a"), { opacity: 0, duration: 0.25, ease: "none" }, 3.15);
+
+      /* 3.4s — the flood plate dissolves in full bleed, scrim and new slug with it. */
+      tl.fromTo([$("plate"), $("scrim")], { opacity: 0 }, { opacity: 1, duration: 0.5, ease: "power2.out" }, 3.4);
+      tl.fromTo($("slug-b"), { opacity: 0 }, { opacity: 1, duration: 0.5, ease: "power2.out" }, 3.4);
+
+      /* Ken Burns pushes IN on the flood — 1.0 -> 1.08 across 3.4 to 9.5. */
+      tl.fromTo($("plate"), { scale: 1.0 }, { scale: 1.08, duration: 6.1, ease: "none" }, 3.4);
+
+      /* 4.2s — the date, per word, heavy. Holds to the cut. */
+      tl.fromTo($("date").querySelectorAll("span"),
+        { opacity: 0, y: 26, filter: "blur(8px)" },
+        { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.52, ease: "power3.out", stagger: 0.09 }, 4.2);
+
+      /* 6.0s — the sentence, per word. Holds to the cut. */
+      tl.fromTo($("line").querySelectorAll("span"),
+        { opacity: 0, y: 18, filter: "blur(6px)" },
+        { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.42, ease: "power3.out", stagger: 0.06 }, 6.0);
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines[ID] = tl;
+    })();
+  </script>
+</template>

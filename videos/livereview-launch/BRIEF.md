@@ -3,16 +3,17 @@ workflow: product-launch-video
 flow: automation
 storyboard: yes
 message: "You already generate code with AI — LiveReview is the AI-assisted inspection layer you owe your users."
+version: v2 (2026-10-01) — see the v2 section below; v1 body retained above it
 destination: youtube
 aspect: 1920x1080
 language: en
 audience: engineering-leadership
-length: 150s
+length: 270s
 angle: problem-solution
 narration: no
 music: bed-only
 captions: no
-style_preset: blue-professional
+style_preset: reclamation-vintage
 ---
 
 ## Intent
@@ -93,3 +94,50 @@ so **every frame carries its own on-screen words**, taken from the deck.
 - Impact / onboarding report: 57 charts across 7 sections, one click, PDF/HTML export.
 - Deck slides 23/24, 35/36 and 40/41 are build-up variants of the same line; each pair
   collapses into a single beat.
+
+
+---
+
+## v2 — 2026-10-01 · "The Inspection Layer"
+
+This section supersedes the Intent / Customizations above. Everything before it
+describes the v1 cut, retained for history. The live plan is `STORYBOARD.md`;
+`STORYBOARD.v1-blue.md` is the v1 plan.
+
+### Why
+
+The user rejected v1 on three specific grounds: it "looks like any other theme
+who hyperframe use it"; text alone is unmemorable — "almost each text can be
+tied to a scene, it should be like a movie"; and the problem section at ~48s was
+"too fast the user cant even read… i dont care if the video is even 4 mins".
+
+### What changed
+
+- **A world, not a theme.** The film is an allegory: a 1930s dam. The river is
+  AI-generated code; the city below is production; inspection is what keeps the
+  water on the useful side of the wall. Every deck line is tied to a scene in it.
+- **Real archival picture.** Public-domain U.S. Bureau of Reclamation / NARA
+  photographs and Prelinger film of Boulder (Hoover) Dam, 1931–35, carry the
+  frame. Three original 1931 intertitles are used verbatim as cards. Sourced,
+  trimmed and credited in `ATTRIBUTION.md`.
+- **Gradual vintage → modern.** Colour and grain recover one step per
+  "→ Solved" (G0…G5), implemented with `hyperframes media-treatment` presets —
+  `mono-fade` / `vintage-wash` / `filmArtifacts` / grain / vignette — never
+  hand-rolled CSS. Product UI is never graded.
+- **The music heals with the picture.** The same bed, band-limited and noisy
+  under 1931, opening one step at each grade boundary, clean at the close.
+- **Runtime 2:30 → 4:30**, with the problem world going 48s → 169s. Cards now
+  hold `max(3.2s, words × 0.42 + 1.4s)` after their entrance.
+
+### Decisions the user made (asked and answered before building)
+
+| Question | Answer |
+| --- | --- |
+| Where does vintage become modern? | Gradual — colour seeps back per solved problem |
+| How literal is the dam world? | Archival footage and photos **are** the picture |
+| Add narration? | **No** — text-only; holds sized for reading instead |
+
+### Standing instruction
+
+"if tokens get exhausted wait until it resets and continue working on it" —
+build autonomously through to the rendered file; no further checkpoints.
