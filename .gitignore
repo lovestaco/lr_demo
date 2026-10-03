@@ -21,3 +21,9 @@ render_*_log.txt
 # >100MB renders (GitHub limit); compressed versions are committed
 videos/livereview-launch/renders/livereview-inspection-layer.mp4
 videos/livereview-launch/renders/livereview-atc.mp4
+
+# secrets
+.env
+
+# miles pipeline: generated build outputs
+miles/build/

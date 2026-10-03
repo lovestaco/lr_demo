@@ -17,7 +17,8 @@ miles/
     paths.py             every path in one place
     anim.py              keyframe helpers (easing, visibility, Blender 5 layered actions)
     mixamo.py            Performer: chain Mixamo clips with crossfades + root-motion stitching
-    fx.py                studio, web strands, two-sided board, camera rig, look/bloom
+    fx.py                studio themes, physical suit shading, WebShots, multi-slide Board, camera rig, look
+    shot.py              shared per-act setup: stage, framing, save
     preview.py           fast Workbench contact sheets for comparing clips
   scripts/               numbered pipeline steps (each re-runnable)
   build/                 generated .blend files, sheets, frames (gitignored)
@@ -39,17 +40,26 @@ blender -b --factory-startup --python scripts/02_build_character.py      # -> bu
 # 3. slides (edit SLIDES in the script)
 python3 scripts/03_make_slides.py                                         # -> assets/slides/*.png
 
-# 4. the shot
-blender -b build/character.blend --python scripts/04_build_scene.py      # -> build/scene.blend
+# 4. the acts (one script per act; slides come from 03)
+blender -b build/character.blend --python scripts/04_act1.py             # Act 1 hook   -> build/act1.blend
+blender -b build/character.blend --python scripts/04_act2.py             # Act 2 belief -> build/act2.blend
 
-# 5. render
-blender -b build/scene.blend --python scripts/05_render.py -- sheet       # quick contact sheet
-blender -b build/scene.blend --python scripts/05_render.py -- full 67     # 720p (100 = 1080p)
+# 5. render (per act)
+blender -b build/act2.blend --python scripts/05_render.py -- sheet        # quick contact sheet
+blender -b build/act2.blend --python scripts/05_render.py -- full         # 360p preview (fast)  -> renders/act2_360p.mp4
+blender -b build/act2.blend --python scripts/05_render.py -- full 100     # 1080p final
 ```
 
-## Directing a new shot
+## Slides
 
-Copy `scripts/04_build_scene.py` and change the clip list. Timing, web strands,
+`scripts/03_make_slides.py` holds the deck text (`SLIDES`, numbered as in
+`../ppt/LiveReview-Presentation-slides.md`). Rules from review: one idea per
+slide, black on white, one font size (auto-fit), no logo. The board shows any
+list of slides; `board.flip(frame, i)` spins it and swaps the hidden face.
+
+## Directing a new act
+
+Copy `scripts/04_act2.py` and change the clip list + slide numbers. Timing, web strands,
 the board and the camera are all derived from the clips, so swapping a clip
 re-times the shot.
 
@@ -59,11 +69,29 @@ perf.then("Hanging Idle", length=100)
 perf.then("Hard Landing", blend=6)
 perf.then("Pull Heavy Object", repeat=2, face=65)
 perf.build()
-hit = perf.clip_frame(clip, 27)                     # scene frame of a clip's action frame
+peak = perf.extreme("Standing 1H Magic Attack 02", "mixamorig:RightHand", (1, 0, 0))  # hit frame
+hit = perf.clip_frame(clip, peak)                   # scene frame of that action frame
 ```
 
 There are 75 clips available (any name from `blender_assets_downloaded/*.fbx`).
 To find the right one, compare candidates with `pipeline.preview.clip_sheet()`.
+
+## Free mocap: CMU library (no Mixamo clicking)
+
+2,500+ motion-capture clips from the CMU Graphics Lab database (free for any use),
+retargeted onto the same rig, so they sequence exactly like Mixamo clips.
+
+```bash
+python3 scripts/00_cmu_fetch.py cartwheel                 # search the index
+python3 scripts/00_cmu_fetch.py cartwheel --get 3         # download first 3 matches
+python3 scripts/00_cmu_fetch.py --ids 02_01 13_11         # or specific clips
+blender -b build/character.blend --python scripts/02b_retarget_cmu.py   # -> actions "CMU <id> <desc>"
+```
+
+`pipeline/retarget.py` matches each Mixamo bone's direction to its CMU bone
+(handles the different rest poses), keeps twist from the source, scales hip travel
+by hip height and turns the clip to start facing camera. Quality varies per clip
+(older CMU subjects are noisier; CMU recommends higher-numbered subjects).
 
 ## Notes
 

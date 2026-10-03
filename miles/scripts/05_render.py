@@ -2,6 +2,7 @@
 
     blender -b build/scene.blend --python scripts/05_render.py -- sheet          # contact sheet of markers + samples
     blender -b build/scene.blend --python scripts/05_render.py -- full [pct]     # all frames -> renders/<name>.mp4
+        pct: 33 = 360p preview (default, fast), 67 = 720p, 100 = 1080p final
 
 Frames go to build/frames/ (gitignored); the encoded video to renders/.
 """
@@ -35,7 +36,7 @@ if mode == "sheet":
     print("SHEET", os.path.join(paths.BUILD, f"{name}_sheet.png"))
 
 elif mode == "full":
-    pct = int(args[1]) if len(args) > 1 else 67
+    pct = int(args[1]) if len(args) > 1 else 33
     sc.render.resolution_percentage = pct
     frames_dir = os.path.join(paths.BUILD, "frames", name)
     shutil.rmtree(frames_dir, ignore_errors=True)
@@ -45,7 +46,7 @@ elif mode == "full":
     bpy.ops.render.render(animation=True)
     os.makedirs(paths.RENDERS, exist_ok=True)
     raw_h = sc.render.resolution_y * pct / 100
-    h = min((540, 720, 1080, 1440, 2160), key=lambda s: abs(s - raw_h))   # snap to a standard height
+    h = min((360, 540, 720, 1080, 1440, 2160), key=lambda s: abs(s - raw_h))   # snap to a standard height
     out = os.path.join(paths.RENDERS, f"{name}_{h}p.mp4")
     subprocess.run(["ffmpeg", "-loglevel", "error", "-y", "-framerate", str(sc.render.fps), "-i",
                     os.path.join(frames_dir, "f_%04d.png"), "-vf", f"scale=-2:{h}",

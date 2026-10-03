@@ -97,6 +97,25 @@ class Performer:
         pb = self.rig.pose.bones[HIPS]
         return self.rig.matrix_world @ pb.head
 
+    def extreme(self, action, bone, direction=(1, 0, 0), frm=None, to=None):
+        """Action frame where `bone` reaches furthest from the hips along `direction`
+        (root space, 0° facing). E.g. the hit frame of a punch/web-shot towards screen right."""
+        act = bpy.data.actions[action]
+        a0, a1 = act.frame_range
+        frm, to = int(frm or a0), int(to or a1)
+        d = Vector(direction).normalized()
+        self.root.animation_data_clear()
+        self.root.matrix_world = Matrix.Identity(4)
+        best, best_f = -1e9, frm
+        for f in range(frm, to + 1):
+            hips = self._hips(act, f)
+            pb = self.rig.pose.bones[bone]
+            v = (self.rig.matrix_world @ pb.head - hips).dot(d)
+            if v > best:
+                best, best_f = v, f
+        self.rig.animation_data.action = None
+        return best_f
+
     # ------------------------------------------------------------- build
     def build(self):
         ad = self.rig.animation_data or self.rig.animation_data_create()

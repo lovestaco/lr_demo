@@ -14,6 +14,14 @@ LOGO_SVG = os.path.join(REPO, "livereview-web", "public", "assets", "logo.svg")
 BUILD = os.path.join(ROOT, "build")
 CHARACTER_BLEND = os.path.join(BUILD, "character.blend")
 SCENE_BLEND = os.path.join(BUILD, "scene.blend")
+
+
+def shot_blend(name):
+    return os.path.join(BUILD, name + ".blend")
+
+
+def slide(num):
+    return os.path.join(SLIDES, f"slide_{num:02d}.png")
 RENDERS = os.path.join(ROOT, "renders")
 
 
@@ -23,3 +31,6 @@ def setup_sys_path():
         sys.path.insert(0, ROOT)
 
 FONT_INTER = os.path.join(REPO, "videos", "livereview-launch", "assets", "fonts", "Inter-var.woff2")
+
+CMU_DIR = os.path.join(MIXAMO_CLIPS, "cmu")                           # CMU mocap BVH downloads
+CMU_REPO_RAW = "https://raw.githubusercontent.com/una-dinosauria/cmu-mocap/master"
