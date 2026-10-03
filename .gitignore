@@ -6,3 +6,18 @@ dist/
 
 # generated tooling output
 graphify-out/
+
+# raw render frame sequences (regenerable; encoded mp4s are kept)
+blender_stuff_lr/frames/
+blender_stuff_lr/motion_test_*.png
+blender_owl/frames*/
+*.blend1
+render_log.txt
+render_*_log.txt
+
+# local Claude Code state
+.claude/scheduled_tasks.lock
+
+# >100MB renders (GitHub limit); compressed versions are committed
+videos/livereview-launch/renders/livereview-inspection-layer.mp4
+videos/livereview-launch/renders/livereview-atc.mp4
