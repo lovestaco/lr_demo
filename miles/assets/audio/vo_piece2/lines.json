@@ -2,10 +2,10 @@
  "1": {
   "text": "You already ship a lot of AI-generated code.",
   "start": 5.5,
-  "duration": 2.7,
+  "duration": 2.89,
   "take": "piece2_vo.mp3",
   "src_start": 0.0,
-  "src_end": 2.7,
+  "src_end": 2.89,
   "words": [
    [
     "you",
@@ -48,676 +48,676 @@
  "2": {
   "text": "But do you do enough code inspection?",
   "start": 10.5,
-  "duration": 2.16,
+  "duration": 2.73,
   "take": "piece2_vo.mp3",
-  "src_start": 3.04,
-  "src_end": 5.2,
+  "src_start": 2.89,
+  "src_end": 5.615,
   "words": [
    [
     "but",
-    0.06
+    0.21
    ],
    [
     "do",
-    0.3
+    0.45
    ],
    [
     "you",
-    0.62
+    0.77
    ],
    [
     "do",
-    0.78
+    0.93
    ],
    [
     "enough",
-    0.92
+    1.07
    ],
    [
     "code",
-    1.26
+    1.41
    ],
    [
     "inspection",
-    1.64
+    1.79
    ]
   ]
  },
  "3": {
   "text": "Code now ships at great velocity.",
   "start": 18.0,
-  "duration": 2.1,
+  "duration": 2.53,
   "take": "piece2_vo.mp3",
-  "src_start": 5.7,
-  "src_end": 7.8,
+  "src_start": 5.615,
+  "src_end": 8.144,
   "words": [
    [
     "code",
-    0.06
+    0.145
    ],
    [
     "now",
-    0.36
+    0.445
    ],
    [
     "ships",
-    0.54
+    0.625
    ],
    [
     "at",
-    0.74
+    0.825
    ],
    [
     "great",
-    0.96
+    1.045
    ],
    [
     "velocity",
-    1.34
+    1.425
    ]
   ]
  },
  "4": {
   "text": "Fast shipping creates a huge volume of code.",
   "start": 22.0,
-  "duration": 2.86,
+  "duration": 3.22,
   "take": "piece2_vo.mp3",
-  "src_start": 8.32,
-  "src_end": 11.18,
+  "src_start": 8.144,
+  "src_end": 11.367,
   "words": [
    [
     "fast",
-    0.06
+    0.236
    ],
    [
     "shipping",
-    0.32
+    0.496
    ],
    [
     "creates",
-    0.54
+    0.716
    ],
    [
     "a",
-    1.06
+    1.236
    ],
    [
     "huge",
-    1.2
+    1.376
    ],
    [
     "volume",
-    1.56
+    1.736
    ],
    [
     "of",
-    2.16
+    2.336
    ],
    [
     "code",
-    2.32
+    2.496
    ]
   ]
  },
  "5": {
   "text": "More code means bigger systems, higher complexity... and potentially more bugs.",
   "start": 27.0,
-  "duration": 5.26,
+  "duration": 5.82,
   "take": "piece2_vo.mp3",
-  "src_start": 11.52,
-  "src_end": 16.78,
+  "src_start": 11.367,
+  "src_end": 17.187,
   "words": [
    [
     "more",
-    0.06
+    0.213
    ],
    [
     "code",
-    0.24
+    0.393
    ],
    [
     "means",
-    0.5
+    0.653
    ],
    [
     "bigger",
-    0.8
+    0.953
    ],
    [
     "systems",
-    1.2
+    1.353
    ],
    [
     "higher",
-    2.26
+    2.413
    ],
    [
     "complexity",
-    2.38
+    2.533
    ],
    [
     "and",
-    3.72
+    3.873
    ],
    [
     "potentially",
-    3.8
+    3.953
    ],
    [
     "more",
-    4.14
+    4.293
    ],
    [
     "bugs",
-    4.64
+    4.793
    ]
   ]
  },
  "6": {
   "text": "Traditional code review can't keep up with this velocity.",
   "start": 34.0,
-  "duration": 2.58,
+  "duration": 3.49,
   "take": "piece2_vo.mp3",
-  "src_start": 17.6,
-  "src_end": 20.18,
+  "src_start": 17.187,
+  "src_end": 20.682,
   "words": [
    [
     "traditional",
-    0.06
+    0.473
    ],
    [
     "code",
-    0.06
+    0.473
    ],
    [
     "review",
-    0.48
+    0.893
    ],
    [
     "can",
-    0.76
+    1.173
    ],
    [
     "t",
-    0.76
+    1.173
    ],
    [
     "keep",
-    1.28
+    1.693
    ],
    [
     "up",
-    1.44
+    1.853
    ],
    [
     "with",
-    1.64
+    2.053
    ],
    [
     "this",
-    1.8
+    2.213
    ],
    [
     "velocity",
-    1.92
+    2.333
    ]
   ]
  },
  "7": {
   "text": "Because human attention is still limited.",
   "start": 39.0,
-  "duration": 2.86,
+  "duration": 3.42,
   "take": "piece2_vo.mp3",
-  "src_start": 21.04,
-  "src_end": 23.9,
+  "src_start": 20.682,
+  "src_end": 24.097,
   "words": [
    [
     "because",
-    0.06
+    0.418
    ],
    [
     "human",
-    0.74
+    1.098
    ],
    [
     "attention",
-    1.02
+    1.378
    ],
    [
     "is",
-    1.38
+    1.738
    ],
    [
     "still",
-    1.74
+    2.098
    ],
    [
     "limited",
-    2.14
+    2.498
    ]
   ]
  },
  "8": {
   "text": "Broken review means production risk, and lost customers.",
   "start": 44.0,
-  "duration": 2.86,
+  "duration": 4.05,
   "take": "piece2_vo.mp3",
-  "src_start": 24.68,
-  "src_end": 27.54,
+  "src_start": 24.097,
+  "src_end": 28.143,
   "words": [
    [
     "broken",
-    0.06
+    0.643
    ],
    [
     "review",
-    0.06
+    0.643
    ],
    [
     "means",
-    0.34
+    0.923
    ],
    [
     "production",
-    0.7
+    1.283
    ],
    [
     "risk",
-    1.08
+    1.663
    ],
    [
     "and",
-    1.56
+    2.143
    ],
    [
     "lost",
-    2.14
+    2.723
    ],
    [
     "customers",
-    2.4
+    2.983
    ]
   ]
  },
  "9": {
   "text": "Customers walk away when there's downtime... security issues... performance regressions... bad UI.",
   "start": 48.5,
-  "duration": 7.22,
+  "duration": 6.99,
   "take": "piece2_vo.mp3",
-  "src_start": 27.52,
-  "src_end": 34.74,
+  "src_start": 28.143,
+  "src_end": 35.128,
   "words": [
    [
     "customers",
-    0.06
+    -0.563
    ],
    [
     "walk",
-    0.32
+    -0.303
    ],
    [
     "away",
-    1.46
+    0.837
    ],
    [
     "when",
-    1.8
+    1.177
    ],
    [
     "there",
-    2.04
+    1.417
    ],
    [
     "s",
-    2.04
+    1.417
    ],
    [
     "downtime",
-    2.24
+    1.617
    ],
    [
     "security",
-    3.16
+    2.537
    ],
    [
     "issues",
-    3.54
+    2.917
    ],
    [
     "performance",
-    4.64
+    4.017
    ],
    [
     "regressions",
-    4.98
+    4.357
    ],
    [
     "bad",
-    6.48
+    5.857
    ],
    [
     "ui",
-    6.66
+    6.037
    ]
   ]
  },
  "10": {
   "text": "So how do you stay competitive in this demanding environment?",
   "start": 57.0,
-  "duration": 3.08,
+  "duration": 3.49,
   "take": "piece2_vo.mp3",
-  "src_start": 35.28,
-  "src_end": 38.36,
+  "src_start": 35.128,
+  "src_end": 38.617,
   "words": [
    [
     "so",
-    0.06
+    0.212
    ],
    [
     "how",
-    0.26
+    0.412
    ],
    [
     "do",
-    0.58
+    0.732
    ],
    [
     "you",
-    0.68
+    0.832
    ],
    [
     "stay",
-    0.74
+    0.892
    ],
    [
     "competitive",
-    0.96
+    1.112
    ],
    [
     "in",
-    1.4
+    1.552
    ],
    [
     "this",
-    1.7
+    1.852
    ],
    [
     "demanding",
-    1.82
+    1.972
    ],
    [
     "environment",
-    2.16
+    2.312
    ]
   ]
  },
  "11": {
   "text": "You need a better inspection layer.",
   "start": 61.5,
-  "duration": 2.16,
+  "duration": 2.52,
   "take": "piece2_vo.mp3",
-  "src_start": 38.84,
-  "src_end": 41.0,
+  "src_start": 38.617,
+  "src_end": 41.137,
   "words": [
    [
     "you",
-    0.06
+    0.283
    ],
    [
     "need",
-    0.18
+    0.403
    ],
    [
     "a",
-    0.44
+    0.663
    ],
    [
     "better",
-    0.7
+    0.923
    ],
    [
     "inspection",
-    1.02
+    1.243
    ],
    [
     "layer",
-    1.28
+    1.503
    ]
   ]
  },
  "12": {
   "text": "It starts with inspection.",
   "start": 67.0,
-  "duration": 1.28,
+  "duration": 1.82,
   "take": "piece2_vo.mp3",
-  "src_start": 41.38,
-  "src_end": 42.66,
+  "src_start": 41.137,
+  "src_end": 42.961,
   "words": [
    [
     "it",
-    0.06
+    0.303
    ],
    [
     "starts",
-    0.08
+    0.323
    ],
    [
     "with",
-    0.34
+    0.583
    ],
    [
     "inspection",
-    0.66
+    0.903
    ]
   ]
  },
  "13": {
   "text": "Thorough inspection gives engineers confidence.",
   "start": 69.5,
-  "duration": 2.62,
+  "duration": 3.05,
   "take": "piece2_vo.mp3",
-  "src_start": 43.1,
-  "src_end": 45.72,
+  "src_start": 42.961,
+  "src_end": 46.008,
   "words": [
    [
     "thorough",
-    0.06
+    0.199
    ],
    [
     "inspection",
-    0.36
+    0.499
    ],
    [
     "gives",
-    0.8
+    0.939
    ],
    [
     "engineers",
-    1.18
+    1.319
    ],
    [
     "confidence",
-    1.66
+    1.799
    ]
   ]
  },
  "14": {
   "text": "Engineers' confidence gives customers confidence.",
   "start": 73.0,
-  "duration": 2.18,
+  "duration": 2.87,
   "take": "piece2_vo.mp3",
-  "src_start": 46.46,
-  "src_end": 48.64,
+  "src_start": 46.008,
+  "src_end": 48.88,
   "words": [
    [
     "engineers",
-    0.06
+    0.512
    ],
    [
     "confidence",
-    0.06
+    0.512
    ],
    [
     "gives",
-    0.42
+    0.872
    ],
    [
     "customers",
-    0.98
+    1.432
    ],
    [
     "confidence",
-    1.46
+    1.912
    ]
   ]
  },
  "15": {
   "text": "And customer confidence keeps your product competitive, and the money coming in.",
   "start": 76.5,
-  "duration": 4.44,
+  "duration": 4.76,
   "take": "piece2_vo.mp3",
-  "src_start": 49.12,
-  "src_end": 53.56,
+  "src_start": 48.88,
+  "src_end": 53.639,
   "words": [
    [
     "and",
-    0.06
+    0.3
    ],
    [
     "customer",
-    0.08
+    0.32
    ],
    [
     "confidence",
-    0.42
+    0.66
    ],
    [
     "keeps",
-    0.94
+    1.18
    ],
    [
     "your",
-    1.32
+    1.559
    ],
    [
     "product",
-    1.68
+    1.919
    ],
    [
     "competitive",
-    2.0
+    2.239
    ],
    [
     "and",
-    2.46
+    2.7
    ],
    [
     "the",
-    3.06
+    3.3
    ],
    [
     "money",
-    3.28
+    3.52
    ],
    [
     "coming",
-    3.5
+    3.739
    ],
    [
     "in",
-    3.84
+    4.08
    ]
   ]
  },
  "16": {
   "text": "Without inspection, everything above it collapses.",
   "start": 81.5,
-  "duration": 2.98,
+  "duration": 3.53,
   "take": "piece2_vo.mp3",
-  "src_start": 53.8,
-  "src_end": 56.78,
+  "src_start": 53.639,
+  "src_end": 57.173,
   "words": [
    [
     "without",
-    0.06
+    0.221
    ],
    [
     "inspection",
-    0.24
+    0.401
    ],
    [
     "everything",
-    1.22
+    1.381
    ],
    [
     "above",
-    1.54
+    1.701
    ],
    [
     "it",
-    2.06
+    2.221
    ],
    [
     "collapses",
-    2.2
+    2.361
    ]
   ]
  },
  "17": {
   "text": "Inspect properly. Keep production stable. Keep customers happy, and keep your dollars.",
   "start": 86.0,
-  "duration": 5.66,
+  "duration": 5.91,
   "take": "piece2_vo.mp3",
-  "src_start": 57.16,
-  "src_end": 62.82,
+  "src_start": 57.173,
+  "src_end": 63.086,
   "words": [
    [
     "inspect",
-    0.06
+    0.047
    ],
    [
     "properly",
-    0.52
+    0.507
    ],
    [
     "keep",
-    1.82
+    1.807
    ],
    [
     "production",
-    1.82
+    1.807
    ],
    [
     "stable",
-    2.06
+    2.047
    ],
    [
     "keep",
-    3.18
+    3.167
    ],
    [
     "customers",
-    3.26
+    3.247
    ],
    [
     "happy",
-    3.6
+    3.587
    ],
    [
     "and",
-    4.12
+    4.107
    ],
    [
     "keep",
-    4.54
+    4.527
    ],
    [
     "your",
-    4.8
+    4.787
    ],
    [
     "dollars",
-    5.06
+    5.047
    ]
   ]
  }

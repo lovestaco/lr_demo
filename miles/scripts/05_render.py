@@ -4,6 +4,7 @@
     blender -b build/scene.blend --python scripts/05_render.py -- full [pct] [from_frame]   # -> renders/<name>.mp4
         pct: 33 = 360p preview (default, fast), 67 = 720p, 100 = 1080p final
         from_frame: re-render only from that frame on, reusing the earlier frames (same pct!)
+        --samples N: override EEVEE samples (8 = quick draft, 24 = default)
 
 Frames go to build/frames/ (gitignored); the encoded video to renders/.
 """
@@ -12,6 +13,11 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from pipeline import paths
 
 args = sys.argv[sys.argv.index("--") + 1:] if "--" in sys.argv else ["sheet"]
+samples = None
+if "--samples" in args:                      # e.g. -- full 33 --samples 8   (quick draft quality)
+    i = args.index("--samples")
+    samples = int(args[i + 1])
+    del args[i:i + 2]
 mode = args[0]
 sc = bpy.context.scene
 name = os.path.splitext(os.path.basename(bpy.data.filepath))[0]
@@ -39,6 +45,8 @@ if mode == "sheet":
 elif mode == "full":
     pct = int(args[1]) if len(args) > 1 else 33
     sc.render.resolution_percentage = pct
+    if samples:
+        sc.eevee.taa_render_samples = samples
     frames_dir = os.path.join(paths.BUILD, "frames", name)
     if len(args) > 2:
         sc.frame_start = int(args[2])

@@ -26,6 +26,7 @@ class Clip:
         self.action, self.start, self.frm, self.to = action, start, frm, to
         self.blend, self.face, self.speed, self.repeat = blend, face, speed, repeat
         self.in_place = 0.0            # 0..1: share of the clip's own hips travel cancelled by the root
+        self.at = None                 # (x, y): start with the hips here — a hard cut (off-camera move)
         self.drift = {}                # scene frame -> hips xy offset from the clip's anchor (root space)
 
     @property
@@ -98,7 +99,7 @@ class Performer:
         return self
 
     def then(self, action, start=None, frm=None, to=None, length=None, blend=8, face=None,
-             speed=1.0, repeat=1, cycle_blend=4, in_place=0.0):
+             speed=1.0, repeat=1, cycle_blend=4, in_place=0.0, at=None):
         """Queue a clip. Starts `blend` frames before the previous clip ends unless `start` is given.
 
         repeat > 1 queues the clip that many times back to back (crossfading `cycle_blend`
@@ -106,6 +107,8 @@ class Performer:
         (An NLA strip repeat would replay the hips from the start every cycle: walking on the spot.)
         in_place (0..1) cancels that share of the clip's own travel (emotes that stumble/jump
         far, e.g. a surprised step back); feet slide a little, the character stays on its mark.
+        at=(x, y) starts the clip with the hips at that world spot instead of continuing from the previous
+        clip: a hard cut (blend is ignored), for moving the character while the camera looks elsewhere.
         Returns the clip, or a ClipGroup spanning all cycles.
         """
         act = bpy.data.actions[action]
@@ -120,6 +123,8 @@ class Performer:
             s = start if (k == 0 and start is not None) else (self.clips[-1].end - b if self.clips else self.scene.frame_start)
             clip = Clip(act, s, frm, to, b if self.clips else 0, face, speed, 1)
             clip.in_place = float(in_place)
+            if at is not None and k == 0:
+                clip.at, clip.blend = Vector(at[:2]), 0
             self.clips.append(clip)
             cycles.append(clip)
         return cycles[0] if len(cycles) == 1 else ClipGroup(cycles)
@@ -196,7 +201,7 @@ class Performer:
             p_loc, p_rot = placements[-1]
             hp = self._hips(prev.action, prev.local(mid)).xy - self._drift(prev, mid)
             hc = self._hips(cur.action, cur.local(mid)).xy
-            world = p_loc + _rot(hp, p_rot)
+            world = p_loc + _rot(hp, p_rot) if cur.at is None else cur.at
             rot = math.radians(cur.face)
             placements.append((world - _rot(hc, rot), rot))
         ad.action = None
@@ -224,6 +229,8 @@ class Performer:
         anim.key(self.root, "rotation_euler", f0, rot0, 2, "lin")
         for (prev, c, (loc, rot), (ploc, prot)) in zip(self.clips, self.clips[1:], placements[1:], placements):
             a, b = c.start, c.start + max(1, c.blend)
+            if c.at is not None:                          # hard cut: hold, then jump on the clip's first frame
+                a, b = c.start - 1, c.start
             pa = ploc - _rot(self._drift(prev, a), prot)
             anim.key(self.root, "location", a, pa.x, 0, "lin")
             anim.key(self.root, "location", a, pa.y, 1, "lin")

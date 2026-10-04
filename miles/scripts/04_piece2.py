@@ -31,7 +31,8 @@ seq = lambda n, length, start: ("seq", os.path.join(SCR, n, "f_0001.png"), lengt
 
 VO = json.load(open(os.path.join(paths.ROOT, "assets", "audio", "vo_piece2", "lines.json")))
 dur = lambda n: VO[str(n)]["duration"]
-hold = lambda n, extra=0.45, at_least=0: int(round(max(at_least, (dur(n) + extra) * FPS)))       # frames
+PAD = 0.35                         # 07b cuts in mid-pause: each clip already carries ~0.35 s of breath
+hold = lambda n, extra=0.45, at_least=0: int(round(max(at_least, (dur(n) - PAD + extra) * FPS)))  # frames
 F = lambda x: int(round(x))
 word = lambda n, w: next(t for x, t in VO[str(n)]["words"] if x == w)                         # seconds into line n
 
@@ -63,9 +64,11 @@ def talk(length, face=5, blend=10):
 
 
 
-# S1 hook
-hang = perf.then("Hanging Idle", length=40)
-land = perf.then("Hard Landing", to=60, speed=1.2, blend=6)
+# S1 hook: descends head-down on one web line, tucked (Hard Landing's crouch turned upside down),
+# flips upright and lands
+TUCK = ("Hard Landing", 28, 46)                    # crouch: knees in, hands by the feet
+hang = perf.then(TUCK[0], frm=TUCK[1], to=TUCK[2], speed=18 / 56)
+land = perf.then("Hard Landing", frm=8, to=60, speed=1.2, blend=6)
 idle1 = perf.then("Breathing Idle", length=48, blend=10)                             # watch check
 shot1 = perf.then("Standing 1H Magic Attack 02", frm=16, to=40, speed=1.15, blend=6)
 yank = perf.then("Pull Heavy Object Stop", to=30, speed=1.1, blend=5, face=65)
@@ -82,44 +85,71 @@ SPRINT_AT = vo3 + F(word(3, "velocity") * FPS) - 6
 pre = talk(SPRINT_AT + 6 - (int(tap2.end) - 8))
 sprint = perf.then("Two Cycle Sprint", start=SPRINT_AT, frm=1, to=23, blend=6, face=90)   # "velocity!" dash past the screen
 stop = perf.then("Run To Stop", blend=5, face=90)
-vel = talk(45, face=-5, blend=16)                                                  # unhurried turn back to camera after the skid                                                             # screen now on his left
+vel = talk(45, face=-5, blend=16)                                                  # unhurried turn back to camera after the skid
 scared = perf.then("CMU 79_73 scared", frm=20, to=120, blend=8, face=5)              # paper avalanche
 stuck = perf.then("Breathing Idle", length=40, blend=8, face=5)                      # watch check in the pile
 w5 = perf.then(WALK, length=16, blend=8, face=-10)                                  # two steps out of the pile, towards camera
-sysA = talk(150, face=-5)                                                           # graph grows, spiders come out
+# graph close-up: (off camera) up on a line; lowers head-down into frame beside the screen, watches the
+# graph grow; when the spiders burst out he flips down and lands -> SHOCK
+SYS_LEN = 150
+hang2 = perf.then(TUCK[0], frm=TUCK[1], to=TUCK[2], speed=18 / (SYS_LEN - 4), at=(0, 0))
+drop2 = perf.then("Hard Landing", frm=8, to=60, speed=1.2, blend=6, face=10)
 shock = perf.then("CMU 120_16 Mickey Surprised", frm=140, to=262, blend=6, face=30, in_place=0.8)  # bugs! (SHOCK)
-# S3 bridges
-rq = talk(max(150, hold(6, 1.5)), face=-5)                                          # review queue overflows
-yawn = perf.then("CMU 111_32 Stretch and yawn", frm=10, to=150, blend=10, face=10)  # human attention
+# S3 bridges — review-queue close-up: only his head + shoulder lean in from the right edge of frame
+rqp = perf.then("Breathing Idle", length=max(150, hold(6, 1.5)), face=0, at=(0, 0))
+yawn = perf.then("CMU 111_32 Stretch and yawn", frm=10, to=150, face=10, at=(0, 0))  # back on his mark (cut)
 # S4 customers leave
 risk = talk(hold(8, 0.8), face=-5)
-worry = perf.then("CMU 79_71 sad", frm=20, to=20 + hold(9, 0.6) + 96, blend=10, face=5)   # tiles + walk-away
+# risk tiles close-up: eyes + hands peek over the top of the screen; ducks when the customers walk off
+topp = perf.then("Breathing Idle", length=hold(9, 0.6) + 96, face=0, at=(0, 0))
 # S5 bridge
-comp = talk(hold(10, 0.8), face=-5)
+comp = talk(hold(10, 0.8), face=-5)                                                # back on his mark (cut)
 layer = talk(hold(11, 1.2), face=-5)
-# S6 tower
-cart2 = perf.then("CMU 49_06 cartwheel", frm=20, to=112, blend=10, face=90)
-w6 = perf.curve(WALK, faces=(145, 115, 85, 55))                                    # curve to the tower, end half-facing camera
+# S6 tower: web-swings across the stage, lands in a crouch still holding the line, then builds
+zip_ = perf.then("Standing 1H Magic Attack 02", frm=16, to=40, speed=1.15, blend=8, face=60)   # web up
+swing = perf.then("Swing To Land (1)", frm=1, to=50, blend=6, face=90)
+crouch = perf.then("Swing To Land (1)", frm=50, to=57, speed=7 / 30, blend=4, face=90)       # hold the crouch (+ line)
+rise = perf.then("Breathing Idle", length=24, blend=14, face=40)
 UP = "Standing 2H Magic Attack 01"
 # S6 runs on the voice: each block lands on its label word, the yank lands on "Without inspection",
-# the cascade on "everything above"; lines keep the take's natural gaps (+0.3 s for the landings).
-GAP = {12: 0.44, 13: 0.74, 14: 0.48, 15: 0.24, 16: 0.38}
+# the cascade on "everything above"; lines keep the take's natural pauses (+0.2 s for the landings).
 LAND_WORD = {12: "inspection", 13: "engineers", 14: "customers", 15: "product"}
-vo_s6 = {12: max(int(layer.start) + 6 + F(dur(11) * FPS) + 18, int(w6.end) + 6)}
+vo_s6 = {12: max(int(layer.start) + 6 + F(dur(11) * FPS) + 18, int(rise.end) + 6)}
 for n in range(13, 18):
-    vo_s6[n] = vo_s6[n - 1] + F((dur(n - 1) + GAP.get(n - 1, 0.4) + 0.3) * FPS)
+    vo_s6[n] = vo_s6[n - 1] + F((dur(n - 1) + 0.2) * FPS)        # clips carry the take's own pauses
 UP_LEAD = F(14 / 1.15)                                       # clip start -> web hit
 lands = [vo_s6[n] + F(word(n, LAND_WORD[n]) * FPS) for n in (12, 13, 14, 15)]
 Y1 = vo_s6[16] + F(word(16, "inspection") * FPS)           # yank INSPECTION out
 builds, starts = [], [ld - 12 - UP_LEAD for ld in lands] + [Y1 - 4]
 for k, st in enumerate(starts[:4]):
     if k == 0:
-        perf.then("Breathing Idle", length=max(8, st + 8 - (int(w6.end) - 8)), blend=8, face=20)
+        perf.then("Breathing Idle", length=max(8, st + 8 - (int(rise.end) - 8)), blend=8, face=20)
     builds.append(perf.then(UP, start=st, frm=up_pk - 14, to=up_pk + 20, speed=1.15, blend=8, face=25))
     nxt = starts[k + 1]
     perf.then("Breathing Idle", length=max(8, nxt + 8 - (int(builds[-1].end) - 8)), blend=8, face=20)
 pull = perf.then("Pull Heavy Object Stop", start=Y1 - 4, to=30, speed=1.0, blend=12, face=75)  # yank INSPECTION out
-fear = perf.then("CMU 79_72 crying", frm=18, to=170, blend=8, face=5)               # hands on head over the rubble
+slump = perf.then("Hard Landing", frm=19, to=28, speed=0.8, blend=8, face=20)        # knees give way...
+fear = perf.then("Fallen Idle", length=150, blend=16, face=-70)                     # ...and he flops flat on the floor
+perf.build()
+first = lambda c: c.cycles[0] if hasattr(c, "cycles") else c
+TVW, STAND = 2.6, 0.75
+TVH = TVW * 9 / 16
+TVZ = STAND + TVH / 2
+_w4 = perf.bone_world(HIPS, w4.end)
+TV2 = Vector((_w4.x + 0.55 + TVW / 2, _w4.y + 0.55, TVZ))
+BEZEL_TOP = TVZ + TVH / 2 + 0.04
+# screen close-ups leave room on the right, where he hangs / peeks in
+close2 = shot.frame_span(TV2.x - TVW / 2 - 0.25, TV2.x + TVW / 2 + 0.9, TV2.y, lens_mm=30, pad=1.1, cam_z=1.7,
+                         target_z=TVZ - 0.05)
+edge_x = lambda y: close2[0][0] + 0.6 * (y - close2[0][1])          # right edge of the close-up at depth y
+HANG2 = Vector((TV2.x + TVW / 2 + 0.0, TV2.y - 0.25))
+PEEK = Vector((edge_x(TV2.y - 0.7) + 0.3, TV2.y - 0.7))
+TOPP = Vector((TV2.x + 0.55, TV2.y + 0.35))
+hang2.at, rqp.at, topp.at = HANG2, PEEK, TOPP
+perf.build()
+MARK = perf.bone_world(HIPS, shock.end - 2).xy                     # where he lands = his presenting mark
+yawn.at = MARK
+first(comp).at, first(comp).blend = Vector(MARK), 0
 perf.build()
 
 
@@ -132,39 +162,54 @@ def audience(f):
     """Where the camera sits for a beat: centred between him and what shares the frame (board or
     tower), ~4.5 m out — so "facing the camera" really means facing the lens."""
     h = perf.bone_world(HIPS, f)
-    if cart.start <= f < cart2.start:                  # LCD2: the camera mostly holds on the screen
+    if cart.start <= f < zip_.start:                   # LCD2: the camera mostly holds on the screen
         return (_tv2_x, _tv2_y - 3.4)                  # screen_close() camera distance
     other = _tv1_x if f < cart.start else h.x + 4.5
     return ((h.x + other) / 2, h.y - 4.5)
 
 
-square_err = perf.square_up([talk1, shrug, talk2, pre, vel, scared, stuck, sysA, shock, rq, yawn, risk, worry, comp,
-                             layer, fear], audience)
+square_err = perf.square_up([talk1, shrug, talk2, pre, vel, scared, stuck, shock, yawn, risk, comp, layer], audience)
 
-HANG_Z = 2.44 - 1.15
-perf.root_z([(1, 5.0, "cubic_out"), (int(hang.start) + 30, HANG_Z, "lin"),
-             (int(land.start), HANG_Z, "lin"), (int(land.start) + land.blend, 0.0, "lin")])
+INV = math.pi                                        # upside down: rolled 180° about the depth axis (still faces camera)
+
+
+def head_down(start, end, top_z, drop_clip, z_from=6.5):
+    """Root keys for a head-down hang from a line at the feet: lower in, hang, flip upright as he lets go."""
+    perf.root_z([(start - 1, 0.0, "const"), (start, z_from, "cubic_out"), (start + 30, top_z, "lin"),
+                 (int(drop_clip.start), top_z, "lin"), (int(drop_clip.start) + 9, 0.0, "lin")])
+    anim.keys(perf.root, "rotation_euler", [(start - 1, 0.0, "const"), (start, INV, "lin"),
+                                            (int(drop_clip.start), INV, "inout"), (int(drop_clip.start) + 9, 0.0, "lin")],
+              index=1)
+
+
+head_down(int(hang.start) + 1, int(land.start), 2.55, land)            # opening: head at eye level
+head_down(int(hang2.start), int(drop2.start), 2.45, drop2)              # graph close-up: head by the screen's corner
+LEAN = math.radians(-30)                                                # lean in from the right edge of frame
+anim.keys(perf.root, "rotation_euler", [(int(rqp.start), 0.0, "lin"), (int(rqp.start) + 16, LEAN, "out"),
+                                        (int(rqp.end) - 16, LEAN, "inout"), (int(rqp.end) - 3, 0.0, "lin")], index=1)
+TOP_Z = BEZEL_TOP - 1.62 + 0.37                                         # eyes + brow over the top of the screen
 IMPACT = perf.clip_frame(land, 30)
+IMPACT2 = int(perf.clip_frame(drop2, 30))
+LEAVE = int(topp.start) + 4 + hold(9, 0.6)                              # customers walk off -> he ducks
+perf.root_z([(int(topp.start) - 1, 0.0, "const"), (int(topp.start), TOP_Z, "lin"), (LEAVE + 4, TOP_Z, "in"),
+             (LEAVE + 14, -0.2, "lin"), (int(topp.end) - 1, -0.2, "const"), (int(topp.end), 0.0, "lin")])
 SHOT_HIT = perf.clip_frame(shot1, hit_pk)
 Y0 = int(yank.start)
-END = max(int(fear.end), vo_s6[16] + F((dur(16) + 1.8) * FPS)) + 10
+END = max(int(fear.start) + 70, vo_s6[16] + F((dur(16) + 1.8) * FPS)) + 10
 sc.frame_end = END
 hips = lambda f: perf.bone_world(HIPS, int(f))
 
 # ------------------------------------------------------------------ timeline (frames) derived from voice + clips
-TVW, STAND = 2.6, 0.75
-TVH = TVW * 9 / 16
-TVZ = STAND + TVH / 2
 t1_on = int(tap1.start) + 14
 s2_at = int(shrug.start) + 16
 t2_on = int(tap2.start) + 12                              # (vo3 = t2_on + 8)
 pour0 = int(scared.start) - 4
-sys_at = int(sysA.start) - 4
+sys_at = int(hang2.start) - 4
 bugs_at = sys_at + 130                                    # p2_system: bugs appear at sequence frame 130
-rq_at = int(rq.start) + 2
+rq_at = int(rqp.start) + 2
 att_at = int(yawn.start) + 6
 risk_at = int(risk.start) + 2
-q_at = int(worry.start) + 4
+q_at = int(topp.start) + 4
 leave_at = q_at + hold(9, 0.6)
 comp_at = int(comp.start) + 2
 layer_at = int(layer.start) + 2
@@ -190,7 +235,6 @@ tv1.power_off(int(cart.start) + 20)
 
 # ------------------------------------------------------------------ LCD2 (problem → bridge)
 cl = hips(w4.end)
-TV2 = Vector((cl.x + 0.55 + TVW / 2, cl.y + 0.55, TVZ))
 tiles = [q_at + F(word(9, w) * FPS) for w in ("downtime", "security", "performance", "bad")]
 lcd2 = [(seq("velocity", 150, t2_on), 1), (scr("s05_volume"), pour0 - 4), (seq("p2_system", 210, sys_at), sys_at),
         (seq("p2_review_queue", 180, rq_at), rq_at), (scr("p2_attention"), att_at), (scr("p2_risk"), risk_at),
@@ -204,7 +248,7 @@ for i, (_, f) in enumerate(lcd2):
     tv2.show(f, i)
 for f in (pour0 - 4, sys_at, rq_at, att_at, risk_at, q_at, leave_at, comp_at, layer_at):
     tv2.flicker(f - 2, n=2)
-tv2.power_off(int(cart2.start) + 6)
+tv2.power_off(int(zip_.start) + 6)
 
 # paper avalanche around his feet
 mid_p = hips(scared.start + 30)
@@ -348,16 +392,26 @@ for k, (ob, rest) in enumerate(cash):
     anim.keys(ob, "location", [(C + 4, rest, "out"), (C + 12 + k, rest + Vector((rr.uniform(-0.8, 0.8), -0.3, 1.0)), "in"),
                                (C + 24 + k, end, "bez")])
     anim.keys(ob, "rotation_euler", [(C + 4, Vector((0, 0, 0))), (C + 24 + k, Vector((0, 0, rr.uniform(-2, 2))))])
+flop = hips(fear.start + 30)
+fx.paper_pour("BillsOnHim", scr("cash_bill"), lambda i: top_rest + Vector((rr.uniform(-0.5, 0.5), 0, 0.3)),
+              (flop.x, flop.y), count=30, start=C + 14, dur=40, spread=(0.9, 0.6), size=(0.24, 0.104), arc=(1.2, 2.4))
 fx.paper_pour("Bills", scr("cash_bill"), lambda i: top_rest + Vector((rr.uniform(-0.5, 0.5), 0, 0.3)),
               (TX, TY - 0.4), count=70, start=C + 6, dur=40, spread=(2.2, 1.1), size=(0.24, 0.104), arc=(1.0, 2.2))
 
 
 # ------------------------------------------------------------------ S1 webs + overlays
+FOOT = "mixamorig:LeftFoot"                               # head-down hangs: the line runs from his feet
 top = hips(hang.start + 20)
 sky = Vector((top.x, top.y, 14.0))
-RELEASE = int(land.start) + 3
-webs.shot("Web_HangL", L_HAND, lambda f: sky, 1, 1, RELEASE)
-webs.shot("Web_HangR", R_HAND, lambda f: sky, 1, 1, RELEASE)
+webs.shot("Web_Hang", FOOT, lambda f: sky, 1, 1, int(land.start) + 3)
+top2 = hips(hang2.start + 40)
+sky2 = Vector((top2.x, top2.y, 14.0))
+webs.shot("Web_Hang2", FOOT, lambda f: sky2, int(hang2.start), int(hang2.start), int(drop2.start) + 3)
+# tower: web up, swing across the stage, land in a crouch still holding the line, let go as he rises
+ZIP_HIT = int(perf.clip_frame(zip_, hit_pk))
+_a, _b = hips(swing.start), hips(swing.end)
+swing_anchor = Vector(((_a.x + _b.x) / 2 + 0.4, (_a.y + _b.y) / 2 + 0.6, 9.0))
+webs.shot("Web_Swing", R_HAND, lambda f: swing_anchor, ZIP_HIT - 4, ZIP_HIT, int(crouch.end) + 2)
 hook1 = lambda f: tv1.nearest_hook(webs.hand(R_HAND))
 webs.shot("Web_Shot", R_HAND, hook1, SHOT_HIT - 4, SHOT_HIT, Y0 + 16)
 webs.shot("Web_Yank", L_HAND, hook1, Y0, Y0, Y0 + 16)
@@ -371,11 +425,16 @@ office.reach(int(tap2.start) + 4, (TV2.x - TVW / 2 + 0.12, TV2.y - 0.05, TVZ - 0
 office.check_watch(int(stuck.start) + 4, hold=16)
 office.check_watch(int(yawn.end) - 32, hold=10)
 # presenter gestures towards the near edge of the screen whenever a new slide lands
-for f, tv in ((t1_on + 8, TV1), (s2_at + 6, TV1), (int(vel.start) + 8, TV2), (sys_at + 10, TV2), (rq_at + 10, TV2),
-              (risk_at + 8, TV2), (comp_at + 6, TV2), (layer_at + 6, TV2)):
+for f, tv in ((t1_on + 8, TV1), (s2_at + 6, TV1), (int(vel.start) + 8, TV2), (risk_at + 8, TV2), (comp_at + 6, TV2),
+              (layer_at + 6, TV2)):
     x = hips(f).x
     edge = tv.x - TVW / 2 + 0.35 if x < tv.x else tv.x + TVW / 2 - 0.35
     office.present_to(f, (edge, tv.y - 0.3, TVZ + 0.1), x)          # gesture in front of the glass
+# peeking over the screen: both hands on the top edge until he ducks
+_tx = hips(topp.start + 10).x
+for sd, dx, dz in (("L", 0.45, 0.03), ("R", -0.4, 0.14)):    # wide grip; the right arm solves ~10 cm short: aim higher
+    office.present(int(topp.start) + 1, (_tx + dx, TV2.y, BEZEL_TOP + dz), side=sd, ramp=3,
+                   hold=LEAVE + 4 - int(topp.start) - 4, amount=1.0)
 
 # SFX for S1–S5
 shot.sfx("landing_thud", IMPACT - 6)                     # impact sits 0.2 s into the sound
@@ -385,7 +444,11 @@ shot.sfx("board_thud", Y0 + 14)
 shot.sfx("tv_power_on", t1_on)
 shot.sfx("tv_power_on", t2_on)
 shot.sfx("cartwheel_whoosh", int(cart.start) + 36)       # over the top ~45 frames in
-shot.sfx("cartwheel_whoosh", int(cart2.start) + 36)
+shot.sfx("web_thwip", ZIP_HIT - 3)
+shot.sfx("cartwheel_whoosh", int(swing.start) + 14)       # the swing
+shot.sfx("landing_thud", int(perf.clip_frame(swing, 40)) - 6)
+shot.sfx("landing_thud", IMPACT2 - 6)
+shot.sfx("web_thwip", int(hang2.start) + 2)
 shot.sfx("cartwheel_whoosh", SPRINT_AT + 2)               # the dash
 shot.sfx("paper_avalanche", pour0)
 shot.sfx("bugs_skitter", bugs_at)
@@ -403,7 +466,7 @@ fx.stage_pool("Tower", (TX + 0.6, TY), (arrive.x, arrive.y))
 fx.spot("TowerSpot", (TX - 1.6, TY - 3.2, 5.4), (TX, TY, TOWER_H * 0.55), energy=1500, angle=38)
 
 # ------------------------------------------------------------------ polish: feet on the floor
-airborne = [hang, land]                                   # cartwheels stay locked: planted hands count as floor
+airborne = [hang, land, hang2, drop2, rqp, topp, zip_, swing]     # hangs, lean, raised peek, swing; cartwheels stay locked
 lock_err = perf.ground_lock(int(land.end), END, skip=airborne)
 
 # ------------------------------------------------------------------ camera: locked while a screen is up
@@ -427,45 +490,53 @@ def locked(a, b, ct, cut=True):
     cam.at(int(b), ct[0], ct[1], "lin")
 
 
-cam.lens(1, 22, "const")
-cam.at(1, (h.x + 0.8, -6.0, 0.4), (h.x, 0, 3.0))                                       # free: descent
-cam.at(int(hang.end) - 2, (h.x + 0.6, -5.4, 0.5), (h.x, 0, 2.4))
+cam.lens(1, 28, "const")
+cam.at(1, (h.x + 0.5, -4.2, 0.9), (h.x, 0, 2.6))                                       # free: he lowers in head-down
+cam.at(int(hang.end) - 2, (h.x + 0.4, -3.8, 1.0), (h.x, 0, 2.0))
 cam.lens(int(land.start) + 2, 30, "const")
 cam.at(int(land.start) + 2, (h.x + 0.9, h.y - 4.0, 0.95), (h.x, h.y, 0.95), cut=True)
 cam.at(int(idle1.end), (h.x + 0.9, h.y - 3.4, 1.25), (h.x, h.y, 1.2), "inout")           # free: watch check
 c1 = frame_on(TV1, int(talk1.start))
 cam.at(int(SHOT_HIT) + 4, (c1[0][0] + 1.0, c1[0][1] - 1.5, 1.8), (c1[1][0] + 0.8, c1[1][1], 1.4), "expo_out")
 locked(Y0 + 22, int(cart.start) + 4, frame_on(TV1, int(talk2.start)), cut=False)             # LCD1 up: locked
-_xs = [hips(f).x for f in (w4.end, vel.start, stuck.end, w5.end, sysA.start)]
+_xs = [hips(f).x for f in (w4.end, vel.start, stuck.end, w5.end)]
 _l, _r = min(_xs), max(_xs)                                                                 # both sides: the dash
 w2s = shot.frame_span(min(_l, _r) - 0.9, max(_l, _r) + 0.9, (TV2.y + hips(vel.start).y) / 2, lens_mm=30, pad=1.12,
                       cam_z=1.75, target_z=1.4)
 cam.at(int(w4.end), w2s[0], w2s[1], "inout")                                              # free: truck with cartwheel
 locked(int(w4.end), sys_at - 1, w2s, cut=False)
-close2 = screen_close(TV2)
 locked(sys_at, int(shock.start) + 4, close2)                                              # read the graph
 swarm = shot.frame_span(TV2.x - TVW / 2 - 0.2, him.x + 1.5, (TV2.y + him.y) / 2 - 0.4, lens_mm=30, pad=1.12,
                        cam_z=1.45, target_z=0.95)                                       # floor in view: the spiders
-locked(int(shock.start) + 5, rq_at - 1, swarm)                                           # SHOCK: him + the swarm
-locked(rq_at, att_at - 1, close2)                                                        # review queue
-locked(att_at, risk_at - 1, frame_on(TV2, att_at + 30))                                   # yawn
-locked(risk_at, q_at - 1, frame_on(TV2, risk_at + 10))
-locked(q_at, leave_at + 96, close2)                                                      # tiles + walk away
-locked(leave_at + 97, int(cart2.start) + 2, frame_on(TV2, comp_at + 20))                  # bridge
+locked(int(shock.start) + 5, int(rqp.start) - 1, swarm)                                 # SHOCK: him + the swarm
+locked(int(rqp.start), int(yawn.start) - 1, close2)                                       # review queue + lean-in peek
+locked(int(yawn.start), risk_at - 1, frame_on(TV2, att_at + 30))                          # yawn
+locked(risk_at, int(topp.start) - 1, frame_on(TV2, risk_at + 10))
+close_q = shot.frame_span(TV2.x - TVW / 2 - 0.3, TV2.x + TVW / 2 + 0.3, TV2.y, lens_mm=30, pad=1.12, cam_z=1.8,
+                          target_z=TVZ + 0.18)                                           # room above for the peek
+locked(int(topp.start), int(comp.start) - 1, close_q)                                     # tiles + peek + walk away
+locked(int(comp.start), int(zip_.start) + 2, frame_on(TV2, comp_at + 20))                 # bridge
 tw = shot.frame_span(arrive.x - 1.0, TX + BLOCKS[0][1] / 2 + 0.8, (TY + arrive.y) / 2, lens_mm=30, pad=1.2,
                      cam_z=1.75, target_z=(TOWER_H + 0.3) * 0.5 + 0.15)                    # whole tower + cash in frame
-cam.at(int(w6.end) + 4, tw[0], tw[1], "inout")                                            # free: to the tower
+_sa, _sb = hips(swing.start), hips(swing.end)
+sw = shot.frame_span(min(_sa.x, _sb.x) - 1.2, max(_sa.x, _sb.x) + 1.2, (_sa.y + _sb.y) / 2, lens_mm=30, pad=1.1,
+                     cam_z=1.9, target_z=1.9)
+locked(int(zip_.start) + 3, int(crouch.start) - 1, sw)                                    # cut: the whole swing, wide
+cr = hips(crouch.start + 8)
+crouch_shot = ((cr.x + 0.6, cr.y - 3.4, 1.1), (cr.x + 0.4, cr.y, 0.9))
+locked(int(crouch.start), int(rise.start) + 4, crouch_shot)                              # cut: the crouch, line in hand
+cam.at(int(rise.end), tw[0], tw[1], "inout")                                              # then on to the tower
 cam.at(int(pull.start) - 4, (tw[0][0], tw[0][1] + 0.15, tw[0][2]), tw[1])                      # barely drift while building
 rub = shot.frame_span(arrive.x - 1.0, TX + 2.9, (TY + arrive.y) / 2, lens_mm=30, pad=1.1, cam_z=1.6, target_z=0.7)
 cam.at(C + 30, rub[0], rub[1])                                                             # pull back: the rubble
-last = shot.frame_span(hips(fear.start + 40).x - 1.1, TX + 2.3, (TY + arrive.y) / 2, lens_mm=30, pad=1.06,
-                      cam_z=1.5, target_z=0.8)
+_fl = hips(fear.start + 40)
+last = shot.frame_span(_fl.x - 1.3, _fl.x + 3.2, (TY + _fl.y) / 2, lens_mm=30, pad=1.05, cam_z=1.4,
+                      target_z=0.55)                                                    # him flat out + the rubble
 cam.at(END, last[0], last[1])                                                              # slow push: Miles + the rubble
-office.face_camera(cam.cam, [(c.start + 4, c.end - 2) for c in (talk1, talk2, pre, vel, sysA, rq, risk, comp, layer)])
+office.face_camera(cam.cam, [(c.start + 4, c.end - 2) for c in (talk1, talk2, pre, vel, rqp, risk, topp, comp, layer)])
 # emphasis on the stressed words: a nod to camera + a small beat with the free arm (the one not
 # pointing at the screen); lines with their own action (sprint, spiders, yawn, risk tiles, tower) are skipped
-STRESS = {1: ("lot", "generated"), 2: ("enough", "inspection"), 4: ("huge", "volume"), 6: ("traditional", "keep"),
-          8: ("production", "lost"), 10: ("competitive",), 11: ("better", "inspection")}
+STRESS = {1: ("lot", "generated"), 2: ("enough", "inspection"), 4: ("huge", "volume"), 8: ("production", "lost"), 10: ("competitive",), 11: ("better", "inspection")}
 last_beat = -99
 for n, words in STRESS.items():
     for w in words:
@@ -485,7 +556,7 @@ cam.shake(C + 2, amp=0.08, dur=14)
 
 shot.finish("piece2", exposure=0.0, markers=[(f"vo {n}", f) for n, f in VO_CUES.items()] + [
     ("S1 hook", 1), ("S2 problem", int(cart.start)), ("S2 bugs", bugs_at), ("S3 bridges", rq_at),
-    ("S4 customers", risk_at), ("S5 bridge", comp_at), ("S6 tower", int(cart2.start)), ("S6 collapse", C),
+    ("S4 customers", risk_at), ("S5 bridge", comp_at), ("S6 tower", int(zip_.start)), ("S6 collapse", C),
     ("S6 end", END)])
 cues = sorted(VO_CUES.items())
 for (a, fa), (b, fb) in zip(cues, cues[1:]):

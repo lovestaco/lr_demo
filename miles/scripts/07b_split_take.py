@@ -4,7 +4,8 @@
     python3 scripts/07b_split_take.py TAKE.mp3 --script assets/audio/vo_piece2.md --out assets/audio/vo_piece2
 
 Transcribes the take with faster-whisper (word timestamps), matches the words against the
-lines in assets/audio/vo_piece1.md in order, and writes assets/audio/vo/line_NN.wav plus
+lines in assets/audio/vo_piece1.md in order, cuts in the middle of the real pause nearest each
+sentence boundary (whisper's own word edges clip syllables), and writes assets/audio/vo/line_NN.wav plus
 vo/lines.json {num: text, start (cue in the cut), duration, take, src_start, src_end}.
 """
 import json, os, re, subprocess, sys, tempfile
@@ -46,23 +47,48 @@ def transcribe(path):
     return out
 
 
+def silences(path, db=-42, min_len=0.12):
+    """[(start, end)] of the pauses in the take (ffmpeg silencedetect)."""
+    err = subprocess.run(["ffmpeg", "-hide_banner", "-i", path, "-af", f"silencedetect=n={db}dB:d={min_len}",
+                          "-f", "null", "-"], capture_output=True, text=True).stderr
+    st = [float(x) for x in re.findall(r"silence_start: ([0-9.]+)", err)]
+    en = [float(x) for x in re.findall(r"silence_end: ([0-9.]+)", err)]
+    return list(zip(st, en))
+
+
+def duration(path):
+    return float(subprocess.run(["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", path],
+                                capture_output=True, text=True).stdout)
+
+
 def main(take):
     words = transcribe(take)
     lines = script_lines()
-    meta, i = {}, 0
+    # whisper word times place each line roughly; its starts run late and ends early, so the actual
+    # cut goes in the middle of the real pause nearest each boundary (never through a word)
+    spans, i = [], 0
     for num, cue, text in lines:
-        want = tok(text)
-        start = words[i][1]
-        i += len(want)                       # transcript tokens track the script 1:1
-        end = words[min(i, len(words)) - 1][2]
-        nxt = words[i][1] if i < len(words) else end + 0.6
-        a, b = max(0.0, start - 0.06), min(nxt - 0.04, end + 0.3)
+        n = len(tok(text))
+        spans.append((words[i][1], words[min(i + n, len(words)) - 1][2], i, i + n))
+        i += n
+    gaps = silences(take)
+    total = duration(take)
+    cuts = [0.0]
+    for (s0, e0, _, _), (s1, e1, _, _) in zip(spans, spans[1:]):
+        mid = (e0 + s1) / 2
+        near = [g for g in gaps if g[1] > e0 - 0.5 and g[0] < s1 + 0.5]
+        g = min(near, key=lambda g: abs((g[0] + g[1]) / 2 - mid)) if near else (mid, mid)
+        cuts.append((g[0] + g[1]) / 2)
+    cuts.append(total)
+    meta = {}
+    for k, (num, cue, text) in enumerate(lines):
+        a, b = cuts[k], cuts[k + 1]
         out = os.path.join(OUT, f"line_{num:02d}.wav")
         subprocess.run(["ffmpeg", "-loglevel", "error", "-y", "-i", take, "-ss", f"{a:.3f}", "-to", f"{b:.3f}",
                         "-af", "afade=t=in:d=0.02,areverse,afade=t=in:d=0.06,areverse", "-ar", "44100", out], check=True)
-        line_words = [(w, round(ws - a, 3)) for w, ws, we in words[i - len(want):i]]
-        meta[str(num)] = {"text": re.sub(r"\[[^\]]*\]\s*", "", text), "start": cue, "duration": round(b - a, 2), "take": os.path.basename(take),
-                          "src_start": round(a, 3), "src_end": round(b, 3),
+        line_words = [(w, round(ws - a, 3)) for w, ws, we in words[spans[k][2]:spans[k][3]]]
+        meta[str(num)] = {"text": re.sub(r"\[[^\]]*\]\s*", "", text), "start": cue, "duration": round(b - a, 2),
+                          "take": os.path.basename(take), "src_start": round(a, 3), "src_end": round(b, 3),
                           "words": line_words}                 # [word, seconds from clip start]
         print(f"line {num:2d}  {a:6.2f}-{b:6.2f}  ({b - a:4.2f}s)  {text}")
     json.dump(meta, open(os.path.join(OUT, "lines.json"), "w"), indent=1)

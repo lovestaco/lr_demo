@@ -68,6 +68,16 @@ Join acts without audio: `ffmpeg -i act1_360p.mp4 -i act2_360p.mp4 -filter_compl
 - `fx.Spiders(paths.SPIDER_GLB, size)` + `.add([(frame, point), ...])` — walking spider swarm (Sketchfab, CC-BY,
   credit in `../blender_assets_downloaded/sketchfab_spider/CREDITS.txt`).
 - Despair: `CMU 79_72 crying` keeps both hands on the head (frames 18–218).
+- `perf.then(..., at=(x, y))` — hard cut to a spot (off-camera move during a screen close-up); combine with root
+  keys after `square_up()`: `perf.root_z(...)` for height, `anim.keys(perf.root, "rotation_euler", ..., index=1)` for
+  roll (π = head-down hang facing camera, ±30° = lean in from a frame edge). Piece 2's `head_down()` helper:
+  `Hard Landing` frames 28–46 upside down = comic-book tuck on a line from the feet (`WebShots` bone `LeftFoot`).
+- Peeks in piece 2: lean-in from the frame edge (`rqp`), over the top of the screen (`topp`, hands on the bezel
+  via `office.present(..., amount=1)`; keep grips ±0.45 m from centre or the IK can't fold).
+- `Swing To Land (1)` = web swing → crouch with one hand down; `Fallen Idle` = flat on the floor.
+- Camera `locked()` spans must not overlap: an overlapping key turns a cut into a slow drift.
+- 07b cuts each line in the middle of the real pause (whisper word edges clip syllables); clips carry
+  ~0.35 s of breath, so scenes subtract `PAD` when timing holds.
 - `shot.finish` lays VO + SFX into the .blend's sequencer → Space in Blender plays with sound (check fixes without rendering).
 - Camera: hold still while a screen is up; move only in screen-free stretches. Frame at the depth
   between screen and presenter (`frame_on`), otherwise he is cropped at the edge.
