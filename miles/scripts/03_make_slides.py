@@ -91,8 +91,32 @@ def slide(num, text):
     return out, size
 
 
+def blank_dark():
+    """Text-free board face in the original dark look (navy + soft blue glow), for overlaying text in edit."""
+    from PIL import ImageFilter
+    img = Image.new("RGBA", (W, H), (11, 18, 32, 255))
+    glow = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+    ImageDraw.Draw(glow).ellipse([1050, 450, 2300, 1500], fill=(37, 99, 235, 70))
+    img.alpha_composite(glow.filter(ImageFilter.GaussianBlur(160)))
+    out = os.path.join(paths.SLIDES, "blank_dark.png")
+    img.convert("RGB").save(out)
+    return out
+
+
+def devto_logo():
+    """Board face = the dev.to mark: white bold 'DEV' on black."""
+    img = Image.new("RGB", (W, H), (0, 0, 0))
+    d = ImageDraw.Draw(img)
+    d.text((W / 2, H / 2), "DEV", font=font(520, 900), fill=(255, 255, 255), anchor="mm")
+    out = os.path.join(paths.SLIDES, "devto.png")
+    img.save(out)
+    return out
+
+
 if __name__ == "__main__":
     os.makedirs(paths.SLIDES, exist_ok=True)
+    print("wrote", devto_logo())
+    print("wrote", blank_dark())
     for num, text in SLIDES.items():
         out, size = slide(num, text)
         print(f"wrote {out} ({size}px)")

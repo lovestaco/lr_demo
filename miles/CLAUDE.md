@@ -16,8 +16,13 @@ blender -b build/character.blend --python scripts/04_act1.py            # -> bui
 blender -b build/character.blend --python scripts/04_act2.py            # -> build/act2.blend (continues act1's end state)
 blender -b build/<act>.blend --python scripts/05_render.py -- sheet     # contact sheet -> build/<act>_sheet.png
 blender -b build/<act>.blend --python scripts/05_render.py -- full      # 360p preview -> renders/<act>_360p.mp4
-python3 scripts/06_assemble.py                                           # join acts + cue VO lines to slides
+python3 scripts/06_assemble.py piece2 [--music bed.mp3]                 # VO (vo N) + SFX (sfx name) + ducked music -> renders/<shot>_360p_mix.mp4
+python3 scripts/07b_split_take.py TAKE.mp3 --script assets/audio/vo_piece2.md --out assets/audio/vo_piece2   # one website take -> line clips + word times
+python3 scripts/08_sfx.py                                                # ElevenLabs sound effects for shot.sfx() cues -> assets/audio/sfx/
 ```
+Piece 2 (`scripts/04_piece2.py`, ~93 s) is timed from `assets/audio/vo_piece2/lines.json` (line lengths +
+per-word times: risk tiles pop and tower blocks land on their spoken words). Audio cues are timeline
+markers: `vo N` and `sfx <name>` (added with `shot.sfx(name, frame)`).
 Re-running `02_build_character.py` wipes the CMU actions; re-run `02b` after it.
 Join acts without audio: `ffmpeg -i act1_360p.mp4 -i act2_360p.mp4 -filter_complex "[0:v][1:v]concat=n=2:v=1:a=0[v]" -map "[v]" ...`
 
@@ -49,6 +54,24 @@ Join acts without audio: `ffmpeg -i act1_360p.mp4 -i act2_360p.mp4 -filter_compl
 - Keep code reusable: shared logic in `pipeline/`, one script per act, numbered steps.
 - Same stage across acts unless asked; continuity via `end_state` (lighting must match across the cut).
 
+## Motion polish (use in every new scene)
+- `perf.ground_lock(start, end, skip=[airborne clips])` after `build()` — retargeted CMU clips hover 5–10 cm;
+  planted hands count as floor, so cartwheels can stay locked.
+- `then(..., in_place=0.8)` for emotes with big root travel (e.g. `CMU 120_16 Mickey Surprised` drifts 1.8 m).
+- Presenting: `perf.lively(clip, length, target=1.5)` picks a *calm* gesture window (no target = most
+  animated, which looks frantic — CMU 80_48 arguing scores 7–10). Piece 2's `talk()` rotates Mixamo
+  `Talking (1)/(2)` + CMU 18_08 in place, `face≈±5`.
+- `office.present_to(frame, point, his_x)` — open-hand gesture on the screen's side; aim 0.3 m in front of the glass.
+- `office.face_camera(cam.cam, [(start, end), ...])` — head looks at the lens on talk beats.
+- Retarget damps mocap clavicles (`retarget.CLAVICLE_KEEP = 0.25`); without it CMU shoulders sit 5–8 cm high.
+  After changing retarget, re-run 02b with every id (`-- $(ls ../blender_assets_downloaded/cmu/*.bvh ...)`): it skips existing clips otherwise.
+- `fx.Spiders(paths.SPIDER_GLB, size)` + `.add([(frame, point), ...])` — walking spider swarm (Sketchfab, CC-BY,
+  credit in `../blender_assets_downloaded/sketchfab_spider/CREDITS.txt`).
+- Despair: `CMU 79_72 crying` keeps both hands on the head (frames 18–218).
+- `shot.finish` lays VO + SFX into the .blend's sequencer → Space in Blender plays with sound (check fixes without rendering).
+- Camera: hold still while a screen is up; move only in screen-free stretches. Frame at the depth
+  between screen and presenter (`frame_on`), otherwise he is cropped at the edge.
+
 ## Gotchas
 - Blender 5.2 API: layered actions (`action.layers[].strips[].channelbag(slot)`), assign `action_slot`
   when setting actions; compositor = `scene.compositing_node_group`; Glare params are socket inputs.
@@ -58,7 +81,9 @@ Join acts without audio: `ffmpeg -i act1_360p.mp4 -i act2_360p.mp4 -filter_compl
 - Avoid `ELASTIC` easing on keys with equal values (oscillates). `BACK` is safe.
 - Masked suit is aligned in armature-local REST space, so posing/moving rigs in `miles.blend` is harmless.
 - GPU is a GTX 1650 (4 GB): EEVEE only; tools needing 8 GB VRAM (GVHMR, UniRig) won't run locally.
-- Tokens live in `../blender_owl/.env` (`SKETCHFAB_API_TOKEN`), gitignored — never commit them.
+- Tokens live in `../blender_owl/.env` (`SKETCHFAB_API_TOKEN`, `ELEVEN_LABS_API_KEY`), gitignored — never commit them.
+- ElevenLabs free tier: library voices are website-only (API 402), Sound Effects API works, Music can be
+  generated on the website but **downloading music needs a paid plan**. Free-tier audio is non-commercial.
 - `build/` and `build/frames/` are gitignored; outputs worth keeping go to `renders/`.
 
 ## Motion sources

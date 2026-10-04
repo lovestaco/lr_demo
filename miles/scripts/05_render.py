@@ -1,8 +1,9 @@
 """Render build/scene.blend.
 
     blender -b build/scene.blend --python scripts/05_render.py -- sheet          # contact sheet of markers + samples
-    blender -b build/scene.blend --python scripts/05_render.py -- full [pct]     # all frames -> renders/<name>.mp4
+    blender -b build/scene.blend --python scripts/05_render.py -- full [pct] [from_frame]   # -> renders/<name>.mp4
         pct: 33 = 360p preview (default, fast), 67 = 720p, 100 = 1080p final
+        from_frame: re-render only from that frame on, reusing the earlier frames (same pct!)
 
 Frames go to build/frames/ (gitignored); the encoded video to renders/.
 """
@@ -22,7 +23,7 @@ if mode == "sheet":
     sc.render.resolution_percentage = 25
     sc.eevee.taa_render_samples = 8
     frames = sorted({int(m.frame) for m in sc.timeline_markers} |
-                    set(range(sc.frame_start, sc.frame_end + 1, max(1, (sc.frame_end - sc.frame_start) // 18))))
+                    set(range(sc.frame_start, sc.frame_end + 1, max(1, (sc.frame_end - sc.frame_start) // 34))))
     for f in frames:
         sc.frame_set(f)
         sc.render.filepath = os.path.join(out_dir, f"f{f:04d}.png")
@@ -39,8 +40,11 @@ elif mode == "full":
     pct = int(args[1]) if len(args) > 1 else 33
     sc.render.resolution_percentage = pct
     frames_dir = os.path.join(paths.BUILD, "frames", name)
-    shutil.rmtree(frames_dir, ignore_errors=True)
-    os.makedirs(frames_dir)
+    if len(args) > 2:
+        sc.frame_start = int(args[2])
+    else:
+        shutil.rmtree(frames_dir, ignore_errors=True)
+    os.makedirs(frames_dir, exist_ok=True)
     sc.render.filepath = os.path.join(frames_dir, "f_")
     sc.render.image_settings.file_format = "PNG"
     bpy.ops.render.render(animation=True)

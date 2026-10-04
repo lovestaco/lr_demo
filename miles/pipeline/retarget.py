@@ -28,6 +28,12 @@ CMU_TO_MIXAMO = {
 PREFIX = "mixamorig:"
 
 
+# Mocap clavicles hike the shoulders up (5-8 cm over rest on Miles); keep only this share of
+# the clavicle rotation. Arms are solved in world space, so arm directions are unaffected.
+CLAVICLE_KEEP = 0.25
+CLAVICLES = (PREFIX + "LeftShoulder", PREFIX + "RightShoulder")
+
+
 def _yaw_to(vec, target=Vector((1, 0, 0))):
     """Rotation about Z turning the horizontal part of vec onto target."""
     a = math.atan2(vec.y, vec.x)
@@ -112,6 +118,9 @@ def bvh_to_action(path, rig, name, mapping=CMU_TO_MIXAMO, trim=None):
                 if arm_rot is None:
                     arm_rot = parent_arm @ rest_rel
                 basis = (parent_arm @ rest_rel).inverted() @ arm_rot
+                if bname in CLAVICLES:
+                    basis = Quaternion().slerp(basis.to_quaternion(), CLAVICLE_KEEP).to_matrix()
+                    arm_rot = parent_arm @ rest_rel @ basis
             else:
                 if arm_rot is None:
                     arm_rot = rest

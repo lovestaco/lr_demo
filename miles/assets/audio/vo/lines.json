@@ -1,0 +1,106 @@
+{
+ "1": {
+  "text": "You already ship a lot of AI-generated code.",
+  "start": 5.6,
+  "duration": 3.08,
+  "take": "piece1_vo.mp3",
+  "src_start": 0.0,
+  "src_end": 3.08
+ },
+ "2": {
+  "text": "But do you do enough inspection?",
+  "start": 10.8,
+  "duration": 1.68,
+  "take": "piece1_vo.mp3",
+  "src_start": 3.46,
+  "src_end": 5.14
+ },
+ "3": {
+  "text": "Your users deserve inspection.",
+  "start": 14.0,
+  "duration": 1.82,
+  "take": "piece1_vo.mp3",
+  "src_start": 5.72,
+  "src_end": 7.54
+ },
+ "4": {
+  "text": "Your profession demands inspection.",
+  "start": 16.4,
+  "duration": 2.22,
+  "take": "piece1_vo.mp3",
+  "src_start": 8.06,
+  "src_end": 10.28
+ },
+ "5": {
+  "text": "Your reputation depends on inspection.",
+  "start": 18.4,
+  "duration": 2.52,
+  "take": "piece1_vo.mp3",
+  "src_start": 10.78,
+  "src_end": 13.3
+ },
+ "6": {
+  "text": "Every team needs an inspection layer.",
+  "start": 20.6,
+  "duration": 2.22,
+  "take": "piece1_vo.mp3",
+  "src_start": 14.06,
+  "src_end": 16.28
+ },
+ "7": {
+  "text": "Code now ships at incredible speed\u2026",
+  "start": 26.8,
+  "duration": 2.34,
+  "take": "piece1_vo.mp3",
+  "src_start": 16.88,
+  "src_end": 19.22
+ },
+ "8": {
+  "text": "Fast shipping creates a huge volume of code.",
+  "start": 30.6,
+  "duration": 2.78,
+  "take": "piece1_vo.mp3",
+  "src_start": 19.64,
+  "src_end": 22.42
+ },
+ "9": {
+  "text": "And you still have to cut production incidents, security incidents, performance regressions \u2014 and still delight your customers.",
+  "start": 36.0,
+  "duration": 6.68,
+  "take": "piece1_vo.mp3",
+  "src_start": 22.54,
+  "src_end": 29.22
+ },
+ "10": {
+  "text": "But human attention? Still limited.",
+  "start": 44.8,
+  "duration": 2.53,
+  "take": "piece1_vo.mp3",
+  "src_start": 29.51,
+  "src_end": 32.04
+ },
+ "11": {
+  "text": "More code means bigger systems\u2026",
+  "start": 48.6,
+  "duration": 2.1,
+  "take": "piece1_vo.mp3",
+  "src_start": 32.78,
+  "src_end": 34.88
+ },
+ "12": {
+  "text": "More code means more complexity, more bugs.",
+  "start": 52.6,
+  "duration": 2.78,
+  "take": "piece1_vo.mp3",
+  "src_start": 35.36,
+  "src_end": 38.14
+ },
+ "13": {
+  "text": "More code also brings deeper consequences.",
+  "start": 55.0,
+  "duration": 2.48,
+  "take": "piece1_vo.mp3",
+  "src_start": 38.82,
+  "src_end": 41.3
+ }
+}

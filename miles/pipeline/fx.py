@@ -83,10 +83,10 @@ def physical_shading(obj, lift=2.2, rough=0.42, sheen=0.6, bump=0.35):
 THEMES = {
     # light: soft cool-grey cyclorama so the black suit reads clearly
     "light": dict(cyc=(0.55, 0.57, 0.62), rough=0.65, world=(0.62, 0.66, 0.74), world_strength=0.32,
-                  key=380, fill=0.35, wash=(1.0, 0.97, 0.92), wash_energy=140, rim_energy=260, char_key=300),
+                  key=380, fill=0.35, wash=(1.0, 0.97, 0.92), wash_energy=140, rim_energy=260, char_key=300, rim_spec=0.8),
     # dark: Spider-Verse night look with coloured rims
     "dark": dict(cyc=(0.012, 0.013, 0.025), rough=0.4, world=(0.004, 0.005, 0.012), world_strength=1.0,
-                 key=900, fill=0.18, wash=(0.35, 0.12, 0.85), wash_energy=2500, rim_energy=1400, char_key=0),
+                 key=900, fill=0.18, wash=(0.35, 0.12, 0.85), wash_energy=2500, rim_energy=1400, char_key=0, rim_spec=0.12),
 }
 
 
@@ -138,13 +138,97 @@ def studio(theme="light", rims=True, subject=(-2.4, 0.0)):
     area("WallWash", (0, 2.5, 0.3), (0, 8, 4), t["wash_energy"], t["wash"], 6.0, spec=0.0)
     if rims:
         sx, sy = subject
-        area("RimRed", (sx - 2.6, sy + 3.2, 3.0), (sx, sy, 1.3), t["rim_energy"], (1.0, 0.18, 0.14), 1.5, spec=0.8)
-        area("RimBlue", (sx + 2.8, sy + 3.0, 3.2), (sx, sy, 1.3), t["rim_energy"] * 0.93, (0.3, 0.5, 1.0), 1.5, spec=0.8)
+        area("RimRed", (sx - 2.6, sy + 3.2, 3.0), (sx, sy, 1.3), t["rim_energy"], (1.0, 0.18, 0.14), 1.5, spec=t["rim_spec"])
+        area("RimBlue", (sx + 2.8, sy + 3.0, 3.2), (sx, sy, 1.3), t["rim_energy"] * 0.93, (0.3, 0.5, 1.0), 1.5, spec=t["rim_spec"])
     if t.get("char_key"):
         # soft key on the character from front-left: its highlights trace the body
         area("CharKey", (subject[0] - 2.2, subject[1] - 3.0, 3.6), (subject[0], subject[1], 1.2), t["char_key"],
              (1.0, 0.97, 0.94), 1.6, spec=1.0)
     return coll
+
+
+def spot(name, loc, target, energy=900, color=(1.0, 0.95, 0.88), angle=40, blend=0.5, coll=None):
+    """Spot light aimed at a point (e.g. an overhead light above a screen)."""
+    coll = coll or collection("Studio")
+    ld = bpy.data.lights.get(name) or bpy.data.lights.new(name, "SPOT")
+    ld.energy, ld.color = energy, color
+    ld.spot_size, ld.spot_blend = math.radians(angle), blend
+    ld.shadow_soft_size = 0.4
+    ob = bpy.data.objects.get(name) or _link(bpy.data.objects.new(name, ld), coll)
+    ob.location = loc
+    ob.rotation_euler = (Vector(target) - Vector(loc)).to_track_quat("-Z", "Y").to_euler()
+    return ob
+
+
+def follow_spot(rig, bone="mixamorig:Spine2", offset=(-1.6, -3.2, 3.4), energy=420, angle=28, coll=None):
+    """Theatre follow-spot: rides with the character (rig root) and stays aimed at a bone, so the
+    dark suit always gets a key light wherever he walks or cartwheels."""
+    coll = coll or collection("Studio")
+    ld = bpy.data.lights.get("FollowSpot") or bpy.data.lights.new("FollowSpot", "SPOT")
+    ld.energy, ld.color = energy, (1.0, 0.96, 0.92)
+    ld.spot_size, ld.spot_blend = math.radians(angle), 0.6
+    ld.shadow_soft_size = 0.6
+    ob = bpy.data.objects.get("FollowSpot") or _link(bpy.data.objects.new("FollowSpot", ld), coll)
+    c = ob.constraints.new("COPY_LOCATION")
+    c.target, c.subtarget = rig, "mixamorig:Hips"
+    c.use_z = False
+    c.use_offset = True
+    ob.location = offset
+    t = ob.constraints.new("TRACK_TO")
+    t.target, t.subtarget = rig, bone
+    t.track_axis, t.up_axis = "TRACK_NEGATIVE_Z", "UP_Y"
+    return ob
+
+
+def paper_pour(name, texture, emit_fn, land_center, count, start, dur, spread=(1.1, 0.7), coll=None, seed=7,
+               size=(0.21, 0.297), arc=(0.5, 1.1)):
+    """Sheets of paper burst out of a source (e.g. a screen) and pile up on the floor.
+
+    emit_fn(i) -> world point where sheet i leaves the source; they arc out and land in an
+    ellipse around land_center, stacking up. Fully keyed (no physics), deterministic.
+    """
+    import random
+    r = random.Random(seed)
+    coll = coll or collection(name)
+    mat = bpy.data.materials.new(name + "_Mat")
+    if mat.node_tree is None:
+        mat.use_nodes = True
+    nt = mat.node_tree
+    bsdf = next(n for n in nt.nodes if n.type == "BSDF_PRINCIPLED")
+    tex = nt.nodes.new("ShaderNodeTexImage")
+    tex.image = bpy.data.images.load(texture, check_existing=True)
+    nt.links.new(tex.outputs["Color"], bsdf.inputs["Base Color"])
+    bsdf.inputs["Roughness"].default_value = 0.7
+    me = bpy.data.meshes.new(name + "_Sheet")
+    w, h = size
+    me.from_pydata([(-w / 2, -h / 2, 0), (w / 2, -h / 2, 0), (w / 2, h / 2, 0), (-w / 2, h / 2, 0)], [], [(0, 1, 2, 3)])
+    uv = me.uv_layers.new()
+    for li, loop in enumerate(me.loops):
+        uv.data[li].uv = [(0, 0), (1, 0), (1, 1), (0, 1)][loop.vertex_index]
+    me.materials.append(mat)
+    cx, cy = land_center[0], land_center[1]
+    pile = {}
+    sheets = []
+    for i in range(count):
+        ob = _link(bpy.data.objects.new(f"{name}_{i:03d}", me), coll)
+        t0 = int(start + dur * (i / count) ** 0.8 + r.uniform(-2, 2))
+        t1 = t0 + r.randint(14, 22)
+        p0 = Vector(emit_fn(i))
+        a = r.uniform(0, 2 * math.pi)
+        rad = math.sqrt(r.random())
+        land = Vector((cx + math.cos(a) * rad * spread[0], cy + math.sin(a) * rad * spread[1], 0))
+        cell = (round(land.x * 4), round(land.y * 4))
+        pile[cell] = pile.get(cell, 0) + 1
+        land.z = 0.004 + pile[cell] * 0.018 * (1.2 - rad)          # mound: higher near the middle
+        apex = (p0 + land) / 2 + Vector((0, -0.4, r.uniform(*arc)))
+        anim.visible(ob, [(1, False), (t0, True)])
+        anim.keys(ob, "location", [(t0, p0, "out"), ((t0 + t1) // 2, apex, "in"), (t1, land, "bez")])
+        rot_end = Vector((r.uniform(-0.25, 0.25), r.uniform(-0.25, 0.25), r.uniform(0, 2 * math.pi)))
+        rot_mid = Vector((r.uniform(-3, 3), r.uniform(-3, 3), r.uniform(-3, 3)))
+        anim.keys(ob, "rotation_euler", [(t0, Vector((math.pi / 2, 0, 0)), "lin"), ((t0 + t1) // 2, rot_mid, "lin"),
+                                         (t1, rot_end, "bez")])
+        sheets.append(ob)
+    return sheets
 
 
 # ------------------------------------------------------------------ web strands
@@ -231,7 +315,13 @@ class Board:
         b.flip(200, 2, turns=1.5)
     """
 
-    def __init__(self, name, slides, width=2.4, depth=0.06, coll=None, glow=0.06, stand_height=0.0):
+    def __init__(self, name, slides, width=2.4, depth=0.06, coll=None, glow=0.06, stand_height=0.0,
+                 frame="aluminium", power=False):
+        """frame: "aluminium" (physical sign), "glow" (dark slab, emissive blue edge) or "tv" (LCD: glossy
+        black bezel, centre stand). power=True starts the screen OFF (black glass) until power_on().
+        Slides: png paths, or ("seq", first_png, n_frames, start_frame) for an animated image sequence."""
+        self.frame_style, self.power = frame, power
+        self.power_nodes = []
         self.name, self.slides, self.width = name, slides, width
         self.height = height = width * 9 / 16
         self.root = root = empty(name, coll=coll, size=0.3)
@@ -267,15 +357,25 @@ class Board:
             bev = ob.modifiers.new("Bevel", "BEVEL")
             bev.width, bev.segments = 0.008, 2
 
-        alu = material("Board_Aluminium", (0.62, 0.63, 0.65), rough=0.32, metallic=0.9)
-        box(name + "_Core", (width, depth, height), (0, 0, 0), material("Board_Core", (0.92, 0.92, 0.9), rough=0.7))
-        f = 0.045
+        alu = {"aluminium": lambda: material("Board_Aluminium", (0.62, 0.63, 0.65), rough=0.32, metallic=0.9),
+               "glow": lambda: material("Board_GlowEdge", (0.05, 0.1, 0.25), rough=0.3, emit=2.5,
+                                        emit_color=(0.23, 0.51, 0.96)),
+               "tv": lambda: material("TV_Bezel", (0.012, 0.012, 0.014), rough=0.18, metallic=0.2)}[frame]()
+        core = (material("TV_Back", (0.02, 0.02, 0.022), rough=0.4) if frame == "tv" else
+                material("Board_Core", (0.92, 0.92, 0.9), rough=0.7))
+        box(name + "_Core", (width, depth, height), (0, 0, 0), core)
+        f = 0.035 if frame == "tv" else 0.045
         for i, (sz, lc) in enumerate((((width + 2 * f, depth + 0.02, f), (0, 0, hh + f / 2)),
                                       ((width + 2 * f, depth + 0.02, f), (0, 0, -hh - f / 2)),
                                       ((f, depth + 0.02, height), (-hw - f / 2, 0, 0)),
                                       ((f, depth + 0.02, height), (hw + f / 2, 0, 0)))):
             box(f"{name}_Frame{i}", sz, lc, alu)
-        if stand_height > 0:
+        if stand_height > 0 and frame == "tv":
+            dark = material("TV_Stand", (0.05, 0.05, 0.055), rough=0.3, metallic=0.7)
+            post_h = stand_height + 0.3
+            box(f"{name}_Post", (0.09, 0.05, post_h), (0, depth, -hh - stand_height + post_h / 2), dark)
+            box(f"{name}_Base", (width * 0.35, 0.55, 0.035), (0, depth, -hh - stand_height + 0.0175), dark)
+        elif stand_height > 0:
             dark = material("Board_Stand", (0.08, 0.08, 0.09), rough=0.45, metallic=0.6)
             for sx in (-width * 0.33, width * 0.33):
                 post_h = stand_height + 0.25
@@ -300,7 +400,15 @@ class Board:
         prev = None
         for i, png in enumerate(self.slides):
             tex = nt.nodes.new("ShaderNodeTexImage")
-            tex.image = bpy.data.images.load(png, check_existing=True)
+            if isinstance(png, tuple):                      # ("seq", first_png, n_frames, start_frame)
+                _, first, n, start = png
+                tex.image = bpy.data.images.load(first, check_existing=False)
+                tex.image.source = "SEQUENCE"
+                tex.image_user.frame_duration = n
+                tex.image_user.frame_start = int(start)
+                tex.image_user.use_auto_refresh = True
+            else:
+                tex.image = bpy.data.images.load(png, check_existing=True)
             if prev is None:
                 prev = tex.outputs["Color"]
                 continue
@@ -314,13 +422,59 @@ class Board:
             nt.links.new(prev, mix.inputs[6])
             nt.links.new(tex.outputs["Color"], mix.inputs[7])
             prev = mix.outputs[2]
-        nt.links.new(prev, bsdf.inputs["Base Color"])
-        nt.links.new(prev, bsdf.inputs["Emission Color"])
-        bsdf.inputs["Emission Strength"].default_value = glow     # tiny lift for legibility only
-        bsdf.inputs["Roughness"].default_value = 0.62              # matte print
-        bsdf.inputs["Specular IOR Level"].default_value = 0.08     # no sheen: ink stays black
+        if self.power:
+            # screen off = black glass; "Power" (0..1+, keyed) fades the picture in and drives emission
+            pw = nt.nodes.new("ShaderNodeValue")
+            pw.name = "Power"
+            pw.outputs[0].default_value = 0.0
+            clamp = nt.nodes.new("ShaderNodeClamp")
+            nt.links.new(pw.outputs[0], clamp.inputs[0])
+            dim = nt.nodes.new("ShaderNodeMix")
+            dim.data_type = "RGBA"
+            dim.inputs[6].default_value = (0.004, 0.004, 0.005, 1)
+            nt.links.new(clamp.outputs[0], dim.inputs["Factor"])
+            nt.links.new(prev, dim.inputs[7])
+            mul = nt.nodes.new("ShaderNodeMath")
+            mul.operation = "MULTIPLY"
+            mul.inputs[1].default_value = glow
+            nt.links.new(pw.outputs[0], mul.inputs[0])
+            nt.links.new(dim.outputs[2], bsdf.inputs["Base Color"])
+            nt.links.new(prev, bsdf.inputs["Emission Color"])
+            nt.links.new(mul.outputs[0], bsdf.inputs["Emission Strength"])
+            bsdf.inputs["Roughness"].default_value = 0.12          # glossy glass
+            bsdf.inputs["Specular IOR Level"].default_value = 0.35
+            self.power_nodes.append(pw)
+        else:
+            nt.links.new(prev, bsdf.inputs["Base Color"])
+            nt.links.new(prev, bsdf.inputs["Emission Color"])
+            bsdf.inputs["Emission Strength"].default_value = glow     # tiny lift for legibility only
+            bsdf.inputs["Roughness"].default_value = 0.62              # matte print
+            bsdf.inputs["Specular IOR Level"].default_value = 0.08     # no sheen: ink stays black
         self.index_nodes[face] = idx
         return m
+
+    def power_on(self, frame):
+        """CRT-ish switch-on: flash, flicker, settle."""
+        f = int(frame)
+        for pw in self.power_nodes:
+            anim.keys(pw.outputs[0], "default_value", [(f - 1, 0.0, "lin"), (f + 1, 1.8, "lin"), (f + 3, 0.25, "lin"),
+                                                       (f + 5, 1.3, "lin"), (f + 7, 0.7, "lin"), (f + 10, 1.0, "bez")])
+        return f + 10
+
+    def power_off(self, frame):
+        f = int(frame)
+        for pw in self.power_nodes:
+            anim.keys(pw.outputs[0], "default_value", [(f, 1.0, "lin"), (f + 2, 1.6, "lin"), (f + 5, 0.0, "lin")])
+        return f + 5
+
+    def flicker(self, frame, n=6):
+        """Unstable screen (glitch moment)."""
+        import random
+        r = random.Random(frame)
+        for pw in self.power_nodes:
+            for i in range(n):
+                anim.key(pw.outputs[0], "default_value", int(frame) + i * 2, r.choice((0.15, 0.4, 1.4, 0.9)), ease="lin")
+            anim.key(pw.outputs[0], "default_value", int(frame) + n * 2, 1.0, ease="bez")
 
     def show(self, frame, index, face=None):
         """Put slide `index` on a face (default: the one facing camera) from `frame` on."""
@@ -424,3 +578,82 @@ def look(scene=None, samples=24, motion_blur=True, bloom=True, exposure=0.0):
         out = ng.nodes.new("NodeGroupOutput")
         ng.links.new(rl.outputs["Image"], gl.inputs["Image"])
         ng.links.new(gl.outputs[0], out.inputs[0])
+
+
+class Spiders:
+    """A swarm of walking spiders (Sketchfab "Spider animated character" by TheGameAssets, CC-BY).
+
+        sw = Spiders(paths.SPIDER_GLB, size=0.32)
+        sw.add([(f0, p0), (f1, p1), ...], walk_speed=1.6)     # pops in at f0, walks the waypoints
+    Each spider faces where it is heading and plays the walk cycle; it is hidden before the first
+    and after the last waypoint (walk it off-screen to make it leave).
+    """
+
+    def __init__(self, path, size=0.32, coll=None, yaw_offset=math.pi / 2):     # model's head points -Y
+        self.coll = coll or collection("Spiders")
+        self.size, self.yaw_offset, self.n = size, yaw_offset, 0
+        before = set(bpy.data.objects)
+        bpy.ops.import_scene.gltf(filepath=path)
+        new = [o for o in bpy.data.objects if o not in before]
+        self.arm = next(o for o in new if o.type == "ARMATURE")
+        self.mesh = next(o for o in new if o.type == "MESH" and o.find_armature() == self.arm)
+        self.walk = next(a for a in bpy.data.actions if a.name.endswith("_Walk"))
+        bpy.context.view_layer.update()
+        m = self.arm.matrix_world.copy()
+        self.arm.parent = None
+        self.arm.matrix_world = m
+        for o in new:                                   # drop the FBX empties + the ground plane
+            if o not in (self.arm, self.mesh):
+                bpy.data.objects.remove(o, do_unlink=True)
+        bpy.context.view_layer.update()
+        pts = [self.mesh.matrix_world @ Vector(c) for c in self.mesh.bound_box]
+        span = max(max(p.x for p in pts) - min(p.x for p in pts), max(p.y for p in pts) - min(p.y for p in pts))
+        s = size / span
+        self.rest = Matrix.Scale(s, 4) @ self.arm.matrix_world
+        self.lift = -min(p.z for p in pts) * s          # sole on the floor
+        for o in (self.arm, self.mesh):                 # the source stays out of the shot
+            for c in list(o.users_collection):
+                c.objects.unlink(o)
+        if self.arm.animation_data:
+            self.arm.animation_data.action = None
+
+    def add(self, waypoints, walk_speed=1.5, pop=4):
+        """waypoints: [(frame, Vector)] — points on the surface it walks on."""
+        i, self.n = self.n, self.n + 1
+        root = empty(f"Spider_{i:02d}", waypoints[0][1], self.coll, 0.05)
+        arm = self.arm.copy()
+        _link(arm, self.coll)
+        arm.parent = root
+        arm.matrix_parent_inverse = Matrix.Identity(4)
+        arm.matrix_basis = Matrix.Translation((0, 0, self.lift)) @ self.rest
+        body = self.mesh.copy()
+        _link(body, self.coll)
+        body.parent = arm
+        body.matrix_parent_inverse = self.mesh.matrix_parent_inverse.copy()
+        for md in body.modifiers:
+            if md.type == "ARMATURE":
+                md.object = arm
+        ad = arm.animation_data_create()
+        ad.action = None
+        tr = ad.nla_tracks.new()
+        a0, a1 = self.walk.frame_range
+        f0, f1 = int(waypoints[0][0]), int(waypoints[-1][0])
+        st = tr.strips.new("walk", f0 - (i * 3) % 9, self.walk)
+        if hasattr(st, "action_slot") and self.walk.slots:
+            st.action_slot = self.walk.slots[0]
+        st.scale = 1.0 / walk_speed
+        st.repeat = max(1.0, (f1 - f0 + 12) * walk_speed / (a1 - a0))
+        yaw = None
+        for k, (f, p) in enumerate(waypoints):
+            anim.key(root, "location", int(f), Vector(p), ease="lin")
+            q = (waypoints[k + 1][1] - Vector(p)) if k + 1 < len(waypoints) else (Vector(p) - waypoints[k - 1][1])
+            if q.xy.length > 1e-4:
+                a = math.atan2(q.y, q.x) + self.yaw_offset
+                if yaw is not None:                         # unwrap: never spin the long way round
+                    a = yaw + (a - yaw + math.pi) % (2 * math.pi) - math.pi
+                yaw = a
+                anim.key(root, "rotation_euler", int(f), a, index=2, ease="lin")
+        anim.keys(root, "scale", [(f0, Vector((0.01, 0.01, 0.01)), "out"), (f0 + pop, Vector((1, 1, 1)), "lin")])
+        for o in (arm, body):
+            anim.visible(o, [(1, False), (f0, True), (f1, False)])
+        return root

@@ -6,14 +6,30 @@ FPS = 30
 L_HAND, R_HAND, HIPS = "mixamorig:LeftHand", "mixamorig:RightHand", "mixamorig:Hips"
 
 
-def stage(theme="light", subject=(-2.4, 0.0)):
-    """Light studio + physically shaded masked Miles. Returns the rig."""
+def stage(theme="light", subject=(-2.4, 0.0), physical=True):
+    """Studio + masked Miles (physical=False keeps the model's original toon shading). Returns the rig."""
     sc = bpy.context.scene
     sc.render.fps = FPS
     sc.frame_start = 1
     fx.studio(theme=theme, subject=subject)
-    fx.physical_shading(bpy.data.objects["MilesMasked"], lift=1.45, sheen=0.5)
+    if physical:
+        fx.physical_shading(bpy.data.objects["MilesMasked"], lift=1.45, sheen=0.5)
     return bpy.data.objects["MilesRig"]
+
+
+SFX = []          # [(label, frame)] collected by sfx(); finish() turns them into "sfx <name>#<n>" cues
+
+
+def sfx(name, frame, gain=1.0):
+    """Mark a sound effect at a frame (06_assemble.py places assets/audio/sfx/<name>.* there)."""
+    SFX.append((f"sfx {name}#{len(SFX)}" + (f"@{gain:g}" if gain != 1.0 else ""), int(frame)))
+    return frame
+
+
+def hold_camera(cam, start, end, c, t):
+    """Locked framing while a screen is up: no pans/zooms between start and end."""
+    cam.at(int(start), c, t, "lin")
+    cam.at(int(end), c, t, "inout")
 
 
 def frame_span(left, right, plane_y, lens_mm=32, pad=1.02, cam_z=1.85, target_z=1.7):
@@ -28,8 +44,10 @@ def finish(name, markers=(), exposure=-0.55, samples=24, end_state=None):
     fx.look(samples=samples, exposure=exposure)
     sc.render.resolution_x, sc.render.resolution_y, sc.render.resolution_percentage = 1920, 1080, 33
     sc.timeline_markers.clear()
+    markers = list(markers) + SFX
     for label, f in markers:
         sc.timeline_markers.new(label, frame=int(f))
+    preview_audio(name, markers)
     sc.frame_set(1)
     os.makedirs(paths.BUILD, exist_ok=True)
     out = paths.shot_blend(name)
@@ -39,6 +57,36 @@ def finish(name, markers=(), exposure=-0.55, samples=24, end_state=None):
         json.dump({"fps": FPS, "frames": sc.frame_end, "duration": sc.frame_end / FPS,
                    "cues": {label: int(f) / FPS for label, f in markers},
                    "end_state": end_state or {}}, fh, indent=1)
+
+
+SFX_PREVIEW_GAIN = 0.385          # keep in step with SFX_GAIN in scripts/06_assemble.py
+
+
+def preview_audio(name, markers):
+    """Lay the voice lines + sound effects into the .blend's sequencer at their cue markers, so
+    viewport playback (Space) is in sync with sound. Final mixing still happens in 06_assemble."""
+    import glob
+    sc = bpy.context.scene
+    audio = os.path.join(paths.ROOT, "assets", "audio")
+    vo_dir = os.path.join(audio, f"vo_{name}")
+    vo_dir = vo_dir if os.path.isdir(vo_dir) else os.path.join(audio, "vo")
+    se = sc.sequence_editor_create()
+    strips = se.strips if hasattr(se, "strips") else se.sequences
+    for st in list(strips):
+        strips.remove(st)
+    for label, f in markers:
+        if label.startswith("vo "):
+            path, ch, vol = os.path.join(vo_dir, f"line_{int(label.split()[1]):02d}.wav"), 1, 1.0
+        elif label.startswith("sfx "):
+            nm, _, gain = label[4:].partition("@")
+            hits = sorted(glob.glob(os.path.join(audio, "sfx", nm.split("#")[0] + ".*")))
+            path, ch, vol = (hits[0] if hits else ""), 2 + len(strips) % 3, SFX_PREVIEW_GAIN * float(gain or 1.0)
+        else:
+            continue
+        if os.path.exists(path):
+            st = strips.new_sound(label, path, ch, int(f))
+            st.volume = vol
+    sc.sync_mode = "AUDIO_SYNC"          # playback keeps real time and stays in sync with the sound
 
 
 def load_end_state(name):

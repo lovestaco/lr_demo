@@ -33,4 +33,5 @@ def setup_sys_path():
 FONT_INTER = os.path.join(REPO, "videos", "livereview-launch", "assets", "fonts", "Inter-var.woff2")
 
 CMU_DIR = os.path.join(MIXAMO_CLIPS, "cmu")                           # CMU mocap BVH downloads
+SPIDER_GLB = os.path.join(MIXAMO_CLIPS, "sketchfab_spider", "spider.glb")   # "Spider animated character" by TheGameAssets (CC-BY)
 CMU_REPO_RAW = "https://raw.githubusercontent.com/una-dinosauria/cmu-mocap/master"

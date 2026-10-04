@@ -27,3 +27,4 @@ videos/livereview-launch/renders/livereview-atc.mp4
 
 # miles pipeline: generated build outputs
 miles/build/
+miles/.venv-tts/
