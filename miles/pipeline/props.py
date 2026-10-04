@@ -188,13 +188,26 @@ class Office:
         return self.present(frame, point, side="L" if point[0] > from_x else "R", **kw)
 
     def face_camera(self, cam, spans, amount=0.7, ramp=8):
-        """Turn the head towards the camera during [(start, end), ...] (talking to the viewer)."""
-        con = self.__dict__.get("look_cam") or self._look(self.rig.pose.bones[P + "Head"], cam, "Look camera")
-        self.look_cam = con
+        """Turn the head towards the camera during [(start, end), ...] (talking to the viewer).
+        The head tracks an empty riding on the camera, so nod() can dip it for emphasis."""
+        if "look_cam" not in self.__dict__:
+            self.cam_eye = fx.empty("LookCam", (0, 0, 0), self.coll, 0.05)
+            self.cam_eye.parent = cam
+            self.look_cam = self._look(self.rig.pose.bones[P + "Head"], self.cam_eye, "Look camera")
+        con = self.look_cam
         for a, b in spans:
             anim.keys(con, "influence", [(int(a), 0.0, "inout"), (int(a) + ramp, amount, "inout"),
                                          (int(b) - ramp, amount, "inout"), (int(b), 0.0, "bez")])
         return con
+
+    def nod(self, frame, depth=0.7):
+        """Emphasis nod on a stressed word (needs face_camera): the head's look point dips and recovers."""
+        f = int(frame)
+        anim.keys(self.cam_eye, "location", [(f - 4, 0.0, "out"), (f, -depth, "inout"), (f + 7, 0.0, "bez")], index=1)
+
+    def beat(self, frame, point, side, amount=0.55):
+        """Small hand 'beat' on a stressed word with the free arm (side = "L"/"R")."""
+        return self.present(frame - 5, point, side=side, hold=4, ramp=5, amount=amount)
 
     def reach(self, frame, point, hold=6, ramp=7):
         anim.key(self.t_reach, "location", int(frame), Vector(point), ease="const")

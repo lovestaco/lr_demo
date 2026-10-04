@@ -90,6 +90,33 @@ THEMES = {
 }
 
 
+def area_light(name, loc, target, energy, color, size, spec=1.0, coll=None):
+    """Soft area light at `loc` aimed at `target` (spec: <1 keeps hot spots off the glossy floor)."""
+    ld = bpy.data.lights.get(name) or bpy.data.lights.new(name, "AREA")
+    ld.energy, ld.color, ld.size = energy, color, size
+    ld.specular_factor = spec
+    ob = bpy.data.objects.get(name) or _link(bpy.data.objects.new(name, ld), coll or collection("Studio"))
+    ob.location = loc
+    ob.rotation_euler = (Vector(target) - Vector(loc)).to_track_quat("-Z", "Y").to_euler()
+    return ob
+
+
+def stage_pool(prefix, center, subject, theme="dark", key=1.0, coll=None):
+    """The studio look (backdrop wash, red/blue rims, soft key) re-created around another spot on
+    the set, e.g. a finale staged far from the main lights. center: (x, y) of the set piece;
+    subject: (x, y) of the character there."""
+    t, coll = THEMES[theme], coll or collection("Studio")
+    cx, cy = center
+    sx, sy = subject
+    area_light(prefix + "Wash", (cx, 2.5, 0.3), (cx, 8, 4), t["wash_energy"], t["wash"], 6.0, spec=0.0, coll=coll)
+    area_light(prefix + "RimRed", (sx - 2.6, sy + 3.2, 3.0), (sx, sy, 1.3), t["rim_energy"], (1.0, 0.18, 0.14), 1.5,
+               spec=t["rim_spec"], coll=coll)
+    area_light(prefix + "RimBlue", (sx + 2.8, sy + 3.0, 3.2), (sx, sy, 1.3), t["rim_energy"] * 0.93, (0.3, 0.5, 1.0), 1.5,
+               spec=t["rim_spec"], coll=coll)
+    area_light(prefix + "Key", (cx - 3.0, cy - 5.0, 5.0), (cx, cy, 1.2), t["key"] * key, (1.0, 0.96, 0.92), 3.0, spec=0.35,
+               coll=coll)
+
+
 def studio(theme="light", rims=True, subject=(-2.4, 0.0)):
     """Infinite cyclorama studio. theme: 'light' | 'dark' (see THEMES)."""
     t = THEMES[theme]
@@ -124,14 +151,7 @@ def studio(theme="light", rims=True, subject=(-2.4, 0.0)):
     bg.inputs["Color"].default_value = (*t["world"], 1)
     bg.inputs["Strength"].default_value = t["world_strength"]
 
-    def area(name, loc, target, energy, color, size, spec=1.0):
-        ld = bpy.data.lights.get(name) or bpy.data.lights.new(name, "AREA")
-        ld.energy, ld.color, ld.size = energy, color, size
-        ld.specular_factor = spec      # low = no hot-spot reflections on the floor
-        ob = bpy.data.objects.get(name) or _link(bpy.data.objects.new(name, ld), coll)
-        ob.location = loc
-        ob.rotation_euler = (Vector(target) - Vector(loc)).to_track_quat("-Z", "Y").to_euler()
-        return ob
+    area = lambda *a, **k: area_light(*a, coll=coll, **k)
 
     area("Key", (-3.5, -5.0, 5.0), (0, 0, 1.2), t["key"], (1.0, 0.96, 0.92), 3.0, spec=0.35)
     area("Fill", (5.0, -6.0, 2.5), (0, 0, 1.2), t["key"] * t["fill"], (0.85, 0.9, 1.0), 4.0, spec=0.2)

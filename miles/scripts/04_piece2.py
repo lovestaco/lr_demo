@@ -238,6 +238,7 @@ TY = arrive.y + 0.5
 BLOCKS = [("INSPECTION", 2.2, 1.0, 0.72, (0.15, 0.39, 0.92)), ("ENGINEERS' CONFIDENCE", 2.0, 0.95, 0.66, (0.12, 0.16, 0.23)),
           ("CUSTOMER CONFIDENCE", 1.8, 0.9, 0.66, (0.12, 0.16, 0.23)), ("COMPETITIVE PRODUCT", 1.6, 0.85, 0.66, (0.12, 0.16, 0.23))]
 tcoll = fx.collection("Tower")
+TOWER_H = sum(b[3] for b in BLOCKS)
 
 
 def block(i, w, d, h, col):
@@ -397,6 +398,9 @@ webs.bake(range(1, END + 1))
 fx.follow_spot(rig, energy=380)
 for i, p in enumerate((TV1, TV2, Vector((TX, TY, 0)))):
     fx.spot(f"ScreenTop{i + 1}", (p.x, p.y - 2.2, 4.6), (p.x, p.y - 1.4, 0.0), energy=650, angle=60)
+# the finale sits ~14 m from the studio lights: give it its own backdrop wash, rims, key + a spot on the labels
+fx.stage_pool("Tower", (TX + 0.6, TY), (arrive.x, arrive.y))
+fx.spot("TowerSpot", (TX - 1.6, TY - 3.2, 5.4), (TX, TY, TOWER_H * 0.55), energy=1500, angle=38)
 
 # ------------------------------------------------------------------ polish: feet on the floor
 airborne = [hang, land]                                   # cartwheels stay locked: planted hands count as floor
@@ -448,7 +452,6 @@ locked(att_at, risk_at - 1, frame_on(TV2, att_at + 30))                         
 locked(risk_at, q_at - 1, frame_on(TV2, risk_at + 10))
 locked(q_at, leave_at + 96, close2)                                                      # tiles + walk away
 locked(leave_at + 97, int(cart2.start) + 2, frame_on(TV2, comp_at + 20))                  # bridge
-TOWER_H = sum(b[3] for b in BLOCKS)
 tw = shot.frame_span(arrive.x - 1.0, TX + BLOCKS[0][1] / 2 + 0.8, (TY + arrive.y) / 2, lens_mm=30, pad=1.2,
                      cam_z=1.75, target_z=(TOWER_H + 0.3) * 0.5 + 0.15)                    # whole tower + cash in frame
 cam.at(int(w6.end) + 4, tw[0], tw[1], "inout")                                            # free: to the tower
@@ -459,6 +462,24 @@ last = shot.frame_span(hips(fear.start + 40).x - 1.1, TX + 2.3, (TY + arrive.y) 
                       cam_z=1.5, target_z=0.8)
 cam.at(END, last[0], last[1])                                                              # slow push: Miles + the rubble
 office.face_camera(cam.cam, [(c.start + 4, c.end - 2) for c in (talk1, talk2, pre, vel, sysA, rq, risk, comp, layer)])
+# emphasis on the stressed words: a nod to camera + a small beat with the free arm (the one not
+# pointing at the screen); lines with their own action (sprint, spiders, yawn, risk tiles, tower) are skipped
+STRESS = {1: ("lot", "generated"), 2: ("enough", "inspection"), 4: ("huge", "volume"), 6: ("traditional", "keep"),
+          8: ("production", "lost"), 10: ("competitive",), 11: ("better", "inspection")}
+last_beat = -99
+for n, words in STRESS.items():
+    for w in words:
+        try:
+            f = int(VO_CUES[n] + word(n, w) * FPS)
+        except StopIteration:
+            continue
+        office.nod(f)
+        h = hips(f)
+        tv = TV1 if f < cart.start else TV2
+        free = "R" if tv.x > h.x else "L"                    # screen on his left side of frame -> his right arm points
+        if f - last_beat >= 16:
+            office.beat(f, (h.x + (0.35 if free == "L" else -0.35), h.y - 0.6, 1.3), free)
+            last_beat = f
 cam.shake(int(IMPACT), amp=0.06, dur=8)
 cam.shake(C + 2, amp=0.08, dur=14)
 
