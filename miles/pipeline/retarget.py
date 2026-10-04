@@ -144,14 +144,14 @@ def bvh_to_action(path, rig, name, mapping=CMU_TO_MIXAMO, trim=None):
     strip = act.layers.new("Layer").strips.new(type="KEYFRAME")
     cb = strip.channelbag(slot, ensure=True)
 
-    def curve(path, idx, values):
+    def curve(path, idx, values, interp=None):
         fc = cb.fcurves.new(path, index=idx)
         fc.keyframe_points.add(len(values))
         co = []
         for k, v in enumerate(values):
             co += [k + 1, v]
         fc.keyframe_points.foreach_set("co", co)
-        fc.keyframe_points.foreach_set("interpolation", [1] * len(values))   # LINEAR (dense samples)
+        fc.keyframe_points.foreach_set("interpolation", interp or [1] * len(values))   # LINEAR (dense samples)
         fc.update()
 
     for bname in order:
@@ -163,9 +163,16 @@ def bvh_to_action(path, rig, name, mapping=CMU_TO_MIXAMO, trim=None):
             prev = q
         if all(abs(q.w - 1) < 1e-5 for q in qs):
             continue                       # untouched bone
+        # Keep every key in the w >= 0 hemisphere so NLA crossfades (which mix quaternion channels
+        # linearly) never take the long way round — a clip that spins >180° (cartwheel) otherwise
+        # ends on -q and the blend into the next clip whips the body through a full turn. Where the
+        # sign flips (same rotation, other hemisphere) the key is CONSTANT, so no in-between is drawn.
+        sign = [1 if q.w >= 0 else -1 for q in qs]
+        qs = [q * sg for q, sg in zip(qs, sign)]
+        interp = [0 if k + 1 < len(qs) and sign[k] != sign[k + 1] else 1 for k in range(len(qs))]
         path = f'pose.bones["{bname}"].rotation_quaternion'
         for c in range(4):
-            curve(path, c, [q[c] for q in qs])
+            curve(path, c, [q[c] for q in qs], interp)
     hpath = f'pose.bones["{PREFIX}Hips"].location'
     for c in range(3):
         curve(hpath, c, [v[c] for v in hip_loc])

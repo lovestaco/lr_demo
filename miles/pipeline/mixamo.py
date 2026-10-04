@@ -128,6 +128,21 @@ class Performer:
     def end(self):
         return self.clips[-1].end if self.clips else self.scene.frame_start
 
+    def curve(self, action, faces, seg=14, blend=6, first_blend=8, frm=None, speed=1.0):
+        """Walk (or run) along a curve: short segments of a cycle clip whose `face` eases through
+        `faces`, phase-continuous so the steps never hitch. Use it to come out of a move facing
+        where the body already points and bend towards the next mark, instead of snapping round."""
+        act = bpy.data.actions[action]
+        a0, a1 = act.frame_range
+        f, parts = (a0 if frm is None else frm), []
+        for k, fc in enumerate(faces):
+            if f + seg > a1:                       # wrap within the cycle
+                f -= (a1 - a0)
+            parts.append(self.then(action, frm=f, to=f + seg, blend=first_blend if k == 0 else blend,
+                                   face=fc, speed=speed))
+            f += seg - blend
+        return parts[0] if len(parts) == 1 else ClipGroup(parts)
+
     # ------------------------------------------------------------- sampling
     def _hips(self, action, local_frame):
         """Hips position in root space for an action frame (root at identity)."""
@@ -231,6 +246,38 @@ class Performer:
             return Vector((0.0, 0.0))
         k = min(c.drift, key=lambda x: abs(x - f))
         return c.drift[k]
+
+    def body_yaw(self, frame):
+        """Facing of the pelvis in `face` degrees (0 = towards -Y/camera, 90 = screen right)."""
+        self.scene.frame_set(int(frame))
+        pb, mw = self.rig.pose.bones, self.rig.matrix_world
+        lat = mw @ pb["mixamorig:LeftUpLeg"].head - mw @ pb["mixamorig:RightUpLeg"].head
+        fwd = lat.cross(Vector((0, 0, 1)))
+        return math.degrees(math.atan2(fwd.x, -fwd.y))
+
+    def square_up(self, clips, aim_fn, passes=2, step=4):
+        """Re-aim clips so the body really faces `aim_fn(frame)` (a world point, e.g. the camera).
+
+        Mocap actors turn within a take, so `face=0` rarely means "chest to camera". Measures the mean
+        pelvis facing over each clip, corrects its `face`, rebuilds. Call right after build(), before
+        root_z()/ground_lock() (build() resets the root). Returns the worst remaining error (deg)."""
+        flat = [c for g in clips for c in (g.cycles if hasattr(g, "cycles") else [g])]
+        worst = 0.0
+        for _ in range(passes):
+            worst = 0.0
+            for c in flat:
+                errs = []
+                for f in range(int(c.start + c.blend) + 2, int(c.end) - 2, step):
+                    h = self.bone_world(HIPS, f)
+                    p = aim_fn(f)
+                    want = math.degrees(math.atan2(p[0] - h.x, -(p[1] - h.y)))
+                    errs.append((self.body_yaw(f) - want + 180) % 360 - 180)
+                if errs:
+                    e = sum(errs) / len(errs)
+                    c.face -= e
+                    worst = max(worst, abs(e))
+            self.build()
+        return worst
 
     # ------------------------------------------------------------- polish passes
     FEET = ("mixamorig:LeftToeBase", "mixamorig:RightToeBase", "mixamorig:LeftFoot", "mixamorig:RightFoot")

@@ -75,14 +75,14 @@ shrug = perf.then("CMU 111_25 Shrug", blend=8, face=10)
 talk2 = talk(hold(2, 0.8))
 # S2 problem
 cart = perf.then("CMU 49_06 cartwheel", frm=20, to=112, blend=10, face=90)
-w4 = perf.then(WALK, blend=8, face=90)
+w4 = perf.curve(WALK, faces=(128, 108, 90))                                        # out of the cartwheel: curve towards LCD2
 tap2 = perf.then("Breathing Idle", length=30, blend=8, face=70)
 vo3 = int(tap2.start) + 20                                                          # = t2_on + 8
 SPRINT_AT = vo3 + F(word(3, "velocity") * FPS) - 6
 pre = talk(SPRINT_AT + 6 - (int(tap2.end) - 8))
 sprint = perf.then("Two Cycle Sprint", start=SPRINT_AT, frm=1, to=23, blend=6, face=90)   # "velocity!" dash past the screen
 stop = perf.then("Run To Stop", blend=5, face=90)
-vel = talk(45, face=-5)                                                             # screen now on his left
+vel = talk(45, face=-5, blend=16)                                                  # unhurried turn back to camera after the skid                                                             # screen now on his left
 scared = perf.then("CMU 79_73 scared", frm=20, to=120, blend=8, face=5)              # paper avalanche
 stuck = perf.then("Breathing Idle", length=40, blend=8, face=5)                      # watch check in the pile
 w5 = perf.then(WALK, length=16, blend=8, face=-10)                                  # two steps out of the pile, towards camera
@@ -99,7 +99,7 @@ comp = talk(hold(10, 0.8), face=-5)
 layer = talk(hold(11, 1.2), face=-5)
 # S6 tower
 cart2 = perf.then("CMU 49_06 cartwheel", frm=20, to=112, blend=10, face=90)
-w6 = perf.then(WALK, blend=8, face=90)
+w6 = perf.curve(WALK, faces=(145, 115, 85, 55))                                    # curve to the tower, end half-facing camera
 UP = "Standing 2H Magic Attack 01"
 # S6 runs on the voice: each block lands on its label word, the yank lands on "Without inspection",
 # the cascade on "everything above"; lines keep the take's natural gaps (+0.3 s for the landings).
@@ -118,9 +118,28 @@ for k, st in enumerate(starts[:4]):
     builds.append(perf.then(UP, start=st, frm=up_pk - 14, to=up_pk + 20, speed=1.15, blend=8, face=25))
     nxt = starts[k + 1]
     perf.then("Breathing Idle", length=max(8, nxt + 8 - (int(builds[-1].end) - 8)), blend=8, face=20)
-pull = perf.then("Pull Heavy Object Stop", start=Y1 - 4, to=30, speed=1.0, blend=8, face=75)  # yank INSPECTION out
+pull = perf.then("Pull Heavy Object Stop", start=Y1 - 4, to=30, speed=1.0, blend=12, face=75)  # yank INSPECTION out
 fear = perf.then("CMU 79_72 crying", frm=18, to=170, blend=8, face=5)               # hands on head over the rubble
 perf.build()
+
+
+_tv1_x = perf.bone_world(HIPS, talk1.start).x + 0.55 + 2.6 / 2      # = TV1.x / TV2.x below
+_tv2_x = perf.bone_world(HIPS, w4.end).x + 0.55 + 2.6 / 2
+_tv2_y = perf.bone_world(HIPS, w4.end).y + 0.55
+
+
+def audience(f):
+    """Where the camera sits for a beat: centred between him and what shares the frame (board or
+    tower), ~4.5 m out — so "facing the camera" really means facing the lens."""
+    h = perf.bone_world(HIPS, f)
+    if cart.start <= f < cart2.start:                  # LCD2: the camera mostly holds on the screen
+        return (_tv2_x, _tv2_y - 3.4)                  # screen_close() camera distance
+    other = _tv1_x if f < cart.start else h.x + 4.5
+    return ((h.x + other) / 2, h.y - 4.5)
+
+
+square_err = perf.square_up([talk1, shrug, talk2, pre, vel, scared, stuck, sysA, shock, rq, yawn, risk, worry, comp,
+                             layer, fear], audience)
 
 HANG_Z = 2.44 - 1.15
 perf.root_z([(1, 5.0, "cubic_out"), (int(hang.start) + 30, HANG_Z, "lin"),
@@ -451,4 +470,5 @@ cues = sorted(VO_CUES.items())
 for (a, fa), (b, fb) in zip(cues, cues[1:]):
     if fa + dur(a) * FPS > fb:
         print(f"VO OVERLAP {a}->{b}: {(fa + dur(a) * FPS - fb) / FPS:.2f}s")
-print(f"PIECE2 frames 1-{END} ({END / FPS:.1f}s)  ground-lock max correction {lock_err * 100:.1f} cm")
+print(f"PIECE2 frames 1-{END} ({END / FPS:.1f}s)  ground-lock max correction {lock_err * 100:.1f} cm  "
+      f"square-up residual {square_err:.0f} deg")
