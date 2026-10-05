@@ -82,6 +82,32 @@ Join acts without audio: `ffmpeg -i act1_360p.mp4 -i act2_360p.mp4 -filter_compl
 - Camera: hold still while a screen is up; move only in screen-free stretches. Frame at the depth
   between screen and presenter (`frame_on`), otherwise he is cropped at the edge.
 
+## Street piece (current direction, `scripts/04_street.py` → `build/street.blend`)
+- Set: Sketchfab "City Scene" (golukumar, Free Standard) via `pipeline/city.py` (`load()`, sunset `golden_hour()`,
+  `wall()/roof()/ground()` ray casts, `sign()` image planes with billboard/lightbox/LED frames). The city is lifted
+  0.34 m so the sidewalk is z=0. Avenue along Y at x≈0 has street trees at x≈±6 — put signs on the tree-free
+  cross street (facades y≈−9.3 south / +8.9 north).
+- Slides live in the world: `scripts/03c_street_signs.py` → `assets/street/` (graffiti mural, billboard, LED ticker,
+  lightbox sequences, risk screen, rooftop screens).
+- Swings: `pipeline/swing.py` — `arc()`/`hop()` paths + `follow()` keys the root so the hips trace the arc; the pose
+  comes from `Swing To Land (1)` played in_place; the clip's own landing (frames 34–57) takes over at the end.
+- Locations are hard cuts (`then(at=...)`, no blend overlap); first clip's `at` is honoured too.
+- VO: `assets/audio/vo_street/` (Mark v4 take, 12 lines); music `assets/audio/music/bed_street.mp3`
+  ("Superhero Cinematic Opener" by ArctSound, Pixabay, not Content ID registered).
+- Assemble: `python3 scripts/06_assemble.py street --height 720 --music assets/audio/music/bed_street.mp3`.
+- Look: `shot.finish(view="AgX", grade="AgX - Punchy")`; camera clip_end 800 for aerials.
+
+## Shot grammar (what each camera choice is for)
+- WIDE to open a scene (where are we), then MEDIUM (waist up) on the character; CLOSE-UP for emotion
+  (shock face) or an action that matters (finger on the power button).
+- OVER-THE-SHOULDER when he looks at a screen; POV ("the camera becomes the screen") when he taps it on.
+- Static frame + subject moving through it (dash out of frame); TRACKING for journeys.
+- PUSH IN = pressure before a turn (the yank), PULL OUT = release after it; HIGH angle = small/tired/defeated,
+  LOW angle = confident; SNORRICAM (camera on his chest) = chaos, ≤1.5 s.
+- Extra cameras: `fx.shot_cam(...)` + `shot.finish(cameras=[(frame, cam), ...])` (marker-bound switches);
+  main `CameraRig` keeps everything else. Build a variant without touching the main one:
+  `blender -b build/character.blend --python scripts/04_piece2.py -- piece2_cine` (VO folder found by prefix).
+
 ## Gotchas
 - Blender 5.2 API: layered actions (`action.layers[].strips[].channelbag(slot)`), assign `action_slot`
   when setting actions; compositor = `scene.compositing_node_group`; Glare params are socket inputs.

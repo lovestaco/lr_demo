@@ -22,8 +22,13 @@ MUSIC_GAIN = 0.22
 
 
 def vo_dir(shot):
-    d = os.path.join(AUDIO, f"vo_{shot}")
-    return d if os.path.isdir(d) else os.path.join(AUDIO, "vo")
+    """vo_<shot>, else the longest prefix (piece2_cine -> vo_piece2), else vo/ (same rule as shot.vo_folder)."""
+    parts = shot.split("_")
+    for k in range(len(parts), 0, -1):
+        d = os.path.join(AUDIO, "vo_" + "_".join(parts[:k]))
+        if os.path.isdir(d):
+            return d
+    return os.path.join(AUDIO, "vo")
 
 
 def sfx_file(name):

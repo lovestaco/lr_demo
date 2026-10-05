@@ -521,6 +521,32 @@ class Board:
 
 
 # ------------------------------------------------------------------ camera
+def shot_cam(name, loc, target, lens=35, coll=None, rig=None, bone=None, follow_bone=None, frame=None):
+    """Extra camera for one shot, switched in with shot.finish(cameras=[(frame, cam), ...]).
+
+    target: world point to aim at, or None with rig+bone to keep a bone centred (Track To the bone).
+    follow_bone: ride on that bone (snorricam) — loc is taken at `frame` and kept relative to the bone."""
+    coll = coll or collection("Camera")
+    cd = bpy.data.cameras.new(name)
+    cd.lens = lens
+    cd.dof.use_dof = False
+    ob = _link(bpy.data.objects.new(name, cd), coll)
+    ob.location = loc
+    tr = ob.constraints.new("TRACK_TO")
+    tr.track_axis, tr.up_axis = "TRACK_NEGATIVE_Z", "UP_Y"
+    if target is None:
+        tr.target, tr.subtarget = rig, bone
+    else:
+        tr.target = empty(name + "Target", target, coll, 0.1)
+    if follow_bone:
+        bpy.context.scene.frame_set(int(frame))
+        m = Matrix.Translation(Vector(loc))
+        ob.parent, ob.parent_type, ob.parent_bone = rig, "BONE", follow_bone
+        bpy.context.view_layer.update()
+        ob.matrix_world = m
+    return ob
+
+
 class CameraRig:
     def __init__(self, name="Cam", lens=35, fstop=2.8, coll=None):
         coll = coll or collection("Camera")
@@ -568,7 +594,7 @@ class CameraRig:
 
 
 # ------------------------------------------------------------------ look
-def look(scene=None, samples=24, motion_blur=True, bloom=True, exposure=0.0):
+def look(scene=None, samples=24, motion_blur=True, bloom=True, exposure=0.0, view="Standard", grade=None):
     sc = scene or bpy.context.scene
     sc.render.engine = "BLENDER_EEVEE"
     ee = sc.eevee
@@ -579,8 +605,13 @@ def look(scene=None, samples=24, motion_blur=True, bloom=True, exposure=0.0):
         ee.use_fast_gi = True
     sc.render.use_motion_blur = motion_blur
     sc.render.motion_blur_shutter = 0.5
-    sc.view_settings.view_transform = "Standard"     # keeps slide/brand colours exact
+    sc.view_settings.view_transform = view           # Standard keeps slide/brand colours exact; AgX = filmic
     sc.view_settings.look = "None"
+    for lk in ([grade] if grade else []):
+        try:
+            sc.view_settings.look = lk
+        except TypeError:
+            pass
     sc.view_settings.exposure = exposure
     if bloom:
         ng = bpy.data.node_groups.get("Compositor") or bpy.data.node_groups.new("Compositor", "CompositorNodeTree")
@@ -677,3 +708,34 @@ class Spiders:
         for o in (arm, body):
             anim.visible(o, [(1, False), (f0, True), (f1, False)])
         return root
+
+
+def char_lights(rig, cam, key=140.0, rim=260.0, bone="mixamorig:Spine2", coll=None):
+    """Film lighting on the character only: soft key from the camera side + warm/cool rims behind him,
+    re-oriented to every shot (the rig follows him and turns its back to the active camera).
+    Light linking keeps them off the set, so the city's look is unchanged."""
+    coll = coll or collection("CharLights")
+    pivot = empty("CharLightRig", (0, 0, 0), coll, 0.1)
+    c = pivot.constraints.new("COPY_LOCATION")
+    c.target, c.subtarget = rig, bone
+    t = pivot.constraints.new("LOCKED_TRACK")
+    t.target, t.track_axis, t.lock_axis = cam, "TRACK_NEGATIVE_Y", "LOCK_Z"
+    receivers = bpy.data.collections.get("CharReceivers") or bpy.data.collections.new("CharReceivers")
+    for ch in rig.children_recursive:
+        if ch.type == "MESH" and ch.name not in receivers.objects:
+            receivers.objects.link(ch)
+    lights = []
+    for name, loc, energy, color, size in (("CharKey", (-1.6, -2.6, 0.9), key, (1.0, 0.93, 0.85), 1.4),
+                                           ("CharRimWarm", (1.7, 1.9, 0.7), rim, (1.0, 0.62, 0.32), 0.6),
+                                           ("CharRimCool", (-1.7, 1.9, 0.9), rim * 0.9, (0.45, 0.65, 1.0), 0.6)):
+        ld = bpy.data.lights.new(name, "AREA")
+        ld.energy, ld.color, ld.size = energy, color, size
+        ob = _link(bpy.data.objects.new(name, ld), coll)
+        ob.parent = pivot
+        ob.location = loc
+        tr = ob.constraints.new("TRACK_TO")
+        tr.target, tr.track_axis, tr.up_axis = pivot, "TRACK_NEGATIVE_Z", "UP_Y"
+        if hasattr(ob, "light_linking"):
+            ob.light_linking.receiver_collection = receivers
+        lights.append(ob)
+    return lights

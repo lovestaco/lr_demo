@@ -39,14 +39,18 @@ def frame_span(left, right, plane_y, lens_mm=32, pad=1.02, cam_z=1.85, target_z=
     return (cx, plane_y - dist, cam_z), (cx, plane_y * 0.5, target_z)
 
 
-def finish(name, markers=(), exposure=-0.55, samples=24, end_state=None):
+def finish(name, markers=(), exposure=-0.55, samples=24, end_state=None, cameras=(), view="Standard", grade=None):
     sc = bpy.context.scene
-    fx.look(samples=samples, exposure=exposure)
+    fx.look(samples=samples, exposure=exposure, view=view, grade=grade)
     sc.render.resolution_x, sc.render.resolution_y, sc.render.resolution_percentage = 1920, 1080, 33
     sc.timeline_markers.clear()
     markers = list(markers) + SFX
     for label, f in markers:
         sc.timeline_markers.new(label, frame=int(f))
+    for f, cam_ob in cameras:                  # camera switches (marker-bound), e.g. POV / close-up / snorricam
+        sc.timeline_markers.new(f"cam {cam_ob.name}", frame=int(f)).camera = cam_ob
+    if cameras:
+        sc.camera = min(cameras, key=lambda c: c[0])[1]
     preview_audio(name, markers)
     sc.frame_set(1)
     os.makedirs(paths.BUILD, exist_ok=True)
@@ -59,6 +63,17 @@ def finish(name, markers=(), exposure=-0.55, samples=24, end_state=None):
                    "end_state": end_state or {}}, fh, indent=1)
 
 
+def vo_folder(name):
+    """assets/audio/vo_<name>, else the longest prefix (piece2_cine -> vo_piece2), else assets/audio/vo."""
+    audio = os.path.join(paths.ROOT, "assets", "audio")
+    parts = name.split("_")
+    for k in range(len(parts), 0, -1):
+        d = os.path.join(audio, "vo_" + "_".join(parts[:k]))
+        if os.path.isdir(d):
+            return d
+    return os.path.join(audio, "vo")
+
+
 SFX_PREVIEW_GAIN = 0.385          # keep in step with SFX_GAIN in scripts/06_assemble.py
 
 
@@ -68,8 +83,7 @@ def preview_audio(name, markers):
     import glob
     sc = bpy.context.scene
     audio = os.path.join(paths.ROOT, "assets", "audio")
-    vo_dir = os.path.join(audio, f"vo_{name}")
-    vo_dir = vo_dir if os.path.isdir(vo_dir) else os.path.join(audio, "vo")
+    vo_dir = vo_folder(name)
     se = sc.sequence_editor_create()
     strips = se.strips if hasattr(se, "strips") else se.sequences
     for st in list(strips):

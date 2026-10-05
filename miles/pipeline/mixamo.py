@@ -21,6 +21,54 @@ from . import anim
 HIPS = "mixamorig:Hips"
 
 
+_QFIXED = set()
+
+
+def fix_quaternions(action):
+    """Keep every rotation key in the w >= 0 hemisphere (CONSTANT at sign flips) so NLA crossfades,
+    which mix quaternion channels linearly, never whip a bone the long way round. Mixamo FBX clips
+    can end on -q (e.g. after a big turn): blending into the next clip then spins the body."""
+    if action.name in _QFIXED:
+        return
+    _QFIXED.add(action.name)
+    bags = []
+    for layer in getattr(action, "layers", []):
+        for strip in layer.strips:
+            for slot in action.slots:
+                cb = strip.channelbag(slot)
+                if cb:
+                    bags.append(cb.fcurves)
+    if not bags and hasattr(action, "fcurves"):
+        bags.append(action.fcurves)
+    for fcs in bags:
+        groups = {}
+        for fc in fcs:
+            if fc.data_path.endswith("rotation_quaternion"):
+                groups.setdefault(fc.data_path, {})[fc.array_index] = fc
+        for path, comp in groups.items():
+            if len(comp) != 4:
+                continue
+            n = min(len(comp[i].keyframe_points) for i in range(4))
+            if n == 0 or any(len(comp[i].keyframe_points) != n for i in range(4)):
+                continue
+            prev_sign = None
+            for k in range(n):
+                q = [comp[i].keyframe_points[k].co[1] for i in range(4)]
+                sign = 1 if q[0] >= 0 else -1
+                if sign < 0:
+                    for i in range(4):
+                        kp = comp[i].keyframe_points[k]
+                        kp.co[1] = -kp.co[1]
+                        kp.handle_left[1] = -kp.handle_left[1]
+                        kp.handle_right[1] = -kp.handle_right[1]
+                if prev_sign is not None and sign != prev_sign:
+                    for i in range(4):
+                        comp[i].keyframe_points[k - 1].interpolation = "CONSTANT"
+                prev_sign = sign
+            for i in range(4):
+                comp[i].update()
+
+
 class Clip:
     def __init__(self, action, start, frm, to, blend, face, speed, repeat):
         self.action, self.start, self.frm, self.to = action, start, frm, to
@@ -119,7 +167,7 @@ class Performer:
             face = self.clips[-1].face if self.clips else self.face0
         cycles = []
         for k in range(max(1, repeat)):
-            b = blend if k == 0 else cycle_blend
+            b = (0 if at is not None else blend) if k == 0 else cycle_blend    # a hard cut doesn't overlap
             s = start if (k == 0 and start is not None) else (self.clips[-1].end - b if self.clips else self.scene.frame_start)
             clip = Clip(act, s, frm, to, b if self.clips else 0, face, speed, 1)
             clip.in_place = float(in_place)
@@ -180,6 +228,8 @@ class Performer:
 
     # ------------------------------------------------------------- build
     def build(self):
+        for c in self.clips:
+            fix_quaternions(c.action)
         ad = self.rig.animation_data or self.rig.animation_data_create()
         for t in list(ad.nla_tracks):
             ad.nla_tracks.remove(t)
@@ -195,7 +245,11 @@ class Performer:
                 anchor = self._hips(c.action, c.local(c.start + c.blend / 2.0)).xy
                 c.drift = {f: (self._hips(c.action, c.local(f)).xy - anchor) * c.in_place
                            for f in range(int(c.start), int(nxt.get(id(c), c.end)) + 2, 2)}
-        placements = [(Vector((self.x0, self.y0)), math.radians(self.clips[0].face))]
+        c0 = self.clips[0]
+        placements = [(Vector((self.x0, self.y0)), math.radians(c0.face))]
+        if c0.at is not None:                        # first clip with a target spot: put its hips there
+            h0 = self._hips(c0.action, c0.local(c0.start)).xy - self._drift(c0, c0.start)
+            placements = [(c0.at - _rot(h0, math.radians(c0.face)), math.radians(c0.face))]
         for prev, cur in zip(self.clips, self.clips[1:]):
             mid = cur.start + cur.blend / 2.0
             p_loc, p_rot = placements[-1]

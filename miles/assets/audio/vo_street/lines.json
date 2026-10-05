@@ -1,0 +1,474 @@
+{
+ "1": {
+  "text": "You already ship a lot of AI-generated code.",
+  "start": 4.0,
+  "duration": 3.02,
+  "take": "street_vo.mp3",
+  "src_start": 0.0,
+  "src_end": 3.024,
+  "words": [
+   [
+    "you",
+    0.0
+   ],
+   [
+    "already",
+    0.22
+   ],
+   [
+    "ship",
+    0.62
+   ],
+   [
+    "a",
+    0.98
+   ],
+   [
+    "lot",
+    1.12
+   ],
+   [
+    "of",
+    1.44
+   ],
+   [
+    "ai",
+    1.6
+   ],
+   [
+    "generated",
+    1.8
+   ],
+   [
+    "code",
+    2.26
+   ]
+  ]
+ },
+ "2": {
+  "text": "But do you do enough code inspection?",
+  "start": 8.0,
+  "duration": 2.52,
+  "take": "street_vo.mp3",
+  "src_start": 3.024,
+  "src_end": 5.542,
+  "words": [
+   [
+    "but",
+    0.076
+   ],
+   [
+    "do",
+    0.416
+   ],
+   [
+    "you",
+    0.596
+   ],
+   [
+    "do",
+    0.736
+   ],
+   [
+    "enough",
+    0.856
+   ],
+   [
+    "code",
+    1.216
+   ],
+   [
+    "inspection",
+    1.576
+   ]
+  ]
+ },
+ "3": {
+  "text": "Code now ships faster than ever.",
+  "start": 12.5,
+  "duration": 2.42,
+  "take": "street_vo.mp3",
+  "src_start": 5.542,
+  "src_end": 7.963,
+  "words": [
+   [
+    "code",
+    0.138
+   ],
+   [
+    "now",
+    0.438
+   ],
+   [
+    "ships",
+    0.658
+   ],
+   [
+    "faster",
+    0.838
+   ],
+   [
+    "than",
+    1.278
+   ],
+   [
+    "ever",
+    1.658
+   ]
+  ]
+ },
+ "4": {
+  "text": "More code means bigger systems... and more bugs.",
+  "start": 16.0,
+  "duration": 3.97,
+  "take": "street_vo.mp3",
+  "src_start": 7.963,
+  "src_end": 11.933,
+  "words": [
+   [
+    "more",
+    0.297
+   ],
+   [
+    "code",
+    0.357
+   ],
+   [
+    "means",
+    0.657
+   ],
+   [
+    "bigger",
+    0.997
+   ],
+   [
+    "systems",
+    1.417
+   ],
+   [
+    "and",
+    1.897
+   ],
+   [
+    "more",
+    2.777
+   ],
+   [
+    "bugs",
+    2.997
+   ]
+  ]
+ },
+ "5": {
+  "text": "And human review just can't keep up.",
+  "start": 21.5,
+  "duration": 2.55,
+  "take": "street_vo.mp3",
+  "src_start": 11.933,
+  "src_end": 14.486,
+  "words": [
+   [
+    "and",
+    0.187
+   ],
+   [
+    "human",
+    0.247
+   ],
+   [
+    "review",
+    0.587
+   ],
+   [
+    "just",
+    0.847
+   ],
+   [
+    "can",
+    1.187
+   ],
+   [
+    "t",
+    1.187
+   ],
+   [
+    "keep",
+    1.707
+   ],
+   [
+    "up",
+    1.867
+   ]
+  ]
+ },
+ "6": {
+  "text": "So customers walk away... over downtime, security holes, slow apps, and bad UI.",
+  "start": 25.5,
+  "duration": 6.58,
+  "take": "street_vo.mp3",
+  "src_start": 14.486,
+  "src_end": 21.065,
+  "words": [
+   [
+    "so",
+    0.354
+   ],
+   [
+    "customers",
+    0.354
+   ],
+   [
+    "walk",
+    0.734
+   ],
+   [
+    "away",
+    1.054
+   ],
+   [
+    "over",
+    1.794
+   ],
+   [
+    "downtime",
+    1.994
+   ],
+   [
+    "security",
+    2.974
+   ],
+   [
+    "holes",
+    3.234
+   ],
+   [
+    "slow",
+    4.134
+   ],
+   [
+    "apps",
+    4.454
+   ],
+   [
+    "and",
+    4.774
+   ],
+   [
+    "bad",
+    5.214
+   ],
+   [
+    "ui",
+    5.574
+   ]
+  ]
+ },
+ "7": {
+  "text": "How do you stay competitive?",
+  "start": 33.0,
+  "duration": 1.8,
+  "take": "street_vo.mp3",
+  "src_start": 21.065,
+  "src_end": 22.862,
+  "words": [
+   [
+    "how",
+    0.295
+   ],
+   [
+    "do",
+    0.415
+   ],
+   [
+    "you",
+    0.495
+   ],
+   [
+    "stay",
+    0.575
+   ],
+   [
+    "competitive",
+    0.775
+   ]
+  ]
+ },
+ "8": {
+  "text": "You need a better inspection layer.",
+  "start": 35.5,
+  "duration": 2.44,
+  "take": "street_vo.mp3",
+  "src_start": 22.862,
+  "src_end": 25.305,
+  "words": [
+   [
+    "you",
+    0.398
+   ],
+   [
+    "need",
+    0.478
+   ],
+   [
+    "a",
+    0.618
+   ],
+   [
+    "better",
+    0.798
+   ],
+   [
+    "inspection",
+    1.178
+   ],
+   [
+    "layer",
+    1.618
+   ]
+  ]
+ },
+ "9": {
+  "text": "Inspection gives engineers confidence.",
+  "start": 39.0,
+  "duration": 2.77,
+  "take": "street_vo.mp3",
+  "src_start": 25.305,
+  "src_end": 28.071,
+  "words": [
+   [
+    "inspection",
+    -0.045
+   ],
+   [
+    "gives",
+    0.415
+   ],
+   [
+    "engineers",
+    1.035
+   ],
+   [
+    "confidence",
+    1.495
+   ]
+  ]
+ },
+ "10": {
+  "text": "Engineers' confidence gives customers confidence.",
+  "start": 42.0,
+  "duration": 3.02,
+  "take": "street_vo.mp3",
+  "src_start": 28.071,
+  "src_end": 31.086,
+  "words": [
+   [
+    "engineers",
+    0.049
+   ],
+   [
+    "confidence",
+    0.409
+   ],
+   [
+    "gives",
+    0.889
+   ],
+   [
+    "customers",
+    1.489
+   ],
+   [
+    "confidence",
+    1.969
+   ]
+  ]
+ },
+ "11": {
+  "text": "And customer confidence keeps you competitive, and the money coming in.",
+  "start": 45.0,
+  "duration": 4.74,
+  "take": "street_vo.mp3",
+  "src_start": 31.086,
+  "src_end": 35.823,
+  "words": [
+   [
+    "and",
+    0.294
+   ],
+   [
+    "customer",
+    0.334
+   ],
+   [
+    "confidence",
+    0.614
+   ],
+   [
+    "keeps",
+    1.254
+   ],
+   [
+    "you",
+    1.614
+   ],
+   [
+    "competitive",
+    1.994
+   ],
+   [
+    "and",
+    2.434
+   ],
+   [
+    "the",
+    3.154
+   ],
+   [
+    "money",
+    3.394
+   ],
+   [
+    "coming",
+    3.634
+   ],
+   [
+    "in",
+    3.974
+   ]
+  ]
+ },
+ "12": {
+  "text": "Without inspection, everything above it collapses.",
+  "start": 50.0,
+  "duration": 3.33,
+  "take": "street_vo.mp3",
+  "src_start": 35.823,
+  "src_end": 39.157,
+  "words": [
+   [
+    "without",
+    0.297
+   ],
+   [
+    "inspection",
+    0.457
+   ],
+   [
+    "everything",
+    1.477
+   ],
+   [
+    "above",
+    1.837
+   ],
+   [
+    "it",
+    2.297
+   ],
+   [
+    "collapses",
+    2.417
+   ]
+  ]
+ }
+}

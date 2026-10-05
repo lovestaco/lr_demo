@@ -14,7 +14,7 @@ No magic: everything arrives by web-pull, walking or cartwheeling. Camera stays 
 screen is up; it only moves on Miles in screen-free stretches.
 
     python3 scripts/03b_make_screens.py
-    blender -b build/character.blend --python scripts/04_piece2.py      # -> build/piece2.blend
+    blender -b build/character.blend --python scripts/04_piece2.py [-- NAME]     # -> build/NAME.blend (default piece2)
 """
 import bpy, os, sys, math, random, json
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -24,6 +24,7 @@ from pipeline.mixamo import Performer, ClipGroup
 from pipeline.shot import L_HAND, R_HAND, HIPS
 
 FPS = 30
+NAME = (sys.argv[sys.argv.index("--") + 1:] or ["piece2"])[0] if "--" in sys.argv else "piece2"
 sc = bpy.context.scene
 SCR = os.path.join(paths.ROOT, "assets", "screens")
 scr = lambda n: os.path.join(SCR, n + ".png")
@@ -82,7 +83,7 @@ w4 = perf.curve(WALK, faces=(128, 108, 90))                                     
 tap2 = perf.then("Breathing Idle", length=30, blend=8, face=70)
 vo3 = int(tap2.start) + 20                                                          # = t2_on + 8
 SPRINT_AT = vo3 + F(word(3, "velocity") * FPS) - 6
-pre = talk(SPRINT_AT + 6 - (int(tap2.end) - 8))
+pre = talk(SPRINT_AT + 6 - (int(tap2.end) - 8), face=70)                           # watching the code race (over-the-shoulder)
 sprint = perf.then("Two Cycle Sprint", start=SPRINT_AT, frm=1, to=23, blend=6, face=90)   # "velocity!" dash past the screen
 stop = perf.then("Run To Stop", blend=5, face=90)
 vel = talk(45, face=-5, blend=16)                                                  # unhurried turn back to camera after the skid
@@ -168,7 +169,7 @@ def audience(f):
     return ((h.x + other) / 2, h.y - 4.5)
 
 
-square_err = perf.square_up([talk1, shrug, talk2, pre, vel, scared, stuck, shock, yawn, risk, comp, layer], audience)
+square_err = perf.square_up([talk1, shrug, talk2, vel, scared, stuck, shock, yawn, risk, comp, layer], audience)
 
 INV = math.pi                                        # upside down: rolled 180° about the depth axis (still faces camera)
 
@@ -490,8 +491,10 @@ def locked(a, b, ct, cut=True):
     cam.at(int(b), ct[0], ct[1], "lin")
 
 
-cam.lens(1, 28, "const")
-cam.at(1, (h.x + 0.5, -4.2, 0.9), (h.x, 0, 2.6))                                       # free: he lowers in head-down
+cam.lens(1, 18, "inout")
+cam.lens(int(hang.start) + 40, 28, "const")
+cam.at(1, (h.x + 1.6, -9.0, 2.4), (h.x, 0, 3.0))                                       # WIDE: the empty studio, a line drops in
+cam.at(int(hang.start) + 40, (h.x + 0.5, -4.2, 0.9), (h.x, 0, 2.2))                   # push in to MEDIUM on the hang
 cam.at(int(hang.end) - 2, (h.x + 0.4, -3.8, 1.0), (h.x, 0, 2.0))
 cam.lens(int(land.start) + 2, 30, "const")
 cam.at(int(land.start) + 2, (h.x + 0.9, h.y - 4.0, 0.95), (h.x, h.y, 0.95), cut=True)
@@ -510,12 +513,15 @@ swarm = shot.frame_span(TV2.x - TVW / 2 - 0.2, him.x + 1.5, (TV2.y + him.y) / 2 
                        cam_z=1.45, target_z=0.95)                                       # floor in view: the spiders
 locked(int(shock.start) + 5, int(rqp.start) - 1, swarm)                                 # SHOCK: him + the swarm
 locked(int(rqp.start), int(yawn.start) - 1, close2)                                       # review queue + lean-in peek
-locked(int(yawn.start), risk_at - 1, frame_on(TV2, att_at + 30))                          # yawn
+_y = frame_on(TV2, att_at + 30)
+locked(int(yawn.start), risk_at - 1, ((_y[0][0], _y[0][1] + 0.6, 3.7), (_y[1][0], _y[1][1], 0.9)))  # HIGH angle: small, tired
 locked(risk_at, int(topp.start) - 1, frame_on(TV2, risk_at + 10))
 close_q = shot.frame_span(TV2.x - TVW / 2 - 0.3, TV2.x + TVW / 2 + 0.3, TV2.y, lens_mm=30, pad=1.12, cam_z=1.8,
                           target_z=TVZ + 0.18)                                           # room above for the peek
 locked(int(topp.start), int(comp.start) - 1, close_q)                                     # tiles + peek + walk away
-locked(int(comp.start), int(zip_.start) + 2, frame_on(TV2, comp_at + 20))                 # bridge
+locked(int(comp.start), int(layer.start) - 1, frame_on(TV2, comp_at + 20))               # bridge question
+_lo = frame_on(TV2, layer_at + 20)
+locked(int(layer.start), int(zip_.start) + 2, ((_lo[0][0], _lo[0][1] + 0.3, 0.55), (_lo[1][0], _lo[1][1], 1.55)))  # LOW angle: confident
 tw = shot.frame_span(arrive.x - 1.0, TX + BLOCKS[0][1] / 2 + 0.8, (TY + arrive.y) / 2, lens_mm=30, pad=1.2,
                      cam_z=1.75, target_z=(TOWER_H + 0.3) * 0.5 + 0.15)                    # whole tower + cash in frame
 _sa, _sb = hips(swing.start), hips(swing.end)
@@ -526,14 +532,46 @@ cr = hips(crouch.start + 8)
 crouch_shot = ((cr.x + 0.6, cr.y - 3.4, 1.1), (cr.x + 0.4, cr.y, 0.9))
 locked(int(crouch.start), int(rise.start) + 4, crouch_shot)                              # cut: the crouch, line in hand
 cam.at(int(rise.end), tw[0], tw[1], "inout")                                              # then on to the tower
-cam.at(int(pull.start) - 4, (tw[0][0], tw[0][1] + 0.15, tw[0][2]), tw[1])                      # barely drift while building
+cam.at(vo_s6[16], (tw[0][0] - 0.3, tw[0][1] + 1.3, tw[0][2] - 0.25), (tw[1][0] - 0.3, tw[1][1], tw[1][2] - 0.2))  # PUSH IN: tension builds
+cam.at(C, (tw[0][0] - 0.5, tw[0][1] + 1.6, tw[0][2] - 0.35), (tw[1][0] - 0.4, tw[1][1], tw[1][2] - 0.3))
 rub = shot.frame_span(arrive.x - 1.0, TX + 2.9, (TY + arrive.y) / 2, lens_mm=30, pad=1.1, cam_z=1.6, target_z=0.7)
-cam.at(C + 30, rub[0], rub[1])                                                             # pull back: the rubble
+cam.at(C + 30, rub[0], rub[1])                                                             # PULL OUT: release
 _fl = hips(fear.start + 40)
 last = shot.frame_span(_fl.x - 1.3, _fl.x + 3.2, (TY + _fl.y) / 2, lens_mm=30, pad=1.05, cam_z=1.4,
                       target_z=0.55)                                                    # him flat out + the rubble
-cam.at(END, last[0], last[1])                                                              # slow push: Miles + the rubble
-office.face_camera(cam.cam, [(c.start + 4, c.end - 2) for c in (talk1, talk2, pre, vel, rqp, risk, topp, comp, layer)])
+cam.at(int(fear.start) + 30, last[0], last[1])
+cam.at(END, (last[0][0] - 0.2, last[0][1] - 0.9, 4.3), (last[1][0] - 0.3, last[1][1], 0.15))   # HIGH-angle pull out: small in the wreck
+office.face_camera(cam.cam, [(c.start + 4, c.end - 2) for c in (talk1, talk2, vel, rqp, risk, topp, comp, layer)])
+
+# ------------------------------------------------------------------ one-shot cameras (switched by markers)
+def facing(f):
+    a = math.radians(perf.body_yaw(f))
+    return Vector((math.sin(a), -math.cos(a), 0.0))
+
+
+HEAD = "mixamorig:Head"
+# POV: the camera becomes LCD1 — we see him through the screen as he taps it on
+pov = fx.shot_cam("Cam_POV_LCD1", (TV1.x - TVW / 2 + 0.55, TV1.y - 0.15, TVZ - 0.05), None, lens=24, rig=rig, bone=HEAD)
+# CLOSE-UP (important action): finger on LCD2's power
+tap_pt = Vector((TV2.x - TVW / 2 + 0.12, TV2.y - 0.05, TVZ - 0.25))
+tapc = fx.shot_cam("Cam_Tap", (tap_pt.x - 0.55, tap_pt.y - 0.85, tap_pt.z + 0.12), tap_pt, lens=40)
+# OVER THE SHOULDER: the code races on screen; on "velocity" he dashes out through the static frame
+_p = hips(pre.start + 10)
+ots = fx.shot_cam("Cam_OTS", (_p.x - 1.05, _p.y - 0.45, 1.72), (TV2.x - 0.2, TV2.y, TVZ - 0.05), lens=32)
+# SNORRICAM (chaos): riding on his chest, facing him, while the paper pours
+SN = int(scared.start) + 40
+_c = perf.bone_world("mixamorig:Spine2", SN)
+snor = fx.shot_cam("Cam_Snorri", _c + facing(SN) * 0.75 + Vector((0, 0, 0.18)), None, lens=20, rig=rig, bone=HEAD,
+                   follow_bone="mixamorig:Spine2", frame=SN)
+# CLOSE-UP (emotion): his face at the spider shock
+SH = int(shock.start) + 18
+_h = perf.bone_world(HEAD, SH + 12)
+shockc = fx.shot_cam("Cam_Shock", _h + facing(SH + 12) * 1.25 + Vector((0, 0, -0.05)), None, lens=50, rig=rig, bone=HEAD)
+CAMS = [(1, cam.cam),
+        (int(tap1.start) + 2, pov), (t1_on + 20, cam.cam),
+        (int(tap2.start) + 2, tapc), (t2_on + 10, ots), (int(stop.start) + 2, cam.cam),
+        (SN, snor), (SN + 36, cam.cam),
+        (SH, shockc), (SH + 30, cam.cam)]
 # emphasis on the stressed words: a nod to camera + a small beat with the free arm (the one not
 # pointing at the screen); lines with their own action (sprint, spiders, yawn, risk tiles, tower) are skipped
 STRESS = {1: ("lot", "generated"), 2: ("enough", "inspection"), 4: ("huge", "volume"), 8: ("production", "lost"), 10: ("competitive",), 11: ("better", "inspection")}
@@ -554,7 +592,7 @@ for n, words in STRESS.items():
 cam.shake(int(IMPACT), amp=0.06, dur=8)
 cam.shake(C + 2, amp=0.08, dur=14)
 
-shot.finish("piece2", exposure=0.0, markers=[(f"vo {n}", f) for n, f in VO_CUES.items()] + [
+shot.finish(NAME, exposure=0.0, cameras=CAMS, markers=[(f"vo {n}", f) for n, f in VO_CUES.items()] + [
     ("S1 hook", 1), ("S2 problem", int(cart.start)), ("S2 bugs", bugs_at), ("S3 bridges", rq_at),
     ("S4 customers", risk_at), ("S5 bridge", comp_at), ("S6 tower", int(zip_.start)), ("S6 collapse", C),
     ("S6 end", END)])

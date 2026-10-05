@@ -207,16 +207,16 @@ STATIC2 = {
 }
 
 
-def review_queue(n=180):
+def review_queue(n=180, name="p2_review_queue", cap="Traditional code review **can't keep up.**"):
     """Incoming PRs race up, reviewed crawls, coverage bar drains red."""
-    d_out = seq_dir("p2_review_queue")
+    d_out = seq_dir(name)
     big = slides.font(96, slides.BOLD)
     lab = slides.font(40, slides.REGULAR)
     for i in range(n):
         t = i / (n - 1)
         img = Image.new("RGB", (W, H), (255, 255, 255))
         d = ImageDraw.Draw(img)
-        caption(d, "Traditional code review **can't keep up.**", 95)
+        caption(d, cap, 95)
         incoming = int(12 + 470 * t ** 1.8)
         reviewed = int(3 + 9 * t)
         for x0, label, val, col in ((90, "Incoming PRs", incoming, RED), (690, "Reviewed", reviewed, INK)):
@@ -279,7 +279,7 @@ QUADS = [("Downtime", _icon_server), ("Security issues", _icon_lock),
          ("Performance regressions", _icon_perf), ("Bad UI", _icon_badui)]
 
 
-def quadrants():
+def quadrants(prefix="p2_quad"):
     """p2_quad_0..4: caption + 0..4 risk tiles (2x2)."""
     lab = slides.font(52, slides.BOLD)
     for k in range(len(QUADS) + 1):
@@ -294,14 +294,14 @@ def quadrants():
             parts = [name] if name == "Bad UI" else name.split(" ", 1)
             for j, part in enumerate(parts):
                 d.text((x0 + 200, y0 + 135 + (j - (len(parts) - 1) / 2) * 60), part, font=lab, fill=INK, anchor="lm")
-        img.save(os.path.join(OUT, f"p2_quad_{k}.png"))
+        img.save(os.path.join(OUT, f"{prefix}_{k}.png"))
     return len(QUADS) + 1
 
 
-def leaving(n=96):
+def leaving(n=96, prefix="p2_quad", name="p2_leaving"):
     """Customers walk out of frame (after the 4 risks)."""
-    d_out = seq_dir("p2_leaving")
-    base = Image.open(os.path.join(OUT, "p2_quad_4.png")).convert("RGB")
+    d_out = seq_dir(name)
+    base = Image.open(os.path.join(OUT, f"{prefix}_4.png")).convert("RGB")
     for i in range(n):
         img = base.copy()
         ov = Image.new("RGBA", (W, H), (255, 255, 255, int(215 * min(1, i / 16))))
