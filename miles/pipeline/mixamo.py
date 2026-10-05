@@ -169,6 +169,8 @@ class Performer:
         for k in range(max(1, repeat)):
             b = (0 if at is not None else blend) if k == 0 else cycle_blend    # a hard cut doesn't overlap
             s = start if (k == 0 and start is not None) else (self.clips[-1].end - b if self.clips else self.scene.frame_start)
+            if at is not None and k == 0:
+                s = math.ceil(s - 1e-6)            # a hard cut lands on a whole frame (no half-cut frame)
             clip = Clip(act, s, frm, to, b if self.clips else 0, face, speed, 1)
             clip.in_place = float(in_place)
             if at is not None and k == 0:
@@ -250,7 +252,12 @@ class Performer:
         if c0.at is not None:                        # first clip with a target spot: put its hips there
             h0 = self._hips(c0.action, c0.local(c0.start)).xy - self._drift(c0, c0.start)
             placements = [(c0.at - _rot(h0, math.radians(c0.face)), math.radians(c0.face))]
+        ends = {}
         for prev, cur in zip(self.clips, self.clips[1:]):
+            if cur.at is None and cur.blend > 1:
+                a_, b_ = cur.start, cur.start + cur.blend
+                ends[id(cur)] = (self._hips(prev.action, prev.local(a_)).xy - self._drift(prev, a_),
+                                 self._hips(cur.action, cur.local(b_)).xy - self._drift(cur, b_))
             mid = cur.start + cur.blend / 2.0
             p_loc, p_rot = placements[-1]
             hp = self._hips(prev.action, prev.local(mid)).xy - self._drift(prev, mid)
@@ -292,6 +299,20 @@ class Performer:
             anim.key(self.root, "location", b, loc.x, 0, "lin")
             anim.key(self.root, "location", b, loc.y, 1, "lin")
             anim.key(self.root, "rotation_euler", b, rot, 2, "lin")
+            if id(c) in ends and abs(rot - prot) > math.radians(25):
+                # a big turn about a root that sits far from the hips (in-place clips) swings the body
+                # in an arc: instead keep the hips on a straight line between the two poses
+                hpa, hcb = ends[id(c)]
+                wa, wb = pa + _rot(hpa, prot), loc + _rot(hcb, rot)
+                n = int(b - a)
+                for k in range(1, n):
+                    t = k / n
+                    sm = t * t * (3 - 2 * t)
+                    r = prot + (rot - prot) * sm
+                    v = wa.lerp(wb, sm) - _rot(hpa.lerp(hcb, sm), r)
+                    anim.key(self.root, "location", a + k, v.x, 0, "lin")
+                    anim.key(self.root, "location", a + k, v.y, 1, "lin")
+                    anim.key(self.root, "rotation_euler", a + k, r, 2, "lin")
         for c, (loc, rot) in zip(self.clips, placements):          # in-place clips: counter their travel
             n = nxt.get(id(c), c.end)
             for f in sorted(c.drift):
@@ -388,6 +409,30 @@ class Performer:
             f = frames[i]
             anim.key(self.root, "location", f, base[f] + sm[i], 2, "lin")
         return max(abs(c) for c in corr) if corr else 0.0
+
+    def contact(self, start, end, floor, toe=0.05, smooth=2, limit=0.35):
+        """Keep the lowest toe `toe` above a surface at height `floor` for every frame in [start, end]
+        (a raised ledge/roof/catwalk). Replaces the root-height keys in that range with per-frame keys,
+        so crossfading poses (crouch -> stand, idle -> moonwalk) neither float nor sink. Returns max |fix|."""
+        frames = list(range(int(start), int(end) + 1))
+        fc = anim.fcurve(self.root, "location", 2)
+        base, low = [], []
+        for f in frames:
+            self.scene.frame_set(f)
+            base.append(fc.evaluate(f) if fc else self.root.location.z)
+            low.append(min((self.rig.matrix_world @ self.rig.pose.bones[b].head).z
+                           for b in ("mixamorig:LeftToeBase", "mixamorig:RightToeBase")))
+        corr = [max(-limit, min(limit, floor + toe - z)) for z in low]     # a hop in the clip stays a hop
+        sm = [sum(corr[max(0, i - smooth):i + smooth + 1]) / len(corr[max(0, i - smooth):i + smooth + 1])
+              for i in range(len(corr))]
+        if fc:                                     # remove back to front: indices stay valid
+            idx = [i for i, kp in enumerate(fc.keyframe_points) if start <= kp.co[0] <= end]
+            for i in reversed(idx):
+                fc.keyframe_points.remove(fc.keyframe_points[i])
+            fc.update()
+        for f, b, c in zip(frames, base, sm):
+            anim.key(self.root, "location", f, b + c, 2, "lin")
+        return max(abs(c) for c in sm) if sm else 0.0
 
     def gesture_energy(self, action, length, stride=10, hands=("mixamorig:LeftHand", "mixamorig:RightHand")):
         """[(frm, energy)] — total wrist travel (relative to hips) for every `length`-frame window."""

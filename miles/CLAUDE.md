@@ -91,13 +91,31 @@ Join acts without audio: `ffmpeg -i act1_360p.mp4 -i act2_360p.mp4 -filter_compl
   cross street (facades y≈−9.3 south / +8.9 north).
 - Slides live in the world: `scripts/03c_street_signs.py` → `assets/street/` (graffiti mural, billboard, LED ticker,
   lightbox sequences, risk screen, rooftop screens).
-- Swings: `pipeline/swing.py` — `arc()`/`hop()` paths + `follow()` keys the root so the hips trace the arc; the pose
-  comes from `Swing To Land (1)` played in_place; the clip's own landing (frames 34–57) takes over at the end.
-- Locations are hard cuts (`then(at=...)`, no blend overlap); first clip's `at` is honoured too.
-- VO: `assets/audio/vo_street/` (Mark v4 take, 12 lines); music `assets/audio/music/bed_street.mp3`
-  ("Superhero Cinematic Opener" by ArctSound, Pixabay, not Content ID registered).
-- Assemble: `python3 scripts/06_assemble.py street --height 720 --music assets/audio/music/bed_street.mp3`.
-- Look: `shot.finish(view="AgX", grade="AgX - Punchy")`; camera clip_end 800 for aerials.
+- **v5 structure: no location cuts** (review: max 1–2 direct cuts in the film). Standing beats are `at=` shots
+  (height from `HEIGHTS` + `perf.contact()`); every move between locations is a TRAVEL — `fly()` (= `Swing To Land (1)`
+  frames 1–34 in place) / sprint / hop — keyed every frame by `travel(path, f0, f1)` (wraps `swing.follow`) from
+  `hp(prev_shot_end)` to `hp(next_shot_start)`; the landing is `land()` (= the same clip's frames 34–57, `at=` the
+  path's end) so pose and position are continuous. `travel()` re-keys the root at f1+1 with what was there before
+  (a lin key at the path end otherwise drags every frame up to the next key towards it: he floated at 14 m).
+- Hangs: `tuck()` (Hard Landing 28–46 crouch) rolled π, pinned with `pin(point, f0, f1, sway)`; the roll turns over
+  inside the incoming/outgoing travel (a flip into / out of the hang). Line from the feet (`FOOT`).
+  Facing: rolling about Y keeps the facing direction, so a hang facing a +y camera needs face=180.
+- Paths are checked for collisions (`path_hits`, prints `PATH <name> hits`) and the camera for occlusion
+  (`OCCLUDED [...]`) on every build. Chase cameras: `ride()` (hips + offset on a collision arm that stops short
+  of facades, smoothed); short moves across a street: `pan()` (fixed camera following him).
+- Close-ups with feeling: CU excited (board ledge), OTS two-building shot (billboard across the street from his
+  ledge), CU amazed (profile, ticker above), CU confident (roof), CU yank. Head look constraints must not
+  point behind him (ticker: he faces it, `face=180`), or the neck turns 180°.
+- Finale: blocks tower in the intersection (piece-2 block code, ×1.45 street scale) on the words of vo 13/9/10/11,
+  yank on "inspection" (vo 12): `Pull Heavy Object Start` (lines taut) → `Stop`; he watches the collapse, then flops.
+- Look: `shot.finish(view="AgX", grade="AgX - Punchy")` + `fx.cine_grade()` (mist-pass haze = aerial
+  perspective, bloom, lens dispersion, vignette — `05_render.py` rescales the vignette blur via
+  `fx.fit_vignette()`); per-shot `aperture_fstop` keys (f/1.8–2.4 close-ups, f/5.6 chases); `cam.shake` on every
+  landing / block / the collapse. Camera clip_end 800 for aerials.
+- VO: `assets/audio/vo_street/` (Mark v4 take, 13 lines); music `assets/audio/music/bed_street.mp3`
+  ("Superhero Cinematic Opener" by ArctSound, Pixabay, not Content ID registered, 70.2 s).
+- Assemble: `python3 scripts/06_assemble.py street --height 1080 --music assets/audio/music/bed_street.mp3 --music-once`
+  (`--music-once`: the 70 s bed plays once instead of restarting under the 73 s film's outro).
 
 ## Shot grammar (what each camera choice is for)
 - WIDE to open a scene (where are we), then MEDIUM (waist up) on the character; CLOSE-UP for emotion
@@ -109,6 +127,19 @@ Join acts without audio: `ffmpeg -i act1_360p.mp4 -i act2_360p.mp4 -filter_compl
 - Extra cameras: `fx.shot_cam(...)` + `shot.finish(cameras=[(frame, cam), ...])` (marker-bound switches);
   main `CameraRig` keeps everything else. Build a variant without touching the main one:
   `blender -b build/character.blend --python scripts/04_piece2.py -- piece2_cine` (VO folder found by prefix).
+
+## Before every render: physical checks
+- `blender -b build/<shot>.blend --python scripts/check_support.py` — feet must be on something (no standing or
+  moonwalking on thin air). Thin set pieces (a 25 cm board top) need a real ledge/catwalk under him.
+- Height per shot comes from `HEIGHTS` in 04_street.py using `low_rel(clip)` (each clip's own foot height);
+  path keys (`swing.follow`) must stop one frame before the next shot's first frame.
+- Movement must match the story beat on screen (e.g. moonwalk WITH the customers, same direction).
+- Hip height across blends (reviewer tip): crossfading poses (crouch → stand, idle → moonwalk) lift or drop the feet
+  even when the root height is eased. On raised surfaces run `perf.contact(start, end, floor=surface_z)` (per-frame
+  toe contact, ±35 cm cap so hops stay hops); on the street `ground_lock(..., step=1)`. Never key the root every
+  2nd frame with linear interpolation: the in-between frame at a hard cut lands halfway between two shots.
+- A hard cut starts on a whole frame (`then(at=...)` rounds up); a shot's last frame is `ceil(end) - 1`.
+- Removing many keyframes: go back to front (`fast=True` while iterating drops the wrong keys).
 
 ## Gotchas
 - Blender 5.2 API: layered actions (`action.layers[].strips[].channelbag(slot)`), assign `action_slot`

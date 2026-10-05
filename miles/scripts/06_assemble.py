@@ -9,7 +9,7 @@ Each shot script marks its audio cues as timeline markers (exported to build/<sh
 by shot.finish), so re-timing the animation re-syncs the sound:
   "vo N"               -> <vo dir>/line_NN.wav   (assets/audio/vo_<shot>/ if it exists, else assets/audio/vo/)
   "sfx name#k[@gain]"  -> assets/audio/sfx/<name>.(mp3|wav)   (shot.sfx(name, frame, gain))
-Music (optional, --music or assets/audio/music/bed_<shot>.mp3): looped to length, 1 s fade in,
+Music (optional, --music or assets/audio/music/bed_<shot>.mp3): looped to length (or --music-once: played once), 1 s fade in,
 2.5 s fade out, ducked under the voice (sidechain). The mix is loudness-normalised to -16 LUFS.
 """
 import glob, json, os, subprocess, sys
@@ -46,7 +46,7 @@ def burnin_filter(total, height):
             f"fontsize={fs}:fontcolor=white:box=1:boxcolor=black@0.55:boxborderw=6")
 
 
-def main(shots, height=360, music=None, burnin=False):
+def main(shots, height=360, music=None, burnin=False, music_once=False):
     videos, vo, sfx, offset = [], [], [], 0.0
     for shot in shots:
         videos.append(os.path.join(paths.RENDERS, f"{shot}_{height}p.mp4"))
@@ -87,9 +87,11 @@ def main(shots, height=360, music=None, burnin=False):
         fc += "".join(sfx_l) + f"amix=inputs={len(sfx_l)}:normalize=0,{trim}[fx];"
         bus.append("[fx]")
     if music:
-        inputs.extend(["-stream_loop", "-1", "-i", music])
-        fc += (f"[{k}:a]aformat=sample_rates=44100:channel_layouts=stereo,atrim=0:{total:.3f},volume={MUSIC_GAIN},"
-               f"afade=t=in:d=1,afade=t=out:st={max(0, total - 2.5):.3f}:d=2.5[mu];"
+        inputs.extend((["-stream_loop", "-1"] if not music_once else []) + ["-i", music])
+        # --music-once: the bed plays through once and ends on its own (no restart of an opener under the outro)
+        fade = "" if music_once else f",afade=t=out:st={max(0, total - 2.5):.3f}:d=2.5"
+        fc += (f"[{k}:a]aformat=sample_rates=44100:channel_layouts=stereo,apad,atrim=0:{total:.3f},volume={MUSIC_GAIN},"
+               f"afade=t=in:d=1{fade}[mu];"
                f"[mu][key]sidechaincompress=threshold=0.02:ratio=8:attack=15:release=400[duck];")
         bus.append("[duck]")
         k += 1
@@ -116,4 +118,4 @@ if __name__ == "__main__":
     mu = os.path.abspath(args[args.index("--music") + 1]) if "--music" in args else None
     skip = {args.index(f) + 1 for f in ("--height", "--music") if f in args}
     shots = [a for i, a in enumerate(args) if not a.startswith("--") and i not in skip]
-    main(shots or ["piece1"], h, mu, burnin="--no-burnin" not in args)
+    main(shots or ["piece1"], h, mu, burnin="--no-burnin" not in args, music_once="--music-once" in args)

@@ -739,3 +739,72 @@ def char_lights(rig, cam, key=140.0, rim=260.0, bone="mixamorig:Spine2", coll=No
             ob.light_linking.receiver_collection = receivers
         lights.append(ob)
     return lights
+
+
+def cine_grade(scene=None, haze=(0.62, 0.56, 0.52), haze_max=0.42, mist_start=22.0, mist_depth=260.0,
+               bloom=0.45, dispersion=0.01, vignette=0.28):
+    """Film finish in the compositor (replaces look()'s bloom-only tree):
+
+    aerial perspective (distance haze from the mist pass: light scattered by air between the lens and a far
+    facade adds a warm-grey veil that grows with distance — cheap stand-in for volumetric Rayleigh/Mie)
+    → bloom → a touch of lens dispersion (chromatic fringing towards the edges) → soft vignette.
+    Call after shot.finish()/look() and save again."""
+    sc = scene or bpy.context.scene
+    vl = sc.view_layers[0]
+    vl.use_pass_mist = True
+    w = sc.world
+    w.mist_settings.start, w.mist_settings.depth, w.mist_settings.falloff = mist_start, mist_depth, "QUADRATIC"
+    ng = bpy.data.node_groups.get("Compositor") or bpy.data.node_groups.new("Compositor", "CompositorNodeTree")
+    for n in list(ng.nodes):
+        ng.nodes.remove(n)
+    sc.compositing_node_group = ng
+    if not ng.interface.items_tree:
+        ng.interface.new_socket("Image", in_out="OUTPUT", socket_type="NodeSocketColor")
+    N, L = ng.nodes.new, ng.links.new
+    rl = N("CompositorNodeRLayers")
+    mul = N("ShaderNodeMath")
+    mul.operation, mul.use_clamp = "MULTIPLY", True
+    mul.inputs[1].default_value = haze_max
+    L(rl.outputs["Mist"], mul.inputs[0])
+    mix = N("ShaderNodeMix")
+    mix.data_type, mix.blend_type = "RGBA", "MIX"
+    L(mul.outputs[0], mix.inputs[0])
+    L(rl.outputs["Image"], mix.inputs[6])
+    mix.inputs[7].default_value = (*haze, 1.0)
+    gl = N("CompositorNodeGlare")
+    gl.inputs["Type"].default_value = "Bloom"
+    gl.inputs["Threshold"].default_value = 1.2
+    gl.inputs["Size"].default_value = 7.0
+    gl.inputs["Strength"].default_value = bloom
+    L(mix.outputs[2], gl.inputs["Image"])
+    ld = N("CompositorNodeLensdist")
+    ld.inputs["Dispersion"].default_value = dispersion
+    ld.inputs["Distortion"].default_value = 0.0
+    L(gl.outputs[0], ld.inputs["Image"])
+    el = N("CompositorNodeEllipseMask")
+    el.inputs["Size"].default_value = (0.92, 0.82)
+    bl = N("CompositorNodeBlur")
+    bl.name = "VignetteBlur"                 # pixel size: 05_render.py rescales it to the output resolution
+    bl.inputs["Size"].default_value = (sc.render.resolution_x * sc.render.resolution_percentage / 100 * 0.22,) * 2
+    L(el.outputs["Mask"], bl.inputs["Image"])
+    rng = N("ShaderNodeMapRange")
+    rng.inputs["To Min"].default_value = 1.0 - vignette
+    L(bl.outputs[0], rng.inputs["Value"])
+    vig = N("ShaderNodeMix")
+    vig.data_type, vig.blend_type = "RGBA", "MULTIPLY"
+    vig.inputs[0].default_value = 1.0
+    L(ld.outputs[0], vig.inputs[6])
+    L(rng.outputs["Result"], vig.inputs[7])
+    out = N("NodeGroupOutput")
+    L(vig.outputs[2], out.inputs[0])
+    return ng
+
+
+def fit_vignette(scene=None):
+    """Re-scale cine_grade's vignette blur (pixels) to the current output resolution."""
+    sc = scene or bpy.context.scene
+    ng = sc.compositing_node_group
+    n = ng.nodes.get("VignetteBlur") if ng else None
+    if n:
+        px = sc.render.resolution_x * sc.render.resolution_percentage / 100 * 0.22
+        n.inputs["Size"].default_value = (px, px)
