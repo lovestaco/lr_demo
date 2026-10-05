@@ -137,30 +137,31 @@ def checklist(n=300, first=20, every=62):
 
 # ---------------------------------------------------------------- system: graph grows, then bugs crawl in
 def system(n=210, grow=110, name="system",
-           caps=("More code means **bigger systems**", "More code means **more complexity, more bugs.**"), glyph="bug"):
+           caps=("More code means **bigger systems**", "More code means **more complexity, more bugs.**"), glyph="bug",
+           cap_size=54, cap_y=100, n_nodes=46, node_r=9, edge_w=3, glyph_s=1.0, n_bugs=22, top=170):
     r = random.Random(11)
     nodes = [(W / 2, H / 2 + 40)]
     edges = []
-    for k in range(1, 46):
+    for k in range(1, n_nodes):
         a, rad = r.uniform(0, 2 * math.pi), r.uniform(80, 330)
         p = (W / 2 + math.cos(a) * rad * 1.6, H / 2 + 40 + math.sin(a) * rad * 0.8)
-        p = (min(W - 70, max(70, p[0])), min(H - 50, max(170, p[1])))
+        p = (min(W - 70, max(70, p[0])), min(H - 50, max(top, p[1])))
         near = sorted(range(len(nodes)), key=lambda j: (nodes[j][0] - p[0]) ** 2 + (nodes[j][1] - p[1]) ** 2)
         nodes.append(p)
         edges += [(near[0], k)] + ([(near[1], k)] if len(near) > 1 and r.random() < 0.6 else [])
-    bugs = [(r.randrange(len(edges)), r.random(), r.uniform(0.004, 0.012)) for _ in range(22)]
+    bugs = [(r.randrange(len(edges)), r.random(), r.uniform(0.004, 0.012)) for _ in range(n_bugs)]
     d_out = seq_dir(name)
     for i in range(n):
         img = Image.new("RGB", (W, H), (255, 255, 255))
         d = ImageDraw.Draw(img)
         shown = 1 + int(min(1.0, i / grow) * (len(nodes) - 1))
-        caption(d, caps[0] if i < grow + 20 else caps[1], 100)
+        caption(d, caps[0] if i < grow + 20 else caps[1], cap_y, size=cap_size)
         for a, b in edges:
             if a < shown and b < shown:
-                d.line([nodes[a], nodes[b]], fill=(180, 190, 205), width=3)
+                d.line([nodes[a], nodes[b]], fill=(170, 182, 200), width=edge_w)
         for k in range(shown):
             x, y = nodes[k]
-            rr = 14 if k == 0 else 9
+            rr = node_r * (1.5 if k == 0 else 1.0)
             d.ellipse([x - rr, y - rr, x + rr, y + rr], fill=BLUE)
         if i >= grow + 20:
             m = i - grow - 20
@@ -169,7 +170,10 @@ def system(n=210, grow=110, name="system",
                 t = (p0 + sp * m) % 1.0
                 x = nodes[a][0] + (nodes[b][0] - nodes[a][0]) * t
                 y = nodes[a][1] + (nodes[b][1] - nodes[a][1]) * t
-                (spider if glyph == "spider" else bug)(d, x, y, i + j * 7)
+                if glyph == "spider":
+                    spider(d, x, y, i + j * 7, glyph_s)
+                else:
+                    bug(d, x, y, i + j * 7)
         img.save(os.path.join(d_out, f"f_{i + 1:04d}.png"))
     return n
 
@@ -181,18 +185,18 @@ def bug(d, x, y, phase):
             d.line([(x, y + lg), (x + s * 17, y + lg - 4)], fill=RED, width=3)
 
 
-def spider(d, x, y, phase):
-    """Black spider with a red mark; legs twitch with `phase` so the swarm looks alive."""
+def spider(d, x, y, phase, k=1.0):
+    """Black spider with a red mark; legs twitch with `phase` so the swarm looks alive. k = size."""
     ink = (24, 24, 30)
     for s in (-1, 1):
-        for k, ang in enumerate((-50, -18, 14, 44)):
-            a = math.radians(ang + 7 * math.sin(phase * 0.9 + k * 1.7 + s))
-            kx, ky = x + s * 15 * math.cos(a), y + 15 * math.sin(a) - 7      # knee (raised)
-            fx_, fy = x + s * 27 * math.cos(a), y + 27 * math.sin(a) + 6     # foot
-            d.line([(x + s * 5, y), (kx, ky), (fx_, fy)], fill=ink, width=3, joint="curve")
-    d.ellipse([x - 11, y - 4, x + 11, y + 18], fill=ink)                    # abdomen
-    d.ellipse([x - 7, y - 13, x + 7, y + 1], fill=ink)                      # head
-    d.polygon([(x, y + 3), (x - 4, y + 8), (x, y + 13), (x + 4, y + 8)], fill=RED)
+        for j, ang in enumerate((-50, -18, 14, 44)):
+            a = math.radians(ang + 7 * math.sin(phase * 0.9 + j * 1.7 + s))
+            kx, ky = x + s * 15 * k * math.cos(a), y + (15 * math.sin(a) - 7) * k      # knee (raised)
+            fx_, fy = x + s * 27 * k * math.cos(a), y + (27 * math.sin(a) + 6) * k     # foot
+            d.line([(x + s * 5 * k, y), (kx, ky), (fx_, fy)], fill=ink, width=max(3, int(3 * k)), joint="curve")
+    d.ellipse([x - 11 * k, y - 4 * k, x + 11 * k, y + 18 * k], fill=ink)               # abdomen
+    d.ellipse([x - 7 * k, y - 13 * k, x + 7 * k, y + k], fill=ink)                     # head
+    d.polygon([(x, y + 3 * k), (x - 4 * k, y + 8 * k), (x, y + 13 * k), (x + 4 * k, y + 8 * k)], fill=RED)
 
 
 # ================================================================ piece 2

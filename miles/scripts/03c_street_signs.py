@@ -116,6 +116,128 @@ def facade(name, w=2400, h=340, bays=12, seed=1):
     img.save(os.path.join(OUT, name + ".png"))
 
 
+def big_caption(d, text, y, size, x=70, w=1280 - 140):
+    """Single-size caption with **bold**, shrunk to fit."""
+    width = lambda sz: sum(slides.font(sz, slides.BOLD if b else slides.REGULAR).getlength(t + " ") for t, b in slides.words(text))
+    while size > 40 and width(size) > w:
+        size -= 2
+    for t, b in slides.words(text):
+        f = slides.font(size, slides.BOLD if b else slides.REGULAR)
+        ImageDraw.Draw(d).text((x, y), t, font=f, fill=INK, anchor="ls") if isinstance(d, Image.Image) else d.text((x, y), t, font=f, fill=INK, anchor="ls")
+        x += f.getlength(t) + f.getlength(" ")
+
+
+def queue_big(name="st_queue", n=180, cap="Human review **can't keep up.**"):
+    """Small-player version: huge caption + two huge counters + one bar. Nothing else."""
+    d_out = os.path.join(OUT, name)
+    os.makedirs(d_out, exist_ok=True)
+    W, H = 1280, 720
+    RED, GREEN = (220, 38, 38), (22, 163, 74)
+    num = slides.font(190, slides.BOLD)
+    lab = slides.font(58, slides.REGULAR)
+    for i in range(n):
+        t = i / (n - 1)
+        img = Image.new("RGB", (W, H), (255, 255, 255))
+        d = ImageDraw.Draw(img)
+        big_caption(d, cap, 120, 86)
+        incoming = int(12 + 470 * t ** 1.8)
+        reviewed = int(3 + 9 * t)
+        for x0, label, val, col in ((70, "Incoming PRs", incoming, RED), (720, "Reviewed", reviewed, INK)):
+            d.text((x0, 250), label, font=lab, fill=(90, 90, 90), anchor="ls")
+            d.text((x0, 450), f"{val}", font=num, fill=col, anchor="ls")
+        cov = reviewed / max(1, incoming)
+        d.rounded_rectangle([70, 560, 1210, 640], radius=30, fill=(214, 220, 228))
+        d.rounded_rectangle([70, 560, 70 + max(60, int(1140 * min(1.0, cov))), 640], radius=30, fill=GREEN if cov > 0.15 else RED)
+        img.save(os.path.join(d_out, f"f_{i + 1:04d}.png"))
+    return n
+
+
+TILES = [("Downtime", "_icon_server"), ("Security", "_icon_lock"), ("Slow apps", "_icon_perf"), ("Bad UI", "_icon_badui")]
+
+
+def quads_big(prefix="st_quad"):
+    """Small-player version of the four risks: big caption, big one/two-word tiles."""
+    W, H = 1280, 720
+    lab = slides.font(70, slides.BOLD)
+    for k in range(len(TILES) + 1):
+        img = Image.new("RGB", (W, H), (255, 255, 255))
+        d = ImageDraw.Draw(img)
+        big_caption(d, "Customers **walk away** over:", 110, 84)
+        for q, (name, icon) in enumerate(TILES[:k]):
+            col, row = q % 2, q // 2
+            x0, y0 = 60 + col * 590, 160 + row * 270
+            d.rounded_rectangle([x0, y0, x0 + 570, y0 + 250], radius=26, fill=(254, 226, 226), outline=(220, 38, 38), width=6)
+            getattr(screens, icon)(d, x0 + 92, y0 + 125, 90)
+            d.text((x0 + 185, y0 + 128), name, font=lab, fill=INK, anchor="lm")
+        img.save(os.path.join(OUT, f"{prefix}_{k}.png"))
+    return len(TILES) + 1
+
+
+def leaving_big(name="st_leaving", prefix="st_quad", n=96):
+    """The customers walk off the faded risks."""
+    import math as m
+    d_out = os.path.join(OUT, name)
+    os.makedirs(d_out, exist_ok=True)
+    W, H = 1280, 720
+    base = Image.open(os.path.join(OUT, f"{prefix}_4.png")).convert("RGB")
+    for i in range(n):
+        img = base.copy()
+        ov = Image.new("RGBA", (W, H), (255, 255, 255, int(215 * min(1, i / 16))))
+        img = Image.alpha_composite(img.convert("RGBA"), ov).convert("RGB")
+        d = ImageDraw.Draw(img)
+        d.rectangle([0, 0, W, 140], fill=(255, 255, 255))
+        big_caption(d, "...and customers **walk away.**", 110, 84)
+        for k in range(7):
+            px = 80 + k * 170 + max(0, i - 14) * 22
+            if px > W + 80:
+                continue
+            y = 560 + (k % 2) * 70
+            bob = 8 * m.sin((i + k * 3) * 0.6)
+            d.ellipse([px - 32, y - 175 + bob, px + 32, y - 111 + bob], fill=(71, 85, 105))
+            d.rounded_rectangle([px - 44, y - 102 + bob, px + 44, y + 15 + bob], radius=20, fill=(71, 85, 105))
+        img.save(os.path.join(d_out, f"f_{i + 1:04d}.png"))
+    return n
+
+
+def car_label(name, text, bg, w=3000, h=520):
+    """Train car side/roof panel: one bold line, white on colour, as big as fits."""
+    img = Image.new("RGB", (w, h), bg)
+    d = ImageDraw.Draw(img)
+    d.rectangle([12, 12, w - 12, h - 12], outline=(255, 255, 255), width=10)
+    size = 300
+    while slides.font(size, 850).getlength(text) > w - 160:
+        size -= 6
+    d.text((w / 2, h / 2 + 6), text, font=slides.font(size, 850), fill=(255, 255, 255), anchor="mm")
+    img.save(os.path.join(OUT, name + ".png"))
+
+
+def web_net(name="web_net", w=2400, h=900):
+    """A Spider-Man web spanning the street, with INSPECTION woven into its middle (RGBA)."""
+    import math as m
+    img = Image.new("RGBA", (w, h), (0, 0, 0, 0))
+    d = ImageDraw.Draw(img)
+    cx, cy = w / 2, h / 2
+    ink = (250, 252, 255, 255)
+    for k in range(18):                                          # radial strands
+        a = 2 * m.pi * k / 18
+        d.line([(cx, cy), (cx + m.cos(a) * w, cy + m.sin(a) * w * 0.6)], fill=ink, width=7)
+    for r in range(1, 9):                                        # concentric rings (sagging between strands)
+        pts = []
+        for k in range(19):
+            a = 2 * m.pi * k / 18
+            rr = r * 150 * (0.96 if k % 2 else 1.0)
+            pts.append((cx + m.cos(a) * rr * 1.7, cy + m.sin(a) * rr))
+        d.line(pts, fill=ink, width=6)
+    bw, bh = 1500, 300                                           # woven label
+    d.rounded_rectangle([cx - bw / 2, cy - bh / 2, cx + bw / 2, cy + bh / 2], radius=40, fill=(37, 99, 235, 255),
+                        outline=ink, width=14)
+    size = 230
+    while slides.font(size, 850).getlength("INSPECTION") > bw - 140:
+        size -= 6
+    d.text((cx, cy + 8), "INSPECTION", font=slides.font(size, 850), fill=(255, 255, 255, 255), anchor="mm")
+    img.save(os.path.join(OUT, name + ".png"))
+
+
 def main():
     os.makedirs(OUT, exist_ok=True)
     board("wallboard_generated", "You already ship a lot of **AI-generated code.**", w=1920, h=1080)
@@ -128,11 +250,14 @@ def main():
     # lightbox / screen sequences (16:9), re-captioned to the street script
     screens.OUT = OUT
     print("bugs", screens.system(name="st_bugs", caps=("More code means **bigger systems**", "**Bigger systems,** more **bugs.**"),
-                                 glyph="spider"), "frames")
-    print("queue", screens.review_queue(name="st_queue", cap="Human review **can't keep up.**"), "frames")
-    screens.QUADS[:] = [("Downtime", screens._icon_server), ("Security holes", screens._icon_lock),
-                        ("Slow apps", screens._icon_perf), ("Bad UI", screens._icon_badui)]
-    print("risks", screens.quadrants(prefix="st_quad"), screens.leaving(prefix="st_quad", name="st_leaving"))
+                                 glyph="spider", cap_size=84, cap_y=115, n_nodes=24, node_r=18, edge_w=7, glyph_s=2.0,
+                                 n_bugs=12, top=210), "frames")
+    print("queue", queue_big(), "frames")
+    print("risks", quads_big(), leaving_big(), "frames")
+    car_label("car_engineers", "ENGINEERS' CONFIDENCE", (30, 41, 59))
+    car_label("car_customers", "CUSTOMER CONFIDENCE", (30, 41, 59))
+    car_label("car_product", "COMPETITIVE PRODUCT  $$$", (21, 128, 61))
+    web_net()
     print("ok ->", OUT)
 
 

@@ -3,6 +3,7 @@
     python3 scripts/06_assemble.py piece1                  # renders/piece1_360p.mp4 -> renders/piece1_360p_vo.mp4
     python3 scripts/06_assemble.py piece2 --music assets/audio/music/bed_piece2.mp3
     python3 scripts/06_assemble.py act1 act2 --height 720  # several shots back to back
+    (every run also writes <name>_tc.mp4: frame number + timecode bottom-right, for review; --no-burnin skips it)
 
 Each shot script marks its audio cues as timeline markers (exported to build/<shot>_cues.json
 by shot.finish), so re-timing the animation re-syncs the sound:
@@ -18,7 +19,8 @@ from pipeline import paths
 AUDIO = os.path.join(paths.ROOT, "assets", "audio")
 SFX_DIR = os.path.join(AUDIO, "sfx")
 SFX_GAIN = 0.385         # effects sit well under the voice (review: -30 %)
-MUSIC_GAIN = 0.22
+MUSIC_GAIN = 0.13          # review: voice up, music down
+VO_GAIN = 1.26             # +2 dB over effects/music before loudness normalisation
 
 
 def vo_dir(shot):
@@ -36,7 +38,15 @@ def sfx_file(name):
     return hits[0] if hits else None
 
 
-def main(shots, height=360, music=None):
+def burnin_filter(total, height):
+    """Bottom-right review overlay: Blender frame number (frame 1 = first frame) + time / total duration."""
+    fs = max(14, height // 24)
+    tot = f"00\\:{int(total // 60):02d}\\:{total % 60:06.3f}"            # same HH:MM:SS.mmm as the running time
+    return (f"drawtext=text='f %{{eif\\:n+1\\:d\\:4}}   %{{pts\\:hms}} / {tot}':x=w-tw-12:y=h-th-10:"
+            f"fontsize={fs}:fontcolor=white:box=1:boxcolor=black@0.55:boxborderw=6")
+
+
+def main(shots, height=360, music=None, burnin=False):
     videos, vo, sfx, offset = [], [], [], 0.0
     for shot in shots:
         videos.append(os.path.join(paths.RENDERS, f"{shot}_{height}p.mp4"))
@@ -54,7 +64,7 @@ def main(shots, height=360, music=None):
         music = guess if os.path.exists(guess) else None
 
     inputs = sum((["-i", v] for v in videos), [])
-    fc = "".join(f"[{i}:v]" for i in range(len(videos))) + f"concat=n={len(videos)}:v=1:a=0[v];"
+    fc = "".join(f"[{i}:v]" for i in range(len(videos))) + f"concat=n={len(videos)}:v=1:a=0[vcat];"
     k = len(videos)
 
     def place(path, t, gain, tag):
@@ -65,7 +75,7 @@ def main(shots, height=360, music=None):
         k += 1
         return f"[{tag}]"
 
-    vo_l = [place(p, t, 1.0, f"v{i}") for i, (t, p) in enumerate(sorted(vo)) if os.path.exists(p)]
+    vo_l = [place(p, t, VO_GAIN, f"v{i}") for i, (t, p) in enumerate(sorted(vo)) if os.path.exists(p)]
     missing = sorted({n for _, n, _ in sfx if not sfx_file(n)})
     sfx_l = [place(sfx_file(n), t, SFX_GAIN * g, f"s{i}") for i, (t, n, g) in enumerate(sorted(sfx)) if sfx_file(n)]
     print(f"voice {len(vo_l)}/{len(vo)} lines, sfx {len(sfx_l)}/{len(sfx)} cues" + (f" (missing: {', '.join(missing)})" if missing else ""))
@@ -80,18 +90,24 @@ def main(shots, height=360, music=None):
         inputs.extend(["-stream_loop", "-1", "-i", music])
         fc += (f"[{k}:a]aformat=sample_rates=44100:channel_layouts=stereo,atrim=0:{total:.3f},volume={MUSIC_GAIN},"
                f"afade=t=in:d=1,afade=t=out:st={max(0, total - 2.5):.3f}:d=2.5[mu];"
-               f"[mu][key]sidechaincompress=threshold=0.03:ratio=6:attack=15:release=350[duck];")
+               f"[mu][key]sidechaincompress=threshold=0.02:ratio=8:attack=15:release=400[duck];")
         bus.append("[duck]")
         k += 1
     else:
         fc += "[key]anullsink;"
-    fc += "".join(bus) + f"amix=inputs={len(bus)}:normalize=0,loudnorm=I=-16:TP=-1.5:LRA=11,{trim}[a]"
+    fc += "".join(bus) + f"amix=inputs={len(bus)}:normalize=0,loudnorm=I=-16:TP=-1.5:LRA=11,{trim}[a];"
+    fc += "[vcat]null[v]"
     name = "-".join(shots) if len(shots) > 1 else shots[0]
     out = os.path.join(paths.RENDERS, f"{name}_{height}p_{'mix' if (sfx_l or music) else 'vo'}.mp4")
     subprocess.run(["ffmpeg", "-loglevel", "error", "-y", *inputs, "-filter_complex", fc, "-map", "[v]", "-map", "[a]",
                     "-c:v", "libx264", "-pix_fmt", "yuv420p", "-crf", "18", "-c:a", "aac", "-b:a", "192k",
                     "-ar", "44100", "-shortest", out], check=True)
     print("VIDEO", out, f"({total:.1f}s)" + (f"  music: {os.path.basename(music)}" if music else ""))
+    if burnin:                                         # review copy: frame number + time / total, bottom-right
+        tc = out[:-4] + "_tc.mp4"
+        subprocess.run(["ffmpeg", "-loglevel", "error", "-y", "-i", out, "-vf", burnin_filter(total, height),
+                        "-c:v", "libx264", "-pix_fmt", "yuv420p", "-crf", "18", "-c:a", "copy", tc], check=True)
+        print("REVIEW", tc)
 
 
 if __name__ == "__main__":
@@ -100,4 +116,4 @@ if __name__ == "__main__":
     mu = os.path.abspath(args[args.index("--music") + 1]) if "--music" in args else None
     skip = {args.index(f) + 1 for f in ("--height", "--music") if f in args}
     shots = [a for i, a in enumerate(args) if not a.startswith("--") and i not in skip]
-    main(shots or ["piece1"], h, mu)
+    main(shots or ["piece1"], h, mu, burnin="--no-burnin" not in args)

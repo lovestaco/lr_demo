@@ -470,5 +470,31 @@
     2.417
    ]
   ]
+ },
+ "13": {
+  "text": "It starts with inspection.",
+  "start": 67.0,
+  "duration": 1.82,
+  "take": "vo_piece2/piece2_vo.mp3 (line 12, reused)",
+  "src_start": 41.137,
+  "src_end": 42.961,
+  "words": [
+   [
+    "it",
+    0.303
+   ],
+   [
+    "starts",
+    0.323
+   ],
+   [
+    "with",
+    0.583
+   ],
+   [
+    "inspection",
+    0.903
+   ]
+  ]
  }
 }

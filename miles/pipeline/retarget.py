@@ -50,12 +50,35 @@ def import_bvh(path, fps=30):
     return src
 
 
-def bvh_to_action(path, rig, name, mapping=CMU_TO_MIXAMO, trim=None):
+MIXAMO_SELF = {k: k for k in CMU_TO_MIXAMO.values()} | {"Spine": "Spine", "Spine1": "Spine1", "Spine2": "Spine2"}
+
+
+def import_fbx(path):
+    """A Mixamo FBX (any character): armature with the 'mixamorig*:' prefix stripped from bone names."""
+    before = set(bpy.data.objects)
+    bpy.ops.import_scene.fbx(filepath=path, automatic_bone_orientation=False)
+    new = [o for o in bpy.data.objects if o not in before]
+    src = next(o for o in new if o.type == "ARMATURE")
+    for o in new:
+        if o is not src and o.type == "MESH":
+            bpy.data.objects.remove(o, do_unlink=True)
+    for b in src.data.bones:
+        b.name = b.name.split(":")[-1]           # renames the action's channels too
+    return src
+
+
+def fbx_to_action(path, rig, name, trim=None):
+    """Mixamo clip downloaded on another character -> action on our rig (same solver as the mocap)."""
+    return bvh_to_action(path, rig, name, mapping=MIXAMO_SELF, trim=trim, source="fbx")
+
+
+def bvh_to_action(path, rig, name, mapping=CMU_TO_MIXAMO, trim=None, source="bvh"):
     sc = bpy.context.scene
-    src = import_bvh(path)
+    src = import_bvh(path) if source == "bvh" else import_fbx(path)
     act_src = src.animation_data.action
     f0, f1 = (int(math.ceil(act_src.frame_range[0])), int(act_src.frame_range[1]))
-    f0 += 1                          # CMU/cgspeed files start with a T-pose calibration frame
+    if source == "bvh":
+        f0 += 1                      # CMU/cgspeed files start with a T-pose calibration frame
     if trim:
         f0, f1 = max(f0, trim[0]), min(f1, trim[1])
     pairs = [(s, PREFIX + t) for s, t in mapping.items()

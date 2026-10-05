@@ -111,7 +111,7 @@ def _plane(name, w, h, coll):
     return ob
 
 
-def image_material(name, image_path, emit=0.0, rough=0.7, seq=None):
+def image_material(name, image_path, emit=0.0, rough=0.7, seq=None, alpha=False):
     """Image texture material; emit>0 makes it a lightbox/LED. seq=(n_frames, start) plays an image sequence."""
     m = bpy.data.materials.new(name)
     if m.node_tree is None:
@@ -131,17 +131,23 @@ def image_material(name, image_path, emit=0.0, rough=0.7, seq=None):
     if emit:
         nt.links.new(tex.outputs["Color"], bsdf.inputs["Emission Color"])
         bsdf.inputs["Emission Strength"].default_value = emit
+    if alpha:                                       # cut-out (web net): transparent where the image is
+        nt.links.new(tex.outputs["Alpha"], bsdf.inputs["Alpha"])
+        if hasattr(m, "surface_render_method"):
+            m.surface_render_method = "DITHERED"
+        elif hasattr(m, "blend_method"):
+            m.blend_method = "HASHED"
     return m
 
 
 def sign(name, image_path, point, normal, width, aspect=16 / 9, offset=0.04, emit=0.0, frame=None, coll=None,
-         seq=None, rough=0.7):
+         seq=None, rough=0.7, alpha=False):
     """A flat image on a surface: mural/poster/billboard face. frame: None | 'billboard' | 'lightbox' | 'led'."""
     coll = coll or fx.collection("Signs")
     h = width / aspect
     n = Vector(normal).normalized()
     ob = _plane(name, width, h, coll)
-    ob.data.materials.append(image_material(name + "_Mat", image_path, emit, rough, seq))
+    ob.data.materials.append(image_material(name + "_Mat", image_path, emit, rough, seq, alpha))
     ob.location = Vector(point) + n * offset
     ob.rotation_euler = (-n).to_track_quat("Y", "Z").to_euler()      # plane faces along -Y: point it out of the wall
     if frame:
@@ -239,16 +245,17 @@ class Building:
         anim.keys(lab, "scale", [(int(frame), Vector((0.02, 1, 1)), "out"), (int(frame) + ramp, Vector((1, 1, 1)), "back")])
         return lab
 
-    def collapse(self, yank, crash, pull=Vector((0, -1, 0)), dist=7.0):
+    def collapse(self, yank, crash, pull=Vector((0, -1, 0)), dist=7.0, slide=10):
         """Ground floor shoots out along `pull` at `yank`; the floors above drop one storey each
         (pancake), tilting and settling into a heap after `crash`."""
         import random
         r = random.Random(4)
         g = self.floors[0]
         p0 = g.location.copy()
-        anim.keys(g, "location", [(int(yank), p0, "in"), (int(yank) + 10, p0 + pull * dist + Vector((0, 0, -0.4)), "out"),
-                                  (int(yank) + 16, p0 + pull * (dist + 0.6) + Vector((0, 0, -0.4)))])
-        anim.keys(g, "rotation_euler", [(int(yank), Vector((0, 0, 0))), (int(yank) + 16, Vector((0.05, 0.0, r.uniform(-0.25, 0.25))))])
+        y0, y1 = int(yank), int(yank) + int(slide)                 # the slide follows the puller's heave
+        anim.keys(g, "location", [(y0, p0, "inout"), (y1, p0 + pull * dist + Vector((0, 0, -0.4)), "out"),
+                                  (y1 + 6, p0 + pull * (dist + 0.6) + Vector((0, 0, -0.4)))])
+        anim.keys(g, "rotation_euler", [(y0, Vector((0, 0, 0))), (y1 + 6, Vector((0.05, 0.0, r.uniform(-0.25, 0.25))))])
         for i in range(1, self.n):
             f = self.floors[i]
             p = f.location.copy()

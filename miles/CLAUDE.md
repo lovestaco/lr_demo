@@ -48,6 +48,8 @@ Join acts without audio: `ffmpeg -i act1_360p.mp4 -i act2_360p.mp4 -filter_compl
 - Deck text source: `../ppt/LiveReview-Presentation-slides.md` (slide numbers = `slide_NN.png`).
 
 ## Working agreements with the user
+- **Every rendered video gets a review copy with burn-in** (`<name>_tc.mp4`: Blender frame number + time / total,
+  bottom-right) — `06_assemble.py` does it by default; reviewers cite frames like "f 1201". Clean file stays alongside.
 - **Discuss the plan before building** anything new (new act, new scene idea); then build.
 - Iterate with **360p** renders (`full` default, ~1–2 min); 720p/1080p only for finals.
 - Always check a contact sheet (`sheet`, or ffmpeg tile from the mp4) before handing over a render.
