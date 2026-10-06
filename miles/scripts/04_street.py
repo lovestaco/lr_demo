@@ -242,7 +242,7 @@ INV = math.pi                                 # roll about the depth axis: upsid
 FOOT_TOE = "mixamorig:LeftToeBase"
 FOOT = "mixamorig:LeftFoot"
 # ---- S0/S1: swing down the avenue, land crouched on TOP of the wall board, facing the street
-TOP1 = (G_C.x - 2.5, WALL_G.point.y + WALL_G.normal.y * 0.85)       # on the board's top ledge, screen-right corner
+TOP1 = (G_C.x + 2.5, WALL_G.point.y + WALL_G.normal.y * 0.85)       # on the board's top ledge, screen-LEFT corner (reading starts there)
 sw1 = perf.then(SW, frm=1, to=57, speed=SW_SPEED, face=-160, in_place=1.0, at=TOP1)
 perch1 = perf.then(SW, frm=52, to=57, speed=5 / max(40, hold(1, 0.5) + 10), blend=8, face=180)
 happy = perf.then(opt("MX Happy Hand Gesture", "Happy Idle"), frm=8, length=54, blend=12, face=180, in_place=1.0)   # CU: excited
@@ -262,7 +262,7 @@ tick = perf.then("Breathing Idle", length=hold(3, 1.0, 75), blend=10, face=180) 
 run4 = perf.then(opt("MX Sprint", "Two Cycle Sprint"), repeat=4, blend=10, face=0)
 stop4 = perf.then(opt("MX Run To Stop", "Run To Stop"), blend=5, face=0)
 look4 = talk(F(word(4, "bugs") * FPS) + 14, face=40)
-shock = perf.then("CMU 120_16 Mickey Surprised", frm=140, to=176, blend=6, face=20, in_place=0.8)
+shock = perf.then("CMU 120_16 Mickey Surprised", frm=140, to=262, blend=6, face=20, in_place=0.8)   # the bug dance (v3)
 ROOF_SPOT = (BUS.x - 0.8, BUS.y + 0.1)
 hop_a = perf.then(opt("MX Jumping Up", "Hard Landing"), blend=4, face=-60, in_place=1.0)
 hop_b = perf.then("Hard Landing", frm=10, to=28, blend=3, face=-60, in_place=1.0)
@@ -334,9 +334,9 @@ C = T["vo12"] + F(word(12, "everything") * FPS) - 6                      # the t
 
 # ------------------------------------------------------------------ body to camera on the talk beats
 BUS_CAM = ((BUS_AD_C.x - 6.2, BUS_AD_C.y + 1.1, 1.5), (BUS_AD_C.x, BUS_AD_C.y + 1.0, 1.35))
-SUB_CAM = ((POST_C.x - 1.3, POST_C.y + 5.0, 2.3), (POST_C.x - 1.3, POST_C.y, 2.55))        # close: board + him both big
-for dx, dy in [(dx_ * 0.5 - 1.3, dy_) for dy_ in (5.0, 5.5, 4.6, 6.0) for dx_ in (0, 1, -1, 2, -2, 3)]:
-    cand = ((POST_C.x + dx, POST_C.y + dy, 2.2), (POST_C.x - 1.3, POST_C.y, 2.5))
+SUB_CAM = ((POST_C.x + 1.0, POST_C.y + 5.0, 2.3), (POST_C.x + 1.0, POST_C.y, 2.55))        # close: board + him both big
+for dx, dy in [(1.0 - dx_ * 0.5, dy_) for dy_ in (5.0, 5.5, 4.6, 6.0) for dx_ in (0, 1, -1, 2, -2, 3)]:
+    cand = ((POST_C.x + dx, POST_C.y + dy, 2.2), (POST_C.x + 1.0, POST_C.y, 2.5))
     if clear_view(cand[0], board_pts(POST_C + POST.normal * 0.12, POST.normal, 3.6, 2.0)):
         SUB_CAM = cand
         print("SUBCAM", dx, dy)
@@ -506,7 +506,7 @@ def lean(path, f0, f1, anchor, a0, a1, max_deg=55.0, ramp=6):
 # the web anchors: on the billboard, the roof edge, or found on a real facade above each swing
 BB_BOT = BB_C.z - 9.6 / 3.0 / 2 - 0.12
 HANG_HIPS = Vector((BB_C.x + 3.0, BB_C.y - 0.75, BB_BOT - 0.95))
-SUB_HIPS = Vector((POST_C.x - 2.3, POST.point.y + 0.9, 2.6))
+SUB_HIPS = Vector((POST_C.x + 2.3, POST.point.y + 0.9, 2.6))
 A2 = Vector((BB_C.x + 3.0, BB_C.y - 0.1, BB_BOT + 0.05))
 A7 = Vector((RF_SPOT[0] - 0.4, RF_SPOT[1] + 1.0, ROOF_Z + 0.3))                       # zip line to the roof edge
 # S0: the opening swing down the avenue onto the board
@@ -635,7 +635,11 @@ for k in range(12):
     ang = rs.uniform(0, 2 * math.pi)
     near = Vector((ROOF_SPOT[0] + 1.9 * math.cos(ang), ROOF_SPOT[1] + 1.3 * math.sin(ang), 0.0))   # circling the shelter
     tn = int(cling.start) + rs.randint(0, 12)
-    spiders.add([(f0, out_), (f0 + 8, (out_ + drop) / 2 + Vector((0, -0.2, 0.05))), (f0 + 14, drop), (tn, near),
+    dz = hips(int(shock.start) + 40)
+    at_him = Vector((dz.x + rs.uniform(-1.1, 1.1), dz.y + rs.uniform(-1.1, 1.1), 0.0))
+    t_him = max(f0 + 20, int(shock.start) + 22 + 2 * k)
+    spiders.add([(f0, out_), (f0 + 8, (out_ + drop) / 2 + Vector((0, -0.2, 0.05))), (f0 + 14, drop), (t_him, at_him),
+                 (max(t_him + 20, int(shock.end) - 10), at_him + Vector((rs.uniform(-0.6, 0.6), rs.uniform(-0.6, 0.6), 0))), (tn, near),
                  (tn + 18, near + Vector((rs.uniform(-0.4, 0.4), rs.uniform(-0.4, 0.4), 0))),
                  (int(cling.end) + 4, near + Vector((rs.uniform(-0.6, 0.6), rs.uniform(-0.6, 0.6), 0)))], walk_speed=3.0)
 
@@ -900,13 +904,17 @@ cam.lens(int(run4.start) + 2, 24, "const")
 ride(int(run4.start) + 2, int(first(look4).start) - 1, Vector((-7.5, -1.5, 0.4)), lead=6)
 cam.lens(int(first(look4).start), 28, "const")
 at(int(first(look4).start), *BUS_CAM, "lin", cut=True)
-at(int(hop_a.start) - 1, BUS_CAM[0], BUS_CAM[1], "lin")
+dance = hp(int(shock.start) + 30)
+cam.lens(int(shock.start) + 5, 24, "const")
+at(int(shock.start) + 5, dance + Vector((-2.9, 1.3, -0.15)), dance + Vector((0.2, -0.3, -0.25)), "lin", cut=True)
+at(int(hop_a.start) - 1, dance + Vector((-2.7, 1.2, -0.15)), dance + Vector((0.2, -0.3, -0.25)), "lin")
+CUTS.append(("bug dance", int(shock.start) + 5))
 roof_cam = ((ROOF_SPOT[0] - 5.6, ROOF_SPOT[1] + 3.4, 3.8), (ROOF_SPOT[0] - 0.4, ROOF_SPOT[1], 2.2))
 at(int(hop_a.start), *roof_cam, "lin", cut=True)
 at(f5a - 1, (roof_cam[0][0] + 0.4, roof_cam[0][1] - 0.2, 3.9), (ROOF_SPOT[0], ROOF_SPOT[1], 2.4), "lin")
 # S5 the hop over to the subway (wide), push into the close two-shot: board + him both big (f769)
 cam.lens(f5a, 26, "const")
-pan(f5a, f5h + 4, (SUB_HIPS.x - 2.6, POST.point.y + 7.2, 5.0), look=Vector((0, 0, -0.2)))
+pan(f5a, f5h + 4, (POST_C.x - 1.5, POST.point.y + 7.2, 5.0), look=Vector((0, 0, -0.2)))
 cam.lens(f5h + 5, 24, "const")
 at(f5h + 5, *SUB_CAM, "lin", cut=True)
 at(f6a - 1, (SUB_CAM[0][0] - 0.2, SUB_CAM[0][1] - 0.3, SUB_CAM[0][2]), SUB_CAM[1], "lin")
@@ -922,18 +930,14 @@ at(f6b, *ts, "lin", cut=True)
 at(f7a - 1, ts[0], ts[1], "lin")
 # S7 the zip up to the rooftop: a wide chase from behind and below
 cam.lens(f7a, 20, "const")
-ride(f7a, f7b - 1, Vector((7.0, 7.0, -3.0)), lead=10)
+pan(f7a, f7b - 1, (RS_C.x - 17.0, RS_C.y + 7.0, ROOF_Z + 4.0), lead=6)      # from the avenue: the screen's face, never its back
 cam.lens(f7b, 24, "const")
 rf = Vector(RF_SPOT)
 roof_cam7 = ((rf.x - 5.4, rf.y - 2.2, ROOF_Z + 2.0), (RS_C.x - 1.6, RS_C.y + 0.2, ROOF_Z + 1.7))
 at(f7b, *roof_cam7, "lin", cut=True)
 at(T["vo8"] - 1, (roof_cam7[0][0] + 0.4, roof_cam7[0][1], ROOF_Z + 1.2), roof_cam7[1], "inout")
-cu7 = T["vo8"] + 2                                   # CU confident: low, close, the screen behind him
-hc = head(cu7 + 20)
-cam.lens(cu7, 30, "const")
-at(cu7, hc + Vector((-1.7, -1.0, -0.55)), hc + Vector((0.6, 0.3, 0.15)), "lin", cut=True)
-at(f8a - 1, hc + Vector((-1.5, -0.9, -0.5)), hc + Vector((0.6, 0.3, 0.15)), "lin")
-CUTS.append(("CU confident", cu7))
+cu7 = T["vo8"] + 2                                   # (confident beat: the lenses act, the slide stays whole in frame)
+at(f8a - 1, (roof_cam7[0][0] + 0.6, roof_cam7[0][1], ROOF_Z + 1.1), roof_cam7[1], "lin")
 # S8 the swing down into the intersection (tracking), a low hero angle on the landing
 cam.lens(f8a, 20, "const")
 ride(f8a, f8b - 1, Vector((-7.0, -5.0, 4.0)), lead=10)
@@ -1008,7 +1012,8 @@ from pipeline import face
 eyes = face.Lenses(bpy.data.objects["MilesMasked"])
 for f_, w_ in ((int(happy.start) + 4, dict(Wide=0.75)), (int(curious.start) + 8, dict(Wide=0.0, Squint=0.35)),
                (f2a, dict(Squint=0.0)), (cu3 - 4, dict(Wide=1.0)), (int(run4.start) + 6, dict(Wide=0.2)),
-               (int(shock.start) + 3, dict(Wide=1.0)), (int(cling.start) + 6, dict(Wide=0.7, Sad=0.35)),
+               (int(shock.start) + 3, dict(Wide=1.0)), (int(shock.start) + 50, dict(Wide=0.0, Squint=0.55, Angry=0.35)),
+               (int(shock.end) - 4, dict(Squint=0.0, Angry=0.0, Wide=0.6)), (int(cling.start) + 6, dict(Wide=0.7, Sad=0.35)),
                (f5a, dict(Wide=0.0, Sad=0.0)), (int(frus.start) + 8, dict(Sad=0.9)), (f6a, dict(Sad=0.0)),
                (int(worry.start) + 10, dict(Sad=0.8)), (int(moon.start) + 4, dict(Sad=0.0, Squint=0.35)),
                (f7a, dict(Squint=0.0)), (cu7, dict(Squint=0.45, Angry=0.3)), (f8a, dict(Squint=0.0, Angry=0.0)),
