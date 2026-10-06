@@ -106,6 +106,14 @@ Join acts without audio: `ffmpeg -i act1_360p.mp4 -i act2_360p.mp4 -filter_compl
 - Close-ups with feeling: CU excited (board ledge), OTS two-building shot (billboard across the street from his
   ledge), CU amazed (profile, ticker above), CU confident (roof), CU yank. Head look constraints must not
   point behind him (ticker: he faces it, `face=180`), or the neck turns 180°.
+- **v8 (review: animation rules):** every read is a `presenter()` shot (whole slide straight-on, him upright at its
+  LEFT edge, facing the lens via `square_up`); travel = `zip_()` (`Hanging Idle`, hands up on the line) + `touch()`
+  (`Hard Landing` 14-64 placed with `at=` + `cut_blend`), `lean()` holds ONE tilt (sample the root rotation before
+  keying, or each frame compounds the tilt into a spin: that was the old "spinning" swings). No hangs. `Performer`
+  turns the short way (180 -> -160 was a 340° spin on the mural landing). Finale = v3 `city.Building` (12 m, 4 floors)
+  in the intersection, shown from the S8 cut; `pancake()` = gravity fall, squash, dust puffs, debris.
+  `scripts/check_rules.py` audits rules 1-6 from `build/street_audit.json`; `check_support.py` reports false
+  "None" gaps when a toe sits exactly on the road (its ray steps through his own mesh).
 - Finale: blocks tower in the intersection (piece-2 block code, ×1.45 street scale) on the words of vo 13/9/10/11,
   yank on "inspection" (vo 12): `Pull Heavy Object Start` (lines taut) → `Stop`; he watches the collapse, then flops.
 - Look: `shot.finish(view="AgX", grade="AgX - Punchy")` + `fx.cine_grade()` (mist-pass haze = aerial

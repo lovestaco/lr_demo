@@ -147,7 +147,7 @@ class Performer:
         return self
 
     def then(self, action, start=None, frm=None, to=None, length=None, blend=8, face=None,
-             speed=1.0, repeat=1, cycle_blend=4, in_place=0.0, at=None):
+             speed=1.0, repeat=1, cycle_blend=4, in_place=0.0, at=None, cut_blend=0):
         """Queue a clip. Starts `blend` frames before the previous clip ends unless `start` is given.
 
         repeat > 1 queues the clip that many times back to back (crossfading `cycle_blend`
@@ -157,6 +157,8 @@ class Performer:
         far, e.g. a surprised step back); feet slide a little, the character stays on its mark.
         at=(x, y) starts the clip with the hips at that world spot instead of continuing from the previous
         clip: a hard cut (blend is ignored), for moving the character while the camera looks elsewhere.
+        cut_blend: with `at`, crossfade the pose over this many frames from the previous clip's held last pose
+        (the root still jumps on the first frame: use it where a travel path ends exactly there, e.g. a landing).
         Returns the clip, or a ClipGroup spanning all cycles.
         """
         act = bpy.data.actions[action]
@@ -174,7 +176,7 @@ class Performer:
             clip = Clip(act, s, frm, to, b if self.clips else 0, face, speed, 1)
             clip.in_place = float(in_place)
             if at is not None and k == 0:
-                clip.at, clip.blend = Vector(at[:2]), 0
+                clip.at, clip.blend = Vector(at[:2]), int(cut_blend)
             self.clips.append(clip)
             cycles.append(clip)
         return cycles[0] if len(cycles) == 1 else ClipGroup(cycles)
@@ -264,6 +266,7 @@ class Performer:
             hc = self._hips(cur.action, cur.local(mid)).xy
             world = p_loc + _rot(hp, p_rot) if cur.at is None else cur.at
             rot = math.radians(cur.face)
+            rot = p_rot + (rot - p_rot + math.pi) % (2 * math.pi) - math.pi     # turn the short way (180 -> -160 is 20°, not 340°)
             placements.append((world - _rot(hc, rot), rot))
         ad.action = None
 
@@ -366,8 +369,8 @@ class Performer:
     HANDS = ("mixamorig:LeftHand", "mixamorig:RightHand")
     PALM = 0.03                    # wrist height above the floor when a hand is planted
 
-    def ground_lock(self, start, end, skip=(), taper=8, smooth=3, limit=0.2, step=2):
-        """Keep the feet on the floor (z=0) between start and end.
+    def ground_lock(self, start, end, skip=(), taper=8, smooth=3, limit=0.2, step=2, floor=0.0):
+        """Keep the feet on the floor (z=floor, default the sidewalk z=0) between start and end.
 
         Retargeted mocap often hovers a few cm (hip-height scaling). Samples the lowest foot/toe
         every frame, smooths it, and keys a root-Z correction. `skip` = clips (or (a, b) frame
@@ -398,7 +401,7 @@ class Performer:
             for a, b in ranges:
                 d = max(a - f, f - b, 0) if not (a <= f <= b) else 0
                 w = min(w, 0.0 if a <= f <= b else min(1.0, d / taper))
-            corr.append(max(-limit, min(limit, (sole - z) * w)))
+            corr.append(max(-limit, min(limit, (sole + floor - z) * w)))
         sm = [sum(corr[max(0, i - smooth):i + smooth + 1]) / len(corr[max(0, i - smooth):i + smooth + 1])
               for i in range(len(corr))]
         base = {f: self.root.location.z for f in frames}
