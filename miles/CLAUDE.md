@@ -112,10 +112,23 @@ Join acts without audio: `ffmpeg -i act1_360p.mp4 -i act2_360p.mp4 -filter_compl
   perspective, bloom, lens dispersion, vignette — `05_render.py` rescales the vignette blur via
   `fx.fit_vignette()`); per-shot `aperture_fstop` keys (f/1.8–2.4 close-ups, f/5.6 chases); `cam.shake` on every
   landing / block / the collapse. Camera clip_end 800 for aerials.
+- **v6 additions:**
+  - `pipeline/life.py` — city life checked against `life.Guard` (per-frame camera + Spidey cache):
+    - parked + moving cars (right-hand lanes ±2 m, signal cycle so cross traffic never meets, a queue at the stop lines for the finale);
+    - pedestrians (`WalkKit`, moving at each loop's measured planted-foot speed, keep right);
+    - pigeons (`PigeonKit`: idle → startled take-off on his landings).
+    - Nothing pops in/out on screen, passes through him or the lens, or blocks the lens.
+    - Assets via `scripts/09_sketchfab_fetch.py` (search/get, CC licences, credits saved).
+  - `pipeline/face.py` — mask lens shape keys (Wide/Squint/Angry/Sad) + blinks, keyed per story beat.
+  - Swings: varied clips (`Swing To Land (3)`, mid-air `MX Front Flip` landings, `MX Falling` leap off the roof).
+    `find_anchor()` puts every web on a real facade ahead of him, in the swing plane. `lean()` hangs the body
+    along the line (pendulum).
+  - Warmer, lower sun (`golden_hour(6°)`, colour 1.0/0.66/0.40); closer ticker / screen / tower wides.
+  - 06_assemble varies each SFX cue's pitch/level. 05_render keeps frames in `build/frames/<name>_<h>p/`.
 - VO: `assets/audio/vo_street/` (Mark v4 take, 13 lines); music `assets/audio/music/bed_street.mp3`
   ("Superhero Cinematic Opener" by ArctSound, Pixabay, not Content ID registered, 70.2 s).
-- Assemble: `python3 scripts/06_assemble.py street --height 1080 --music assets/audio/music/bed_street.mp3 --music-once`
-  (`--music-once`: the 70 s bed plays once instead of restarting under the 73 s film's outro).
+- Assemble: `python3 scripts/06_assemble.py street --height 360 --music assets/audio/music/bed_street.mp3`
+  (film 69 s < the 70 s bed; `--music-once` if a cut ever runs longer than the bed).
 
 ## Shot grammar (what each camera choice is for)
 - WIDE to open a scene (where are we), then MEDIUM (waist up) on the character; CLOSE-UP for emotion

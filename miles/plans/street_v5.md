@@ -116,3 +116,9 @@ Closer, board + head both large; `clear_view` keeps pipes out.
   `05_render.py -- full 100` → `06_assemble.py street --height 1080 --music … --music-once` → renders/street_1080p_mix(_tc).mp4.
   Remaining after render: frame check, commit (local, no push).
 - 04:20 DONE: renders/street_1080p_mix.mp4 (+_tc), 73.2 s, -16 LUFS; committed 2513ae6 (local, not pushed).
+
+## v6 (2026-10-06, "work on all of those")
+City life (24 parked / ~23 moving / 12 queued cars, 70 pedestrians, 23 pigeons), bigger Spidey in wides, swing physics
+(anchors on real facades, pendulum lean, flip landings, roof leap + web catch, varied swing clips), warmer sun, lens
+expressions + blinks, hands together on hangs, 69.2 s (trimmed holds), occlusions fixed, SFX pitch variation.
+360p full-quality render (frames kept, _tc copy) for review.

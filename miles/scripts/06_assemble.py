@@ -12,7 +12,7 @@ by shot.finish), so re-timing the animation re-syncs the sound:
 Music (optional, --music or assets/audio/music/bed_<shot>.mp3): looped to length (or --music-once: played once), 1 s fade in,
 2.5 s fade out, ducked under the voice (sidechain). The mix is loudness-normalised to -16 LUFS.
 """
-import glob, json, os, subprocess, sys
+import random, glob, json, os, subprocess, sys
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from pipeline import paths
 
@@ -67,17 +67,26 @@ def main(shots, height=360, music=None, burnin=False, music_once=False):
     fc = "".join(f"[{i}:v]" for i in range(len(videos))) + f"concat=n={len(videos)}:v=1:a=0[vcat];"
     k = len(videos)
 
-    def place(path, t, gain, tag):
+    def place(path, t, gain, tag, pitch=1.0):
         nonlocal fc, k
         inputs.extend(["-i", path])
         d = max(0, int(t * 1000))
-        fc += f"[{k}:a]aformat=sample_rates=44100:channel_layouts=stereo,volume={gain:.3f},adelay={d}|{d}[{tag}];"
+        vary = f"asetrate={44100 * pitch:.0f},aresample=44100," if abs(pitch - 1.0) > 1e-3 else ""
+        fc += f"[{k}:a]aformat=sample_rates=44100:channel_layouts=stereo,{vary}volume={gain:.3f},adelay={d}|{d}[{tag}];"
         k += 1
         return f"[{tag}]"
 
+    # repeated effects shouldn't sound like one sample: each cue gets its own pitch (= size) and level, deterministic
+    vary_rng = random.Random(7)
+    varied = lambda: (vary_rng.uniform(0.88, 1.12), vary_rng.uniform(0.84, 1.08))
+
     vo_l = [place(p, t, VO_GAIN, f"v{i}") for i, (t, p) in enumerate(sorted(vo)) if os.path.exists(p)]
     missing = sorted({n for _, n, _ in sfx if not sfx_file(n)})
-    sfx_l = [place(sfx_file(n), t, SFX_GAIN * g, f"s{i}") for i, (t, n, g) in enumerate(sorted(sfx)) if sfx_file(n)]
+    sfx_l = []
+    for i, (t, n, g) in enumerate(sorted(sfx)):
+        if sfx_file(n):
+            pr, gv = varied()
+            sfx_l.append(place(sfx_file(n), t, SFX_GAIN * g * gv, f"s{i}", pitch=pr))
     print(f"voice {len(vo_l)}/{len(vo)} lines, sfx {len(sfx_l)}/{len(sfx)} cues" + (f" (missing: {', '.join(missing)})" if missing else ""))
 
     trim = f"apad,atrim=0:{total:.3f}"

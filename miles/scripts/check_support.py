@@ -14,7 +14,7 @@ for o in bpy.data.objects:                       # webs / spiders / bills aren't
     if o.name.startswith(("Web", "Spider", "Bills", "BillOnMask", "CodePages")):
         mine.add(o.name)
 mk = sorted((m.frame, m.name) for m in sc.timeline_markers if not m.name.startswith(("sfx", "vo", "cam")))
-air_names = ("Swing To Land", "Hanging Idle", "MX Backflip", "Hard Landing")   # hangs / swings / drops / dive
+air_names = ("Swing To Land", "Hanging Idle", "MX Backflip", "Hard Landing", "MX Front Flip", "MX Falling")   # hangs / swings / drops / dive
 bad, runs = [], []
 dg = bpy.context.evaluated_depsgraph_get()
 for f in range(2, sc.frame_end, 3):

@@ -19,7 +19,7 @@ camera angles within a scene (wide → close-up → over-the-shoulder).
 """
 import bpy, os, sys, math, random, json
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from mathutils import Vector
+from mathutils import Vector, Euler, Matrix
 from pipeline import paths, anim, fx, shot, props, city, swing
 from pipeline.mixamo import Performer, ClipGroup
 from pipeline.shot import L_HAND, R_HAND, HIPS
@@ -40,6 +40,8 @@ word = lambda n, w: next(t for x, t in VO[str(n)]["words"] if x == w)
 
 # ------------------------------------------------------------------ set: city at sunset, raised so the sidewalk is z=0
 c = city.load()
+sun = city.golden_hour(sun_elev=6.0, sun_az=-60.0, strength=7.2)     # lower + warmer than the default: long gold light
+sun.data.color = (1.0, 0.66, 0.40)
 LIFT = 0.34
 for o in c.coll.objects:
     if o.parent is None:
@@ -207,14 +209,28 @@ have = lambda n: n in bpy.data.actions
 opt = lambda n, fallback: n if have(n) else fallback       # new Mixamo clips when they're in character.blend
 
 
-def fly(face, speed=SW_SPEED, blend=8):
+SW3 = opt("Swing To Land (3)", SW)                 # deeper, faster arc (variety)
+FLIP_CLIP = "MX Front Flip"
+
+
+def fly(face, speed=SW_SPEED, blend=8, clip=SW, to=SW_FLY):
     """Swing pose (hanging from the line, legs trailing) for a travel path."""
-    return perf.then(SW, frm=1, to=SW_FLY, speed=speed, face=face, in_place=1.0, blend=blend)
+    return perf.then(clip, frm=1, to=to, speed=speed, face=face, in_place=1.0, blend=blend)
 
 
-def land(face, at, speed=SW_SPEED):
+def land(face, at, speed=SW_SPEED, clip=SW, frm=SW_FLY, to=57):
     """The swing clip's own landing (continues the fly pose), placed where the travel path ends."""
-    return perf.then(SW, frm=SW_FLY, to=57, speed=speed, face=face, in_place=1.0, at=at)
+    return perf.then(clip, frm=frm, to=to, speed=speed, face=face, in_place=1.0, at=at)
+
+
+def flip_in(face, speed=0.9):
+    """Let go of the line and front-flip in the air (the flip's take-off already happened off camera)."""
+    return perf.then(FLIP_CLIP, frm=19, to=37, speed=speed, blend=6, face=face, in_place=1.0) if have(FLIP_CLIP) else None
+
+
+def flip_land(face, at, speed=0.9):
+    return (perf.then(FLIP_CLIP, frm=37, to=49, speed=speed, face=face, in_place=1.0, at=at) if have(FLIP_CLIP)
+            else land(face, at))
 
 
 def tuck(length, face, blend=8):
@@ -228,19 +244,20 @@ FOOT = "mixamorig:LeftFoot"
 # ---- S0/S1: swing down the avenue, land crouched on TOP of the wall board, facing the street
 TOP1 = (G_C.x - 2.5, WALL_G.point.y + WALL_G.normal.y * 0.85)       # on the board's top ledge, screen-right corner
 sw1 = perf.then(SW, frm=1, to=57, speed=SW_SPEED, face=-160, in_place=1.0, at=TOP1)
-perch1 = perf.then(SW, frm=52, to=57, speed=5 / max(40, hold(1, 0.9) + 26), blend=8, face=180)
+perch1 = perf.then(SW, frm=52, to=57, speed=5 / max(40, hold(1, 0.5) + 10), blend=8, face=180)
 happy = perf.then(opt("MX Happy Hand Gesture", "Happy Idle"), frm=8, length=54, blend=12, face=180, in_place=1.0)   # CU: excited
 # ---- S2: two-building shot: on his ledge he studies the billboard across the street (over the shoulder)
 curious = perf.then(opt("MX Thoughtful Head Shake", "Breathing Idle"), frm=1, length=max(70, hold(2, 0.3)), blend=12,
                     face=175, in_place=1.0)
 web2 = perf.then("Standing 1H Magic Attack 02", frm=16, to=40, speed=1.1, blend=8, face=172, in_place=1.0)  # line to the billboard
-fly2 = fly(180, speed=0.62)                                  # swing across + up ...
+fly2 = fly(180, speed=0.62, clip=SW3, to=30)                 # swing across + up ...
 hang2 = tuck(48, face=0)                                     # ... flips into the hang under the billboard
 # ---- S3: lets go, swings east along the north side down to the LED ticker
-fly3 = fly(90, speed=0.62)
+fly3 = fly(90, speed=0.66)
+flip3 = flip_in(90)                                            # lets go and flips ...
 TICK_SPOT = (TK_C.x + 2.2, TICK.point.y - 1.5)
-land3 = land(90, TICK_SPOT, speed=0.62)
-tick = perf.then("Breathing Idle", length=hold(3, 1.6, 75), blend=10, face=180)     # faces the ticker, watching the streak
+land3 = flip_land(90, TICK_SPOT)                               # ... landing on his feet under the ticker
+tick = perf.then("Breathing Idle", length=hold(3, 1.0, 75), blend=10, face=180)     # faces the ticker, watching the streak
 # ---- S4: sprints across the street to the bus stop; spiders → he leaps onto the shelter roof
 run4 = perf.then(opt("MX Sprint", "Two Cycle Sprint"), repeat=4, blend=10, face=0)
 stop4 = perf.then(opt("MX Run To Stop", "Run To Stop"), blend=5, face=0)
@@ -253,8 +270,8 @@ cling_l = perf.then("Hard Landing", frm=28, to=40, face=-60, at=ROOF_SPOT)
 cling = (perf.then("MX Terrified", frm=110, length=64, blend=8, face=-60) if have("MX Terrified") else
          perf.then("Hard Landing", frm=40, to=44, speed=4 / 58, blend=8, face=-60))
 # ---- S5: web-swings off the shelter and flips into a hang beside the subway lightbox
-fly5 = fly(100, speed=1.0)
-frus = tuck(hold(5, 0.9), face=180)
+fly5 = fly(100, speed=1.0, clip=SW3, to=30)
+frus = tuck(hold(5, 0.6), face=180)
 # ---- S6: swings across the street up onto the big screen's catwalk; risks pop; moonwalks off with the customers
 fly6 = fly(180, speed=0.7)
 SCR_W = 9.2
@@ -265,16 +282,18 @@ worry = perf.then("Hard Landing", frm=30, to=44, speed=14 / (F(word(6, "bad") * 
 MOON = opt("MX Moonwalk 1", "Walking")
 moon = perf.then(MOON, blend=8, repeat=3, face=-90, in_place=1.0, speed=1.0)     # faces screen-left, glides screen-right
 # ---- S7: web-zips from the end of the catwalk up to the tall rooftop
-fly7 = fly(-46, speed=0.5)
+fly7 = fly(-46, speed=0.6)
+flip7 = flip_in(-70)                                           # over the parapet ...
 RF_SPOT = (10.2, -17.5)
-land7 = land(-70, RF_SPOT, speed=0.6)
+land7 = flip_land(-70, RF_SPOT)                                # ... onto the roof
 perch7 = perf.then("Hard Landing", frm=30, to=44, speed=14 / max(20, hold(7, 0.7)), blend=10, face=-70)
-conf7 = (perf.then("MX Taunt", blend=10, face=-40, speed=50 / max(50, hold(8, 1.0))) if have("MX Taunt")
-         else talk(hold(8, 1.0), face=-60, blend=12))
+conf7 = (perf.then("MX Taunt", blend=10, face=-40, speed=50 / max(50, hold(8, 0.7))) if have("MX Taunt")
+         else talk(hold(8, 0.7), face=-60, blend=12))
 # ---- S8: swings down into the intersection and webs the tower down block by block, on the words
-fly8 = fly(-143, speed=0.55, blend=10)
+fall8 = perf.then(opt("MX Falling", "Hard Landing"), frm=1, length=26, blend=10, face=-143, in_place=1.0)   # leaps off: free fall
+fly8 = fly(-143, speed=0.7, blend=6, clip=SW3, to=32)                                    # ... the web catches him
 FIN_SPOT = (-2.4, -2.0)
-land8 = land(-143, FIN_SPOT, speed=0.6)
+land8 = land(-143, FIN_SPOT, speed=0.6, clip=SW3, frm=32, to=55)
 rise8 = perf.then("Breathing Idle", length=26, blend=14, face=20)
 T = {}
 ORDER = [13, 9, 10, 11, 12]                          # "It starts with inspection" opens the tower
@@ -353,7 +372,7 @@ HEIGHTS = ([(int(sw1.start), int(perch1.start) - 1, LEDGE_TOP - first_low, sw1)]
            on([perch1, happy, curious, web2], LEDGE_TOP, int(fly2.start) - 1) +
            on([cling_l, cling], SHELTER_TOP, int(fly5.start) - 1) +
            on([land6, worry, moon], TS_Z, int(fly7.start) - 1) +
-           on([land7, perch7, first(conf7)], ROOF_Z, int(fly8.start) - 1))
+           on([land7, perch7, first(conf7)], ROOF_Z, int(fall8.start) - 1))
 HEIGHTS.sort(key=lambda h: h[0])
 zk = []
 for k, (a_, b_, z, clip) in enumerate(HEIGHTS):
@@ -431,36 +450,103 @@ def bez(p0, p1, p2, p3):
     return fn
 
 
-# S0: the opening swing down the avenue onto the board
-a1, b1 = int(sw1.start), int(sw1.start) + SW_LEN(sw1)
-p1 = swing.arc(Vector((2.0, 30.0, 18.0)), hp(b1), sag=8.0, apex=0.45)
-travel(p1, a1, b1 - 1)
-# S2: ledge → billboard (swing up, flip, hang)
+def find_anchor(p0, p1, fallback, min_up=7.0, reach=45.0):
+    """A real place for the web to stick: the facade / roof edge above the swing (rays fanned up from its middle),
+    as close to straight above the middle as possible so he swings under it like a pendulum."""
+    p0, p1 = Vector(p0), Vector(p1)
+    mid = (p0 + p1) / 2
+    top = mid.z
+    run = (p1 - p0).xy
+    best = None
+    for el in (35, 45, 55, 65, 75, 85):
+        for az in range(0, 360, 10):
+            ce = math.cos(math.radians(el))
+            d = Vector((math.cos(math.radians(az)) * ce, math.sin(math.radians(az)) * ce, math.sin(math.radians(el))))
+            h_ = c.ray(mid, d, reach)
+            if h_ is None or h_.obj.name in MINE or h_.point.z < top + min_up:
+                continue
+            along = (h_.point.xy - p0.xy).dot(run) / max(1e-6, run.length_squared)
+            if not 0.35 <= along <= 1.3:                   # ahead of him, never behind (he swings towards it)
+                continue
+            off = abs((h_.point.xy - p0.xy).cross(run)) / max(1e-6, run.length)
+            if off > 12.0:                                 # roughly in the plane of the swing
+                continue
+            score = (h_.point.xy - mid.xy).length - 0.35 * (h_.point.z - top)
+            if best is None or score < best[0]:
+                best = (score, h_.point.copy())
+    print("ANCHOR", tuple(round(v, 1) for v in (best[1] if best else Vector(fallback))), "found" if best else "fallback")
+    return best[1] if best else Vector(fallback)
+
+
+def lean(path, f0, f1, anchor, a0, a1, max_deg=55.0, ramp=6):
+    """Pendulum body: while the line is attached (a0..a1) the body hangs along it — the root tilts so his long
+    axis points at the anchor (centripetal pull along the line), easing in/out over `ramp` frames."""
+    fcs = [anim.fcurve(perf.root, "rotation_euler", i) for i in range(3)]
+    ev = lambda f: Euler([fc.evaluate(f) if fc else 0.0 for fc in fcs], "XYZ")
+    a0, a1 = int(a0), int(a1)
+    keep = ev(a1 + 1)
+    prev = None
+    for f in range(a0, a1 + 1):
+        t = (f - f0) / max(1, f1 - f0)
+        u = (Vector(anchor) - path(t)).normalized()
+        w = max(0.0, min(1.0, (f - a0) / ramp, (a1 - f) / ramp))
+        w = w * w * (3 - 2 * w)
+        ang = min(math.acos(max(-1.0, min(1.0, u.z))), math.radians(max_deg)) * w
+        axis = Vector((0, 0, 1)).cross(u)
+        base = ev(f)
+        e = base if (axis.length < 1e-6 or ang < 1e-4) else \
+            (Matrix.Rotation(ang, 3, axis.normalized()) @ base.to_matrix()).to_euler("XYZ", prev or base)
+        for i in range(3):
+            anim.key(perf.root, "rotation_euler", f, e[i], i, "lin")
+        prev = e
+    for i in range(3):
+        anim.key(perf.root, "rotation_euler", a1 + 1, keep[i], i, "lin")
+
+
+# the web anchors: on the billboard, the roof edge, or found on a real facade above each swing
 BB_BOT = BB_C.z - 9.6 / 3.0 / 2 - 0.12
 HANG_HIPS = Vector((BB_C.x + 3.0, BB_C.y - 0.75, BB_BOT - 0.95))
+SUB_HIPS = Vector((POST_C.x - 2.3, POST.point.y + 0.9, 2.6))
+A2 = Vector((BB_C.x + 3.0, BB_C.y - 0.1, BB_BOT + 0.05))
+A7 = Vector((RF_SPOT[0] - 0.4, RF_SPOT[1] + 1.0, ROOF_Z + 0.3))                       # zip line to the roof edge
+# S0: the opening swing down the avenue onto the board
+a1, b1 = int(sw1.start), int(sw1.start) + SW_LEN(sw1)
+P1_START = Vector((2.0, 30.0, 18.0))
+A1 = find_anchor(P1_START, hp(b1), (-9.3, 12.0, 27.0))
+p1 = swing.arc(P1_START, hp(b1), sag=8.0, apex=0.45)
+lean(p1, a1, b1 - 1, A1, a1, b1 - 6)
+travel(p1, a1, b1 - 1)
+# S2: ledge → billboard (swing up, flip, hang)
 f2a, f2h = int(fly2.start), int(hang2.start) + 6
 p2 = swing.arc(hp(f2a - 1), HANG_HIPS, sag=2.5)
+lean(p2, f2a, f2h, A2, f2a, f2h - 14)
 travel(p2, f2a, f2h)
 pin(HANG_HIPS, f2h + 1, int(fly3.start) - 1, sway=0.06)
 # S3: billboard → ticker (long swing east along the north side)
 f3a, f3b = int(fly3.start), int(land3.start)
 e3 = hp(f3b)
 p3 = bez(HANG_HIPS, HANG_HIPS + Vector((2.5, -3.5, -3.0)), e3 + Vector((-9.0, -1.5, 7.0)), e3)   # drops out, away from the roof edge
+A3 = find_anchor(HANG_HIPS, e3, ((HANG_HIPS.x + TICK_SPOT[0]) / 2, TICK.point.y - 0.05, 24.0))
+lean(p3, f3a, f3b - 1, A3, f3a + FLIP, int(perf.clip_frame(fly3, 28)))
 travel(p3, f3a, f3b - 1)
 # S4: the run is root motion (ground-locked); the hop up onto the shelter roof is a ballistic path
 f4a, f4b = int(hop_b.start), int(cling_l.start)
 p4 = swing.hop(hp(f4a - 1), hp(f4b), 1.1)
 travel(p4, f4a, f4b - 1)
 # S5: shelter roof → subway hang (web-swing hop, flip)
-SUB_HIPS = Vector((POST_C.x - 2.3, POST.point.y + 0.9, 2.6))
 f5a, f5h = int(fly5.start), int(frus.start) + 6
 cling_end = hp(f5a - 1)
-p5 = swing.arc(cling_end, SUB_HIPS, sag=1.2)
+p5 = swing.hop(cling_end, SUB_HIPS, 1.4)                        # springs off the shelter roof, the line catches him
+A5 = find_anchor(cling_end, SUB_HIPS, (SUB_HIPS.x - 0.5, POST.point.y + 0.05, 11.0))
+lean(p5, f5a, f5h, A5, f5a + 2, f5h - 14)
 travel(p5, f5a, f5h)
 pin(SUB_HIPS, f5h + 1, int(fly6.start) - 1, sway=0.05)
 # S6: subway → catwalk (swing across the street and up)
 f6a, f6b = int(fly6.start), int(land6.start)
-p6 = swing.arc(SUB_HIPS, hp(f6b), sag=3.0)
+e6 = hp(f6b)
+p6 = swing.arc(SUB_HIPS, e6, sag=3.0)
+A6 = find_anchor(SUB_HIPS, e6, ((SUB_HIPS.x + TS_SPOT[0]) / 2, SCREEN.point.y - 0.05, 15.0))
+lean(p6, f6a, f6b - 1, A6, f6a + FLIP, int(perf.clip_frame(fly6, 28)))
 travel(p6, f6a, f6b - 1)
 # moonwalk along the catwalk, with the customers, off the right edge of the screen
 m0, m1 = int(moon.start) + 4, int(fly7.start) - 1
@@ -477,11 +563,14 @@ if MOON == "Walking":                                                           
 f7a, f7b = int(fly7.start), int(land7.start)
 q0, q3 = hp(f7a - 1), hp(f7b)
 p7 = bez(q0, q0 + Vector((-14.0, -4.0, 4.0)), Vector((2.5, -12.0, q3.z + 9.0)), q3)
+lean(p7, f7a, f7b - 1, A7, f7a + 2, int(perf.clip_frame(fly7, 26)))
 travel(p7, f7a, f7b - 1)
-# S8: rooftop → down into the intersection
-f8a, f8b = int(fly8.start), int(land8.start)
+# S8: rooftop → leap, free fall, a web to the corner building catches him → down into the intersection
+f8a, f8b = int(fall8.start), int(land8.start)
 r0, r3 = hp(f8a - 1), hp(f8b)
 p8 = bez(r0, r0 + Vector((-3.0, 2.0, 6.0)), Vector((r3.x + 3.0, r3.y - 6.0, r3.z + 3.0)), r3)
+A8 = find_anchor((r0 + r3) / 2, r3, (8.85, 9.4, 16.5), min_up=4.0)       # nothing is above the top of the tallest roof
+lean(p8, f8a, f8b - 1, A8, int(fly8.start) + 2, int(perf.clip_frame(fly8, 28)))
 travel(p8, f8a, f8b - 1)
 for name, (fa, fb) in zip(["S0", "S2", "hang2", "S3", "S4hop", "S5", "frus", "S6", "moon", "S7", "S8"], TRAVEL):
     path_hits(fa, fb, name)
@@ -490,35 +579,28 @@ for name, (fa, fb) in zip(["S0", "S2", "hang2", "S3", "S4hop", "S5", "frus", "S6
 LAND_SETTLE = 8                                    # a landing's first frames are still in the air
 for a_, b_, top in ((b1 + 1, int(fly2.start) - 1, LEDGE_TOP), (int(cling_l.start) + 4, int(fly5.start) - 1, SHELTER_TOP),
                     (int(land6.start) + LAND_SETTLE, int(fly7.start) - 1, TS_Z),
-                    (int(land7.start) + LAND_SETTLE, int(fly8.start) - 1, ROOF_Z)):
+                    (int(land7.start) + LAND_SETTLE, int(fall8.start) - 1, ROOF_Z)):
     perf.contact(a_, b_, floor=top)
 air = [(a_, b_) for a_, b_ in TRAVEL] + [(int(land3.start), int(land3.start) + LAND_SETTLE),
                                           (int(cling_l.start), int(fly8.start) + 2),
                                           (int(land8.start), int(land8.start) + LAND_SETTLE)]
 lock_err = perf.ground_lock(int(land3.start), int(flop.end), skip=air, step=1)   # every frame: no lerp across cuts
-END = int(flop.start) + 105
+END = int(flop.start) + 92
 sc.frame_end = END
 hips = lambda f: perf.bone_world(HIPS, int(f))
 
 # ------------------------------------------------------------------ webs
 webs = fx.WebShots(rig, fx.collection("Webs"))
-A1 = Vector((-9.3, 12.0, 27.0))
 webs.shot("Web_S1", R_HAND, lambda f: A1, a1 - 3, a1, b1 - 4)
 W2 = int(perf.clip_frame(web2, hit_pk))
-A2 = Vector((BB_C.x + 3.0, BB_C.y - 0.1, BB_BOT + 0.05))
 webs.shot("Web_Zip2", R_HAND, lambda f: A2, W2 - 4, W2, f2h - 8)
 webs.shot("Web_Hang2", FOOT, lambda f: A2, f2h - 8, f2h - 8, int(fly3.start) + 2)
-A3 = Vector(((HANG_HIPS.x + TICK_SPOT[0]) / 2, TICK.point.y - 0.05, 24.0))          # high on the north facades
 webs.shot("Web_S3", R_HAND, lambda f: A3, f3a - 2, f3a + 2, int(perf.clip_frame(fly3, 30)))
-A5 = Vector((SUB_HIPS.x - 0.5, POST.point.y + 0.05, 11.0))
 webs.shot("Web_S5", R_HAND, lambda f: A5, f5a - 2, f5a + 2, f5h - 6)
 webs.shot("Web_Sub", FOOT, lambda f: Vector((SUB_HIPS.x, SUB_HIPS.y, 14.0)), f5h - 6, f5h - 6, int(fly6.start) + 2)
-A6 = Vector(((SUB_HIPS.x + TS_SPOT[0]) / 2, SCREEN.point.y - 0.05, 15.0))
 webs.shot("Web_S6", R_HAND, lambda f: A6, f6a, f6a + 4, int(perf.clip_frame(fly6, 30)))
-A7 = Vector((RF_SPOT[0] - 0.4, RF_SPOT[1] + 1.0, ROOF_Z + 0.3))                       # zip line to the roof edge
-webs.shot("Web_S7", R_HAND, lambda f: A7, f7a - 2, f7a + 2, f7b - 4)
-A8 = Vector((-9.0, -12.0, 28.0))
-webs.shot("Web_S8", R_HAND, lambda f: A8, f8a - 2, f8a + 2, int(perf.clip_frame(fly8, 30)))
+webs.shot("Web_S7", R_HAND, lambda f: A7, f7a - 2, f7a + 2, int(perf.clip_frame(fly7, 28)))
+webs.shot("Web_S8", R_HAND, lambda f: A8, int(fly8.start) - 2, int(fly8.start) + 2, int(perf.clip_frame(fly8, 30)))
 
 # ------------------------------------------------------------------ S3 ticker: a light streak racing along it, his head chasing it
 glint = box("TickerGlint", (0.35, 0.05, 0.9), TK_C, fx.material("Glint", (1.0, 0.85, 0.45), emit=12.0))
@@ -706,7 +788,7 @@ for fa in (a1, f2a, f3a, f5a, f6a, f7a, f8a):
 for fl_ in (int(perf.clip_frame(sw1, 40)) - 6, int(land3.start) + 4, int(cling_l.start) + 2, int(land6.start) + 4,
             int(land7.start) + 4, int(land8.start) + 4):
     shot.sfx("landing_thud", fl_)
-for fw in (W2 - 3, f3a - 2, f5a - 2, f6a, f7a - 2, f8a - 2, f2h - 8, f5h - 6):
+for fw in (W2 - 3, f3a - 2, f5a - 2, f6a, f7a - 2, int(fly8.start) - 2, f2h - 8, f5h - 6):
     shot.sfx("web_thwip", fw)
 shot.sfx("bugs_skitter", bugs_at)
 for f in tiles:
@@ -800,17 +882,18 @@ at(f3a + 2, (s2_cam[0][0] - 0.3, s2_cam[0][1] + 0.5, s2_cam[0][2]), s2_cam[1], "
 # S3 the long swing to the ticker: tracking from the street, then the ticker shot as he lands
 cam.lens(f3a + 3, 22, "const")
 ride(f3a + 3, f3b - 1, Vector((0.0, -11.0, 1.5)), lead=10)
-cam.lens(f3b, 24, "const")
+cam.lens(f3b, 22, "const")
 tk_pts = board_pts(TK_C + TICK.normal * 0.35, TICK.normal, TK_W, 1.0)
-s3 = clear_cam([((TK_C.x + dx, TICK.point.y - 10.2, 2.0), (TK_C.x + 1.0, TICK.point.y, 3.3)) for dx in (1.0, 0.0, 2.0, -1.0, 3.0)],
+s3 = clear_cam([((TK_C.x + dx, TICK.point.y - 7.4, 1.9), (TK_C.x + 1.0, TICK.point.y, 3.0)) for dx in (1.0, 0.0, 2.0, -1.0, 3.0)],
                tk_pts)
 at(f3b, *s3, "lin", cut=True)
 cu3 = int(tick.end) - 46                             # CU amazed: the streak is racing now, his head whipping after it
 at(cu3 - 1, s3[0], s3[1], "lin")
 hc = head(cu3 + 10)
 cam.lens(cu3, 30, "const")
-at(cu3, hc + Vector((1.9, -0.7, -0.45)), hc + Vector((-0.3, 0.45, 0.35)), "lin", cut=True)     # low profile, ticker above
-at(int(run4.start) + 1, hc + Vector((1.75, -0.65, -0.45)), hc + Vector((-0.3, 0.45, 0.35)), "lin")
+at(cu3, hc + Vector((0.55, 1.15, 0.45)), hc + Vector((-0.1, -0.2, 0.0)), "lin", cut=True)   # in front + above: his upturned face
+at(int(run4.start) + 1, hc + Vector((0.5, 1.1, 0.42)), hc + Vector((-0.1, -0.2, 0.0)), "lin")
+anim.keys(look_t, "influence", [(cu3 - 6, 0.95, "inout"), (cu3, 0.4, "inout"), (int(tick.end) - 4, 0.4, "lin")])   # gaze up, not sideways
 CUTS.append(("CU amazed", cu3))
 # S4 the sprint across the street (side-tracking), the bus stop, the leap onto the shelter
 cam.lens(int(run4.start) + 2, 24, "const")
@@ -823,7 +906,7 @@ at(int(hop_a.start), *roof_cam, "lin", cut=True)
 at(f5a - 1, (roof_cam[0][0] + 0.4, roof_cam[0][1] - 0.2, 3.9), (ROOF_SPOT[0], ROOF_SPOT[1], 2.4), "lin")
 # S5 the hop over to the subway (wide), push into the close two-shot: board + him both big (f769)
 cam.lens(f5a, 26, "const")
-pan(f5a, f5h + 4, (SUB_HIPS.x - 2.6, POST.point.y + 7.2, 3.9), look=Vector((0, 0, -0.2)))
+pan(f5a, f5h + 4, (SUB_HIPS.x - 2.6, POST.point.y + 7.2, 5.0), look=Vector((0, 0, -0.2)))
 cam.lens(f5h + 5, 24, "const")
 at(f5h + 5, *SUB_CAM, "lin", cut=True)
 at(f6a - 1, (SUB_CAM[0][0] - 0.2, SUB_CAM[0][1] - 0.3, SUB_CAM[0][2]), SUB_CAM[1], "lin")
@@ -833,7 +916,7 @@ pan(f6a, f6b - 1, (14.5, 0.5, 4.5), lead=6)
 cam.lens(f6b, 24, "const")
 scr_pts = board_pts(SCR_C + SCR_N * SCR_OFF, SCR_N, SCR_W, SCR_W * 9 / 16)
 cam.lens(f6b, 35, "const")
-ts = clear_cam([((SCR_C.x + dx, SCREEN.point.y - 12.6, SCR_C.z - 0.55), (SCR_C.x + dx * 0.5, SCREEN.point.y, SCR_C.z - 0.55))
+ts = clear_cam([((SCR_C.x + dx, SCREEN.point.y - 11.6, SCR_C.z - 0.6), (SCR_C.x + dx * 0.5, SCREEN.point.y, SCR_C.z - 0.55))
                 for dx in (0, 0.6, -0.6, 1.2, -1.2)], scr_pts)
 at(f6b, *ts, "lin", cut=True)
 at(f7a - 1, ts[0], ts[1], "lin")
@@ -853,13 +936,13 @@ at(f8a - 1, hc + Vector((-1.5, -0.9, -0.5)), hc + Vector((0.6, 0.3, 0.15)), "lin
 CUTS.append(("CU confident", cu7))
 # S8 the swing down into the intersection (tracking), a low hero angle on the landing
 cam.lens(f8a, 20, "const")
-ride(f8a, f8b - 1, Vector((-7.0, -5.0, 3.0)), lead=10)
+ride(f8a, f8b - 1, Vector((-7.0, -5.0, 4.0)), lead=10)
 fs = hp(f8b + 20)
 cam.lens(f8b, 22, "const")
 at(f8b, (fs.x - 2.2, fs.y + 3.8, 0.6), (fs.x, fs.y, 1.2), "lin", cut=True)
 # the tower: wide from down the avenue (him + tower + cash in frame), slow push in
 mid_x = (arrive.x + TX) / 2
-tw = ((mid_x, TY - 8.4, 2.1), (mid_x, TY, (TOWER_H + 0.6) * 0.5))
+tw = ((mid_x, TY - 7.0, 2.0), (mid_x, TY, (TOWER_H + 0.6) * 0.5))
 cam.lens(int(rise8.end) - 6, 24, "const")
 w0, w1, wf0, wf1 = Vector(tw[0]), Vector((tw[0][0] + 0.2, tw[0][1] + 2.2, 2.1)), int(rise8.end) - 6, Y1 - 30
 wide = lambda f: w0.lerp(w1, swing.ease_pendulum((f - wf0) / (wf1 - wf0)))
@@ -912,8 +995,156 @@ for f_, v_ in FSTOPS:
     anim.key(cam.cam.data.dof, "aperture_fstop", int(f_), v_, ease="const")
 office.face_camera(cam.cam, [(c_.start + 4, c_.end - 2) for c_ in [look4, happy]] + [(cu7, int(conf7.end) - 2)] +
                    [(f2h + 4, f3a - 4), (f5h + 4, f6a - 4)], amount=0.45)          # hangs: head lifts towards the lens
-fx.char_lights(rig, cam.cam)
+fx.char_lights(rig, cam.cam, key=170.0, rim=340.0)
 office.present_to(T["vo1"] + 4, (G_C.x - 1.0, G_C.y + 0.4, G_C.z), hips(T["vo1"]).x)
+# hangs: both hands together in front of the chest, holding on (not dangling)
+for h0, h1, fwd in ((f2h + 2, f3a - 2, Vector((0, -1, 0))), (f5h + 2, f6a - 2, Vector((0, 1, 0)))):
+    ch = perf.bone_world("mixamorig:Spine2", h0 + 8)
+    for sd, dx in (("L", 0.07), ("R", -0.07)):
+        office.present(h0, ch + fwd * 0.3 + Vector((dx, 0, 0.05)), side=sd, hold=max(4, h1 - h0 - 12), ramp=6, amount=0.85)
+# the lenses act: wide when excited / amazed / shocked, a squint to study or look cool, angled when
+# determined or worried, and a blink every few seconds
+from pipeline import face
+eyes = face.Lenses(bpy.data.objects["MilesMasked"])
+for f_, w_ in ((int(happy.start) + 4, dict(Wide=0.75)), (int(curious.start) + 8, dict(Wide=0.0, Squint=0.35)),
+               (f2a, dict(Squint=0.0)), (cu3 - 4, dict(Wide=1.0)), (int(run4.start) + 6, dict(Wide=0.2)),
+               (int(shock.start) + 3, dict(Wide=1.0)), (int(cling.start) + 6, dict(Wide=0.7, Sad=0.35)),
+               (f5a, dict(Wide=0.0, Sad=0.0)), (int(frus.start) + 8, dict(Sad=0.9)), (f6a, dict(Sad=0.0)),
+               (int(worry.start) + 10, dict(Sad=0.8)), (int(moon.start) + 4, dict(Sad=0.0, Squint=0.35)),
+               (f7a, dict(Squint=0.0)), (cu7, dict(Squint=0.45, Angry=0.3)), (f8a, dict(Squint=0.0, Angry=0.0)),
+               (int(rise8.end), dict(Angry=0.45)), (Y1 - 30, dict(Angry=1.0, Squint=0.3)), (C, dict(Angry=0.0, Squint=0.0, Wide=1.0)),
+               (int(flop.start) + 12, dict(Wide=0.0, Squint=0.85))):
+    eyes.set(f_, **w_)
+eyes.blinks(1, int(flop.start), every=95, skip=[(Y1 - 34, C + 10)])
+
+
+# ------------------------------------------------------------------ city life: traffic, pedestrians, pigeons
+# Everything is checked against a per-frame cache of the camera and Spidey (life.Guard): nothing pops in or out
+# on screen, nothing drives or walks through him or the lens, nothing steps between the lens and him.
+from pipeline import life
+guard = life.Guard(cam.cam, lambda f: rig.matrix_world @ rig.pose.bones[HIPS].head, (1, END), step=2)
+guard.keepout.append((int(fly8.start), END, Vector((TX, TY, 0)), 7.0))          # the tower, its wreck and the bills
+rl = random.Random(21)
+cars = life.CarKit()
+ROAD_END, LANE, CURB_LANE, Z_ROAD = 47.0, 2.0, 4.25, -0.08
+# parked cars along both curbs of both streets (not in the intersection, not where he runs or lands)
+parked = 0
+for axis in ("x", "y"):
+    for side in (-1, 1):
+        u = -ROAD_END + rl.uniform(0, 4)
+        while u < ROAD_END:
+            if abs(u) > 12.5 and rl.random() < 0.72:
+                p_ = Vector((u, side * CURB_LANE, 0.4)) if axis == "x" else Vector((side * CURB_LANE, u, 0.4))
+                if all(guard.ok(f, p_, r_sub=2.6, r_cam=2.6, r_line=1.0) for f in guard.cam):
+                    car = cars.spawn(rl.randrange(10), f"Parked{parked}")
+                    hd = Vector((side, 0, 0)) if axis == "y" else Vector((0, 0, 0))
+                    heading = Vector((1, 0, 0)) * -side if axis == "x" else Vector((0, 1, 0)) * side
+                    car.place(Vector((p_.x, p_.y, Z_ROAD)), heading)
+                    parked += 1
+            u += rl.uniform(5.6, 7.5)
+# moving traffic: right-hand lanes, one signal cycle so cross traffic never meets in the intersection
+SIG = 240                                            # frames per green (avenue first)
+green = lambda f, axis: (int(f // SIG) % 2 == 0) == (axis == "y")
+FIN_BLOCK = int(fly8.start) - 40                     # from here the intersection is his (and then the tower's)
+LANES = [("y", Vector((LANE, -ROAD_END, 0)), Vector((0, 1, 0))), ("y", Vector((-LANE, ROAD_END, 0)), Vector((0, -1, 0))),
+         ("x", Vector((-ROAD_END, -LANE, 0)), Vector((1, 0, 0))), ("x", Vector((ROAD_END, LANE, 0)), Vector((-1, 0, 0)))]
+moving, last_in_lane = 0, {}
+for li, (axis, p0, h) in enumerate(LANES):
+    speed = rl.uniform(0.30, 0.38)                   # m / frame (9–11 m/s), one speed per lane: no overtaking
+    f = -int(2 * ROAD_END / speed) + rl.randint(0, 60)
+    while f < END:
+        n = int(2 * ROAD_END / speed)
+        t_in = f + int((ROAD_END - 7.0) / speed)       # enters / leaves the intersection box
+        t_out = f + int((ROAD_END + 7.0) / speed)
+        okay = green(t_in, axis) and green(t_out, axis) and t_out < FIN_BLOCK
+        if okay:
+            track = [(k, p0 + h * (speed * (k - f)) + Vector((0, 0, 0.7))) for k in range(max(1, f), min(END, f + n) + 1, 4)]
+            okay = bool(track) and guard.clear(track, r_sub=3.0, r_cam=3.0, r_line=1.2) if f + n > 1 else False
+        if okay:
+            car = cars.spawn(rl.randrange(10), f"Drive{moving}")
+            car.drive(p0, h, [(f, 0.0, "lin"), (f + n, speed * n, "lin")], z=Z_ROAD)
+            car.show([(1, False), (max(1, f), True), (f + n + 1, False)])
+            moving += 1
+            f += rl.randint(45, 110)
+        else:
+            f += 17
+# the finale: traffic stops at the stop lines and queues while he builds (and wrecks) the tower
+queued = 0
+for li, (axis, p0, h) in enumerate(LANES):
+    for q in range(3):
+        stop = ROAD_END - 11.0 - q * 6.2
+        arrive = FIN_BLOCK + 20 + q * 26 + li * 9
+        track = [(k, p0 + h * stop + Vector((0, 0, 0.7))) for k in range(arrive, END + 1, 6)]
+        if not all(guard.ok(fk, pk, r_sub=3.0, r_cam=3.0, r_line=1.2) for fk, pk in track):
+            continue
+        car = cars.spawn(rl.randrange(10), f"Queue{queued}")
+        car.drive(p0, h, [(arrive - 70, stop - 0.32 * 50, "lin"), (arrive - 20, stop - 0.32 * 10, "out"), (arrive, stop, "const")],
+                  z=Z_ROAD)
+        car.show([(1, False), (arrive - 70, True)])
+        queued += 1
+# pedestrians: keep right on all four sidewalks, at their own stride speed, never through him, the lens or a sign
+walk = life.WalkKit()
+WALKS = [("x", -7.15, (-ROAD_END, -9.5)), ("x", -7.15, (9.5, ROAD_END)), ("x", 6.95, (-ROAD_END, -9.5)), ("x", 6.95, (9.5, ROAD_END)),
+         ("y", -7.3, (-ROAD_END, -10.0)), ("y", -7.3, (10.0, ROAD_END)), ("y", 7.3, (-ROAD_END, -10.0)), ("y", 7.3, (10.0, ROAD_END))]
+
+
+def sidewalk_clear(a, b):
+    for z_ in (0.35, 1.1):
+        pa, pb = Vector((a.x, a.y, z_)), Vector((b.x, b.y, z_))
+        h_ = c.ray(pa, pb - pa, (pb - pa).length)
+        if h_ is not None and h_.obj.name not in MINE:
+            return False
+    return True
+
+
+peds = 0
+for attempt in range(900):
+    axis, line, (u0, u1) = WALKS[rl.randrange(len(WALKS))]
+    kind = rl.randrange(4)
+    spd = walk.kinds[kind][4]
+    dirn = rl.choice((-1, 1))
+    off = 0.45 * dirn * (1 if axis == "x" else -1) * (1 if line < 0 else -1)
+    L = rl.uniform(14.0, 34.0)
+    if u1 - u0 < L:
+        continue
+    a_ = rl.uniform(u0, u1 - L)
+    s_, e_ = (a_, a_ + L) if dirn > 0 else (a_ + L, a_)
+    mk = (lambda u, ln=line + off, ax=axis: Vector((u, ln, 0)) if ax == "x" else Vector((ln, u, 0)))
+    A, B = mk(s_), mk(e_)
+    n = int(L / spd)
+    f0 = rl.randint(-n // 2, END - 20)
+    track = [(k, A.lerp(B, (k - f0) / n) + Vector((0, 0, 1.0))) for k in range(max(1, f0), min(END, f0 + n) + 1, 4)]
+    if len(track) < 4 or not (f0 + n > 1) or not guard.clear(track, r_sub=1.4, r_cam=1.8, r_line=0.55):
+        continue
+    if not sidewalk_clear(A, B):
+        continue
+    w = walk.spawn(kind, f"Ped{peds}")
+    w.walk(A, B, f0, phase=rl.random())
+    peds += 1
+    if peds >= 14:                                   # a few people sell the street (each one is a rig to evaluate)
+        break
+# pigeons: on the board's ledge (startled by his landing), on the rooftop, on the street at the finale, + a flock
+birds = life.PigeonKit()
+pg = 0
+
+
+def flock(points, f_go, away, face=0.0):
+    global pg
+    for i, p_ in enumerate(points):
+        b_ = birds.spawn(f"Pigeon{pg}")
+        b_.perch(p_, 1, face + rl.uniform(-70, 70), phase=rl.randint(0, 120))
+        b_.fly_off(f_go + rl.randint(-3, 5), Vector((away[0] + rl.uniform(-0.3, 0.3), away[1] + rl.uniform(-0.3, 0.3), 0)),
+                   speed=rl.uniform(0.24, 0.32), seed=pg)
+        pg += 1
+
+
+land1 = int(perf.clip_frame(sw1, 40)) - 8
+ledge_y = WALL_G.point.y + WALL_G.normal.y * 0.6
+flock([Vector((x_, ledge_y + rl.uniform(-0.2, 0.25), LEDGE_TOP)) for x_ in (-14.6, -13.4)], land1, (0.7, 0.7))
+flock([Vector((RF_SPOT[0] + 2.4, RF_SPOT[1] + 0.8, ROOF_Z))], int(land7.start) - 6, (-0.6, -0.8))
+flock([Vector((FIN_SPOT[0] + rl.uniform(-2.5, 1.5), FIN_SPOT[1] + rl.uniform(-4.5, -2.0), Z_ROAD)) for _ in range(2)],
+      int(land8.start) - 10, (-0.2, -1.0))
+print(f"LIFE parked {parked}, moving {moving}, queued {queued}, pedestrians {peds}, pigeons {pg}")
 
 
 # ------------------------------------------------------------------ checks: is he in frame and unobstructed?

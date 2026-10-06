@@ -7,7 +7,7 @@
         --samples N: override EEVEE samples (8 = quick draft, 24 = default)
         --fast: draft quality (no ray-traced reflections, no motion blur, 8 samples) ~2x faster
 
-Frames go to build/frames/ (gitignored); the encoded video to renders/.
+Frames go to build/frames/<name>_<h>p/ (gitignored, kept: never wiped, re-renders overwrite); the video to renders/.
 """
 import bpy, os, sys, subprocess, shutil
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -58,18 +58,17 @@ elif mode == "full":
         if hasattr(sc.eevee, "use_raytracing"):
             sc.eevee.use_raytracing = False
         sc.render.use_motion_blur = False
-    frames_dir = os.path.join(paths.BUILD, "frames", name)
+    raw_h = sc.render.resolution_y * pct / 100
+    h = min((270, 360, 540, 720, 1080, 1440, 2160), key=lambda s: abs(s - raw_h))   # snap to a standard height
+    # frames are kept (never wiped): one folder per resolution, a re-render overwrites in place
+    frames_dir = os.path.join(paths.BUILD, "frames", f"{name}_{h}p")
     if len(args) > 2:
         sc.frame_start = int(args[2])
-    else:
-        shutil.rmtree(frames_dir, ignore_errors=True)
     os.makedirs(frames_dir, exist_ok=True)
     sc.render.filepath = os.path.join(frames_dir, "f_")
     sc.render.image_settings.file_format = "PNG"
     bpy.ops.render.render(animation=True)
     os.makedirs(paths.RENDERS, exist_ok=True)
-    raw_h = sc.render.resolution_y * pct / 100
-    h = min((270, 360, 540, 720, 1080, 1440, 2160), key=lambda s: abs(s - raw_h))   # snap to a standard height
     out = os.path.join(paths.RENDERS, f"{name}_{h}p.mp4")
     subprocess.run(["ffmpeg", "-loglevel", "error", "-y", "-framerate", str(sc.render.fps), "-i",
                     os.path.join(frames_dir, "f_%04d.png"), "-vf", f"scale=-2:{h}",
