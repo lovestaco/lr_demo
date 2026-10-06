@@ -115,3 +115,4 @@ Closer, board + head both large; `clear_view` keeps pipes out.
   `--music-once` (70 s bed, 73 s film). FINAL 1080p full-quality render started (~2 h):
   `05_render.py -- full 100` → `06_assemble.py street --height 1080 --music … --music-once` → renders/street_1080p_mix(_tc).mp4.
   Remaining after render: frame check, commit (local, no push).
+- 04:20 DONE: renders/street_1080p_mix.mp4 (+_tc), 73.2 s, -16 LUFS; committed 2513ae6 (local, not pushed).
