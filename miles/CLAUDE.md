@@ -176,8 +176,14 @@ must drop the word "efficient(cy)" — wrong positioning).
   C its own shot: he presents its board; robot arms + a builder bot + the crane build, the boss (from A) checks;
   framing recomputed every 8 frames as floors land; then the pull-back to all three. Plaza building behind the lot
   hidden. Root z keyed flat at every cut (a travel's first key otherwise ramps him up into the air).
-- S14/S15 medium close-up (36-40 mm, 2.4 m): hands in frame; a "Hand aim" Copy Rotation on the right hand per
-  gesture (palm to camera for the count, palm in for chin / temple / chest) — the IK alone twisted the wrist.
+- S14/S15 medium close-up (36-40 mm, 2.4 m): hands in frame. The right-arm gestures (count, the "common sense"
+  temple tap, hand on chest) are NOT Office IK: the legacy IK flipped that arm (hand behind the shoulder, elbow up).
+  `solve()` does a two-bone solve per frame (elbow pulled down/out) + the hand's axes, keyed on a REPLACE NLA layer
+  "ZZZ Arm gestures" with eased influence. He faces +y there, so HIS RIGHT IS +X.
+- Crew: `pipeline/crew.py` — NLA loop strips must set action_frame_start/end AFTER the slot (else a 1-frame range:
+  frozen workers); the boss retarget turns the src motion to the dst heading and strips the clip's own body turn.
+- Walkers: `walk.phone_every = 6` (one in six on a phone); the competitor's shop has an interior image, striped
+  awning, brass trim, neon, bulbs, a planter; tower B is glossy (white panels, blue glass, glowing bands).
 - VO: real Mark takes per line (website, Generation 1) in `assets/audio/vo_street_part2/takes/take_NN.mp3` →
   `07b_split_take.py --lines ...` (whisper word times, merged into lines.json; Kit.word aliases "cuz"→"cause" etc.).
 - Build name `street_part2_a` (underscore: 06_assemble's prefix lookup then finds `vo_street_part2`).

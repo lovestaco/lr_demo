@@ -399,7 +399,10 @@ class WalkKit:
 
     def spawn(self, k, name, coll=None, outfit=None):
         coll = coll or fx.collection("Crowd")
-        fo, objs, arm, act, speed, stand = self.kinds[k % len(self.kinds)]
+        idx = k % len(self.kinds)
+        if getattr(self, "phone_every", None):              # FOLDERS: male, female, male_phone, female_phone
+            idx = k % 2 + (2 if k % self.phone_every == self.phone_every - 1 else 0)
+        fo, objs, arm, act, speed, stand = self.kinds[idx]
         v = outfit if outfit is not None else k + 1
         m = _clone(objs, coll, name)
         for o, c in m.items():

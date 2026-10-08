@@ -146,6 +146,7 @@ def brick_mat(name, along):
 cash_mat = fx.material("CashSide", (0.22, 0.75, 0.32), rough=0.55, emit=0.5)
 PED = itertools.count()
 walk = life.WalkKit()
+walk.phone_every = 6                                         # one in six on a phone (not everyone)
 spawn = lambda name: walk.spawn(next(PED), name)            # every walker its own outfit
 rw = random.Random(31)
 
@@ -187,6 +188,71 @@ for side, cx in SHOPX.items():
     sg = city.sign(f"Shop{side}Sign", img("shopL" if side == "L" else "shopR"), Vector((cx, FRONT, 3.55)), Vector((0, 1, 0)), SHOP_W - 0.4,
                    aspect=2400 / 520, emit=0.8, frame="lightbox", offset=0.05)
     SHOP[side] = dict(sign=sg, win=win, door=(door_x, FRONT + 0.3), table=(tab_x, FRONT + 0.75))
+
+
+def stripes(name, c1, c2, width=0.32):
+    """Awning stripes along x (object space, metres)."""
+    m = fx.material(name, c1, rough=0.6)
+    nt = m.node_tree
+    bs = next(n for n in nt.nodes if n.type == "BSDF_PRINCIPLED")
+    tc, sep = nt.nodes.new("ShaderNodeTexCoord"), nt.nodes.new("ShaderNodeSeparateXYZ")
+    dv, md = nt.nodes.new("ShaderNodeMath"), nt.nodes.new("ShaderNodeMath")
+    dv.operation, md.operation = "DIVIDE", "FLOORED_MODULO"
+    dv.inputs[1].default_value, md.inputs[1].default_value = width * 2, 1.0
+    ramp = nt.nodes.new("ShaderNodeValToRGB")
+    ramp.color_ramp.interpolation = "CONSTANT"
+    ramp.color_ramp.elements[0].color = (*c1, 1)
+    ramp.color_ramp.elements[1].position = 0.5
+    ramp.color_ramp.elements[1].color = (*c2, 1)
+    nt.links.new(tc.outputs["Object"], sep.inputs[0])
+    nt.links.new(sep.outputs["X"], dv.inputs[0])
+    nt.links.new(dv.outputs[0], md.inputs[0])
+    nt.links.new(md.outputs[0], ramp.inputs[0])
+    nt.links.new(ramp.outputs["Color"], bs.inputs["Base Color"])
+    return m
+
+
+def ball(name, r, loc, mat, coll=signs):
+    me = bpy.data.meshes.new(name)
+    b = bmesh.new()
+    bmesh.ops.create_uvsphere(b, u_segments=12, v_segments=8, radius=r)
+    b.to_mesh(me)
+    b.free()
+    for p_ in me.polygons:
+        p_.use_smooth = True
+    ob = bpy.data.objects.new(name, me)
+    coll.objects.link(ob)
+    ob.location = loc
+    me.materials.append(mat)
+    return ob
+
+
+# the competitor's shop looks the part: its lit interior through the window, a striped awning, brass trim, a
+# planter, warm bulbs under the awning, an OPEN neon, warm light spilling onto the sidewalk (yours stays plain)
+cxR = SHOPX["R"]
+win_c = Vector((cxR - 0.6, FRONT + 0.055, 1.35))
+city.sign("ShopRInterior", img("shopR_interior"), win_c, Vector((0, 1, 0)), 3.0, aspect=1500 / 1050, emit=0.9, offset=0.01)
+city.sign("ShopROpen", img("open_neon"), win_c + Vector((0.85, 0, 0.62)), Vector((0, 1, 0)), 0.9, aspect=900 / 360, emit=3.0,
+          offset=0.02, alpha=True)
+bpy.data.objects["ShopRAwning"].data.materials[0] = stripes("AwningStripes", (0.04, 0.32, 0.14), (0.9, 0.9, 0.86))
+brass = fx.material("Brass", (0.8, 0.58, 0.22), rough=0.3, metallic=1.0)
+for j, (sx_, sz_, dx, dz) in enumerate(((3.16, 0.08, 0, 1.09), (3.16, 0.08, 0, -1.09), (0.08, 2.26, 1.54, 0), (0.08, 2.26, -1.54, 0))):
+    box(f"ShopRTrim{j}", (sx_, 0.06, sz_), win_c + Vector((dx, 0.02, dz)), brass)
+box("ShopRHandle", (0.04, 0.06, 0.5), (SHOP["R"]["door"][0] - 0.38, FRONT + 0.09, 1.1), brass)
+pot_m, leaf_m = fx.material("Planter", (0.12, 0.12, 0.13), rough=0.5), fx.material("Leaves", (0.08, 0.32, 0.08), rough=0.8)
+for j, px in enumerate((SHOP["R"]["door"][0] - 0.95, cxR - 2.25)):
+    box(f"ShopRPot{j}", (0.45, 0.45, 0.5), (px, FRONT + 0.32, 0.25), pot_m)
+    for q, (dx, dz, r_) in enumerate(((0, 0.75, 0.3), (0.12, 0.98, 0.22), (-0.1, 0.92, 0.2))):
+        ball(f"ShopRLeaf{j}{q}", r_, Vector((px + dx, FRONT + 0.32, dz)), leaf_m)
+bulb = fx.material("Bulb", (1.0, 0.85, 0.55), rough=0.3, emit=6.0, emit_color=(1.0, 0.78, 0.45))
+for j in range(12):
+    ball(f"ShopRBulb{j}", 0.045, Vector((cxR - 2.3 + j * 0.42, FRONT + 1.15, 2.5 - 0.05 * math.sin(j * 1.3) ** 2)), bulb)
+spill = bpy.data.lights.new("ShopRSpill", "AREA")
+spill.energy, spill.size, spill.color = 220.0, 3.0, (1.0, 0.78, 0.5)
+spill_ob = bpy.data.objects.new("ShopRSpill", spill)
+signs.objects.link(spill_ob)
+spill_ob.location = win_c + Vector((0, 0.35, 0.4))
+spill_ob.rotation_euler = (math.radians(-60), 0, 0)              # out of the window, down onto the sidewalk
 closed = city.sign("ShopLClosed", img("shopL_closed"), Vector((SHOPX["L"], FRONT, 3.55)), Vector((0, 1, 0)), SHOP_W - 0.4,
                    aspect=2400 / 520, emit=0.8, offset=0.06)
 vase = box("BrokenItem", (0.3, 0.3, 0.42), (SHOP["L"]["table"][0], FRONT + 0.75, 1.06), fx.material("Vase", (0.9, 0.9, 0.88), rough=0.3))
@@ -557,10 +623,17 @@ def windows(fl, rest, seed, missing=0.0, hole=None, glass=None, appear=1, landed
             anim.visible(w, [(1, False), (appear, True)])
 
 
-glassB = fx.material("WinGlass", (0.2, 0.28, 0.35), rough=0.1, metallic=0.4)
+glassB = fx.material("WinGlassB", (0.12, 0.42, 0.75), rough=0.05, metallic=0.5, emit=0.25, emit_color=(0.4, 0.7, 1.0))
+panelB = fx.material("AgentPanel", (0.84, 0.86, 0.9), rough=0.22, metallic=0.1)
+bandB = [fx.material("AgentBandTeal", (0.1, 0.8, 0.85), rough=0.3, emit=2.0, emit_color=(0.1, 0.9, 1.0)),
+         fx.material("AgentBandPink", (0.9, 0.2, 0.7), rough=0.3, emit=2.0, emit_color=(1.0, 0.25, 0.8))]
 T4_0 = T[4] + 6                                              # the crane starts on "option two"
 pivB = crane("CraneB", TOWER["B"], 17.0)
-floorsB = stack("TowerB", TOWER["B"], 6, T4_0, 14, concrete, crooked=0.35, seed=5)
+floorsB = stack("TowerB", TOWER["B"], 6, T4_0, 14, panelB, crooked=0.35, seed=5)
+for i, (fl, land, rest) in enumerate(floorsB):                # a glowing band at the foot of every floor
+    bd = box(f"TowerBBand{i}", (T_W + 0.06, T_W + 0.06, 0.16), rest + Vector((0, 0, -T_H / 2 + 0.12)), bandB[i % 2], csite)
+    parent_keep(bd, fl, land + 10)
+    anim.visible(bd, [(1, False), (land - 14, True)])
 HOLE_FL, DOOR_FL = 2, 4
 for i, (fl, land, rest) in enumerate(floorsB):
     windows(fl, rest, 10 + i, missing=0.3, hole=holes, glass=glassB, appear=land - 14, landed=land + 10,
@@ -652,7 +725,7 @@ w6 = lambda w, nth=0: wordf(6, w, nth)
 w7 = lambda w, nth=0: wordf(7, w, nth)
 SEQ = [(w6("headcount") - 6, "flat"), (w6("headcount") - 2, "one"), (w6("code") - 2, "two"), (w6("better") - 2, "three"),
        (w6("only") - 4, "three"), (w6("only"), "fist"), (w6("only") + 14, "flat"),
-       (w7("why") + 40, "flat"), (w7("why") + 46, "point"), (w7("cuz") - 2, "point"), (w7("ai") + 4, "flat"), (w7("human") - 4, "flat"),
+       (w7("cuz") - 14, "flat"), (w7("cuz") - 6, "point"), (w7("sense") + 14, "point"), (w7("sense") + 24, "flat"), (w7("human") - 4, "flat"),
        (END - 2, "flat")]
 for f_, p_ in SEQ:
     key_pose(f_, p_)
@@ -677,34 +750,86 @@ for f_, v_ in ((a_, 0.0), (a_ + 6, 1.0), (b_ - 6, 1.0), (b_, 0.0)):
 cuh = lambda f: perf.bone_world("mixamorig:Spine2", f)
 HD = lambda f: perf.bone_world("mixamorig:Head", f)
 fwd = Vector((0, 1, 0))                                      # he faces +y (the close-up camera)
-CHEST = lambda f: HD(f) + fwd * 0.34 + Vector((0.2, 0, -0.16))           # beside his face, his own (right) side
-office.present(w6("headcount") - 10, CHEST(w6("headcount")), side="R", hold=w6("only") - w6("headcount") + 4, ramp=8, amount=0.95)
-office.present(w7("why") + 40, HD(w7("why") + 40) + fwd * 0.12 + Vector((0, 0, -0.1)), side="R", hold=16, ramp=6, amount=1.0)   # chin
-office.present(w7("cuz") - 6, HD(w7("cuz")) + Vector((-0.11, 0.04, 0.05)), side="R", hold=12, ramp=5, amount=1.0)              # temple
-office.present(w7("human") - 8, cuh(w7("human")) + fwd * 0.16 + Vector((0.05, 0, 0.05)), side="R", hold=26, ramp=7, amount=1.0)    # chest
-# the hand's own rotation per gesture (the IK only places the wrist; left to the talk clip, the wrist twisted into a
-# claw). Columns: hand X, Y (along the fingers), Z (the palm side: fingers curl towards +Z). He faces +y.
-hand_t = fx.empty("HandAim", (0, 0, 0), csite, 0.05)
-hand_rot = rig.pose.bones[R_HAND].constraints.new("COPY_ROTATION")
-hand_rot.name = "Hand aim"
-hand_rot.target = hand_t
-hand_rot.owner_space = hand_rot.target_space = "WORLD"
-hand_rot.influence = 0.0
-hk = [(1, 0.0, "const")]
+CHEST = lambda f: cuh(f) + fwd * 0.26 + Vector((0.16, 0, 0.08))          # in front of his chest, his right side (+x: he faces +y)
+# ---- S14/S15 the right-arm gestures (count, chin, temple tap, hand on chest): no IK here — the legacy solver flipped
+# this arm (hand behind the shoulder, elbow up: the "dinosaur"). Instead a two-bone solve per frame (elbow down and
+# out), plus the hand's own rotation, keyed on a REPLACE arm layer over the talk clips, eased in and out.
+UP, TOWARD, BACK = Vector((0, 0, 1)), Vector((0, 1, 0)), Vector((0, -1, 0))   # he faces +y: his right is +x
+RWM = rig.matrix_world
+RW3, RWi = RWM.to_3x3(), RWM.inverted()
+ARM_B = ["mixamorig:RightShoulder", "mixamorig:RightArm", "mixamorig:RightForeArm", "mixamorig:RightHand"]
+rest3 = {n: rig.data.bones[n].matrix_local.to_3x3() for n in ARM_B}
+LEN_UP, LEN_FA = rig.pose.bones[ARM_B[1]].length, rig.pose.bones[ARM_B[2]].length
+SHW = lambda f: perf.bone_world(ARM_B[1], f)
+TAP = w7("sense") - w7("cuz") + 18
+GEST = [  # start, ramp, hold, wrist target (world), elbow pull, hand axes (X, Y = along the fingers, Z = palm side)
+    (w6("headcount") - 10, 8, w6("only") - w6("headcount") + 4, lambda f: SHW(f) + fwd * 0.3 + Vector((-0.03, 0, -0.14)),
+     Vector((0.6, -0.2, -1)), (Vector((-1, 0, 0)), UP, TOWARD)),                                  # count: palm to the camera
+    (w7("cuz") - 8, 6, TAP, lambda f: HD(f) + Vector((0.13, 0.05, -0.04)),
+     Vector((1, 0, -0.6)), (BACK, Vector((-0.35, 0, 0.94)), Vector((-0.94, 0, -0.35)))),          # temple: the knowing tap
+    (w7("human") - 8, 7, 26, lambda f: cuh(f) + fwd * 0.15 + Vector((-0.02, 0, 0.04)),
+     Vector((0.6, 0, -1)), (UP, Vector((-1, 0, 0)), BACK)),                                       # hand on his chest
+]
 
 
-def orient(frame, X, Y, Z, hold, ramp):
-    anim.key(hand_t, "rotation_euler", int(frame), Matrix((X, Y, Z)).transposed().to_euler(), ease="const")
-    hk.extend([(int(frame), 0.0, "inout"), (int(frame) + ramp, 1.0, "inout"), (int(frame) + ramp + hold, 1.0, "inout"),
-               (int(frame) + 2 * ramp + hold, 0.0, "inout")])
+def solve(f, tgt, pull, axes):
+    """Armature-space rotations for shoulder (as is), upper arm, forearm, hand at frame f."""
+    sc.frame_set(f)
+    pbs = rig.pose.bones
+    M = {n: pbs[n].matrix.to_3x3() for n in ARM_B}
+    S = RWi @ (RWM @ pbs[ARM_B[1]].head)
+    T = RWi @ tgt(f)
+    P = (RW3.inverted() @ pull).normalized()
+    d = T - S
+    L = min(d.length, (LEN_UP + LEN_FA) * 0.98)
+    u = d.normalized()
+    ca = max(-1.0, min(1.0, (LEN_UP ** 2 + L ** 2 - LEN_FA ** 2) / (2 * LEN_UP * L)))
+    v = (P - u * P.dot(u)).normalized()
+    E = S + (u * ca + v * math.sqrt(1 - ca * ca)) * LEN_UP
+    T = S + u * L
+    r1 = M[ARM_B[1]].col[1].normalized().rotation_difference((E - S).normalized()).to_matrix()
+    up = r1 @ M[ARM_B[1]]
+    fa0 = r1 @ M[ARM_B[2]]
+    fa = fa0.col[1].normalized().rotation_difference((T - E).normalized()).to_matrix() @ fa0
+    X, Y, Z = (Vector(a_).normalized() for a_ in axes)
+    hand = RW3.inverted() @ Matrix((X, Y, Z)).transposed()
+    return {ARM_B[0]: M[ARM_B[0]], ARM_B[1]: up, ARM_B[2]: fa, ARM_B[3]: hand}
 
 
-UP, TOWARD, BACK, HIS_L = (0, 0, 1), (0, 1, 0), (0, -1, 0), (1, 0, 0)
-orient(w6("headcount") - 10, (-1, 0, 0), UP, TOWARD, w6("only") - w6("headcount") + 4, 8)        # count: palm to the camera
-orient(w7("why") + 40, HIS_L, UP, BACK, 16, 6)                                                   # chin: palm to his face
-orient(w7("cuz") - 6, TOWARD, UP, (1, 0, 0), 12, 5)                                               # temple: palm to his head
-orient(w7("human") - 8, (0, 0, -1), HIS_L, BACK, 26, 7)                                          # chest: palm on it
-anim.keys(hand_rot, "influence", sorted(hk))
+arm_act = bpy.data.actions.new("ArmGestures")
+keyed = []
+for f0, ramp, hold, tgt, pull, axes in GEST:
+    for f in range(int(f0), int(f0) + 2 * ramp + hold + 1, 2):
+        keyed.append((f, solve(f, tgt, pull, axes)))
+ad.action = arm_act
+if hasattr(ad, "action_slot") and arm_act.slots:
+    ad.action_slot = arm_act.slots[0]
+for f, Ms in keyed:
+    for i, n in enumerate(ARM_B[1:], start=1):
+        par = ARM_B[i - 1]
+        basis = (rest3[n].inverted() @ rest3[par]) @ Ms[par].inverted() @ Ms[n]
+        pbn = rig.pose.bones[n]
+        pbn.rotation_quaternion = basis.to_quaternion()
+        pbn.keyframe_insert("rotation_quaternion", frame=f)
+if hasattr(arm_act, "slots") and arm_act.slots and not ad.action_slot:
+    ad.action_slot = arm_act.slots[0]
+ad.action = keep_action
+arm_tr = ad.nla_tracks.new()
+arm_tr.name = "ZZZ Arm gestures"
+for f0, ramp, hold, tgt, pull, axes in GEST:
+    a_, b_ = int(f0), int(f0) + 2 * ramp + hold
+    st = arm_tr.strips.new(f"Arm{a_}", a_, arm_act)
+    if hasattr(st, "action_slot") and arm_act.slots:
+        st.action_slot = arm_act.slots[0]
+    st.action_frame_start, st.action_frame_end = a_, b_
+    st.frame_start, st.frame_end = a_, b_
+    st.blend_type = "REPLACE"
+    st.use_auto_blend = False
+    st.extrapolation = "NOTHING"
+    st.use_animated_influence = True
+    for f_, v_ in ((a_, 0.0), (a_ + ramp, 1.0), (b_ - ramp, 1.0), (b_, 0.0)):
+        st.influence = v_
+        st.keyframe_insert("influence", frame=int(f_))
 
 # ================================================================== cameras
 cam = k.camera()
@@ -784,6 +909,8 @@ for kk in range(3):                                          # a light head shak
     f_ = w7("doesn") + kk * 7
     anim.keys(office.cam_eye, "location", [(f_, 0.0, "inout"), (f_ + 3, 0.35 * (-1) ** kk, "inout"), (f_ + 7, 0.0, "inout")], index=0)
 anim.keys(office.cam_eye, "location", [(T[2] - 14, 0.0, "inout"), (T[2] - 6, 0.5, "inout"), (T[2] + 2, 0.0, "inout")], index=0)   # the head tilt (S10)
+anim.keys(office.cam_eye, "location", [(w7("cuz") - 10, 0.0, "inout"), (w7("cuz"), -0.45, "inout"), (w7("sense") + 14, -0.45, "inout"),
+                                       (w7("sense") + 26, 0.0, "inout")], index=0)                                   # the knowing tilt
 fx.char_lights(rig, cam.cam, key=170.0, rim=340.0)
 # S10: he presents your shop on "you ship without inspection", theirs on "your competitor"; S10.1 a thumb at their queue
 fL, fR = wordf(1, "without"), wordf(1, "competitor")
@@ -804,7 +931,7 @@ for f_, w_ in ((1, dict(Squint=0.85)), (int(rise0.start) + 10, dict(Squint=0.0, 
                (T[3], dict(Angry=0.0, Squint=0.3)), (wordf(3, "can"), dict(Squint=0.0, Sad=0.6)), (T[4], dict(Sad=0.0, Wide=0.5)),
                (RUN_F, dict(Wide=0.0, Squint=0.5)), (T[5], dict(Squint=0.4)),
                (T[6], dict(Squint=0.0, Wide=0.45)), (w6("only"), dict(Wide=0.0, Squint=0.35, Angry=0.3)), (w6("stay"), dict(Squint=0.0, Angry=0.0, Wide=0.3)),
-               (T[7], dict(Wide=0.0, Sad=0.3)), (w7("cuz"), dict(Sad=0.0, Wide=1.0)), (w7("doesn"), dict(Wide=0.0, Angry=0.35)),
+               (T[7], dict(Wide=0.0, Sad=0.3)), (w7("cuz") - 6, dict(Sad=0.0, Squint=0.75)), (w7("ai"), dict(Squint=0.0, Wide=0.3)), (w7("doesn"), dict(Wide=0.0, Angry=0.35)),
                (w7("human"), dict(Angry=0.0, Squint=0.3))):
     eyes.set(f_, **w_)
 eyes.blinks(1, END, every=95)

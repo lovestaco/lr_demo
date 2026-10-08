@@ -270,6 +270,48 @@ def v2a_signs():
                  ("board_d", "Skip inspection, and **your competitor's product beats yours.**")):
         board(n, t, w=3000, h=560, box=(110, 70, 2890, 490))
     site_sign("siteA", "SITE A", ["**Human only**", "**Human only.** Careful, with high standards, but it can't keep up with the pace."])
+    shop_interior("shopR_interior")
+    neon("open_neon", "OPEN")
+
+
+def shop_interior(name, w=1500, h=1050):
+    """The competitor's shop seen through its window: warm light, full shelves, pendant lamps, a counter."""
+    import random
+    r = random.Random(4)
+    img = Image.new("RGB", (w, h), (0, 0, 0))
+    d = ImageDraw.Draw(img)
+    for y in range(h):                                      # warm wall, brighter towards the lamps
+        t = y / h
+        d.line([(0, y), (w, y)], fill=(int(250 - 40 * t), int(222 - 50 * t), int(170 - 60 * t)))
+    d.rectangle([0, int(h * 0.82), w, h], fill=(150, 98, 60))                     # wooden floor
+    cols = [(220, 60, 50), (40, 120, 200), (250, 190, 40), (60, 170, 110), (240, 120, 40), (150, 80, 180), (240, 240, 235)]
+    for sy in (0.28, 0.46, 0.64):                           # three shelves of products
+        y = int(h * sy)
+        d.rectangle([40, y, w - 40, y + 14], fill=(120, 78, 45))
+        x = 60
+        while x < w - 90:
+            bw, bh = r.randint(40, 80), r.randint(50, 110)
+            d.rectangle([x, y - bh, x + bw, y], fill=r.choice(cols), outline=(60, 40, 30), width=2)
+            x += bw + r.randint(8, 22)
+    for lx in (0.2, 0.5, 0.8):                              # pendant lamps
+        cx = int(w * lx)
+        d.line([(cx, 0), (cx, 70)], fill=(40, 30, 20), width=4)
+        d.pieslice([cx - 60, 40, cx + 60, 150], 180, 360, fill=(255, 236, 170))
+        d.ellipse([cx - 22, 80, cx + 22, 124], fill=(255, 252, 230))
+    d.rectangle([int(w * 0.55), int(h * 0.7), int(w * 0.95), int(h * 0.86)], fill=(110, 70, 40))     # the counter
+    d.rectangle([int(w * 0.55), int(h * 0.7), int(w * 0.95), int(h * 0.72)], fill=(200, 160, 100))
+    save(img.filter(ImageFilter.GaussianBlur(1.2)), name)
+
+
+def neon(name, text, w=900, h=360, col=(255, 70, 120)):
+    img = Image.new("RGBA", (w, h), (0, 0, 0, 0))
+    d = ImageDraw.Draw(img)
+    f = slides.font(220, slides.BOLD)
+    glow = Image.new("RGBA", (w, h), (0, 0, 0, 0))
+    ImageDraw.Draw(glow).text((w // 2, h // 2), text, font=f, fill=col + (200,), anchor="mm")
+    img = Image.alpha_composite(img, glow.filter(ImageFilter.GaussianBlur(14)))
+    ImageDraw.Draw(img).text((w // 2, h // 2), text, font=f, fill=(255, 225, 235, 255), anchor="mm")
+    save(img, name)
 
 
 def main():

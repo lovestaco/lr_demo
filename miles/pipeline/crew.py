@@ -58,6 +58,12 @@ class Crew:
             lo = Vector([min(p[i] for p in pts) for i in range(3)])
             hi = Vector([max(p[i] for p in pts) for i in range(3)])
             arm = next((o for o in objs if o.type == "ARMATURE"), None)
+            if arm is not None and arm.animation_data:                 # the clips the rig really plays (the longest
+                ad_ = arm.animation_data                             # first); stray 1-frame copies come along too
+                used = {ad_.action} | {st.action for t in ad_.nla_tracks for st in t.strips}
+                used.discard(None)
+                if used:
+                    acts = sorted(used, key=lambda a: -(a.frame_range[1] - a.frame_range[0]))
             fwd = self._forward(arm) if kind in ("worker", "boss") else Vector((0, -1, 0))
             self.src[kind] = dict(objs=objs, acts=acts, arm=arm, scale=HEIGHT[kind] / max(1e-6, hi.z - lo.z),
                                   centre=Vector(((lo.x + hi.x) / 2, (lo.y + hi.y) / 2, lo.z)), fwd=fwd)
@@ -110,6 +116,8 @@ class Crew:
         st = tr.strips.new(action.name, int(1 - phase * (a1 - a0)), action)
         if hasattr(st, "action_slot") and action.slots:
             st.action_slot = slot or action.slots[0]
+        st.action_frame_start, st.action_frame_end = a0, a1    # (read before the slot was set: a 1-frame range)
+        st.frame_start = int(1 - phase * (a1 - a0))
         st.repeat = repeat
         st.scale = 1.0 / speed
         st.extrapolation = "HOLD_FORWARD"
@@ -176,6 +184,10 @@ def retarget(src_rig, action, dst_arm, frames=None, step=1):
     a0, a1 = (int(v) for v in action.frame_range)
     frames = frames or (a0, a1)
     dst_bones = {_strip_suffix(b.name): b.name for b in dst_arm.data.bones}
+    fwd = Crew._forward(dst_arm)                             # the dst rest heading (world)
+    fwd_s = Crew._forward(proxy)                             # the src rest heading: Spidey's rig faces the other way
+    Rh = Matrix.Rotation(math.atan2(fwd_s.x * fwd.y - fwd_s.y * fwd.x, fwd_s.x * fwd.x + fwd_s.y * fwd.y), 3, "Z")
+    hips_s = next((s for s in (pb.name for pb in proxy.pose.bones) if s.endswith("Hips")), None)
     pairs = [(pb.name, dst_bones[pb.name]) for pb in proxy.pose.bones if pb.name in dst_bones]
     S3 = proxy.matrix_world.to_3x3().normalized()
     D3 = dst_arm.matrix_world.to_3x3().normalized()
@@ -184,7 +196,7 @@ def retarget(src_rig, action, dst_arm, frames=None, step=1):
     # the rest poses differ (Spidey's rig rests in an A-pose, the boss in a T-pose): first turn each dst bone onto the
     # src bone's rest direction (shortest arc, world), then apply the src bone's change from its rest
     dirw = lambda arm_, b: (arm_.matrix_world.to_3x3() @ (b.tail_local - b.head_local)).normalized()
-    align = {d: dirw(dst_arm, dst_arm.data.bones[d]).rotation_difference(dirw(proxy, proxy.data.bones[s])).to_matrix() for s, d in pairs}
+    align = {d: dirw(dst_arm, dst_arm.data.bones[d]).rotation_difference(Rh @ dirw(proxy, proxy.data.bones[s])).to_matrix() for s, d in pairs}
     order = [d for d in (b.name for b in dst_arm.data.bones) if d in rest_d]          # parents first
     src_of = {d: s for s, d in pairs}
     out = bpy.data.actions.new(f"{action.name} -> {dst_arm.name}")
@@ -194,10 +206,15 @@ def retarget(src_rig, action, dst_arm, frames=None, step=1):
     for f in range(frames[0], frames[1] + 1, step):
         sc.frame_set(f)
         M = {}
+        # the clip's own turn (its body heading) is taken out: the dst keeps facing where it was placed
+        yaw = Matrix.Identity(3)
+        if hips_s in rest_s:
+            h = (Rh @ (S3 @ proxy.pose.bones[hips_s].matrix.to_3x3()).normalized() @ rest_s[hips_s].inverted() @ Rh.inverted()) @ fwd
+            yaw = Matrix.Rotation(-math.atan2(fwd.x * h.y - fwd.y * h.x, fwd.x * h.x + fwd.y * h.y), 3, "Z")
         for d in order:
             s = src_of[d]
             ws = (S3 @ proxy.pose.bones[s].matrix.to_3x3()).normalized()
-            delta = ws @ rest_s[s].inverted()
+            delta = yaw @ Rh @ ws @ rest_s[s].inverted() @ Rh.inverted()       # the src motion, turned to the dst heading
             M[d] = (D3.inverted() @ delta @ align[d] @ D3 @ rest_d[d]).normalized()   # armature space, dst
         for d in order:
             b = dst_arm.data.bones[d]
