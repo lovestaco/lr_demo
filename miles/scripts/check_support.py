@@ -1,6 +1,6 @@
 """Physical-plausibility check: every frame, is there something under his feet?
 
-    blender -b build/street.blend --python scripts/check_support.py
+    blender -b build/street_part_1_final.blend --python scripts/check_support.py
 
 Casts a ray down from the lowest toe (ignoring the character, webs, spiders, bills) and reports runs of
 frames where the gap to the surface below is > 25 cm, except while an intentionally airborne clip plays

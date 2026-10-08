@@ -84,7 +84,7 @@ Join acts without audio: `ffmpeg -i act1_360p.mp4 -i act2_360p.mp4 -filter_compl
 - Camera: hold still while a screen is up; move only in screen-free stretches. Frame at the depth
   between screen and presenter (`frame_on`), otherwise he is cropped at the edge.
 
-## Street piece (current direction, `scripts/04_street.py` → `build/street.blend`)
+## Street part 1 (final: `scripts/04_street_part_1_final.py` → `build/street_part_1_final.blend`, renders `renders/street_part_1_final_720p*`)
 - Set: Sketchfab "City Scene" (golukumar, Free Standard) via `pipeline/city.py` (`load()`, sunset `golden_hour()`,
   `wall()/roof()/ground()` ray casts, `sign()` image planes with billboard/lightbox/LED frames). The city is lifted
   0.34 m so the sidewalk is z=0. Avenue along Y at x≈0 has street trees at x≈±6 — put signs on the tree-free
@@ -112,7 +112,7 @@ Join acts without audio: `ffmpeg -i act1_360p.mp4 -i act2_360p.mp4 -filter_compl
   keying, or each frame compounds the tilt into a spin: that was the old "spinning" swings). No hangs. `Performer`
   turns the short way (180 -> -160 was a 340° spin on the mural landing). Finale = v3 `city.Building` (12 m, 4 floors)
   in the intersection, shown from the S8 cut; `pancake()` = gravity fall, squash, dust puffs, debris.
-  `scripts/check_rules.py` audits rules 1-6 from `build/street_audit.json`; `check_support.py` reports false
+  `scripts/check_rules.py` audits rules 1-6 from `build/<name>_audit.json`; `check_support.py` reports false
   "None" gaps when a toe sits exactly on the road (its ray steps through his own mesh).
 - Finale: blocks tower in the intersection (piece-2 block code, ×1.45 street scale) on the words of vo 13/9/10/11,
   yank on "inspection" (vo 12): `Pull Heavy Object Start` (lines taut) → `Stop`; he watches the collapse, then flops.
@@ -135,7 +135,7 @@ Join acts without audio: `ffmpeg -i act1_360p.mp4 -i act2_360p.mp4 -filter_compl
   - 06_assemble varies each SFX cue's pitch/level. 05_render keeps frames in `build/frames/<name>_<h>p/`.
 - VO: `assets/audio/vo_street/` (Mark v4 take, 13 lines); music `assets/audio/music/bed_street.mp3`
   ("Superhero Cinematic Opener" by ArctSound, Pixabay, not Content ID registered, 70.2 s).
-- Assemble: `python3 scripts/06_assemble.py street --height 360 --music assets/audio/music/bed_street.mp3`
+- Assemble: `python3 scripts/06_assemble.py street_part_1_final --height 720 --music assets/audio/music/bed_street.mp3`
   (film 69 s < the 70 s bed; `--music-once` if a cut ever runs longer than the bed).
 
 ## Street part 2 (a separate video: `scripts/04_street_part2.py` → `build/street_part2.blend`, ~2:10)
@@ -174,7 +174,7 @@ Join acts without audio: `ffmpeg -i act1_360p.mp4 -i act2_360p.mp4 -filter_compl
 ## Before every render: physical checks
 - `blender -b build/<shot>.blend --python scripts/check_support.py` — feet must be on something (no standing or
   moonwalking on thin air). Thin set pieces (a 25 cm board top) need a real ledge/catwalk under him.
-- Height per shot comes from `HEIGHTS` in 04_street.py using `low_rel(clip)` (each clip's own foot height);
+- Height per shot comes from `HEIGHTS` in 04_street_part_1_final.py using `low_rel(clip)` (each clip's own foot height);
   path keys (`swing.follow`) must stop one frame before the next shot's first frame.
 - Movement must match the story beat on screen (e.g. moonwalk WITH the customers, same direction).
 - Hip height across blends (reviewer tip): crossfading poses (crouch → stand, idle → moonwalk) lift or drop the feet

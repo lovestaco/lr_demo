@@ -1,6 +1,6 @@
-"""Review-rule audit for the street piece (run after 04_street.py, which writes build/street_audit.json).
+"""Review-rule audit for the street piece (run after 04_street_part_1_final.py / 04_street_part2.py, which write build/<name>_audit.json).
 
-    blender -b build/street.blend --python scripts/check_rules.py
+    blender -b build/street_part_1_final.blend --python scripts/check_rules.py
     blender -b build/street_part2.blend --python scripts/check_rules.py -- street_part2
 
 1 web travel: no spin / roll / cartwheel (body angle steady along the line; max per-frame change, total range)
@@ -12,7 +12,7 @@ import bpy, json, math, os, sys
 from mathutils import Vector
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from pipeline import paths
-NAME = sys.argv[sys.argv.index("--") + 1] if "--" in sys.argv else "street"
+NAME = sys.argv[sys.argv.index("--") + 1] if "--" in sys.argv else "street_part_1_final"
 A = json.load(open(os.path.join(paths.ROOT, "build", f"{NAME}_audit.json")))
 sc = bpy.context.scene
 rig = bpy.data.objects["MilesRig"]
