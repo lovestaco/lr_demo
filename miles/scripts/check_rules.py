@@ -1,6 +1,7 @@
 """Review-rule audit for the street piece (run after 04_street.py, which writes build/street_audit.json).
 
     blender -b build/street.blend --python scripts/check_rules.py
+    blender -b build/street_part2.blend --python scripts/check_rules.py -- street_part2
 
 1 web travel: no spin / roll / cartwheel (body angle steady along the line; max per-frame change, total range)
 2 explaining: upright (spine within 20° of vertical)        3 facing the camera (chest within 35°)
@@ -11,7 +12,8 @@ import bpy, json, math, os, sys
 from mathutils import Vector
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from pipeline import paths
-A = json.load(open(os.path.join(paths.ROOT, "build", "street_audit.json")))
+NAME = sys.argv[sys.argv.index("--") + 1] if "--" in sys.argv else "street"
+A = json.load(open(os.path.join(paths.ROOT, "build", f"{NAME}_audit.json")))
 sc = bpy.context.scene
 rig = bpy.data.objects["MilesRig"]
 pb = rig.pose.bones

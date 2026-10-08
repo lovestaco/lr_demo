@@ -230,8 +230,41 @@ class CarKit:
 
 # ------------------------------------------------------------------ pedestrians
 class Walker:
-    def __init__(self, wrap, objs, arm, action, speed):
+    def __init__(self, wrap, objs, arm, action, speed, stand=None):
         self.wrap, self.objs, self.arm, self.action, self.speed = wrap, objs, arm, action, speed
+        self.stand = stand if stand is not None else action.frame_range[0]     # cycle frame with the feet together
+
+    def route(self, legs, f0, phase=0.0, until=None, pace=None):
+        """Walk point to point at the stride speed, standing still `wait` frames at each stop (queues, onlookers).
+        legs = [(point, wait), ...]: starts at the first point. Visible from f0 to the end (or `until`).
+        pace = [x, ...]: speed factor per walking leg (2.4 = running off; the walk plays faster to match)."""
+        a0, a1 = self.action.frame_range
+        cyc = a1 - a0
+        f = int(f0)
+        p = Vector((legs[0][0][0], legs[0][0][1], 0.0))
+        anim.key(self.wrap, "location", f, p, ease="lin")
+        for k, (pt, wait) in enumerate(legs):
+            if wait > 0:                                   # stand: one held frame of the cycle, feet together
+                anim.key(self.wrap, "location", f + int(wait), p, ease="lin")
+                _strip(self.arm, self.action, f, frm=self.stand, to=self.stand + 1, scale=max(1.0, float(wait)))
+                f += int(wait)
+            if k + 1 < len(legs):
+                q = Vector((legs[k + 1][0][0], legs[k + 1][0][1], 0.0))
+                d = q - p
+                pc = (pace[k] if pace and k < len(pace) else 1.0)
+                n = max(1, int(round(d.length / (self.speed * pc))))
+                anim.key(self.wrap, "rotation_euler", f, Vector((0, 0, _yaw_to(d))), ease="const")
+                _strip(self.arm, self.action, f - int(phase * cyc), repeat=(n * pc + cyc) / cyc + 1, scale=1.0 / pc)
+                anim.key(self.wrap, "location", f + n, q, ease="lin")
+                f, p = f + n, q
+        end = until or f
+        for o in self.objs:
+            anim.visible(o, [(1, False), (int(f0), True), (int(end) + 1, False)])
+        return f
+
+    def face(self, frame, direction):
+        """Turn to face a direction from `frame` on (an onlooker turning to the thing)."""
+        anim.key(self.wrap, "rotation_euler", int(frame), Vector((0, 0, _yaw_to(Vector(direction)))), ease="const")
 
     def walk(self, p0, p1, f0, phase=0.0):
         """Walk p0 → p1 starting at f0 at the clip's own stride speed (feet don't skate). Returns end frame."""
@@ -261,17 +294,19 @@ class WalkKit:
             act = arm.animation_data.action
             feet = [b.name for b in arm.pose.bones if ("Foot" in b.name or "Toe" in b.name) and "root" not in b.name]
             a0, a1 = (int(v) for v in act.frame_range)
-            prev, sp = None, []
+            prev, sp, gap = None, [], []
             for f in range(a0, a1 + 1):                    # planted-foot speed = walking speed (m / frame)
                 sc.frame_set(f)
                 pts = {b: arm.matrix_world @ arm.pose.bones[b].head for b in feet}
+                fz = sorted(pts.values(), key=lambda v: v.x)
+                gap.append(((fz[-1] - fz[0]).length, f))
                 low = min(pts, key=lambda b: pts[b].z)
                 if prev and prev[0] == low:
                     sp.append((pts[low] - prev[1]).xy.length)
                 prev = (low, pts[low])
             sp.sort()
             speed = sp[len(sp) // 2] if sp else 0.04
-            self.kinds.append((fo, [o for o in objs if not o.name.startswith("Icosphere")], arm, act, speed))
+            self.kinds.append((fo, [o for o in objs if not o.name.startswith("Icosphere")], arm, act, speed, min(gap)[1]))
             for t in list(arm.animation_data.nla_tracks):
                 arm.animation_data.nla_tracks.remove(t)
             arm.animation_data.action = None
@@ -279,13 +314,13 @@ class WalkKit:
 
     def spawn(self, k, name, coll=None):
         coll = coll or fx.collection("Crowd")
-        fo, objs, arm, act, speed = self.kinds[k % len(self.kinds)]
+        fo, objs, arm, act, speed, stand = self.kinds[k % len(self.kinds)]
         m = _clone(objs, coll, name)
         wrap = fx.empty(name, (0, 0, 0), coll, 0.2)
         for o, c in m.items():
             if o.parent is None:
                 c.parent = wrap
-        return Walker(wrap, list(m.values()) + [wrap], m[arm], act, speed)
+        return Walker(wrap, list(m.values()) + [wrap], m[arm], act, speed, stand)
 
 
 # ------------------------------------------------------------------ pigeons

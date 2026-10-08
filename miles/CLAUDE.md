@@ -138,6 +138,28 @@ Join acts without audio: `ffmpeg -i act1_360p.mp4 -i act2_360p.mp4 -filter_compl
 - Assemble: `python3 scripts/06_assemble.py street --height 360 --music assets/audio/music/bed_street.mp3`
   (film 69 s < the 70 s bed; `--music-once` if a cut ever runs longer than the bed).
 
+## Street part 2 (a separate video: `scripts/04_street_part2.py` → `build/street_part2.blend`, ~2:10)
+- v2 story (colleague script): S10 two identical shops facing each other across the west arm (head-on from the middle
+  of the road; customers cross the zebra to the competitor) → S10.1 the answer from the sidewalk (your sign flickers,
+  the broken item, CLOSED) → S11-S13 three sites on the open lot BEHIND the plaza building (cameras at y 86 looking
+  south; same camera per site, zoom fits the site; boards blank outside their own scene) → S14/S15 masked close-ups
+  (finger count, point, temple tap, hand on chest; lower-third captions) → S16/S17 2D product boards → S18 the wreck
+  before sunrise (sky + sun keyed), INSPECTION locks with a glow, floors rise, sunrise, new floors → S19 rooftop,
+  peace sign, pull-out, billboard demo. Unmasked lip-sync was declined (no face rig on MilesUnmasked).
+- Pipeline: `03d_street_part2_signs.py v2` → `07c_estimate_vo.py` (until the Mark take) → build →
+  `05c_render_range.py OUT 1-1600 ...` (skips the 2D frames) + `05b_street_part2_boards.py OUT` (S16/S17 frames from
+  `videos/livereview-launch/assets` demo clips) → `06c_street_part2_post.py OUT` (captions from
+  `build/street_part2_overlays.json`, piped straight to ffmpeg) → `06_assemble.py street_part2 --height 720 --music ...`.
+- Shared helpers: `pipeline/streetkit.py` (`Kit`); `life.Walker.route([(point, wait)], f0, pace=[...])` for queues,
+  workers, onlookers (pace 2.4 = running off).
+- Hands: a fingers-only REPLACE NLA track ("ZZ Finger poses"); finger curl = +X rotation per segment. An NLA strip made
+  through the API evaluates at influence 0 unless `use_animated_influence` with keyed influence. Office IK: mute the
+  unused IK constraints on a chain (the legacy solver weighs them even at influence 0 — the hand couldn't rise); IK
+  can't lift a hand above the shoulder anyway → the peace sign uses the hand-to-ear frame of `CMU 79_36 answering the
+  phone` + the finger layer.
+- `parent_keep(child, parent, frame)` must update the view layer first (a just-placed object reads identity).
+- Audit: `blender -b build/street_part2.blend --python scripts/check_rules.py -- street_part2`.
+
 ## Shot grammar (what each camera choice is for)
 - WIDE to open a scene (where are we), then MEDIUM (waist up) on the character; CLOSE-UP for emotion
   (shock face) or an action that matters (finger on the power button).

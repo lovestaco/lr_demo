@@ -90,7 +90,10 @@ def main(shots, height=360, music=None, burnin=False, music_once=False):
     print(f"voice {len(vo_l)}/{len(vo)} lines, sfx {len(sfx_l)}/{len(sfx)} cues" + (f" (missing: {', '.join(missing)})" if missing else ""))
 
     trim = f"apad,atrim=0:{total:.3f}"
-    fc += "".join(vo_l) + f"amix=inputs={len(vo_l)}:normalize=0,{trim},asplit=2[vo][key];"
+    if vo_l:
+        fc += "".join(vo_l) + f"amix=inputs={len(vo_l)}:normalize=0,{trim},asplit=2[vo][key];"
+    else:                                              # no take yet (estimated timing): a silent voice bus
+        fc += f"anullsrc=r=44100:cl=stereo,{trim},asplit=2[vo][key];"
     bus = ["[vo]"]
     if sfx_l:
         fc += "".join(sfx_l) + f"amix=inputs={len(sfx_l)}:normalize=0,{trim}[fx];"
