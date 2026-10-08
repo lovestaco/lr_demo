@@ -4,6 +4,7 @@ Same slide rules as part 1: one idea per sign, one font size, emphasis only in *
 
     python3 scripts/03d_street_part2_signs.py            # -> assets/street2/*.png (+ sequences)
     python3 scripts/03d_street_part2_signs.py v2           # the reworked part 2 (shops, banner, site boards, labels, demo)
+    python3 scripts/03d_street_part2_signs.py v2a          # part 2a: the board over the two shops, site A's line fixed
     python3 scripts/03d_street_part2_signs.py blooper DIR  # (v1) the movie-screen sequence from rendered blooper frames
 """
 import importlib, math, os, subprocess, sys, tempfile
@@ -262,6 +263,15 @@ def v2_signs():
     print("demo", demo_screen(), "frames")
 
 
+def v2a_signs():
+    """Part 2a: the two shops share one building; one board over both carries the S10 / S10.1 lines (same size)."""
+    for n, t in (("board_a", "You don't inspect. **Your competitor does.**"), ("board_b", "Who wins **the customer?**"),
+                 ("board_c", "Customers pick **the better product.**"),
+                 ("board_d", "Skip inspection, and **your competitor's product beats yours.**")):
+        board(n, t, w=3000, h=560, box=(110, 70, 2890, 490))
+    site_sign("siteA", "SITE A", ["**Human only**", "**Human only.** Careful, with high standards, but it can't keep up with the pace."])
+
+
 def main():
     os.makedirs(OUT, exist_ok=True)
     ticker("shops_tick_a", "You don't inspect. **Your competitor does.**")
@@ -297,6 +307,9 @@ if __name__ == "__main__":
     if sys.argv[1:2] == ["v2"]:
         os.makedirs(OUT, exist_ok=True)
         v2_signs()
+    elif sys.argv[1:2] == ["v2a"]:
+        os.makedirs(OUT, exist_ok=True)
+        v2a_signs()
     elif sys.argv[1:2] == ["blooper"]:
         os.makedirs(OUT, exist_ok=True)
         print("blooper", blooper(sys.argv[2]), "frames")

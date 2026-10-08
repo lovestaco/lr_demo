@@ -2,7 +2,8 @@
 
 Assets (Sketchfab; credits in ../blender_assets_downloaded/<folder>/CREDITS.txt):
     sketchfab_cars              10-car pack (CC-BY, comrade1280) — cars face the ring centre, wheels separate
-    sketchfab_walk_*            in-place walk loops (Free Standard, denysalmaral), face +Y
+    sketchfab_walk_*            in-place walk loops (Free Standard, denysalmaral), face -Y (glTF forward; the planted
+                                foot slides +Y) — so walkers are turned with _walk_yaw, never _yaw_to
     sketchfab_pigeon            rigged pigeon, 9 actions (CC-BY, AnimalMesh3D), faces +Y, real size
 
     g = life.Guard(cam_ob, hips_fn, (1, END))          # per-frame camera + subject cache
@@ -85,6 +86,11 @@ def _strip(ob, action, start, frm=None, to=None, repeat=1.0, scale=1.0, name=Non
 def _yaw_to(d):
     """Z rotation that turns local +Y towards direction d."""
     return math.atan2(-d.x, d.y)
+
+
+def _walk_yaw(d):
+    """Z rotation that turns a walker (faces local -Y) towards direction d."""
+    return _yaw_to(-Vector(d))
 
 
 # ------------------------------------------------------------------ guard
@@ -253,7 +259,7 @@ class Walker:
                 d = q - p
                 pc = (pace[k] if pace and k < len(pace) else 1.0)
                 n = max(1, int(round(d.length / (self.speed * pc))))
-                anim.key(self.wrap, "rotation_euler", f, Vector((0, 0, _yaw_to(d))), ease="const")
+                anim.key(self.wrap, "rotation_euler", f, Vector((0, 0, _walk_yaw(d))), ease="const")
                 _strip(self.arm, self.action, f - int(phase * cyc), repeat=(n * pc + cyc) / cyc + 1, scale=1.0 / pc)
                 anim.key(self.wrap, "location", f + n, q, ease="lin")
                 f, p = f + n, q
@@ -264,14 +270,14 @@ class Walker:
 
     def face(self, frame, direction):
         """Turn to face a direction from `frame` on (an onlooker turning to the thing)."""
-        anim.key(self.wrap, "rotation_euler", int(frame), Vector((0, 0, _yaw_to(Vector(direction)))), ease="const")
+        anim.key(self.wrap, "rotation_euler", int(frame), Vector((0, 0, _walk_yaw(direction))), ease="const")
 
     def walk(self, p0, p1, f0, phase=0.0):
         """Walk p0 → p1 starting at f0 at the clip's own stride speed (feet don't skate). Returns end frame."""
         p0, p1 = Vector((p0[0], p0[1], 0.0)), Vector((p1[0], p1[1], 0.0))
         d = p1 - p0
         n = max(1, int(round(d.length / self.speed)))
-        self.wrap.rotation_euler = (0, 0, _yaw_to(d))
+        self.wrap.rotation_euler = (0, 0, _walk_yaw(d))
         anim.keys(self.wrap, "location", [(f0, p0, "lin"), (f0 + n, p1, "lin")])
         a0, a1 = self.action.frame_range
         cyc = a1 - a0
@@ -312,10 +318,93 @@ class WalkKit:
             arm.animation_data.action = None
         _exclude(coll_name)
 
-    def spawn(self, k, name, coll=None):
+    # outfits: every face of a model is classed once (shirt / pants / skin / hair / other) from its height in the rest
+    # pose and its palette colour; each walker gets its own colours for those classes (material slots), so a crowd
+    # of the same four models doesn't wear the same four outfits
+    BANDS = {"male": dict(pants=(10, 100), shirt=(100, 158), hair=158), "female": dict(pants=(10, 96), shirt=(96, 146), hair=146)}
+    SHIRTS = [(0.55, 0.7, 0.85), (0.6, 0.08, 0.08), (0.1, 0.3, 0.16), (0.88, 0.86, 0.82), (0.9, 0.45, 0.06),
+              (0.12, 0.12, 0.13), (0.35, 0.18, 0.45), (0.85, 0.72, 0.25), (0.06, 0.35, 0.5), (0.85, 0.4, 0.45),
+              (0.4, 0.42, 0.2), (0.7, 0.7, 0.72)]
+    PANTS = [(0.02, 0.03, 0.08), (0.01, 0.01, 0.012), (0.25, 0.18, 0.1), (0.06, 0.065, 0.07), (0.04, 0.07, 0.16),
+             (0.08, 0.04, 0.02), (0.45, 0.42, 0.36), (0.12, 0.01, 0.01), (0.03, 0.05, 0.12)]          # linear
+    SKIN = [(0.8, 0.55, 0.4), (0.45, 0.25, 0.14), (0.2, 0.1, 0.05), (0.07, 0.035, 0.018), (0.6, 0.38, 0.25), (0.12, 0.06, 0.03)]   # linear
+    HAIR = [(0.03, 0.025, 0.02), (0.22, 0.12, 0.05), (0.8, 0.62, 0.3), (0.4, 0.18, 0.07), (0.55, 0.55, 0.55), (0.05, 0.04, 0.03)]
+
+    @staticmethod
+    def _skin(c):
+        r, g, b = c
+        return r > 0.9 and 0.66 < g < 0.8 and 0.48 < b < 0.7 and g - b < 0.18
+
+    def _classes(self, fo, ob):
+        """Per polygon: 0 keep, 1 shirt, 2 pants, 3 skin, 4 hair — by palette colour group (a garment is one colour
+        group) and the group's median height in the rest pose (cm)."""
+        if not hasattr(self, "_cls"):
+            self._cls = {}
+        if fo in self._cls:
+            return self._cls[fo]
+        me = ob.data
+        tex = next(n for n in me.materials[0].node_tree.nodes if n.type == "TEX_IMAGE").image
+        W, H = tex.size
+        px = tex.pixels[:]
+        uv = me.uv_layers.active.data
+        band = self.BANDS["female" if "female" in fo else "male"]
+        cols, zs = [], {}
+        for p in me.polygons:
+            u = sum(uv[i].uv.x for i in p.loop_indices) / p.loop_total
+            v = sum(uv[i].uv.y for i in p.loop_indices) / p.loop_total
+            i = (min(H - 1, max(0, int(v * H))) * W + min(W - 1, max(0, int(u * W)))) * 4
+            col = tuple(round(c, 2) for c in px[i:i + 3])
+            cols.append(col)
+            zs.setdefault(col, []).append(sum(me.vertices[j].co.z for j in p.vertices) / len(p.vertices))
+        kind = {}
+        for col, zz in zs.items():
+            zm = sorted(zz)[len(zz) // 2]
+            if self._skin(col):
+                kind[col] = 3
+            elif zm >= band["hair"]:
+                kind[col] = 4
+            elif band["shirt"][0] <= zm < band["shirt"][1]:
+                kind[col] = 1
+            elif band["pants"][0] <= zm < band["pants"][1]:
+                kind[col] = 2
+            else:
+                kind[col] = 0
+        self._cls[fo] = [kind[c] for c in cols]
+        return self._cls[fo]
+
+    def _flat(self, part, col):
+        key = (part, tuple(col))
+        if not hasattr(self, "_flats"):
+            self._flats = {}
+        if key not in self._flats:
+            self._flats[key] = fx.material(f"Ped_{part}_{len(self._flats)}", col, rough=0.75)
+        return self._flats[key]
+
+    def dress(self, fo, src, ob, v):
+        """Give mesh object `ob` (a copy of `src`) outfit v (0 = the model's own colours)."""
+        if v == 0:
+            return
+        r = random.Random(7919 * v + (1 if "female" in fo else 0))
+        me = src.data.copy()
+        ob.data = me
+        cls = self._classes(fo, src)
+        shirt = self.SHIRTS[v % len(self.SHIRTS)]
+        cos = lambda a, b: sum(x * y for x, y in zip(a, b)) / (math.sqrt(sum(x * x for x in a) * sum(y * y for y in b)) + 1e-9)
+        pants = r.choice([p for p in self.PANTS if cos(p, shirt) < 0.95])       # never the same hue as the shirt
+        mats = [me.materials[0], self._flat("shirt", shirt), self._flat("pants", pants),
+                self._flat("skin", r.choice(self.SKIN)), self._flat("hair", r.choice(self.HAIR))]
+        for m in mats[1:]:
+            me.materials.append(m)
+        me.polygons.foreach_set("material_index", cls)
+
+    def spawn(self, k, name, coll=None, outfit=None):
         coll = coll or fx.collection("Crowd")
         fo, objs, arm, act, speed, stand = self.kinds[k % len(self.kinds)]
+        v = outfit if outfit is not None else k + 1
         m = _clone(objs, coll, name)
+        for o, c in m.items():
+            if c.type == "MESH" and c.data.materials:
+                self.dress(fo, o, c, v)
         wrap = fx.empty(name, (0, 0, 0), coll, 0.2)
         for o, c in m.items():
             if o.parent is None:

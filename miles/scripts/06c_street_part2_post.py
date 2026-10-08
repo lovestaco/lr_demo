@@ -1,6 +1,7 @@
 """Street part 2 post: frames -> video, with the lower-third captions laid over (no extra frames written to disk).
 
     python3 scripts/06c_street_part2_post.py build/frames/street_part2_720p     # -> renders/street_part2_720p.mp4
+    python3 scripts/06c_street_part2_post.py build/frames/street_part2_a_720p street_part2_a   # part 2a (its own overlays)
     python3 scripts/06_assemble.py street_part2 --height 720 --music assets/audio/music/bed_street.mp3
 
 Captions come from build/street_part2_overlays.json ({f0, f1, text, row}); captions that end on the same frame are
@@ -52,10 +53,11 @@ def caption(img, parts, alpha):
 
 if __name__ == "__main__":
     src = sys.argv[1]
-    ov = json.load(open(os.path.join(paths.ROOT, "build", "street_part2_overlays.json")))
+    name = sys.argv[2] if len(sys.argv) > 2 else "street_part2"
+    ov = json.load(open(os.path.join(paths.ROOT, "build", f"{name}_overlays.json")))
     caps = ov["captions"]
     end = ov["end"]
-    out = os.path.join(paths.RENDERS, "street_part2_720p.mp4")
+    out = os.path.join(paths.RENDERS, f"{name}_720p.mp4")
     ff = subprocess.Popen(["ffmpeg", "-loglevel", "error", "-y", "-f", "rawvideo", "-pix_fmt", "rgb24", "-s", f"{W}x{H}", "-r", str(FPS),
                            "-i", "-", "-c:v", "libx264", "-pix_fmt", "yuv420p", "-crf", "18", out], stdin=subprocess.PIPE)
     missing = 0

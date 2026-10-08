@@ -160,6 +160,32 @@ Join acts without audio: `ffmpeg -i act1_360p.mp4 -i act2_360p.mp4 -filter_compl
 - `parent_keep(child, parent, frame)` must update the view layer first (a just-placed object reads identity).
 - Audit: `blender -b build/street_part2.blend --python scripts/check_rules.py -- street_part2`.
 
+## Street part 2a (S10-S15 on its own: `scripts/04_street_part2_a.py` → `build/street_part2_a.blend`, ~73 s)
+Part 2 is split for faster iteration; part 2b (S16-S19) is still 04_street_part2.py (not reworked yet; the S19 line
+must drop the word "efficient(cy)" — wrong positioning).
+- S10/S10.1: ONE building on the west arm's south facade, two shops side by side (yours screen-left, theirs right, doors
+  in the middle), one board over both (states `board_a..d`, `03d ... v2a`); one head-on camera from the north sidewalk
+  (S10.1 = a slow push, no cut). Customers walk out of your door along the sidewalk into their queue (it runs off to
+  the right, everyone faces the door). The merged city lamp mesh had a pole in front of your shop: the build deletes
+  that island only (`drop_islands`, by hit face + same xy).
+- Their queue moves (`queue_route`): every 60 frames the one at their door goes inside; yours join the end.
+- S11 site A: brick one-storey building, two hammering builders + the boss giving instructions (`pipeline/crew.py`;
+  the boss is a Mixamo-rigged Sketchfab model driven by Spidey's own CMU clip via a rest-relative world-rotation
+  bake — his rig rests in a T-pose, Spidey's in an A-pose). S12: on "Option two" he sprints to site B's board (`MX
+  Sprint` + a straight root travel) and the camera trucks right (A's board leaves the frame); no onlookers. S13 site
+  C its own shot: he presents its board; robot arms + a builder bot + the crane build, the boss (from A) checks;
+  framing recomputed every 8 frames as floors land; then the pull-back to all three. Plaza building behind the lot
+  hidden. Root z keyed flat at every cut (a travel's first key otherwise ramps him up into the air).
+- S14/S15 medium close-up (36-40 mm, 2.4 m): hands in frame; a "Hand aim" Copy Rotation on the right hand per
+  gesture (palm to camera for the count, palm in for chin / temple / chest) — the IK alone twisted the wrist.
+- VO: real Mark takes per line (website, Generation 1) in `assets/audio/vo_street_part2/takes/take_NN.mp3` →
+  `07b_split_take.py --lines ...` (whisper word times, merged into lines.json; Kit.word aliases "cuz"→"cause" etc.).
+- Build name `street_part2_a` (underscore: 06_assemble's prefix lookup then finds `vo_street_part2`).
+- Pipeline: build → `05c_render_range.py build/frames/street_part2_a_720p 1-2177` → `06c_street_part2_post.py
+  build/frames/street_part2_a_720p street_part2_a` → `06_assemble.py street_part2_a --height 720 --music ...`.
+- Pedestrians (all scenes, `pipeline/life.py`): the walk models face -Y (turn them with `_walk_yaw`, never `_yaw_to`
+  — they moonwalked before); every spawn index gets its own outfit (shirt/pants/skin/hair colour slots).
+
 ## Shot grammar (what each camera choice is for)
 - WIDE to open a scene (where are we), then MEDIUM (waist up) on the character; CLOSE-UP for emotion
   (shock face) or an action that matters (finger on the power button).

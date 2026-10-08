@@ -1,484 +1,480 @@
 {
  "1": {
   "text": "Now picture this. You ship without inspection. Your competitor inspects every change. Who does the customer pick?",
-  "start": 3.0,
-  "duration": 7.49,
+  "duration": 7.08,
+  "take": "take_01.mp3",
   "words": [
    [
     "now",
-    0.25
+    0.0
    ],
    [
     "picture",
-    0.56
+    0.24
    ],
    [
     "this",
-    0.87
+    0.46
    ],
    [
     "you",
-    1.56
+    1.5
    ],
    [
     "ship",
-    1.87
+    1.54
    ],
    [
     "without",
-    2.18
+    1.76
    ],
    [
     "inspection",
-    2.49
+    2.0
    ],
    [
     "your",
-    3.22
+    3.34
    ],
    [
     "competitor",
-    3.53
+    3.34
    ],
    [
     "inspects",
-    3.87
+    3.76
    ],
    [
     "every",
-    4.2
+    4.44
    ],
    [
     "change",
-    4.51
-   ],
-   [
-    "who",
-    5.2
-   ],
-   [
-    "does",
-    5.51
-   ],
-   [
-    "the",
-    5.82
-   ],
-   [
-    "customer",
-    6.13
-   ],
-   [
-    "pick",
-    6.45
-   ]
-  ],
-  "estimated": true
- },
- "2": {
-  "text": "Easy. Customers pick the better product when price and new updates are the same. If you don't inspect what you ship, your competitor will ship with higher standards.",
-  "start": 12.0,
-  "duration": 10.73,
-  "words": [
-   [
-    "easy",
-    0.25
-   ],
-   [
-    "customers",
-    0.94
-   ],
-   [
-    "pick",
-    1.27
-   ],
-   [
-    "the",
-    1.58
-   ],
-   [
-    "better",
-    1.89
-   ],
-   [
-    "product",
-    2.2
-   ],
-   [
-    "when",
-    2.51
-   ],
-   [
-    "price",
-    2.82
-   ],
-   [
-    "and",
-    3.13
-   ],
-   [
-    "new",
-    3.44
-   ],
-   [
-    "updates",
-    3.75
-   ],
-   [
-    "are",
-    4.06
-   ],
-   [
-    "the",
-    4.37
-   ],
-   [
-    "same",
-    4.68
-   ],
-   [
-    "if",
-    5.37
-   ],
-   [
-    "you",
-    5.56
-   ],
-   [
-    "don",
-    5.87
-   ],
-   [
-    "t",
-    6.18
-   ],
-   [
-    "inspect",
-    6.37
-   ],
-   [
-    "what",
-    6.68
-   ],
-   [
-    "you",
-    6.99
-   ],
-   [
-    "ship",
-    7.3
-   ],
-   [
-    "your",
-    7.77
-   ],
-   [
-    "competitor",
-    8.08
-   ],
-   [
-    "will",
-    8.42
-   ],
-   [
-    "ship",
-    8.73
-   ],
-   [
-    "with",
-    9.04
-   ],
-   [
-    "higher",
-    9.35
-   ],
-   [
-    "standards",
-    9.66
-   ]
-  ],
-  "estimated": true
- },
- "3": {
-  "text": "Option one: you review everything. Features are shipped carefully, but you can't keep up with the pace.",
-  "start": 23.0,
-  "duration": 7.21,
-  "words": [
-   [
-    "option",
-    0.25
-   ],
-   [
-    "one",
-    0.56
-   ],
-   [
-    "you",
-    1.15
-   ],
-   [
-    "review",
-    1.46
-   ],
-   [
-    "everything",
-    1.77
-   ],
-   [
-    "features",
-    2.5
-   ],
-   [
-    "are",
-    2.82
-   ],
-   [
-    "shipped",
-    3.13
-   ],
-   [
-    "carefully",
-    3.44
-   ],
-   [
-    "but",
-    3.93
-   ],
-   [
-    "you",
-    4.24
-   ],
-   [
-    "can",
-    4.55
-   ],
-   [
-    "t",
-    4.86
-   ],
-   [
-    "keep",
-    5.05
-   ],
-   [
-    "up",
-    5.36
-   ],
-   [
-    "with",
-    5.55
-   ],
-   [
-    "the",
-    5.86
-   ],
-   [
-    "pace",
-    6.17
-   ]
-  ],
-  "estimated": true
- },
- "4": {
-  "text": "Option two: let agents do it all. Fast, but no one's sweating the details, and the subtle things break. Customers notice, because the most refined product wins.",
-  "start": 31.0,
-  "duration": 10.72,
-  "words": [
-   [
-    "option",
-    0.25
-   ],
-   [
-    "two",
-    0.56
-   ],
-   [
-    "let",
-    1.15
-   ],
-   [
-    "agents",
-    1.46
-   ],
-   [
-    "do",
-    1.77
-   ],
-   [
-    "it",
-    1.96
-   ],
-   [
-    "all",
-    2.14
-   ],
-   [
-    "fast",
-    2.83
-   ],
-   [
-    "but",
-    3.3
-   ],
-   [
-    "no",
-    3.61
-   ],
-   [
-    "one",
-    3.8
-   ],
-   [
-    "s",
-    4.11
-   ],
-   [
-    "sweating",
-    4.29
-   ],
-   [
-    "the",
-    4.62
-   ],
-   [
-    "details",
-    4.93
-   ],
-   [
-    "and",
-    5.4
-   ],
-   [
-    "the",
-    5.71
-   ],
-   [
-    "subtle",
-    6.02
-   ],
-   [
-    "things",
-    6.33
-   ],
-   [
-    "break",
-    6.64
-   ],
-   [
-    "customers",
-    7.33
-   ],
-   [
-    "notice",
-    7.66
-   ],
-   [
-    "because",
-    8.13
-   ],
-   [
-    "the",
-    8.44
-   ],
-   [
-    "most",
-    8.75
-   ],
-   [
-    "refined",
-    9.06
-   ],
-   [
-    "product",
-    9.37
-   ],
-   [
-    "wins",
-    9.68
-   ]
-  ],
-  "estimated": true
- },
- "5": {
-  "text": "Or combine them. Agents for speed and scale, humans for judgment. That team beats human-only, and it beats agent-only.",
-  "start": 42.0,
-  "duration": 8.33,
-  "words": [
-   [
-    "or",
-    0.25
-   ],
-   [
-    "combine",
-    0.44
-   ],
-   [
-    "them",
-    0.75
-   ],
-   [
-    "agents",
-    1.44
-   ],
-   [
-    "for",
-    1.75
-   ],
-   [
-    "speed",
-    2.06
-   ],
-   [
-    "and",
-    2.37
-   ],
-   [
-    "scale",
-    2.68
-   ],
-   [
-    "humans",
-    3.15
-   ],
-   [
-    "for",
-    3.46
-   ],
-   [
-    "judgment",
-    3.77
-   ],
-   [
-    "that",
-    4.47
-   ],
-   [
-    "team",
     4.78
    ],
    [
-    "beats",
-    5.09
+    "who",
+    5.82
    ],
    [
-    "human",
-    5.4
+    "does",
+    5.94
    ],
    [
-    "only",
-    5.71
+    "the",
+    6.04
+   ],
+   [
+    "customer",
+    6.16
+   ],
+   [
+    "pick",
+    6.32
+   ]
+  ]
+ },
+ "2": {
+  "text": "Easy. Customers pick the better product when price and new updates are the same. If you don't inspect what you ship, your competitor will ship with higher standards.",
+  "duration": 8.67,
+  "take": "take_02.mp3",
+  "words": [
+   [
+    "easy",
+    0.0
+   ],
+   [
+    "customers",
+    1.22
+   ],
+   [
+    "pick",
+    1.22
+   ],
+   [
+    "the",
+    1.48
+   ],
+   [
+    "better",
+    1.64
+   ],
+   [
+    "product",
+    1.86
+   ],
+   [
+    "when",
+    2.2
+   ],
+   [
+    "price",
+    2.5
    ],
    [
     "and",
-    6.18
+    2.78
+   ],
+   [
+    "new",
+    3.1
+   ],
+   [
+    "updates",
+    3.26
+   ],
+   [
+    "are",
+    3.56
+   ],
+   [
+    "the",
+    3.84
+   ],
+   [
+    "same",
+    3.94
+   ],
+   [
+    "if",
+    4.84
+   ],
+   [
+    "you",
+    4.86
+   ],
+   [
+    "don",
+    5.0
+   ],
+   [
+    "t",
+    5.0
+   ],
+   [
+    "inspect",
+    5.24
+   ],
+   [
+    "what",
+    5.5
+   ],
+   [
+    "you",
+    5.74
+   ],
+   [
+    "ship",
+    5.86
+   ],
+   [
+    "your",
+    6.5
+   ],
+   [
+    "competitor",
+    6.6
+   ],
+   [
+    "will",
+    7.0
+   ],
+   [
+    "ship",
+    7.32
+   ],
+   [
+    "with",
+    7.5
+   ],
+   [
+    "higher",
+    7.66
+   ],
+   [
+    "standards",
+    7.82
+   ]
+  ]
+ },
+ "3": {
+  "text": "Option one: you review everything. Features are shipped carefully, but you can't keep up with the pace.",
+  "duration": 6.69,
+  "take": "take_03.mp3",
+  "words": [
+   [
+    "option",
+    0.0
+   ],
+   [
+    "1",
+    0.32
+   ],
+   [
+    "you",
+    0.96
+   ],
+   [
+    "review",
+    1.44
+   ],
+   [
+    "everything",
+    1.7
+   ],
+   [
+    "features",
+    3.02
+   ],
+   [
+    "are",
+    3.2
+   ],
+   [
+    "shipped",
+    3.5
+   ],
+   [
+    "carefully",
+    3.68
+   ],
+   [
+    "but",
+    4.56
+   ],
+   [
+    "you",
+    4.84
+   ],
+   [
+    "can",
+    5.08
+   ],
+   [
+    "t",
+    5.08
+   ],
+   [
+    "keep",
+    5.42
+   ],
+   [
+    "up",
+    5.56
+   ],
+   [
+    "with",
+    5.7
+   ],
+   [
+    "the",
+    5.88
+   ],
+   [
+    "pace",
+    5.98
+   ]
+  ]
+ },
+ "4": {
+  "text": "Option two: let agents do it all. Fast, but no one's sweating the details, and the subtle things break. Customers notice, because the most refined product wins.",
+  "duration": 11.23,
+  "take": "take_04.mp3",
+  "words": [
+   [
+    "option",
+    0.0
+   ],
+   [
+    "2",
+    0.36
+   ],
+   [
+    "let",
+    1.6
+   ],
+   [
+    "agents",
+    1.62
+   ],
+   [
+    "do",
+    2.02
    ],
    [
     "it",
-    6.49
+    2.32
+   ],
+   [
+    "all",
+    2.44
+   ],
+   [
+    "fast",
+    3.42
+   ],
+   [
+    "but",
+    3.94
+   ],
+   [
+    "no",
+    4.12
+   ],
+   [
+    "one",
+    4.5
+   ],
+   [
+    "s",
+    4.5
+   ],
+   [
+    "sweating",
+    4.78
+   ],
+   [
+    "the",
+    4.96
+   ],
+   [
+    "details",
+    5.18
+   ],
+   [
+    "and",
+    5.52
+   ],
+   [
+    "the",
+    6.04
+   ],
+   [
+    "subtle",
+    6.14
+   ],
+   [
+    "things",
+    6.36
+   ],
+   [
+    "break",
+    6.72
+   ],
+   [
+    "customers",
+    8.06
+   ],
+   [
+    "notice",
+    8.06
+   ],
+   [
+    "because",
+    8.42
+   ],
+   [
+    "the",
+    9.08
+   ],
+   [
+    "most",
+    9.22
+   ],
+   [
+    "refined",
+    9.48
+   ],
+   [
+    "product",
+    9.88
+   ],
+   [
+    "wins",
+    10.38
+   ]
+  ]
+ },
+ "5": {
+  "text": "Or combine them. Agents for speed and scale, humans for judgment. That team beats human-only, and it beats agent-only.",
+  "duration": 8.05,
+  "take": "take_05.mp3",
+  "words": [
+   [
+    "or",
+    0.0
+   ],
+   [
+    "combine",
+    0.2
+   ],
+   [
+    "them",
+    0.4
+   ],
+   [
+    "agents",
+    1.26
+   ],
+   [
+    "for",
+    1.46
+   ],
+   [
+    "speed",
+    1.74
+   ],
+   [
+    "and",
+    2.02
+   ],
+   [
+    "scale",
+    2.18
+   ],
+   [
+    "humans",
+    3.06
+   ],
+   [
+    "for",
+    3.22
+   ],
+   [
+    "judgment",
+    3.56
+   ],
+   [
+    "that",
+    4.6
+   ],
+   [
+    "team",
+    4.66
    ],
    [
     "beats",
-    6.67
+    4.96
+   ],
+   [
+    "human",
+    5.32
+   ],
+   [
+    "only",
+    5.6
+   ],
+   [
+    "and",
+    6.34
+   ],
+   [
+    "it",
+    6.54
+   ],
+   [
+    "beats",
+    6.72
    ],
    [
     "agent",
@@ -486,290 +482,283 @@
    ],
    [
     "only",
-    7.29
+    7.24
    ]
-  ],
-  "estimated": true
+  ]
  },
  "6": {
   "text": "Every team wants three things: the same headcount, more code, and a better product. Only a human plus agent gets all three. That's how you stay competitive.",
-  "start": 51.0,
-  "duration": 10.72,
+  "duration": 10.03,
+  "take": "take_06.mp3",
   "words": [
    [
     "every",
-    0.25
+    0.0
    ],
    [
     "team",
-    0.56
+    0.24
    ],
    [
     "wants",
-    0.87
+    0.54
    ],
    [
     "three",
-    1.18
+    0.82
    ],
    [
     "things",
-    1.49
+    1.16
    ],
    [
     "the",
-    2.08
+    2.12
    ],
    [
     "same",
-    2.39
+    2.14
    ],
    [
     "headcount",
-    2.7
+    2.34
    ],
    [
     "more",
-    3.19
+    3.1
    ],
    [
     "code",
-    3.5
+    3.32
    ],
    [
     "and",
-    3.97
+    3.98
    ],
    [
     "a",
-    4.28
+    4.02
    ],
    [
     "better",
-    4.47
+    4.1
    ],
    [
     "product",
-    4.78
+    4.36
    ],
    [
     "only",
-    5.47
+    5.44
    ],
    [
     "a",
-    5.78
+    5.64
    ],
    [
     "human",
-    5.97
+    5.76
    ],
    [
     "plus",
-    6.28
+    6.1
    ],
    [
     "agent",
-    6.59
+    6.38
    ],
    [
     "gets",
-    6.9
+    6.78
    ],
    [
     "all",
-    7.21
+    7.12
    ],
    [
     "three",
-    7.52
+    7.44
    ],
    [
     "that",
-    8.21
+    8.32
    ],
    [
     "s",
-    8.52
+    8.32
    ],
    [
     "how",
-    8.7
+    8.76
    ],
    [
     "you",
-    9.01
+    8.88
    ],
    [
     "stay",
-    9.32
+    8.98
    ],
    [
     "competitive",
-    9.63
+    9.18
    ]
-  ],
-  "estimated": true
+  ]
  },
  "7": {
   "text": "Why keep humans in the loop? Cuz common sense! AI lets everyone ship more, but it doesn't make more great products. Human judgment and care do that, and they're not in any model's training data.",
-  "start": 61.0,
-  "duration": 13.28,
+  "duration": 12.51,
+  "take": "take_07.mp3",
   "words": [
    [
     "why",
-    0.25
+    0.0
    ],
    [
     "keep",
-    0.56
+    0.32
    ],
    [
     "humans",
-    0.87
+    0.58
    ],
    [
     "in",
-    1.18
+    0.98
    ],
    [
     "the",
-    1.37
+    1.2
    ],
    [
     "loop",
-    1.68
+    1.28
    ],
    [
-    "cuz",
-    2.37
+    "cause",
+    2.28
    ],
    [
     "common",
-    2.68
+    2.32
    ],
    [
     "sense",
-    2.99
+    2.7
    ],
    [
     "ai",
-    3.68
+    3.96
    ],
    [
     "lets",
-    3.86
+    4.02
    ],
    [
     "everyone",
-    4.17
+    4.36
    ],
    [
     "ship",
-    4.49
+    4.76
    ],
    [
     "more",
-    4.8
+    5.12
    ],
    [
     "but",
-    5.27
+    5.66
    ],
    [
     "it",
-    5.58
+    5.86
    ],
    [
     "doesn",
-    5.77
+    6.04
    ],
    [
     "t",
-    6.08
+    6.04
    ],
    [
     "make",
-    6.27
+    6.36
    ],
    [
     "more",
-    6.58
+    6.52
    ],
    [
     "great",
-    6.89
+    6.78
    ],
    [
     "products",
-    7.2
+    7.0
    ],
    [
     "human",
-    7.9
+    8.38
    ],
    [
     "judgment",
-    8.21
+    8.4
    ],
    [
     "and",
-    8.53
+    8.66
    ],
    [
     "care",
-    8.84
+    9.02
    ],
    [
     "do",
-    9.15
+    9.26
    ],
    [
     "that",
-    9.34
+    9.52
    ],
    [
     "and",
-    9.81
+    10.08
    ],
    [
     "they",
-    10.12
+    10.32
    ],
    [
     "re",
-    10.43
+    10.32
    ],
    [
     "not",
-    10.61
+    10.54
    ],
    [
     "in",
-    10.92
+    10.78
    ],
    [
     "any",
-    11.11
+    10.9
    ],
    [
-    "model",
-    11.42
-   ],
-   [
-    "s",
-    11.73
+    "models",
+    11.14
    ],
    [
     "training",
-    11.92
+    11.72
    ],
    [
     "data",
-    12.24
+    11.9
    ]
-  ],
-  "estimated": true
+  ]
  },
  "8": {
   "text": "LiveReview gives your engineers attention and understanding: issues ranked by importance, a slide deck for every change, a quick quiz, conversations on the MR, and Livi, the bot that turns your data into analysis reports and actionable items.",

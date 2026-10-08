@@ -7,6 +7,11 @@ Transcribes the take with faster-whisper (word timestamps), matches the words ag
 lines in assets/audio/vo_piece1.md in order, cuts in the middle of the real pause nearest each
 sentence boundary (whisper's own word edges clip syllables), and writes assets/audio/vo/line_NN.wav plus
 vo/lines.json {num: text, start (cue in the cut), duration, take, src_start, src_end}.
+
+Per-line takes (one website generation per line, named take_NN.mp3):
+    python3 scripts/07b_split_take.py --lines assets/audio/vo_street_part2/takes --script assets/audio/vo_street_part2.md --out assets/audio/vo_street_part2
+converts each to line_NN.wav, transcribes its word times and merges it into <out>/lines.json (other lines,
+e.g. estimated ones, are kept).
 """
 import json, os, re, subprocess, sys, tempfile
 
@@ -94,6 +99,27 @@ def main(take):
     json.dump(meta, open(os.path.join(OUT, "lines.json"), "w"), indent=1)
 
 
+def per_line(folder):
+    path = os.path.join(OUT, "lines.json")
+    meta = json.load(open(path)) if os.path.exists(path) else {}
+    text = {num: t for num, cue, t in script_lines()}
+    for f in sorted(os.listdir(folder)):
+        m = re.match(r"take_(\d+)\.(mp3|wav)$", f)
+        if not m:
+            continue
+        num, take = int(m.group(1)), os.path.join(folder, f)
+        out = os.path.join(OUT, f"line_{num:02d}.wav")
+        subprocess.run(["ffmpeg", "-loglevel", "error", "-y", "-i", take, "-ar", "44100", out], check=True)
+        words = transcribe(out)
+        want = tok(text[num])
+        if [w for w, _, _ in words] != want:
+            print(f"  line {num}: whisper heard {' '.join(w for w, _, _ in words)!r}")
+        meta[str(num)] = {"text": re.sub(r"\[[^\]]*\]\s*", "", text[num]), "duration": round(duration(out), 2),
+                          "take": f, "words": [(w, round(s, 3)) for w, s, e in words]}
+        print(f"line {num:2d}  {duration(out):5.2f}s  {len(words)} words")
+    json.dump(meta, open(path, "w"), indent=1)
+
+
 if __name__ == "__main__":
     args = sys.argv[1:]
     if "--script" in args:
@@ -101,4 +127,7 @@ if __name__ == "__main__":
     if "--out" in args:
         OUT = os.path.abspath(args[args.index("--out") + 1])
         os.makedirs(OUT, exist_ok=True)
-    main(os.path.abspath(args[0]))
+    if "--lines" in args:
+        per_line(os.path.abspath(args[args.index("--lines") + 1]))
+    else:
+        main(os.path.abspath(args[0]))
