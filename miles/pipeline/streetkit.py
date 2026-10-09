@@ -43,7 +43,7 @@ class Kit:
     def hold(self, n, extra=0.45, at_least=0):
         return int(round(max(at_least, (self.dur(n) - PAD + extra) * FPS)))
 
-    ALIAS = {"one": "1", "two": "2", "three": "3", "cuz": "cause", "model": "models"}   # how whisper spells them
+    ALIAS = {"one": "1", "two": "2", "three": "3", "cuz": "cause", "model": "models", "livi": "livy"}   # how whisper spells them
 
     def word(self, n, w, nth=0):
         hits = [t for x, t in self.vo[str(n)]["words"] if x == w] or \

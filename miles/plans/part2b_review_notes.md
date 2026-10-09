@@ -51,24 +51,30 @@ which can't cover 2 s + 2 s — needs fixed durations or a re-read.
   **hexmos.com/livereview** in light grey. Today the card has only a thin blue accent bar and the brand
   line sits under the demo video on the right.
 
-## Code changes still to make (not started)
-1. `05b_street_part2_boards.py`
-   - S16 clips → `blast_radius_zoom.mp4`, `slide_deck.gif`, `quiz.gif`, `converse_in_mr.png`, `demo_livi_chat_bot.mp4`.
-   - S17 item a text → "CI/CD Gates: Precise, Customized Merge Enforcement"; clip `demo_cicd_gates.mp4` (full 4 s).
-   - S17 item b → show `teams.png` (2 s) then `slack.png` (2 s).
-   - S17 item c → drop the MCP clip; render the MCP sentence as styled text.
-   - Add the LiveReview wordmark to the board's top-left blue box.
-   - Support still images (`.png`) and GIF→MP4 in `clip_frames` (it currently assumes video via ffmpeg).
-2. `04_street_part2.py`
-   - `s16_items` / `s17_items`: pop words `w8("livi")` → the take spells **"Livy"**; `w9("rules")` no longer
-     exists (line is now "CI/CD gates") → use `w9("gates")` (or `w9("ci")`).
-   - Move the board timing from word-driven to the requested fixed durations (12/5/3/2/3 and 4/4/5), or re-read.
-   - Update the line-11 caption that still says "the most efficient way…".
-3. `pipeline/streetkit.py`
-   - Add `"livi": "livy"` to `ALIAS` (Whisper spells it "Livy").
+## Implemented (2026-10-09 — built, **not rendered**)
+- `scripts/05b_street_part2_boards.py` rewritten:
+  - S16 media: `blast_radius_zoom.mp4` (full), `slide_deck.gif` (5 s), `quiz.gif` (3 s),
+    `converse_in_mr.png` (2 s), `demo_livi_chat_bot.mp4` (trimmed to 2 s–5 s).
+  - S17: item a text + `demo_cicd_gates.mp4` (full 4 s); item b = a **video** (`demo_schedule_review.mp4`,
+    starts on the word "integrations", no teams/slack images); item c MCP = text-only card.
+  - LiveReview wordmark in the board's blue header (white) + URL (light grey).
+  - **Full-screen rule:** the media starts in the right panel and expands to full screen when the item's
+    configured media length is **> 2 s**; otherwise it stays in the panel. Result: S16 only "Conversations"
+    stays in the panel (others full); S17 MCP is a text card. Handles video / GIF / still and trims.
+- `scripts/04_street_part2.py`: pop words fixed — S16 a on `"issue"` (VO says issue, not "issues"),
+  e on `"livy"`; S17 a on `"gates"`, b on `"integrations"` (video starts there); S14/S15 `code`→`results`;
+  line-11 caption updated to "humans and AI, working together".
+- `pipeline/streetkit.py`: `ALIAS` gains `livi → livy`.
+- Built `build/street_part2.blend`. Overlays: `end 4353`; s16 `[2195,2966]` items `[2316,2616,2731,2801,2865]`;
+  s17 `[2967,3516]` items `[3119,3248,3348]`. No `OCCLUDED`, no path hits.
 
-## Source prep still to do
-- Convert `slide_deck.gif` and `quiz.gif` to MP4 (16:9, e.g. 800×450) to fill the demo box.
-- Trim `demo_livi_chat_bot.mp4` to its 2 s–5 s section.
-- `blast_radius_zoom.mp4` (3:2) and the GIFs (~1.16:1) are not 16:9 → they letterbox in the 800×450 box;
-  crop/re-render to 16:9 for a clean fill.
+## Open questions / notes
+- **Integrations video:** no integrations-specific clip exists, so item b uses `demo_schedule_review.mp4`
+  (the previous mapping) — confirm, or supply a better clip.
+- `teams_integration.png` / `slack_integration.png` (supplied earlier) are currently **unused**.
+- The full-screen brand pill can overlap a demo UI's own header (cosmetic).
+- Media is cover-cropped to 16:9 (no letterbox), so `blast_radius_zoom.mp4` (3:2) loses top/bottom.
+
+## To finish (when asked)
+Render the 3D range skipping S16/S17 → `05b_street_part2_boards.py <frames> ` (boards) →
+`06c_street_part2_post.py` (captions) → `06_assemble.py street_part2 --height 720 --music …`.

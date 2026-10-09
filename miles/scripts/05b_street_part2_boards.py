@@ -1,12 +1,15 @@
-"""Street part 2, S16/S17: the product, as clean full-screen 2D frames (no Spidey): LiveReview's own demo footage on
-the right two-thirds, a board on the left third whose items pop in on their words in the VO.
+"""Street part 2, S16/S17: the product, as clean full-screen 2D frames (no Spidey).
 
     python3 scripts/05b_street_part2_boards.py build/frames/street_part2_720p      # writes f_NNNN.jpg for the S16/S17 frames
 
 Frame ranges and word frames come from build/street_part2_overlays.json (written by 04_street_part2.py), so the
 boards re-time with the voice-over like the 3D scenes. The 3D render skips these frames.
+
+Layout: the board card sits on the left with the LiveReview wordmark in its blue header. Each item's media starts
+in the right-hand panel and, when the item runs longer than 2 s, expands to full screen (short clips / stills stay
+in the panel). An item with no clip (MCP) renders as a styled text card instead.
 """
-import json, os, subprocess, sys, tempfile
+import json, os, shutil, subprocess, sys, tempfile
 from PIL import Image, ImageDraw, ImageFilter
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -18,33 +21,56 @@ slides = importlib.import_module("03_make_slides")
 
 W, H = 1280, 720
 DEMO = os.path.join(paths.REPO, "videos", "livereview-launch", "assets")
-LOGOS = os.path.join(paths.ROOT, "assets", "street2", "logos")
 BG, CARD, INK, DIM = (12, 18, 32), (255, 255, 255), (15, 23, 42), (148, 163, 184)
 ACCENT = {"s16": (37, 99, 235), "s17": (22, 163, 74)}
+BRAND = (37, 99, 235)                              # LiveReview header blue
+PANEL = (452, 70, 1252, 520)                       # demo frame in the right two-thirds
+FULL = (0, 0, 1280, 720)                           # full-screen frame
+EXPAND = 12                                        # frames to grow from the panel to full screen
+FULL_AT = 2.0                                       # a media longer than this many seconds goes full screen
+
 BOARDS = {
     "s16": dict(title="For your engineers: **attention + understanding**",
                 items=["Issues ranked by importance", "A slide deck for every change", "A quick quiz to check understanding",
                        "Conversations right on the MR", "Livi: bot that turns your data into analysis reports and actionable items"],
-                clips=["git-lrc_issue-navigator-compressed.mp4", "git-lrc_summary-deck-compressed.mp4",
-                       "quiz-coverage_quiz-coverage-demo-compressed.mp4", "clip05_blast.mp4", "demo_livi_chat_bot.mp4"]),
+                media=["blast_radius_zoom.mp4", "slide_deck.gif", "quiz.gif", "converse_in_mr.png", "demo_livi_chat_bot.mp4"],
+                secs=[12.0, 5.0, 3.0, 2.0, 3.0],                       # media length -> >2 s goes full screen
+                trim=[None, None, None, None, (2.0, 5.0)],            # Livi: only the 2 s-5 s section
+                caption=None),
     "s17": dict(title="For your agents: **enforcement + scale**",
-                items=["Custom repository rules checked on every pre-commit", "Integrations: Slack, Teams, Discord", "MCP"],
-                clips=["demo_cicd_gates.mp4", "demo_schedule_review.mp4", "clip14_nav.mp4"]),
+                items=["CI/CD Gates: Precise, Customized Merge Enforcement", "Integrations: Slack, Teams, Discord", "MCP"],
+                media=["demo_cicd_gates.mp4", "demo_schedule_review.mp4", None],
+                secs=[4.0, 4.0, 5.0],
+                trim=[None, None, None],
+                caption="MCP can be used to connect to any preferred AI Agent to operate Livi right from your agent."),
 }
-VID = (452, 70, 1252, 520)                        # demo frame box on the right two-thirds (16:9-ish, letterboxed)
+
+_cache = {}                                        # name -> (tmpdir, [frame paths]) ; only the current clip is kept
 
 
-def clip_frames(name, n, cache={}):
-    """The clip's frames at 30 fps, fitted into the video box (looped when it is shorter than needed)."""
-    if name in cache:
-        return cache[name]
-    d = tempfile.mkdtemp()
-    w, h = VID[2] - VID[0], VID[3] - VID[1]
-    subprocess.run(["ffmpeg", "-loglevel", "error", "-y", "-i", os.path.join(DEMO, name), "-t", str(n / 30 + 0.5), "-vf",
-                    f"fps=30,scale={w}:{h}:force_original_aspect_ratio=decrease,pad={w}:{h}:(ow-iw)/2:(oh-ih)/2:color=0x0c1220",
+def media_frames(name, window, trim=None):
+    """The media at 30 fps, cover-fitted to the full frame (loops when shorter than the on-screen window)."""
+    global _cache
+    if name in _cache:
+        return _cache[name][1]
+    for d_, _ in _cache.values():                  # one item plays at a time: drop the previous clip
+        shutil.rmtree(d_, ignore_errors=True)
+    _cache = {}
+    d = tempfile.mkdtemp(prefix="board_")
+    src = os.path.join(DEMO, name)
+    ss = trim[0] if trim else 0.0
+    clip_len = (trim[1] - trim[0]) if trim else None
+    want = window / 30.0 + 0.1
+    dur = min(want, clip_len) if clip_len else want
+    subprocess.run(["ffmpeg", "-loglevel", "error", "-y", "-ss", f"{ss:.3f}", "-i", src, "-t", f"{dur:.3f}", "-vf",
+                    f"fps=30,scale={W}:{H}:force_original_aspect_ratio=increase,crop={W}:{H}",
                     os.path.join(d, "c_%04d.png")], check=True)
-    cache[name] = sorted(os.path.join(d, f) for f in os.listdir(d))
-    return cache[name]
+    fr = sorted(os.path.join(d, f) for f in os.listdir(d))
+    if not fr:                                     # a still that ffmpeg refused: load it directly
+        Image.open(src).convert("RGB").save(os.path.join(d, "c_0001.png"))
+        fr = [os.path.join(d, "c_0001.png")]
+    _cache[name] = (d, fr)
+    return fr
 
 
 def rich(d, x, y, text, size, fill, max_w):
@@ -62,46 +88,87 @@ def rich(d, x, y, text, size, fill, max_w):
     return y
 
 
+def rich_center(d, cx, y, text, size, fill, max_w):
+    tokens = slides.words(text)
+    fonts = {False: slides.font(size, slides.REGULAR), True: slides.font(size, slides.BOLD)}
+    lines, space = slides.wrap(tokens, fonts, max_w)
+    lh = int(size * 1.35)
+    for line in lines:
+        width = sum(fonts[b].getlength(wd) + space for wd, b in line)
+        x = cx - width / 2
+        for wd, b in line:
+            d.text((x, y + size), wd, font=fonts[b], fill=fill, anchor="ls")
+            x += fonts[b].getlength(wd) + space
+        y += lh
+    return y
+
+
+def box_lerp(k):
+    return tuple(PANEL[j] + (FULL[j] - PANEL[j]) * k for j in range(4))
+
+
+def brand_header(d, x0, y0, x1, h=68):
+    """The blue header on the board card: LiveReview in white, the URL in light grey."""
+    d.rounded_rectangle([x0, y0, x1, y0 + h], radius=22, fill=BRAND + (255,))
+    d.rectangle([x0, y0 + h - 22, x1, y0 + h], fill=BRAND + (255,))
+    d.text((x0 + 24, y0 + 30), "LiveReview", font=slides.font(28, slides.BOLD), fill=(255, 255, 255, 255), anchor="ls")
+    d.text((x0 + 24, y0 + 52), "hexmos.com/livereview", font=slides.font(15, slides.REGULAR), fill=(214, 224, 245, 255), anchor="ls")
+    return y0 + h
+
+
 def board_layer(key, f, title_f, item_fs, slide):
-    """The left-third card at frame f (slide: px offset for the S16 -> S17 swap)."""
+    """The left card: brand header, title, numbered items (the one being spoken highlighted)."""
     b = BOARDS[key]
     layer = Image.new("RGBA", (W, H), (0, 0, 0, 0))
     d = ImageDraw.Draw(layer)
-    x0, y0, x1, y1 = 28 + slide, 40, 420 + slide, 680
+    x0, y0, x1, y1 = 28 + slide, 40, 430 + slide, 682
     d.rounded_rectangle([x0, y0, x1, y1], radius=22, fill=CARD + (255,))
-    d.rounded_rectangle([x0, y0, x1, y0 + 10], radius=5, fill=ACCENT[key] + (255,))
+    y = brand_header(d, x0, y0, x1)
     if f >= title_f:
         a = min(1.0, (f - title_f + 1) / 6)
-        rich(d, x0 + 26, y0 + 30, b["title"], 30, INK + (int(255 * a),), x1 - x0 - 52)
-    y = y0 + 150
+        y = rich(d, x0 + 26, y + 20, b["title"], 29, INK + (int(255 * a),), x1 - x0 - 52)
+    y = max(y, y0 + 168) + 6
     cur = max((i for i, fi in enumerate(item_fs) if f >= fi), default=-1)
     for i, (txt, fi) in enumerate(zip(b["items"], item_fs)):
         if f < fi:
             break
         t = min(1.0, (f - fi + 1) / 7)
         pop = 0.7 + 0.3 * (1 - (1 - t) ** 3) + 0.06 * max(0.0, 1 - abs(t * 2 - 1.4))        # a small overshoot
-        size = int(25 * pop)
+        size = int(24 * pop)
         hi = i == cur
         if hi:
-            tint = {"s16": (219, 234, 254), "s17": (220, 252, 231)}[key]       # the item being spoken
-            lines_n = max(1, len(slides.wrap(slides.words(txt), {False: slides.font(size, slides.REGULAR), True: slides.font(size, slides.BOLD)},
-                                             x1 - x0 - 90)[0]))
+            tint = {"s16": (219, 234, 254), "s17": (220, 252, 231)}[key]
+            fonts = {False: slides.font(size, slides.REGULAR), True: slides.font(size, slides.BOLD)}
+            lines_n = max(1, len(slides.wrap(slides.words(txt), fonts, x1 - x0 - 90)[0]))
             d.rounded_rectangle([x0 + 14, y - 8, x1 - 14, y + int(size * 1.22) * lines_n + 10], radius=12, fill=tint + (255,))
         d.ellipse([x0 + 24, y + 2, x0 + 54, y + 32], fill=(ACCENT[key] if hi else DIM) + (255,))
         d.text((x0 + 39, y + 17), str(i + 1), font=slides.font(18, slides.BOLD), fill=(255, 255, 255, 255), anchor="mm")
         y = rich(d, x0 + 66, y, txt, size, (INK if hi else (100, 116, 139)) + (255,), x1 - x0 - 90)
-        if key == "s17" and i == 1:                               # Slack, Teams, Discord in a row
-            for kk, n in enumerate(("slack", "teams", "discord")):
-                p = os.path.join(LOGOS, n + ".png")
-                if os.path.exists(p):
-                    lg = Image.open(p).convert("RGBA").resize((44, 44))
-                    layer.alpha_composite(lg, (x0 + 66 + kk * 58, y + 4))
-            y += 56
         y += 22
     return layer
 
 
-def frame(key, f, ov, cfg):
+def text_card(img, box, caption):
+    """An item with no clip: a dark card with the sentence centred."""
+    x0, y0, x1, y1 = (int(v) for v in box)
+    pad = 26
+    card = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+    d = ImageDraw.Draw(card)
+    d.rounded_rectangle([x0, y0, x1, y1], radius=18, fill=(17, 24, 39, 255))
+    d.rounded_rectangle([x0, y0, x0 + 8, y1], radius=4, fill=BRAND + (255,))
+    size = 30
+    while size > 18:
+        fonts = {False: slides.font(size, slides.REGULAR), True: slides.font(size, slides.BOLD)}
+        lines, space = slides.wrap(slides.words(caption), fonts, x1 - x0 - 2 * pad)
+        if len(lines) * int(size * 1.35) < (y1 - y0) - 2 * pad:
+            break
+        size -= 2
+    y = (y0 + y1) / 2 - len(lines) * int(size * 1.35) / 2
+    rich_center(d, (x0 + x1) / 2, y, caption, size, (226, 232, 240, 255), x1 - x0 - 2 * pad)
+    return card
+
+
+def frame(key, f, cfg):
     b = BOARDS[key]
     title_f = cfg[f"{key}_title"]
     item_fs = cfg[f"{key}_items"]
@@ -111,19 +178,19 @@ def frame(key, f, ov, cfg):
     for yy in range(H):                                          # a soft vertical gradient
         c = int(10 * yy / H)
         d.line([(0, yy), (W, yy)], fill=(BG[0] + c, BG[1] + c, BG[2] + c + 4))
-    cur = max((i for i, fi in enumerate(item_fs) if f >= fi), default=0)
-    clip = b["clips"][cur]
-    start = item_fs[cur] if f >= item_fs[0] else a0
-    fr = clip_frames(clip, max(60, a1 - a0 + 30))
-    shot = Image.open(fr[(f - start) % len(fr)]).convert("RGB")
-    sh = Image.new("RGBA", (VID[2] - VID[0] + 40, VID[3] - VID[1] + 40), (0, 0, 0, 0))
-    ImageDraw.Draw(sh).rounded_rectangle([20, 20, sh.width - 20, sh.height - 20], radius=18, fill=(0, 0, 0, 160))
-    img.paste(sh.filter(ImageFilter.GaussianBlur(12)), (VID[0] - 20, VID[1] - 12), sh.filter(ImageFilter.GaussianBlur(12)))
-    mask = Image.new("L", shot.size, 0)
-    ImageDraw.Draw(mask).rounded_rectangle([0, 0, shot.width, shot.height], radius=16, fill=255)
-    img.paste(shot, (VID[0], VID[1]), mask)
-    d.text((VID[0], VID[3] + 40), "LiveReview", font=slides.font(30, slides.BOLD), fill=(226, 232, 240))
-    d.text((VID[0] + 175, VID[3] + 44), "· hexmos.com/livereview", font=slides.font(24, slides.REGULAR), fill=DIM)
+
+    cur = max((i for i, fi in enumerate(item_fs) if f >= fi), default=-1)
+    k = 0.0                                                      # 0 = panel, 1 = full screen
+    media, start, end = None, None, None
+    if cur >= 0:
+        start = item_fs[cur]
+        end = item_fs[cur + 1] if cur + 1 < len(item_fs) else a1
+        media = b["media"][cur]
+        if media is not None and b["secs"][cur] > FULL_AT:
+            t = max(0.0, (f - start) / EXPAND)
+            k = min(1.0, t) * min(1.0, t) * (3 - 2 * min(1.0, t))     # smoothstep out of the panel
+    box = box_lerp(k)
+
     slide = 0
     if key == "s16" and f > a1 - 10:                             # the S16 board slides out ...
         slide = -int(460 * ((f - (a1 - 10)) / 10) ** 2)
@@ -131,6 +198,29 @@ def frame(key, f, ov, cfg):
         slide = -int(460 * (1 - (f - a0) / 10) ** 2)
     out = img.convert("RGBA")
     out.alpha_composite(board_layer(key, f, title_f, item_fs, slide))
+
+    if cur >= 0:
+        bx0, by0, bx1, by1 = (int(v) for v in box)
+        bw, bh = bx1 - bx0, by1 - by0
+        if media is None:
+            out.alpha_composite(text_card(img, box, b["caption"]))
+        else:
+            fr = media_frames(media, end - start, b["trim"][cur])
+            shot = Image.open(fr[(f - start) % len(fr)]).convert("RGB").resize((bw, bh))
+            radius = int(16 * (1 - k))
+            if radius > 1:
+                sh = Image.new("RGBA", (bw + 40, bh + 40), (0, 0, 0, 0))
+                ImageDraw.Draw(sh).rounded_rectangle([20, 20, bw + 20, bh + 20], radius=radius + 4, fill=(0, 0, 0, 170))
+                out.alpha_composite(sh.filter(ImageFilter.GaussianBlur(12)), (bx0 - 20, by0 - 20))
+            mask = Image.new("L", (bw, bh), 0)
+            ImageDraw.Draw(mask).rounded_rectangle([0, 0, bw - 1, bh - 1], radius=radius, fill=255)
+            out.paste(shot, (bx0, by0), mask)
+
+    if k > 0.55:                                                 # full screen: keep a small wordmark top-left
+        d2 = ImageDraw.Draw(out)
+        d2.rounded_rectangle([18, 16, 214, 58], radius=12, fill=(8, 12, 22, 150))
+        d2.text((32, 40), "LiveReview", font=slides.font(22, slides.BOLD), fill=(255, 255, 255, 235), anchor="ls")
+        d2.text((150, 40), "· hexmos.com/livereview", font=slides.font(14, slides.REGULAR), fill=(206, 214, 230, 220), anchor="ls")
     return out.convert("RGB")
 
 
@@ -143,6 +233,6 @@ if __name__ == "__main__":
     for key in ("s16", "s17"):
         a0, a1 = cfg[key]
         for f in range(a0, a1 + 1):
-            frame(key, f, ov, cfg).save(os.path.join(out, f"f_{f:04d}.jpg"), quality=92)
+            frame(key, f, cfg).save(os.path.join(out, f"f_{f:04d}.jpg"), quality=92)
             n += 1
     print("BOARDS", n, "frames", cfg["s16"], cfg["s17"])

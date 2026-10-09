@@ -677,7 +677,7 @@ def key_pose(frame, name):
 w6 = lambda w, nth=0: wordf(6, w, nth)
 w7 = lambda w, nth=0: wordf(7, w, nth)
 PEACE = wordf(11, "sign")
-SEQ = [(w6("headcount") - 6, "flat"), (w6("headcount") - 2, "one"), (w6("code") - 2, "two"), (w6("better") - 2, "three"),
+SEQ = [(w6("headcount") - 6, "flat"), (w6("headcount") - 2, "one"), (w6("results") - 2, "two"), (w6("better") - 2, "three"),
        (w6("only") - 4, "three"), (w6("only"), "fist"), (w6("human") - 2, "point"), (w6("stay") + 10, "point"), (w6("stay") + 18, "flat"),
        (w7("why") + 40, "flat"), (w7("why") + 46, "point"), (w7("cuz") - 2, "point"), (w7("ai") + 4, "flat"), (w7("human") - 4, "flat"),
        (PEACE - 8, "flat"), (PEACE - 2, "peace"), (END - 2, "peace")]
@@ -934,17 +934,17 @@ for o in fx.collection("Webs").objects:
         o.data.materials[0] = fx.material("Web_Line", (0.95, 0.97, 1.0), rough=0.35, emit=0.9)
 
 # ================================================================== captions (laid over in post) + the 2D product frames
-OVER = [(w6("headcount") - 2, T[7] - 6, "Same headcount.", 0), (w6("code") - 2, T[7] - 6, "More code.", 1),
+OVER = [(w6("headcount") - 2, T[7] - 6, "Same headcount.", 0), (w6("results") - 2, T[7] - 6, "More results.", 1),
         (w6("better") - 2, T[7] - 6, "Better product.", 2), (w7("not") - 2, T[8] - 2, "Common sense isn't in the **training data.**", 0),
         (T[10], HOLD_F - 4, "Let agents scale. **You do the judging.**", 0), (HOLD_F, SUNRISE + 60, "Inspection **holds it all up.**", 0),
-        (wordf(11, "livereview") - 2, PEACE + 60, "LiveReview keeps you competitive: **the most efficient way for humans and AI to work together.**", 0),
+        (wordf(11, "livereview") - 2, PEACE + 60, "LiveReview keeps you competitive: **humans and AI, working together.**", 0),
         (DEMO_CUT, END, "hexmos.com/livereview", 0)]
 w8 = lambda w: wordf(8, w)
 w9 = lambda w: wordf(9, w)
 json.dump(dict(fps=FPS, end=END, captions=[dict(f0=a_, f1=b_, text=t_, row=r_) for a_, b_, t_, r_ in OVER],
                boards=dict(s16=[T[8], T[9] - 1], s17=[T[9], S18_CUT - 1],
-                           s16_title=w8("attention"), s16_items=[w8("issues"), w8("slide"), w8("quick"), w8("conversations"), w8("livi")],
-                           s17_title=w9("agents"), s17_items=[w9("rules"), w9("integrations"), w9("mcp")])),
+                           s16_title=w8("attention"), s16_items=[w8("issue"), w8("slide"), w8("quick"), w8("conversations"), w8("livy")],
+                           s17_title=w9("agents"), s17_items=[w9("gates"), w9("integrations"), w9("mcp")])),
           open(os.path.join(paths.ROOT, "build", "street_part2_overlays.json"), "w"), indent=1)
 
 # ------------------------------------------------------------------ parked cars (none on the shop street)
