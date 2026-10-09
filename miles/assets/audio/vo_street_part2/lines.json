@@ -761,425 +761,662 @@
   ]
  },
  "8": {
-  "text": "LiveReview gives your engineers attention and understanding: issues ranked by importance, a slide deck for every change, a quick quiz, conversations on the MR, and Livi, the bot that turns your data into analysis reports and actionable items.",
-  "start": 73.0,
-  "duration": 13.54,
+  "text": "LiveReview gives your engineers attention and understanding. Every issue is ranked by importance, sorted by real blast radius \u2014 what a change touches, how far it spreads, and how risky it is \u2014 so the critical one never gets buried. A slide deck for every change, explaining what moved and why. A quick quiz to check the reviewer understood it. Conversations right on the MR. And Livi, your bot for reports and actions.",
+  "duration": 24.84,
+  "take": "take_08.mp3",
   "words": [
    [
     "livereview",
-    0.25
+    0.0
    ],
    [
     "gives",
-    0.6
+    0.46
    ],
    [
     "your",
-    0.91
+    0.82
    ],
    [
     "engineers",
-    1.22
+    0.98
    ],
    [
     "attention",
-    1.55
+    1.36
    ],
    [
     "and",
-    1.89
+    1.88
    ],
    [
     "understanding",
-    2.2
-   ],
-   [
-    "issues",
-    2.86
-   ],
-   [
-    "ranked",
-    3.17
-   ],
-   [
-    "by",
-    3.48
-   ],
-   [
-    "importance",
-    3.67
-   ],
-   [
-    "a",
-    4.17
-   ],
-   [
-    "slide",
-    4.36
-   ],
-   [
-    "deck",
-    4.67
-   ],
-   [
-    "for",
-    4.98
-   ],
-   [
-    "every",
-    5.29
-   ],
-   [
-    "change",
-    5.6
-   ],
-   [
-    "a",
-    6.07
-   ],
-   [
-    "quick",
-    6.26
-   ],
-   [
-    "quiz",
-    6.57
-   ],
-   [
-    "conversations",
-    7.04
-   ],
-   [
-    "on",
-    7.42
-   ],
-   [
-    "the",
-    7.61
-   ],
-   [
-    "mr",
-    7.92
-   ],
-   [
-    "and",
-    8.26
-   ],
-   [
-    "livi",
-    8.57
-   ],
-   [
-    "the",
-    9.04
-   ],
-   [
-    "bot",
-    9.35
-   ],
-   [
-    "that",
-    9.66
-   ],
-   [
-    "turns",
-    9.97
-   ],
-   [
-    "your",
-    10.28
-   ],
-   [
-    "data",
-    10.59
-   ],
-   [
-    "into",
-    10.9
-   ],
-   [
-    "analysis",
-    11.21
-   ],
-   [
-    "reports",
-    11.54
-   ],
-   [
-    "and",
-    11.85
-   ],
-   [
-    "actionable",
-    12.16
-   ],
-   [
-    "items",
-    12.5
-   ]
-  ],
-  "estimated": true
- },
- "9": {
-  "text": "And it gives your agents what they need to enforce your standards at scale: your rules on every pre-commit, your integrations, and MCP.",
-  "start": 87.0,
-  "duration": 8.61,
-  "words": [
-   [
-    "and",
-    0.25
-   ],
-   [
-    "it",
-    0.56
-   ],
-   [
-    "gives",
-    0.75
-   ],
-   [
-    "your",
-    1.06
-   ],
-   [
-    "agents",
-    1.37
-   ],
-   [
-    "what",
-    1.68
-   ],
-   [
-    "they",
-    1.99
-   ],
-   [
-    "need",
-    2.3
-   ],
-   [
-    "to",
-    2.61
-   ],
-   [
-    "enforce",
-    2.79
-   ],
-   [
-    "your",
-    3.1
-   ],
-   [
-    "standards",
-    3.41
-   ],
-   [
-    "at",
-    3.75
-   ],
-   [
-    "scale",
-    3.93
-   ],
-   [
-    "your",
-    4.52
-   ],
-   [
-    "rules",
-    4.83
-   ],
-   [
-    "on",
-    5.14
-   ],
-   [
-    "every",
-    5.33
-   ],
-   [
-    "pre",
-    5.64
-   ],
-   [
-    "commit",
-    5.95
-   ],
-   [
-    "your",
-    6.42
-   ],
-   [
-    "integrations",
-    6.73
-   ],
-   [
-    "and",
-    7.26
-   ],
-   [
-    "mcp",
-    7.57
-   ]
-  ],
-  "estimated": true
- },
- "10": {
-  "text": "Use agents for scale. Use your judgment, always. Inspection holds it all up.",
-  "start": 95.0,
-  "duration": 5.73,
-  "words": [
-   [
-    "use",
-    0.25
-   ],
-   [
-    "agents",
-    0.56
-   ],
-   [
-    "for",
-    0.87
-   ],
-   [
-    "scale",
-    1.18
-   ],
-   [
-    "use",
-    1.87
-   ],
-   [
-    "your",
-    2.18
-   ],
-   [
-    "judgment",
-    2.49
-   ],
-   [
-    "always",
-    2.97
-   ],
-   [
-    "inspection",
-    3.66
-   ],
-   [
-    "holds",
-    4.01
-   ],
-   [
-    "it",
-    4.32
-   ],
-   [
-    "all",
-    4.51
-   ],
-   [
-    "up",
-    4.82
-   ]
-  ],
-  "estimated": true
- },
- "11": {
-  "text": "LiveReview keeps you competitive: the most efficient way for humans and AI to work together. The blast-radius aware AI code reviewer for your critical systems. Sign in to try it, or contact us to learn more.",
-  "start": 105.0,
-  "duration": 12.68,
-  "words": [
-   [
-    "livereview",
-    0.25
-   ],
-   [
-    "keeps",
-    0.6
-   ],
-   [
-    "you",
-    0.91
-   ],
-   [
-    "competitive",
-    1.22
-   ],
-   [
-    "the",
-    1.86
-   ],
-   [
-    "most",
-    2.17
-   ],
-   [
-    "efficient",
     2.48
    ],
    [
-    "way",
-    2.81
+    "every",
+    3.92
    ],
    [
-    "for",
-    3.12
+    "issue",
+    4.02
    ],
    [
-    "humans",
-    3.43
+    "is",
+    4.44
    ],
    [
-    "and",
-    3.74
+    "ranked",
+    4.58
    ],
    [
-    "ai",
-    4.05
+    "by",
+    4.82
    ],
    [
-    "to",
-    4.24
+    "importance",
+    5.08
    ],
    [
-    "work",
-    4.42
+    "sorted",
+    5.96
    ],
    [
-    "together",
-    4.73
+    "by",
+    6.14
    ],
    [
-    "the",
-    5.44
+    "real",
+    6.42
    ],
    [
     "blast",
-    5.75
+    6.7
    ],
    [
     "radius",
-    6.06
+    6.98
    ],
    [
-    "aware",
-    6.37
+    "what",
+    8.02
    ],
    [
-    "ai",
-    6.68
+    "a",
+    8.12
    ],
    [
-    "code",
-    6.86
+    "change",
+    8.2
    ],
    [
-    "reviewer",
-    7.17
+    "touches",
+    8.36
+   ],
+   [
+    "how",
+    9.2
+   ],
+   [
+    "far",
+    9.32
+   ],
+   [
+    "it",
+    9.56
+   ],
+   [
+    "spreads",
+    9.7
+   ],
+   [
+    "and",
+    10.32
+   ],
+   [
+    "how",
+    10.34
+   ],
+   [
+    "risky",
+    10.52
+   ],
+   [
+    "it",
+    10.8
+   ],
+   [
+    "is",
+    11.1
+   ],
+   [
+    "so",
+    11.56
+   ],
+   [
+    "the",
+    11.82
+   ],
+   [
+    "critical",
+    11.92
+   ],
+   [
+    "one",
+    12.18
+   ],
+   [
+    "never",
+    12.46
+   ],
+   [
+    "gets",
+    12.78
+   ],
+   [
+    "buried",
+    13.08
+   ],
+   [
+    "a",
+    14.02
+   ],
+   [
+    "slide",
+    14.02
+   ],
+   [
+    "deck",
+    14.26
    ],
    [
     "for",
-    7.49
+    14.5
+   ],
+   [
+    "every",
+    14.68
+   ],
+   [
+    "change",
+    14.96
+   ],
+   [
+    "explaining",
+    15.38
+   ],
+   [
+    "what",
+    15.98
+   ],
+   [
+    "moved",
+    16.38
+   ],
+   [
+    "and",
+    16.66
+   ],
+   [
+    "why",
+    16.98
+   ],
+   [
+    "a",
+    17.88
+   ],
+   [
+    "quick",
+    17.88
+   ],
+   [
+    "quiz",
+    18.02
+   ],
+   [
+    "to",
+    18.3
+   ],
+   [
+    "check",
+    18.54
+   ],
+   [
+    "the",
+    18.7
+   ],
+   [
+    "reviewer",
+    18.84
+   ],
+   [
+    "understood",
+    18.96
+   ],
+   [
+    "it",
+    19.56
+   ],
+   [
+    "conversations",
+    20.2
+   ],
+   [
+    "right",
+    20.76
+   ],
+   [
+    "on",
+    21.1
+   ],
+   [
+    "the",
+    21.3
+   ],
+   [
+    "mr",
+    21.42
+   ],
+   [
+    "and",
+    22.34
+   ],
+   [
+    "livy",
+    22.34
+   ],
+   [
+    "your",
+    22.84
+   ],
+   [
+    "bot",
+    23.08
+   ],
+   [
+    "for",
+    23.34
+   ],
+   [
+    "reports",
+    23.54
+   ],
+   [
+    "and",
+    23.8
+   ],
+   [
+    "actions",
+    24.1
+   ]
+  ]
+ },
+ "9": {
+  "text": "And it gives your agents what they need to enforce your standards at scale. CI/CD gates apply precise, customized enforcement on every merge. Integrations keep the team in the loop \u2014 Teams and Slack. And MCP lets any preferred AI agent operate Livi right from your own agent.",
+  "duration": 17.32,
+  "take": "take_09.mp3",
+  "words": [
+   [
+    "and",
+    0.0
+   ],
+   [
+    "it",
+    0.12
+   ],
+   [
+    "gives",
+    0.18
+   ],
+   [
+    "your",
+    0.34
+   ],
+   [
+    "agents",
+    0.52
+   ],
+   [
+    "what",
+    0.78
+   ],
+   [
+    "they",
+    1.08
+   ],
+   [
+    "need",
+    1.34
+   ],
+   [
+    "to",
+    1.62
+   ],
+   [
+    "enforce",
+    1.84
+   ],
+   [
+    "your",
+    2.06
+   ],
+   [
+    "standards",
+    2.44
+   ],
+   [
+    "at",
+    2.82
+   ],
+   [
+    "scale",
+    3.08
+   ],
+   [
+    "ci",
+    4.38
+   ],
+   [
+    "slash",
+    4.38
+   ],
+   [
+    "cd",
+    4.86
+   ],
+   [
+    "gates",
+    5.08
+   ],
+   [
+    "apply",
+    5.4
+   ],
+   [
+    "precise",
+    5.78
+   ],
+   [
+    "customized",
+    6.58
+   ],
+   [
+    "enforcement",
+    6.98
+   ],
+   [
+    "on",
+    7.5
+   ],
+   [
+    "every",
+    7.96
+   ],
+   [
+    "merge",
+    8.28
+   ],
+   [
+    "integrations",
+    9.38
+   ],
+   [
+    "keep",
+    9.84
+   ],
+   [
+    "the",
+    10.06
+   ],
+   [
+    "team",
+    10.22
+   ],
+   [
+    "in",
+    10.38
+   ],
+   [
+    "the",
+    10.54
+   ],
+   [
+    "loop",
+    10.62
+   ],
+   [
+    "teams",
+    11.28
+   ],
+   [
+    "and",
+    11.36
+   ],
+   [
+    "slack",
+    11.78
+   ],
+   [
+    "and",
+    12.7
+   ],
+   [
+    "mcp",
+    12.7
+   ],
+   [
+    "lets",
+    13.04
+   ],
+   [
+    "any",
+    13.5
+   ],
+   [
+    "preferred",
+    13.86
+   ],
+   [
+    "ai",
+    14.22
+   ],
+   [
+    "agent",
+    14.54
+   ],
+   [
+    "operate",
+    14.98
+   ],
+   [
+    "livy",
+    15.4
+   ],
+   [
+    "right",
+    15.76
+   ],
+   [
+    "from",
+    16.12
+   ],
+   [
+    "your",
+    16.34
+   ],
+   [
+    "own",
+    16.46
+   ],
+   [
+    "agent",
+    16.74
+   ]
+  ]
+ },
+ "10": {
+  "text": "Use agents for scale. Use your judgment for better product. Inspection holds it all up.",
+  "duration": 6.27,
+  "take": "take_10.mp3",
+  "words": [
+   [
+    "use",
+    0.0
+   ],
+   [
+    "agents",
+    0.36
+   ],
+   [
+    "for",
+    0.64
+   ],
+   [
+    "scale",
+    1.04
+   ],
+   [
+    "use",
+    2.2
+   ],
+   [
+    "your",
+    2.2
+   ],
+   [
+    "judgment",
+    2.36
+   ],
+   [
+    "for",
+    2.7
+   ],
+   [
+    "better",
+    3.14
+   ],
+   [
+    "product",
+    3.34
+   ],
+   [
+    "inspection",
+    4.38
+   ],
+   [
+    "holds",
+    4.58
+   ],
+   [
+    "it",
+    5.18
+   ],
+   [
+    "all",
+    5.36
+   ],
+   [
+    "up",
+    5.64
+   ],
+   [
+    "subs",
+    5.96
+   ],
+   [
+    "by",
+    5.96
+   ],
+   [
+    "www",
+    5.96
+   ],
+   [
+    "zeoranger",
+    5.96
+   ],
+   [
+    "co",
+    5.96
+   ],
+   [
+    "uk",
+    5.96
+   ]
+  ]
+ },
+ "11": {
+  "text": "LiveReview keeps you competitive: humans and AI, working together. The blast-radius aware AI code reviewer for your critical systems. Sign in to try it, or contact us to learn more.",
+  "duration": 12.28,
+  "take": "take_11.mp3",
+  "words": [
+   [
+    "livereview",
+    0.0
+   ],
+   [
+    "keeps",
+    0.5
+   ],
+   [
+    "you",
+    0.86
+   ],
+   [
+    "competitive",
+    1.08
+   ],
+   [
+    "humans",
+    2.24
+   ],
+   [
+    "and",
+    2.4
+   ],
+   [
+    "ai",
+    2.86
+   ],
+   [
+    "working",
+    3.56
+   ],
+   [
+    "together",
+    3.82
+   ],
+   [
+    "the",
+    5.42
+   ],
+   [
+    "blast",
+    5.5
+   ],
+   [
+    "radius",
+    5.7
+   ],
+   [
+    "aware",
+    6.1
+   ],
+   [
+    "ai",
+    6.38
+   ],
+   [
+    "code",
+    6.82
+   ],
+   [
+    "reviewer",
+    7.2
+   ],
+   [
+    "for",
+    7.52
    ],
    [
     "your",
@@ -1187,57 +1424,56 @@
    ],
    [
     "critical",
-    8.11
+    7.92
    ],
    [
     "systems",
-    8.44
+    8.18
    ],
    [
     "sign",
-    9.13
+    9.48
    ],
    [
     "in",
-    9.44
+    9.56
    ],
    [
     "to",
-    9.62
+    9.74
    ],
    [
     "try",
-    9.81
+    9.84
    ],
    [
     "it",
-    10.12
+    10.04
    ],
    [
     "or",
-    10.46
+    10.48
    ],
    [
     "contact",
-    10.65
+    10.64
    ],
    [
     "us",
-    10.96
+    11.0
    ],
    [
     "to",
-    11.15
+    11.3
    ],
    [
     "learn",
-    11.33
+    11.44
    ],
    [
     "more",
-    11.64
+    11.58
    ]
-  ],
-  "estimated": true
+  ]
  }
 }
