@@ -1,6 +1,7 @@
 """Street part 2, S16/S17: the product, as clean full-screen 2D frames (no Spidey).
 
     python3 scripts/05b_street_part2_boards.py build/frames/street_part2_720p      # writes f_NNNN.jpg for the S16/S17 frames
+    python3 scripts/05b_street_part2_boards.py build/frames/street_part2_b_720p street_part2_b
 
 Frame ranges and word frames come from build/street_part2_overlays.json (written by 04_street_part2.py), so the
 boards re-time with the voice-over like the 3D scenes. The 3D render skips these frames.
@@ -226,7 +227,8 @@ def frame(key, f, cfg):
 
 if __name__ == "__main__":
     out = sys.argv[1]
-    ov = json.load(open(os.path.join(paths.ROOT, "build", "street_part2_overlays.json")))
+    name = sys.argv[2] if len(sys.argv) > 2 else "street_part2"
+    ov = json.load(open(os.path.join(paths.ROOT, "build", f"{name}_overlays.json")))
     cfg = ov["boards"]
     os.makedirs(out, exist_ok=True)
     n = 0

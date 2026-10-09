@@ -65,8 +65,11 @@ which can't cover 2 s + 2 s — needs fixed durations or a re-read.
   e on `"livy"`; S17 a on `"gates"`, b on `"integrations"` (video starts there); S14/S15 `code`→`results`;
   line-11 caption updated to "humans and AI, working together".
 - `pipeline/streetkit.py`: `ALIAS` gains `livi → livy`.
-- Built `build/street_part2.blend`. Overlays: `end 4353`; s16 `[2195,2966]` items `[2316,2616,2731,2801,2865]`;
-  s17 `[2967,3516]` items `[3119,3248,3348]`. No `OCCLUDED`, no path hits.
+- **Standalone build:** `scripts/04_street_part2_b.py` → `build/street_part2_b.blend` (S16-S19 only; timeline starts
+  at frame 1 = the S16 cut; he is off frame through S16/S17). The old `04_street_part2.py` / `street_part2.blend` is
+  superseded. Overlays `build/street_part2_b_overlays.json`: `end 2159`; s16 `[1,772]` items `[122,422,537,607,671]`;
+  s17 `[773,1322]` items `[925,1054,1154]`. `check_rules` → ALL OK, no path hits.
+- `05b_street_part2_boards.py` now takes the part name as a 2nd arg (`… OUT street_part2_b`) and reads that overlays file.
 
 ## Open questions / notes
 - **Integrations video:** no integrations-specific clip exists, so item b uses `demo_schedule_review.mp4`

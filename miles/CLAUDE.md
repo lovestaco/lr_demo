@@ -161,8 +161,10 @@ Join acts without audio: `ffmpeg -i act1_360p.mp4 -i act2_360p.mp4 -filter_compl
 - Audit: `blender -b build/street_part2.blend --python scripts/check_rules.py -- street_part2`.
 
 ## Street part 2a (S10-S15 on its own: `scripts/04_street_part2_a.py` → `build/street_part2_a.blend`, ~73 s)
-Part 2 is split for faster iteration; part 2b (S16-S19) is still 04_street_part2.py (not reworked yet; the S19 line
-must drop the word "efficient(cy)" — wrong positioning).
+Part 2 is split for faster iteration. **Part 2b (S16-S19) is now its own build: `scripts/04_street_part2_b.py` →
+`build/street_part2_b.blend`** (~72 s; timeline starts at frame 1 = the S16 cut; he is off frame through S16/S17,
+whose 2D boards come from `05b_street_part2_boards.py OUT street_part2_b`). The old full `04_street_part2.py`
+(→ `build/street_part2.blend`) is superseded and no longer used.
 - S10/S10.1: ONE building on the west arm's south facade, two shops side by side (yours screen-left, theirs right, doors
   in the middle), one board over both (states `board_a..d`, `03d ... v2a`); one head-on camera from the north sidewalk
   (S10.1 = a slow push, no cut). Customers walk out of your door along the sidewalk into their queue (it runs off to
