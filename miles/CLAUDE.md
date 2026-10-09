@@ -194,8 +194,12 @@ must drop the word "efficient(cy)" — wrong positioning).
 - VO: real Mark takes per line (website, Generation 1) in `assets/audio/vo_street_part2/takes/take_NN.mp3` →
   `07b_split_take.py --lines ...` (whisper word times, merged into lines.json; Kit.word aliases "cuz"→"cause" etc.).
 - Build name `street_part2_a` (underscore: 06_assemble's prefix lookup then finds `vo_street_part2`).
-- Pipeline: build → `05c_render_range.py build/frames/street_part2_a_720p 1-2177` → `06c_street_part2_post.py
+- Pipeline: build → `05c_render_range.py build/frames/street_part2_a_720p 1-2158` → `06c_street_part2_post.py
   build/frames/street_part2_a_720p street_part2_a` → `06_assemble.py street_part2_a --height 720 --music ...`.
+  Quick review: `05c_render_range.py OUT 1-2158 --h 360 --fast` (no ray-traced reflections, 8 samples) then
+  `06c_street_part2_post.py OUT street_part2_a --height 360` → `06_assemble.py street_part2_a --height 360
+  --music assets/audio/music/bed_street.mp3 --music-once` (writes `<name>_360p_mix.mp4` + frame-numbered `_tc.mp4`).
+  Run at most 2 renders in parallel: RAM (13 GB) and the 4 GB GPU both thrash at 3.
 - Pedestrians (all scenes, `pipeline/life.py`): the walk models face -Y (turn them with `_walk_yaw`, never `_yaw_to`
   — they moonwalked before); every spawn index gets its own outfit (shirt/pants/skin/hair colour slots).
 

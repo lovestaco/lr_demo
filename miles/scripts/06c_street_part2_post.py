@@ -2,10 +2,12 @@
 
     python3 scripts/06c_street_part2_post.py build/frames/street_part2_720p     # -> renders/street_part2_720p.mp4
     python3 scripts/06c_street_part2_post.py build/frames/street_part2_a_720p street_part2_a   # part 2a (its own overlays)
+    python3 scripts/06c_street_part2_post.py build/frames/street_part2_a_360p street_part2_a --height 360
     python3 scripts/06_assemble.py street_part2 --height 720 --music assets/audio/music/bed_street.mp3
 
 Captions come from build/street_part2_overlays.json ({f0, f1, text, row}); captions that end on the same frame are
 one line that builds up phrase by phrase (S14's three things). Each fades in over 6 frames. **bold** in yellow.
+--height sets the frame height (default 720): the frames are used at native size and the caption scales with it.
 """
 import json, os, subprocess, sys
 from PIL import Image, ImageDraw
@@ -22,25 +24,27 @@ FADE = 6
 
 def caption(img, parts, alpha):
     """A lower third: dark rounded band, white text, bold in warm yellow; parts = [(text, alpha), ...] on one line."""
-    size = 34
+    s = H / 720.0
+    size = int(round(34 * s))
     tokens = []
     for text, a in parts:
         if tokens:
             tokens.append(("   ", False, a))
         tokens += [(w, b, a) for w, b in slides.words(text)]
-    fonts = {False: slides.font(size, slides.REGULAR), True: slides.font(size, slides.BOLD)}
-    while size > 20:
+    while size > int(20 * s):
         fonts = {False: slides.font(size, slides.REGULAR), True: slides.font(size, slides.BOLD)}
         width = sum(fonts[b].getlength(w) + fonts[False].getlength(" ") for w, b, _ in tokens)
-        if width < W - 160:
+        if width < W - 160 * s:
             break
         size -= 2
+    fonts = {False: slides.font(size, slides.REGULAR), True: slides.font(size, slides.BOLD)}
     width = sum(fonts[b].getlength(w) + fonts[False].getlength(" ") for w, b, _ in tokens)
     layer = Image.new("RGBA", (W, H), (0, 0, 0, 0))
     d = ImageDraw.Draw(layer)
     x0 = (W - width) / 2
-    y = H - 92
-    d.rounded_rectangle([x0 - 28, y - 18, x0 + width + 20, y + size + 18], radius=16, fill=(8, 12, 22, int(190 * alpha)))
+    y = H - 92 * s
+    d.rounded_rectangle([x0 - 28 * s, y - 18 * s, x0 + width + 20 * s, y + size + 18 * s],
+                        radius=int(16 * s), fill=(8, 12, 22, int(190 * alpha)))
     x = x0
     for w, b, a in tokens:
         col = (255, 214, 102) if b else (255, 255, 255)
@@ -52,12 +56,15 @@ def caption(img, parts, alpha):
 
 
 if __name__ == "__main__":
-    src = sys.argv[1]
-    name = sys.argv[2] if len(sys.argv) > 2 else "street_part2"
+    args = sys.argv[1:]
+    src = args[0]
+    name = args[1] if len(args) > 1 and not args[1].startswith("--") else "street_part2"
+    H = int(args[args.index("--height") + 1]) if "--height" in args else 720
+    W = H * 16 // 9
     ov = json.load(open(os.path.join(paths.ROOT, "build", f"{name}_overlays.json")))
     caps = ov["captions"]
     end = ov["end"]
-    out = os.path.join(paths.RENDERS, f"{name}_720p.mp4")
+    out = os.path.join(paths.RENDERS, f"{name}_{H}p.mp4")
     ff = subprocess.Popen(["ffmpeg", "-loglevel", "error", "-y", "-f", "rawvideo", "-pix_fmt", "rgb24", "-s", f"{W}x{H}", "-r", str(FPS),
                            "-i", "-", "-c:v", "libx264", "-pix_fmt", "yuv420p", "-crf", "18", out], stdin=subprocess.PIPE)
     missing = 0
