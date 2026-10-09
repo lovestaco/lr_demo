@@ -317,6 +317,11 @@ B_LOC = Vector((SITES["B"] + 1.6, CAM_Y + 3.0, 2.3))       # S12: site B on its 
 ptsB = [Vector((SPOT["B"][0] + 0.45, SPOT["B"][1], z_)) for z_ in (0.0, 1.9)] + \
        [SIGN_C["B"] + Vector((dx * SW_ / 2, 0, dz * SH_ / 2)) for dx in (-1, 1) for dz in (-1, 1)] + B_TOP
 CAM_B = (B_LOC, *k.fit(B_LOC, ptsB, margin=1.05))
+# S11/S12 read beats: push the lens onto the board text (same camera position, so the angle is unchanged) and back
+CAM_AZ = (AB_LOC, *k.fit(AB_LOC, [SIGN_C["A"] + Vector((dx * SW_ / 2, 0, dz * SH_ / 2)) for dx in (-1, 1) for dz in (-1, 1)] +
+                                 [Vector((SPOT["A"][0] + 0.8, SPOT["A"][1], z_)) for z_ in (0.0, 1.9)], margin=1.06))
+CAM_BZ = (B_LOC, *k.fit(B_LOC, [SIGN_C["B"] + Vector((dx * SW_ / 2, 0, dz * SH_ / 2)) for dx in (-1, 1) for dz in (-1, 1)] +
+                                [Vector((SPOT["B"][0] + 0.8, SPOT["B"][1], z_)) for z_ in (0.0, 1.9)], margin=1.06))
 C_LOC = Vector((SITES["C"] + 2.4, CAM_Y + 3.0, 2.4))       # S13: the board, him, the crew and the tower
 ptsC_lo = [Vector((SPOT["C"][0] + 1.1, SPOT["C"][1], z_)) for z_ in (0.0, 1.9)] + \
           [SIGN_C["C"] + Vector((dx * SW_ / 2, 0, dz * SH_ / 2)) for dx in (-1, 1) for dz in (-1, 1)] + \
@@ -727,7 +732,7 @@ boss_c.show([(1, False), (int(setC.start), True)])
 BAN_L = 5.5
 ban_top = TOP_C - 0.12
 roll_m = fx.material("BannerRoll", (0.9, 0.9, 0.86), rough=0.6)
-for i, (nm, word) in enumerate((("banner_headcount", "headcount"), ("banner_code", "code"), ("banner_product", "better"))):
+for i, (nm, word) in enumerate((("banner_headcount", "headcount"), ("banner_results", "results"), ("banner_product", "better"))):
     bx = TOWER["C"].x + 1.2 - 1.2 * i                        # left to right on screen: +x first
     piv = fx.empty(f"BannerPivot{i}", Vector((bx, FACE_C + 0.14, ban_top)), csite, 0.1)
     cloth = city.sign(f"Banner{i}", img(nm), Vector((bx, FACE_C + 0.02, ban_top - BAN_L / 2)), SN, 1.05, aspect=600 / 3000,
@@ -857,7 +862,7 @@ def key_pose(frame, name):
 w6 = lambda w, nth=0: wordf(6, w, nth)
 w7 = lambda w, nth=0: wordf(7, w, nth)
 T15a = int(set15.start)
-SEQ = [(w6("headcount") - 6, "flat"), (w6("headcount") - 2, "one"), (w6("code") - 2, "two"), (w6("better") - 2, "three"),
+SEQ = [(w6("headcount") - 6, "flat"), (w6("headcount") - 2, "one"), (w6("results") - 2, "two"), (w6("better") - 2, "three"),
        (w6("only") - 6, "three"), (w6("only"), "flat"), (w6("human") - 8, "point"), (w6("stay") + 12, "point"), (w6("stay") + 20, "flat"),
        (T15a, "flat"), (w7("loop") - 2, "point"), (w7("cuz") - 4, "flat"), (w7("human") - 10, "flat"), (w7("human") - 6, "fist"),
        (END - 2, "fist")]
@@ -904,7 +909,7 @@ _py = Vector((0, 0.6, -0.8)).normalized()
 seg = lambda a_, b_: max(4, int(b_) - int(a_))
 GEST = [  # start, ramp, hold, wrist target (world), elbow pull, hand axes (X, Y = along the fingers, Z = palm side)
     # S14 on the roof: the count, hand raised high (palm to the camera); then pointing down at his own tower
-    (w6("headcount") - 10, 8, seg(w6("headcount") - 2, w6("only") - 10), lambda f: SHW(f) + Vector((0.1, 0.12, 0.38)),
+    (w6("headcount") - 10, 8, seg(w6("headcount") - 2, w6("only") - 20), lambda f: SHW(f) + Vector((0.1, 0.12, 0.38)),
      Vector((1, 0, -0.3)), (Vector((-1, 0, 0)), UP, TOWARD)),
     (w6("human") - 10, 7, seg(w6("human") - 3, w6("stay") + 8), lambda f: SHW(f) + Vector((0.06, 0.42, -0.2)),
      Vector((0.6, -0.3, -1)), (_py.cross(Vector((-1, 0, 0))), _py, Vector((-1, 0, 0)))),
@@ -995,10 +1000,25 @@ cam.lens(int(setA.start) - 1, round(cam101[2]), "const")
 # S11: site A (B's empty plot at the right edge); S12: the camera trucks right with his sprint and settles on site B
 cam.lens(int(setA.start), round(CAM_A[2]), "const")
 k.at(int(setA.start), CAM_A[0], CAM_A[1], "lin", cut=True)
+# read: push onto site A's board text, hold it, then back out to the wide before the sprint
+k.at(int(talkA.start) + 6, CAM_AZ[0], CAM_AZ[1], "inout")
+cam.lens(int(talkA.start) + 6, round(CAM_AZ[2]), "inout")
+k.at(int(talkA.end) - 20, CAM_AZ[0], CAM_AZ[1], "inout")
+cam.lens(int(talkA.end) - 20, round(CAM_AZ[2]), "inout")
+k.at(int(talkA.end) - 2, CAM_A[0], CAM_A[1], "inout")
+cam.lens(int(talkA.end) - 2, round(CAM_A[2]), "inout")
 k.at(ra - 2, CAM_A[0] + Vector((0, -0.2, 0)), CAM_A[1], "inout")
 cam.lens(ra - 2, round(CAM_A[2]), "inout")
 k.at(rb + 10, CAM_B[0], CAM_B[1], "inout")
 cam.lens(rb + 10, round(CAM_B[2]), "inout")
+# read: push onto site B's board text, hold, then the existing pull to CAM_B (on "subtle") brings it back out
+fBZ = max(rb + 14, int(talkB.start) + 8)
+k.at(fBZ, CAM_B[0], CAM_B[1], "inout")
+cam.lens(fBZ, round(CAM_B[2]), "inout")
+k.at(fBZ + 34, CAM_BZ[0], CAM_BZ[1], "inout")
+cam.lens(fBZ + 34, round(CAM_BZ[2]), "inout")
+k.at(fBZ + 84, CAM_BZ[0], CAM_BZ[1], "inout")
+cam.lens(fBZ + 84, round(CAM_BZ[2]), "inout")
 CUTS.append(("A", int(setA.start)))
 hole_p = floorsB[HOLE_FL][2] + Vector((0, T_W / 2, 0.1))
 door_p = floorsB[DOOR_FL][2] + Vector((T_W / 2 - 0.6, T_W / 2, 0.0))

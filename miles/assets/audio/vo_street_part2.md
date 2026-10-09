@@ -13,7 +13,7 @@ re-times everything on the next build.
 | 3 | 23.0s | S11 site A: human only | Option one: you review everything. Features are shipped carefully, but you can't keep up with the pace. |
 | 4 | 31.0s | S12 site B: agent only | Option two: let agents do it all. Fast, but no one's sweating the details, and the subtle things break. Customers notice, because the most refined product wins. |
 | 5 | 42.0s | S13 site C: human + agent | Or combine them. Agents for speed and scale, humans for judgment. That team beats human-only, and it beats agent-only. |
-| 6 | 51.0s | S14 close-up: three things | Every team wants three things: the same headcount, more code, and a better product. Only a human plus agent gets all three. That's how you stay competitive. |
+| 6 | 51.0s | S14 close-up: three things | Every team wants three things: the same headcount, more results, and a better product. Only a human plus agent gets all three. That's how you stay competitive. |
 | 7 | 61.0s | S15 close-up: common sense | Why keep humans in the loop? Cuz common sense! AI lets everyone ship more, but it doesn't make more great products. Human judgment and care do that, and they're not in any model's training data. |
 | 8 | 73.0s | S16 product: engineers | LiveReview gives your engineers attention and understanding: issues ranked by importance, a slide deck for every change, a quick quiz, conversations on the MR, and Livi, the bot that turns your data into analysis reports and actionable items. |
 | 9 | 87.0s | S17 product: agents | And it gives your agents what they need to enforce your standards at scale: your rules on every pre-commit, your integrations, and MCP. |

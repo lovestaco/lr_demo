@@ -178,7 +178,7 @@ must drop the word "efficient(cy)" — wrong positioning).
   hidden. Root z keyed flat at every cut (a travel's first key otherwise ramps him up into the air).
 - No close-ups and no three-site wide any more. End of S13: he zips from C's board to C's roof and the camera rises
   with him (`ROOF_CAM`: roof + the banners below). S14 on the roof (root z = roof minus each clip's lowest foot,
-  `perf.contact`): three banners (`banner_*`, 03d v2a) unroll on "headcount / code / better"; count raised, then he
+  `perf.contact`): three banners (`banner_*`, 03d v2a) unroll on "headcount / results / better"; count raised, then he
   points down at the tower. S15 (cut) = medium shot of C's top floor: he STANDS on a scaffold platform beside the door
   to nowhere (no hanging): the Shrug clip (both palms) on "why keep humans in the loop", then talks; right arm: chin
   tap, the line that pulls a balcony in under the door ("cuz"), the stamp (green check beside the door). The boss

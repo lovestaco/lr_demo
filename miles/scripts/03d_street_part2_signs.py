@@ -272,7 +272,7 @@ def v2a_signs():
     site_sign("siteA", "SITE A", ["**Human only**", "**Human only.** Careful, with high standards, but it can't keep up with the pace."])
     shop_interior("shopR_interior")
     neon("open_neon", "OPEN")
-    for n, t, bg in (("banner_headcount", "SAME HEADCOUNT", (30, 64, 175)), ("banner_code", "MORE CODE", (21, 128, 61)),
+    for n, t, bg in (("banner_headcount", "SAME HEADCOUNT", (30, 64, 175)), ("banner_results", "MORE RESULTS", (21, 128, 61)),
                      ("banner_product", "BETTER PRODUCT", (234, 88, 12))):
         tall_banner(n, t, bg)
 
