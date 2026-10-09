@@ -176,14 +176,14 @@ must drop the word "efficient(cy)" — wrong positioning).
   C its own shot: he presents its board; robot arms + a builder bot + the crane build, the boss (from A) checks;
   framing recomputed every 8 frames as floors land; then the pull-back to all three. Plaza building behind the lot
   hidden. Root z keyed flat at every cut (a travel's first key otherwise ramps him up into the air).
-- No close-ups any more. End of S13: he zips from C's board to C's roof during the pull-back. S14 = the wide of all
-  three sites, him full body on C's roof (root z = roof minus each clip's lowest foot, `perf.contact`); three banners
-  (`banner_*`, 03d v2a) unroll down C's face on "headcount / code / better"; on "only" the sun + sky dim and a spot
-  lights C; customers stream in towards C. S15 (cut) = medium shot of C's top floor: he hangs on a line (left hand),
-  the right arm does a palm-up shrug, a chin tap, the line that pulls a balcony in under the door to nowhere (on "cuz"),
-  the stamp (green check beside the door); a customer (boss model, no hard hat: `crew.person`, `crew.sequence`) walks
-  out to the edge, steps onto the balcony, waves; three more floors land above.
-- Right-arm gestures (S14 count raised / pointing down, S15 shrug / chin / web / stamp) are NOT Office IK (the legacy
+- No close-ups and no three-site wide any more. End of S13: he zips from C's board to C's roof and the camera rises
+  with him (`ROOF_CAM`: roof + the banners below). S14 on the roof (root z = roof minus each clip's lowest foot,
+  `perf.contact`): three banners (`banner_*`, 03d v2a) unroll on "headcount / code / better"; count raised, then he
+  points down at the tower. S15 (cut) = medium shot of C's top floor: he STANDS on a scaffold platform beside the door
+  to nowhere (no hanging): the Shrug clip (both palms) on "why keep humans in the loop", then talks; right arm: chin
+  tap, the line that pulls a balcony in under the door ("cuz"), the stamp (green check beside the door). The boss
+  (hard hat) walks out of the door to the edge, steps onto the balcony, waves; three more floors land above.
+- Right-arm gestures (S14 count raised / pointing down, S15 chin / web / stamp) are NOT Office IK (the legacy
   IK flipped that arm): `solve()` two-bone per frame + the hand's axes on a REPLACE NLA layer "ZZZ Arm gestures"
   (spans must not overlap — asserted). He faces +y there, so HIS RIGHT IS +X.
 - Shop queue: new customers walk in from the street (off frame right); nobody comes out of your shop.
