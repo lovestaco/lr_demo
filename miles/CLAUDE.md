@@ -176,10 +176,17 @@ must drop the word "efficient(cy)" — wrong positioning).
   C its own shot: he presents its board; robot arms + a builder bot + the crane build, the boss (from A) checks;
   framing recomputed every 8 frames as floors land; then the pull-back to all three. Plaza building behind the lot
   hidden. Root z keyed flat at every cut (a travel's first key otherwise ramps him up into the air).
-- S14/S15 medium close-up (36-40 mm, 2.4 m): hands in frame. The right-arm gestures (count, the "common sense"
-  temple tap, hand on chest) are NOT Office IK: the legacy IK flipped that arm (hand behind the shoulder, elbow up).
-  `solve()` does a two-bone solve per frame (elbow pulled down/out) + the hand's axes, keyed on a REPLACE NLA layer
-  "ZZZ Arm gestures" with eased influence. He faces +y there, so HIS RIGHT IS +X.
+- No close-ups any more. End of S13: he zips from C's board to C's roof during the pull-back. S14 = the wide of all
+  three sites, him full body on C's roof (root z = roof minus each clip's lowest foot, `perf.contact`); three banners
+  (`banner_*`, 03d v2a) unroll down C's face on "headcount / code / better"; on "only" the sun + sky dim and a spot
+  lights C; customers stream in towards C. S15 (cut) = medium shot of C's top floor: he hangs on a line (left hand),
+  the right arm does a palm-up shrug, a chin tap, the line that pulls a balcony in under the door to nowhere (on "cuz"),
+  the stamp (green check beside the door); a customer (boss model, no hard hat: `crew.person`, `crew.sequence`) walks
+  out to the edge, steps onto the balcony, waves; three more floors land above.
+- Right-arm gestures (S14 count raised / pointing down, S15 shrug / chin / web / stamp) are NOT Office IK (the legacy
+  IK flipped that arm): `solve()` two-bone per frame + the hand's axes on a REPLACE NLA layer "ZZZ Arm gestures"
+  (spans must not overlap — asserted). He faces +y there, so HIS RIGHT IS +X.
+- Shop queue: new customers walk in from the street (off frame right); nobody comes out of your shop.
 - Crew: `pipeline/crew.py` — NLA loop strips must set action_frame_start/end AFTER the slot (else a 1-frame range:
   frozen workers); the boss retarget turns the src motion to the dst heading and strips the clip's own body turn.
 - Walkers: `walk.phone_every = 6` (one in six on a phone); the competitor's shop has an interior image, striped

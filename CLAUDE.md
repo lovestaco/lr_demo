@@ -20,3 +20,15 @@ independent tracks live here; scope work to one subfolder and read its own docs.
 - Before building a new scene/act, discuss the plan with the user first.
 - For new character motion, use the free CMU mocap pipeline in `miles/` (`scripts/00_cmu_fetch.py`
   → `scripts/02b_retarget_cmu.py`) instead of hand-downloading from mixamo.com.
+
+## Installed tools
+- **TripoSR** (image → 3D mesh, MIT licence, VAST-AI/Stability) at `~/tools/TripoSR` with its own venv
+  (`.venv`, uv-managed Python 3.10, torch 2.4.1+cu121). Weights: HF cache `stabilityai/TripoSR` (~1.7 GB).
+  For one-off static props only (no rig, no animation; soft/blobby, the back is guessed) — Sketchfab first.
+      cd ~/tools/TripoSR && .venv/bin/python run.py IMAGE.png --output-dir OUT --chunk-size 4096 \
+          --model-save-format glb --bake-texture --texture-resolution 1024      # -> OUT/0/mesh.glb
+  The GTX 1650 has 4 GB: keep `--chunk-size` ≤ 4096 (default 8192 wants ~6 GB). Local patch:
+  `tsr/models/isosurface.py` uses PyMCubes (CPU) instead of torchmcubes (its CUDA build fails with CUDA 12.0 here);
+  winding flipped to outward normals. Background removal (rembg) downloads its model on first run.
+- Blender skills pack (kevinbadi/blender-skills) in `~/.claude/skills/` (turntable, slow-zoom, PolyHaven, ...):
+  written for macOS — METAL device, `~/Desktop/Blender Videos`, ProRes 4444; adapt before use.

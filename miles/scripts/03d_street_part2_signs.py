@@ -272,6 +272,24 @@ def v2a_signs():
     site_sign("siteA", "SITE A", ["**Human only**", "**Human only.** Careful, with high standards, but it can't keep up with the pace."])
     shop_interior("shopR_interior")
     neon("open_neon", "OPEN")
+    for n, t, bg in (("banner_headcount", "SAME HEADCOUNT", (30, 64, 175)), ("banner_code", "MORE CODE", (21, 128, 61)),
+                     ("banner_product", "BETTER PRODUCT", (234, 88, 12))):
+        tall_banner(n, t, bg)
+
+
+def tall_banner(name, text, bg, w=3000, h=600):
+    """A building banner (S14): white text reading top to bottom on a coloured cloth, a light hem at both ends."""
+    img = Image.new("RGB", (w, h), bg)
+    d = ImageDraw.Draw(img)
+    size = 330
+    f = slides.font(size, slides.BOLD)
+    while f.getlength(text) > w - 260 and size > 120:
+        size -= 10
+        f = slides.font(size, slides.BOLD)
+    d.text((w // 2, h // 2), text, font=f, fill=(255, 255, 255), anchor="mm")
+    d.rectangle([0, 0, 40, h], fill=(240, 240, 235))
+    d.rectangle([w - 40, 0, w, h], fill=(240, 240, 235))
+    save(img.rotate(-90, expand=True), name)
 
 
 def shop_interior(name, w=1500, h=1050):

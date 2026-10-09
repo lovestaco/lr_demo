@@ -161,6 +161,56 @@ class Crew:
         return u
 
 
+def person(crew_, name, p, face=(0, -1), colors=None, coll=None):
+    """A customer: the boss model without the hard hat, in his own colours (per-object material slots)."""
+    u = crew_._spawn("boss", name, p, face, coll)
+    colors = colors or {"Object_92": (0.55, 0.08, 0.1), "Object_88": (0.06, 0.08, 0.16), "Object_98": (0.05, 0.05, 0.05)}
+    for c in u.objs:
+        src = c.name.split("_", 1)[1] if "_" in c.name else ""
+        if c.type != "MESH":
+            continue
+        if src == "Object_94":                                # the hard hat
+            c.hide_render = c.hide_viewport = True
+        elif src in colors and c.material_slots:
+            c.material_slots[0].link = "OBJECT"
+            c.material_slots[0].material = fx.material(f"{name}_{src}", colors[src], rough=0.7)
+    return u
+
+
+def in_place(action, root="Hips"):
+    """A copy of a clip with its root's travel removed (keeps the bob: bone-local Y is up for a Mixamo hips)."""
+    act = action.copy()
+    act.name = action.name + " (in place)"
+    bags = [cb for ly in getattr(act, "layers", []) for st in ly.strips for cb in st.channelbags]
+    fcs = [fc for cb in bags for fc in cb.fcurves] if bags else list(getattr(act, "fcurves", []))
+    for cb in bags or [None]:
+        for fc in list(cb.fcurves if cb else act.fcurves):
+            if root in fc.data_path and fc.data_path.endswith("location") and fc.array_index != 1:
+                (cb.fcurves if cb else act.fcurves).remove(fc)
+    return act
+
+
+def sequence(arm, clips):
+    """[(action, f0, f1), ...] one after another on stacked NLA tracks (later on top), each held inside its span."""
+    ad = arm.animation_data or arm.animation_data_create()
+    ad.action = None
+    for t in ad.nla_tracks:
+        t.mute = True
+    for action, f0, f1 in clips:
+        tr = ad.nla_tracks.new()
+        st = tr.strips.new(action.name, int(f0), action)
+        if hasattr(st, "action_slot") and action.slots:
+            st.action_slot = action.slots[0]
+        a0, a1 = action.frame_range
+        st.action_frame_start, st.action_frame_end = a0, a1
+        st.frame_start = int(f0)
+        st.repeat = max(1.0, (f1 - f0) / max(1.0, a1 - a0))
+        st.extrapolation = "NOTHING"
+        st.use_animated_influence = True
+        st.influence = 1.0
+        st.keyframe_insert("influence", frame=int(f0))
+
+
 def _strip_suffix(n):
     return re.sub(r"_\d+$", "", n)
 
