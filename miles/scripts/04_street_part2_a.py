@@ -391,7 +391,7 @@ talkB = k.talk(max(14, T[4] + F(k.dur(4) * FPS) - 12 - int(perf.end)), face=FB, 
 f_run2 = face_to(SPOT["B"], SPOT["C"])
 run13 = perf.then("MX Sprint", repeat=n_cyc(RUN2_D), blend=6, face=f_run2, in_place=1.0)
 FC = face_to(SPOT["C"], C_LOC)
-setC = perf.then("Breathing Idle", length=12, face=FC, in_place=1.0, blend=8)
+setC = perf.then("Breathing Idle", length=12, face=FC, at=SPOT["C"], cut_blend=6, in_place=1.0)   # the run ended exactly here: no visible jump
 T[5] = int(setC.start) + 12
 talkC = k.talk_until(T[5] + F(k.word(5, "that") * FPS) + 18, face=FC, clips=CALM)
 # ---- end of S13 (in the pull-back): a line to the crane jib, up onto site C's roof
@@ -1017,8 +1017,10 @@ k.at(int(setA.start), CAM_A[0], CAM_A[1], "lin", cut=True)
 # read: push onto site A's board text, hold it, then back out to the wide before the sprint
 k.at(int(talkA.start) + 6, CAM_AZ[0], CAM_AZ[1], "inout")
 cam.lens(int(talkA.start) + 6, round(CAM_AZ[2]), "inout")
-k.at(ra - 14, CAM_AZ[0], CAM_AZ[1], "inout")             # held on site A until the sprint starts, then out and across to site B
-cam.lens(ra - 14, round(CAM_AZ[2]), "inout")
+k.at(ra - 18, CAM_AZ[0], CAM_AZ[1], "inout")             # held on site A until just before the sprint, then out ...
+cam.lens(ra - 18, round(CAM_AZ[2]), "inout")
+k.at(ra - 2, CAM_A[0] + Vector((0, -0.2, 0)), CAM_A[1], "inout")      # ... and across to site B with him
+cam.lens(ra - 2, round(CAM_A[2]), "inout")
 k.at(rb + 10, CAM_B[0], CAM_B[1], "inout")
 cam.lens(rb + 10, round(CAM_B[2]), "inout")
 # read: push onto site B's board text, hold, then the existing pull to CAM_B (on "subtle") brings it back out
@@ -1048,7 +1050,7 @@ CUTS.append(("B back", RUN_F - 5))
 # beats..." the pull-back to all three sites side by side
 C_TOP = lambda f: T_H * max(3, min(N_C, sum(1 for lf in LANDS_C if lf <= f))) + 0.8      # the top of the tower so far
 c_fit = lambda f: k.fit(C_LOC, ptsC_lo + [TOWER["C"] + Vector((dx * T_W / 2, 0, C_TOP(f))) for dx in (-1, 1)], margin=1.06)
-c_keys = list(range(int(setC.start), THAT - 4, 8)) + [THAT - 4]
+c_keys = list(range(int(setC.start) + 10, THAT - 4, 8)) + [THAT - 4]      # the first key is where the camera arrives (10 frames after his run ends)
 c_sm = {f: c_fit(f) for f in range(int(setC.start) - 16, THAT + 20)}
 k.at(ra2 - 2, CAM_B[0] + Vector((0, -0.2, 0)), CAM_B[1], "inout")      # trucks right with his sprint to site C (no cut)
 cam.lens(ra2 - 2, round(CAM_B[2]), "inout")

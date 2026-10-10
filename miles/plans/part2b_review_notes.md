@@ -174,3 +174,15 @@ Frame numbers below are in the JOINED video (part 1 = f1-2295, 2a starts f2296, 
    changed/will change the take; subtitle/caption text must follow the new wording (needs the new take: ask the user for it).
 8. **f6531 (2b end):** show the livereview URL itself (hexmos.com/livereview) at that point; drop the separate billboard demo video and the
    separate link at the end.
+
+## Done 2026-10-10 (round 3) — applied, rendered at 360p
+- Subtitle strip (7% of the frame, yellow, spoken word bold, video above it) on all three parts; `--range` preview option in `06_assemble.py`.
+- 2a: S10 now = empty street while the question is asked -> 3 customers into your shop -> 11 into theirs -> the answer (3 s silent beat after
+  "who does the customer pick?", `BEAT` in `04_street_part2_a.py`; a short VO line could go there). Site A: camera tighter (`CAM_AZ` margin 1.0), held
+  until just before the sprint, then out and across. Runs: real `MX Sprint` cycles at constant speed (the old single 16-frame clip stretched = sliding,
+  one leg); new B -> C run with the camera trucking with him, no cut; he arrives with `at=SPOT["C"]`. "MORE RESULTS" banner was only a stale render.
+- 2b: S17 item 2 = `teams_integration.png` (on "Microsoft", ~1.1 s) then `slack_integration.png` (2 s) in the panel, MCP card waits for Slack's 2 s;
+  the ending is the billboard with LiveReview + hexmos.com/livereview (no demo footage, no caption).
+- Output: renders/street_part_1_final-street_part2_a-street_part2_b_360p_mix(_tc).mp4 (227 s, 22 MB) + `_10mb_tc.mp4` (9.8 MB).
+- STILL OPEN: item 7 (VO line 11 "risk aware AI code reviewer ..."): needs a new take 11 (current take says "blast-radius aware"; subtitles follow the audio).
+  Also the Teams/Slack stills are timed to the spoken words (Microsoft/Slack), not to joined-video 3:05-3:08 literally — easy to change.
