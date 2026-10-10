@@ -765,8 +765,8 @@
   ]
  },
  "8": {
-  "text": "LiveReview helps your engineers focus on what matters. Every issue is ranked by importance, sorted by real blast radius \u2014 what a change touches, how far it spreads, and how risky it is \u2014 so the critical one never gets buried. Then they can understand every change: a slide deck for each one, explaining what moved and why. A quick quiz to check the reviewer understood it. Conversations right on the MR. And Livi, your bot for reports and actions.",
-  "duration": 26.75,
+  "text": "LiveReview helps your engineers focus on what matters. Every issue is prioritized by risk, based on what a change affects, how far its impact spreads, and the potential consequences \u2014 so critical issues never get buried. Then they can understand every change: a slide deck for each one, explaining what moved and why. A quick quiz to check the reviewer understood it. Conversations right on the MR. And Livi, your bot for reports and actions.",
+  "duration": 26.67,
   "take": "take_08.mp3",
   "words": [
    [
@@ -775,7 +775,7 @@
    ],
    [
     "helps",
-    0.44
+    0.48
    ],
    [
     "your",
@@ -783,303 +783,291 @@
    ],
    [
     "engineers",
-    1.08
+    1.1
    ],
    [
     "focus",
-    1.44
+    1.48
    ],
    [
     "on",
-    2.02
+    2.0
    ],
    [
     "what",
-    2.34
+    2.32
    ],
    [
     "matters",
-    2.6
+    2.52
    ],
    [
     "every",
-    3.76
+    3.68
    ],
    [
     "issue",
-    3.88
+    3.76
    ],
    [
     "is",
-    4.32
+    4.24
    ],
    [
-    "ranked",
-    4.46
-   ],
-   [
-    "by",
-    4.7
-   ],
-   [
-    "importance",
-    4.96
-   ],
-   [
-    "sorted",
-    5.84
+    "prioritized",
+    4.38
    ],
    [
     "by",
-    5.94
+    5.08
    ],
    [
-    "real",
-    6.2
+    "risk",
+    5.24
    ],
    [
-    "blast",
-    6.52
-   ],
-   [
-    "radius",
-    6.8
-   ],
-   [
-    "what",
-    7.82
-   ],
-   [
-    "a",
-    7.92
-   ],
-   [
-    "change",
-    8.0
-   ],
-   [
-    "touches",
-    8.16
-   ],
-   [
-    "how",
-    9.0
-   ],
-   [
-    "far",
-    9.1
-   ],
-   [
-    "it",
-    9.28
-   ],
-   [
-    "spreads",
-    9.4
-   ],
-   [
-    "and",
-    10.08
-   ],
-   [
-    "how",
-    10.22
-   ],
-   [
-    "risky",
-    10.4
-   ],
-   [
-    "it",
-    10.66
-   ],
-   [
-    "is",
-    10.92
-   ],
-   [
-    "so",
-    11.42
-   ],
-   [
-    "the",
-    11.66
-   ],
-   [
-    "critical",
-    11.74
-   ],
-   [
-    "one",
-    12.0
-   ],
-   [
-    "never",
-    12.32
-   ],
-   [
-    "gets",
-    12.74
-   ],
-   [
-    "buried",
-    13.06
-   ],
-   [
-    "then",
-    14.0
-   ],
-   [
-    "they",
-    14.14
-   ],
-   [
-    "can",
-    14.3
-   ],
-   [
-    "understand",
-    14.42
-   ],
-   [
-    "every",
-    14.72
-   ],
-   [
-    "change",
-    15.28
-   ],
-   [
-    "a",
-    16.1
-   ],
-   [
-    "slide",
-    16.2
-   ],
-   [
-    "deck",
-    16.42
-   ],
-   [
-    "for",
-    16.64
-   ],
-   [
-    "each",
-    16.82
-   ],
-   [
-    "one",
-    17.02
-   ],
-   [
-    "explaining",
-    17.32
-   ],
-   [
-    "what",
-    17.78
-   ],
-   [
-    "moved",
-    18.22
-   ],
-   [
-    "and",
-    18.5
-   ],
-   [
-    "why",
-    18.82
-   ],
-   [
-    "a",
-    19.76
-   ],
-   [
-    "quick",
-    19.76
-   ],
-   [
-    "quiz",
-    19.9
-   ],
-   [
-    "to",
-    20.16
-   ],
-   [
-    "check",
-    20.42
-   ],
-   [
-    "the",
-    20.58
-   ],
-   [
-    "reviewer",
-    20.72
-   ],
-   [
-    "understood",
-    20.88
-   ],
-   [
-    "it",
-    21.4
-   ],
-   [
-    "conversations",
-    22.16
-   ],
-   [
-    "right",
-    22.68
+    "based",
+    5.9
    ],
    [
     "on",
-    23.04
+    6.12
+   ],
+   [
+    "what",
+    6.3
+   ],
+   [
+    "a",
+    6.52
+   ],
+   [
+    "change",
+    6.58
+   ],
+   [
+    "affects",
+    6.76
+   ],
+   [
+    "how",
+    7.54
+   ],
+   [
+    "far",
+    7.72
+   ],
+   [
+    "its",
+    7.96
+   ],
+   [
+    "impact",
+    8.12
+   ],
+   [
+    "spreads",
+    8.44
+   ],
+   [
+    "and",
+    9.42
    ],
    [
     "the",
-    23.22
+    9.58
    ],
    [
-    "mr",
-    23.34
+    "potential",
+    9.7
    ],
    [
-    "and",
-    23.48
+    "consequences",
+    9.98
    ],
    [
-    "livy",
-    24.2
+    "so",
+    11.26
    ],
    [
-    "your",
-    24.8
+    "critical",
+    11.5
    ],
    [
-    "bot",
-    25.0
+    "issues",
+    11.74
+   ],
+   [
+    "never",
+    12.14
+   ],
+   [
+    "get",
+    12.62
+   ],
+   [
+    "buried",
+    12.92
+   ],
+   [
+    "then",
+    13.78
+   ],
+   [
+    "they",
+    13.98
+   ],
+   [
+    "can",
+    14.14
+   ],
+   [
+    "understand",
+    14.26
+   ],
+   [
+    "every",
+    14.58
+   ],
+   [
+    "change",
+    15.16
+   ],
+   [
+    "a",
+    15.98
+   ],
+   [
+    "slide",
+    16.1
+   ],
+   [
+    "deck",
+    16.34
    ],
    [
     "for",
-    25.2
+    16.54
    ],
    [
-    "reports",
-    25.42
+    "each",
+    16.72
+   ],
+   [
+    "one",
+    16.9
+   ],
+   [
+    "explaining",
+    17.22
+   ],
+   [
+    "what",
+    17.54
+   ],
+   [
+    "moved",
+    18.06
    ],
    [
     "and",
-    25.72
+    18.34
+   ],
+   [
+    "why",
+    18.66
+   ],
+   [
+    "a",
+    19.54
+   ],
+   [
+    "quick",
+    19.56
+   ],
+   [
+    "quiz",
+    19.7
+   ],
+   [
+    "to",
+    19.98
+   ],
+   [
+    "check",
+    20.24
+   ],
+   [
+    "the",
+    20.4
+   ],
+   [
+    "reviewer",
+    20.56
+   ],
+   [
+    "understood",
+    20.74
+   ],
+   [
+    "it",
+    21.22
+   ],
+   [
+    "conversations",
+    21.94
+   ],
+   [
+    "right",
+    22.5
+   ],
+   [
+    "on",
+    22.84
+   ],
+   [
+    "the",
+    23.04
+   ],
+   [
+    "m",
+    23.16
+   ],
+   [
+    "r",
+    23.3
+   ],
+   [
+    "and",
+    24.18
+   ],
+   [
+    "livy",
+    24.18
+   ],
+   [
+    "your",
+    24.72
+   ],
+   [
+    "bot",
+    24.9
+   ],
+   [
+    "for",
+    25.12
+   ],
+   [
+    "reports",
+    25.34
+   ],
+   [
+    "and",
+    25.58
    ],
    [
     "actions",
-    26.04
+    25.92
    ]
   ]
  },
@@ -1386,8 +1374,8 @@
   ]
  },
  "11": {
-  "text": "LiveReview keeps you competitive: humans and AI, working together. The blast-radius aware AI code reviewer for your critical systems. Sign in to try it, or contact us to learn more.",
-  "duration": 12.28,
+  "text": "LiveReview keeps you competitive: humans and AI, working together. The risk aware AI code reviewer for your critical systems. Sign in to try it, or contact us to learn more.",
+  "duration": 12.12,
   "take": "take_11.mp3",
   "words": [
    [
@@ -1396,123 +1384,119 @@
    ],
    [
     "keeps",
-    0.5
+    0.52
    ],
    [
     "you",
-    0.84
+    0.86
    ],
    [
     "competitive",
-    1.08
+    1.06
    ],
    [
     "humans",
-    2.16
+    2.14
    ],
    [
     "and",
-    2.4
+    2.34
    ],
    [
     "ai",
-    2.86
+    2.8
    ],
    [
     "working",
-    3.56
+    3.5
    ],
    [
     "together",
-    3.82
+    3.72
    ],
    [
     "the",
-    5.4
+    5.62
    ],
    [
-    "blast",
-    5.5
-   ],
-   [
-    "radius",
-    5.7
+    "risk",
+    5.68
    ],
    [
     "aware",
-    6.1
+    5.94
    ],
    [
     "ai",
-    6.36
+    6.24
    ],
    [
     "code",
-    6.82
+    6.58
    ],
    [
     "reviewer",
-    7.2
+    6.96
    ],
    [
     "for",
-    7.52
+    7.4
    ],
    [
     "your",
-    7.8
+    7.54
    ],
    [
     "critical",
-    7.92
+    7.66
    ],
    [
     "systems",
-    8.18
+    7.94
    ],
    [
     "sign",
-    9.38
+    9.36
    ],
    [
     "in",
+    9.4
+   ],
+   [
+    "to",
     9.56
    ],
    [
-    "to",
-    9.74
-   ],
-   [
     "try",
-    9.84
+    9.66
    ],
    [
     "it",
-    10.02
+    9.86
    ],
    [
     "or",
-    10.48
+    10.28
    ],
    [
     "contact",
-    10.64
+    10.42
    ],
    [
     "us",
-    11.0
+    10.76
    ],
    [
     "to",
-    11.3
+    11.08
    ],
    [
     "learn",
-    11.44
+    11.24
    ],
    [
     "more",
-    11.58
+    11.38
    ]
   ]
  }

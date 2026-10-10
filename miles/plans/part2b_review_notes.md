@@ -186,3 +186,11 @@ Frame numbers below are in the JOINED video (part 1 = f1-2295, 2a starts f2296, 
 - Output: renders/street_part_1_final-street_part2_a-street_part2_b_360p_mix(_tc).mp4 (227 s, 22 MB) + `_10mb_tc.mp4` (9.8 MB).
 - STILL OPEN: item 7 (VO line 11 "risk aware AI code reviewer ..."): needs a new take 11 (current take says "blast-radius aware"; subtitles follow the audio).
   Also the Teams/Slack stills are timed to the spoken words (Microsoft/Slack), not to joined-video 3:05-3:08 literally — easy to change.
+
+## DONE (2026-10-10): "blast radius" -> "risk" in the voice-over (new takes 08 + 11 applied, 2b re-rendered; 10 MB version made)
+- Line 8 (S16) new wording: "Every issue is prioritized by risk, based on what a change affects, how far its impact spreads, and the potential
+  consequences — so critical issues never get buried." (rest of the line unchanged).
+- Line 11 (S19): "The risk aware AI code reviewer for your critical systems."
+- `vo_street_part2.md` already updated. Needs: new take_08 + take_11 -> copy to assets/audio/vo_street_part2/takes/ + videos/livereview-launch/assets/,
+  re-split (`07b_split_take.py --lines ...`), rebuild 04_street_part2_b.py, re-render 2b 360p (full: S16 length changes), re-join 3 parts + 10 MB.
+- Not changeable: the product clip footage `blast_radius_zoom.mp4` shows "Blast-radius order" in the UI.
