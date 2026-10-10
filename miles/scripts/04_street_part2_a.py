@@ -522,10 +522,10 @@ shot.sfx("ui_pop", CLOSE_F)
 # the customers: out of your door, along the sidewalk, into the queue at their door (it runs off to the right). The
 # queue moves: every ENTER_GAP frames the one at their door goes in and everyone steps up a place.
 dl, dr = SHOP["L"]["door"], SHOP["R"]["door"]
-QUEUE = lambda i: (dr[0] - 0.35 - 0.72 * i, FRONT + 1.45)
+QUEUE = lambda i: (dr[0] - 0.35 - 0.6 * (i // 3), FRONT + 1.0 + 0.55 * (i % 3))     # a crowd three deep in front of their door
 LANE = FRONT + 2.5                                          # the outer lane of the sidewalk (they pass the queue there)
 DOOR_IN = (dr[0], FRONT + 0.05)
-ENTER0, ENTER_GAP = Q1 + 90, 52
+ENTER0, ENTER_GAP = Q1 + 90, 46
 entries = [ENTER0 + i * ENTER_GAP for i in range(40)]
 n_in = lambda t: sum(1 for e in entries if e <= t)
 
@@ -571,13 +571,13 @@ def queue_route(w_, rank, f0, approach=(), phase=0.0):
 # 1. the question is asked to an empty street; 2. a few customers go into the shop that doesn't inspect;
 # 3. many more queue up at the one that does; 4. only then the answer (line 2)
 DOOR_L = (dl[0], FRONT + 0.05)
-for i in range(3):
+for i in range(2):                                          # just two go into your shop
     start = (SHOPX["L"] + 6.5 + 1.4 * i, FRONT + 0.5)                               # in from the left along the facade (behind him), into your shop
     spawn(f"Visitor{i}").route([(start, 0), (DOOR_L, 0)], Q1 - 40 + i * 34, phase=rw.random())
-N_CUST = 11
-for i in range(N_CUST):                                     # in from the street (off frame right), into their queue
-    start = (SX - 9.5 - 0.9 * i, LANE + 0.35 * (i % 2))
-    queue_route(spawn(f"Customer{i}"), i, Q1 - 60 + i * 24, approach=[(start, 0)], phase=rw.random())
+N_CUST = 18                                                 # and eighteen into theirs
+for i in range(N_CUST):                                     # in from the street (off frame right), into their crowd
+    start = (SX - 9.5 - 0.5 * (i % 4), LANE + 0.35 * (i % 2))
+    queue_route(spawn(f"Customer{i}"), i, Q1 - 50 + i * 14, approach=[(start, 0)], phase=rw.random())
 # (nobody comes out of your shop: the broken item sits in its window, the sign flips to CLOSED)
 
 # ================================================================== S11-S13 the sites
@@ -1098,7 +1098,7 @@ pL = Vector((SHOPX["L"], FRONT + 0.6, 2.2))
 pR = Vector((SHOPX["R"], FRONT + 0.6, 2.2))
 office.present(fL - 6, pL, side=k.gesture_side(pL, hips(fL), cam10[0]), hold=max(8, fR - fL - 16), ramp=7, amount=0.6)
 office.present(fR - 4, pR, side=k.gesture_side(pR, hips(fR), cam10[0]), hold=max(8, B_WHO - fR - 12), ramp=7, amount=0.6)
-qp = Vector((QUEUE(2)[0], QUEUE(2)[1], 1.4))
+qp = Vector((QUEUE(4)[0], QUEUE(4)[1], 1.4))
 office.present(T[2] + 2, qp, side=k.gesture_side(qp, hips(T[2]), cam101[0]), hold=30, ramp=7, amount=0.7)
 office.present(T[3] + 6, SIGN_C["A"] + Vector((0, 0.4, 0)), side=k.gesture_side(SIGN_C["A"], hips(T[3]), AB_LOC), hold=24, ramp=8, amount=0.6)
 fB = int(first(talkB).start) + 12

@@ -119,8 +119,8 @@ FBLD = face_to(FX_SPOT, FIN_C)
 push18 = perf.then("Standing 2H Magic Attack 01", frm=4, to=60, speed=0.9, blend=10, face=FBLD + 10)
 R0 = int(push18.start) + 22                                 # INSPECTION slides back in
 HOLD_F = max(wordf(10, "inspection"), R0 + 18)             # it locks in (glow); the floors snap up
-watch18 = perf.then("Breathing Idle", length=max(40, HOLD_F + 150 - int(perf.end)), blend=10, face=FBLD)
-SUNRISE = HOLD_F + 40
+watch18 = perf.then("Breathing Idle", length=max(20, HOLD_F + 57 - int(perf.end)), blend=10, face=FBLD)     # he leaves as the voice ends (~57 frames after "inspection")
+SUNRISE = HOLD_F + 14
 f_rf = face_to(FX_SPOT, ROOF_SPOT)
 shoot18b = k.shoot(f_rf)
 zip18b = k.zip_(16.0, f_rf)
@@ -132,11 +132,11 @@ talk19 = k.talk_until(wordf(11, "sign") - 4, face=F19, clips=CALM)
 PHONE = "CMU 79_36 answering the phone"                      # its hand comes up beside the head: the peace sign (fingers on top)
 pk19 = perf.extreme(PHONE, R_HAND, (0, 0, 1), 10, 120)
 up19 = perf.then(PHONE, frm=max(1, pk19 - 24), to=pk19, blend=10, face=F19, in_place=1.0)
-n19 = max(30, T[11] + F((k.dur(11) + 0.8) * FPS) + 3 * FPS - int(perf.end) + 6)
+DEMO_CUT = wordf(11, "contact") - 10                          # the billboard with the address comes in as "or contact us to learn more" starts
+END = DEMO_CUT + 3 * FPS
+n19 = max(30, END - int(perf.end) + 6)
 peace19 = perf.then(PHONE, frm=pk19, to=pk19 + 1, speed=1.0 / n19, blend=4, face=F19, in_place=1.0)
 perf.build()
-DEMO_CUT = T[11] + F((k.dur(11) + 0.8) * FPS)
-END = DEMO_CUT + 3 * FPS
 sc.frame_end = END
 print("T", T, "S18", S18_CUT, "R0", R0, "HOLD", HOLD_F, "DEMO", DEMO_CUT, "END", END)
 
@@ -307,17 +307,17 @@ for i in range(1, 4):
     home = fl.location.copy()
     crushed = Vector((home.x + rp.uniform(-0.25, 0.25), home.y + rp.uniform(-0.3, 0.3), (i - 1) * FIN_S * SQ + FIN_S * SQ / 2 + 0.02))
     tilt = Vector((rp.uniform(-0.06, 0.06), rp.uniform(-0.1, 0.1), rp.uniform(-0.08, 0.08)))
-    up = HOLD_F + 6 + (i - 1) * 5
+    up = HOLD_F + 4 + (i - 1) * 3
     anim.keys(fl, "location", [(1, crushed, "const"), (up, crushed, "back"), (up + 10, home, "out"), (up + 13, home + Vector((0, 0, 0.06)), "in"),
                                (up + 16, home)])
     anim.keys(fl, "rotation_euler", [(1, tilt, "const"), (up, tilt, "out"), (up + 10, Vector((0, 0, 0)))])
     anim.keys(fl, "scale", [(1, Vector((1.03, 1.04, SQ)), "const"), (up, Vector((1.03, 1.04, SQ)), "out"), (up + 9, Vector((1, 1, 1)), "back")])
     shot.sfx("block_thud", up + 10)
 for i in range(1, 4):
-    lf = SUNRISE + 20 + i * 12
+    lf = SUNRISE + 8 + i * 5
     anim.keys(bld.mix[i].inputs[0], "default_value", [(lf, 0.15, "lin"), (lf + 8, 0.9, "out")])
     shot.sfx("ui_pop", lf)
-NEW = [(4, SUNRISE + 80), (5, SUNRISE + 98)]
+NEW = [(4, SUNRISE + 30), (5, SUNRISE + 38)]
 for i, f_ in NEW:
     fl = bld.floors[i]
     home = fl.location.copy()
@@ -329,7 +329,7 @@ for i, f_ in NEW:
                                (f_ + 3, home + Vector((0, 0, 0.1)), "in"), (f_ + 6, home)])
     shot.sfx("block_thud", f_)
 cash_mat = fx.material("CashSide", (0.22, 0.75, 0.32), rough=0.55, emit=0.5)
-CASH_F = SUNRISE + 112
+CASH_F = SUNRISE + 46
 for kk, dx in enumerate((-5.0, -3.6, 3.6, 5.0)):
     rest = Vector((FIN_C.x + dx, FIN_FRONT + 1.6, TOP6 + 0.6))
     ob = box(f"Cash{kk}", (1.2, 1.0, 1.1 + 0.3 * (kk % 2)), rest, cash_mat, fcoll)
@@ -384,7 +384,7 @@ light_key(1, DAY)
 light_key(S18_CUT - 1, DAY)
 light_key(S18_CUT, DAWN)
 light_key(SUNRISE, DAWN, ease="inout")
-light_key(SUNRISE + 120, RISE, ease="inout")
+light_key(SUNRISE + 50, RISE, ease="inout")
 light_key(T[11] - 21, RISE)
 light_key(T[11] - 20, FULL)
 
@@ -399,9 +399,10 @@ k.read_shot(S18_CUT, int(land18b.start) + 40, cam18, drift=0.6)
 rtgt = lambda f: HD(f) + Vector((0, 0, -0.25))
 cam.lens(int(land18b.start) + 41, 35, "const")
 k.at(int(land18b.start) + 41, R_CAM, rtgt(T[11]), "lin", cut=True)
-k.at(PEACE + 6, R_CAM + Vector((0.1, -0.3, 0.0)), rtgt(PEACE), "inout")
+PULL0 = min(PEACE + 6, DEMO_CUT - 72)                         # the pull-out takes ~2.3 s and ends on the billboard cut
+k.at(PULL0, R_CAM + Vector((0.1, -0.3, 0.0)), rtgt(PEACE), "inout")
 k.at(DEMO_CUT - 2, Vector((FIN_C.x + 9.0, FIN_FRONT - 26.0, TOP6 + 14.0)), Vector((FIN_C.x + 4.0, FIN_C.y, 6.0)), "inout")
-cam.lens(PEACE + 6, 35, "inout")
+cam.lens(PULL0, 35, "inout")
 cam.lens(DEMO_CUT - 2, 28, "inout")
 d_loc = BB2_C + Vector((0, -10.0, -0.6))
 d_tgt, d_lens = k.fit(d_loc, [BB2_C + Vector((dx * BB2_W / 2, 0, dz * BB2_H / 2)) for dx in (-1, 1) for dz in (-1, 1)], margin=1.08)

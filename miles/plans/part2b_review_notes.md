@@ -194,3 +194,10 @@ Frame numbers below are in the JOINED video (part 1 = f1-2295, 2a starts f2296, 
 - `vo_street_part2.md` already updated. Needs: new take_08 + take_11 -> copy to assets/audio/vo_street_part2/takes/ + videos/livereview-launch/assets/,
   re-split (`07b_split_take.py --lines ...`), rebuild 04_street_part2_b.py, re-render 2b 360p (full: S16 length changes), re-join 3 parts + 10 MB.
 - Not changeable: the product clip footage `blast_radius_zoom.mp4` shows "Blast-radius order" in the UI.
+
+## State 2026-10-10 (late): built but NOT yet rendered
+- 2b: S19 billboard (LiveReview + address) comes in at "or contact us to learn more" (rendered, in the committed videos).
+- 2b (build only): S18 rebuild compressed to the voice length (ends ~57 frames after "inspection", he goes up as the audio ends) -> 2b = 2072 frames (69.1 s).
+  Partial new-cut frames kept in build/frames/street_part2_b_360p_partial_newcut/ (135 frames, from 1415).
+- 2a (build only): S10 crowd = 2 people into your shop, 18 (three deep) into theirs. Needs frames 270-720 re-rendered.
+- To finish: render 2b from 1415 + 2a 270-720 (05c_render_range.py), 06c post, 06_assemble.py (2a, 2b, then the joined cut), 10 MB copy.
