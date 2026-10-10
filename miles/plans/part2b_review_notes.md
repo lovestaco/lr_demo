@@ -211,3 +211,13 @@ Decided placements (user: #3 not needed, the other two are good):
    (`LABELS` / `NEW` floors in 04_street_part2_b.py; floor label images are made in 03d_street_part2_signs.py `floor_label`). On-screen only.
 3. S19 closing billboard: NOT changing.
 Optional (not requested yet): speak it in take 10 ("... Attention goes where risk is."), and plant a small ATTENTION word in part 1 / 2a ("human review can't keep up", "humans for judgment").
+
+## Requirement (2026-10-10): the Meta section (~20 s) between "he goes up" (S18) and the S19 ending — waiting for the user's takes 12-14
+Argument: inspection is a big deal -> Meta recognized it and went risk-first (skip low risk) -> awesome results -> you can get the same with LiveReview -> website link.
+Decisions: numbers only, no source credit; no Zuckerberg face; no "deserving person" card; total ~20 s.
+- take 12 (~9 s): "[serious] Inspection is a big deal. [confident] Meta saw it too, and went risk-first. [matter-of-fact] Low-risk changes skip the line, so attention goes where risk is."
+- take 13 (~7 s): "[excited] And the results? [emphatic] One fiftieth of the production incidents. One third of the deploy reverts. Thirty-three percent lower wait time."
+- take 14 (~4 s): "[warm] You can get the same results in your org, with LiveReview."
+Visuals: META sign on the rooftop + risk-sorted change cards (low-risk ones go grey, "SKIPPED"); three number signs "1/50 production incidents", "1/3 deploy reverts",
+"33% lower wait time" popping on the spoken numbers; then LiveReview gifs (risk score / skip low risk, see assets risk-score_*.webp/.mp4) + the website link; then the existing S19 ending (take 11).
+Build plan: 3D signs for the Meta beats (city.sign machinery as in part 1's risk screen), a 2D board (05b style) for the LiveReview gifs + link; new vo lines 12-14 placed between S18 and S19 (T[12..14] in 04_street_part2_b.py), 2b grows by ~20 s.
