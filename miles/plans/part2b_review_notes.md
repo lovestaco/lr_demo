@@ -201,3 +201,13 @@ Frame numbers below are in the JOINED video (part 1 = f1-2295, 2a starts f2296, 
   Partial new-cut frames kept in build/frames/street_part2_b_360p_partial_newcut/ (135 frames, from 1415).
 - 2a (build only): S10 crowd = 2 people into your shop, 18 (three deep) into theirs. Needs frames 270-720 re-rendered.
 - To finish: render 2b from 1415 + 2a 270-720 (05c_render_range.py), 06c post, 06_assemble.py (2a, 2b, then the joined cut), 10 MB copy.
+
+## Requirement (2026-10-10, from the reviewer): the two big concepts — ATTENTION, RISK  [NOTES ONLY, not started; user has one more requirement coming]
+Message: "Respect human attention" + "Use risk scoring" -> in two words ATTENTION, RISK -> in five words: **"attention goes where risk is"**. Viewers should remember those two things.
+Decided placements (user: #3 not needed, the other two are good):
+1. **S16 board title (2b):** replace "LiveReview helps your engineers focus on what matters" with **"ATTENTION goes where RISK is"** (the two words big / highlighted).
+   The VO line "Every issue is prioritized by risk ..." stays. On-screen only (05b BOARDS["s16"]["title"]; the title pops on the word "engineers" — may need a new trigger word).
+2. **S18 rebuild floors (2b):** put the two words on the rebuilt building's floors (ATTENTION, RISK), like the existing HUMANS: JUDGMENT / AGENTS: SCALE floors
+   (`LABELS` / `NEW` floors in 04_street_part2_b.py; floor label images are made in 03d_street_part2_signs.py `floor_label`). On-screen only.
+3. S19 closing billboard: NOT changing.
+Optional (not requested yet): speak it in take 10 ("... Attention goes where risk is."), and plant a small ATTENTION word in part 1 / 2a ("human review can't keep up", "humans for judgment").
