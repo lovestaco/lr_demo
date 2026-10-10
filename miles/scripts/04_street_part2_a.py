@@ -319,7 +319,7 @@ ptsB = [Vector((SPOT["B"][0] + 0.45, SPOT["B"][1], z_)) for z_ in (0.0, 1.9)] + 
 CAM_B = (B_LOC, *k.fit(B_LOC, ptsB, margin=1.05))
 # S11/S12 read beats: push the lens onto the board text (same camera position, so the angle is unchanged) and back
 CAM_AZ = (AB_LOC, *k.fit(AB_LOC, [SIGN_C["A"] + Vector((dx * SW_ / 2, 0, dz * SH_ / 2)) for dx in (-1, 1) for dz in (-1, 1)] +
-                                 [Vector((SPOT["A"][0] + 0.8, SPOT["A"][1], z_)) for z_ in (0.0, 1.9)], margin=1.06))
+                                 [Vector((SPOT["A"][0] + 0.8, SPOT["A"][1], z_)) for z_ in (0.0, 1.9)], margin=1.0))
 CAM_BZ = (B_LOC, *k.fit(B_LOC, [SIGN_C["B"] + Vector((dx * SW_ / 2, 0, dz * SH_ / 2)) for dx in (-1, 1) for dz in (-1, 1)] +
                                 [Vector((SPOT["B"][0] + 0.8, SPOT["B"][1], z_)) for z_ in (0.0, 1.9)], margin=1.06))
 C_LOC = Vector((SITES["C"] + 2.4, CAM_Y + 3.0, 2.4))       # S13: the board, him, the crew and the tower
@@ -357,7 +357,9 @@ zip0 = k.zip_((Vector(SPOT10) - CP.xy).length, f_0)
 land0 = k.touch(f_0, SPOT10)
 F10 = face_to(SPOT10, cam10[0])
 T[1] = int(land0.start) + UPRIGHT
-T[2] = T[1] + F((k.dur(1) + 0.3) * FPS)
+BEAT = 3.0                                                   # seconds of staging after "who does the customer pick?" (some go to one shop, many to the other)
+Q1 = T[1] + F(k.dur(1) * FPS)                                # the question has been asked
+T[2] = T[1] + F((k.dur(1) + 0.3 + BEAT) * FPS)
 talk10 = k.talk_until(T[2] + 4, face=F10, clips=CALM)
 # ---- S10.1: the same spot, turned to the closer camera
 F101 = face_to(SPOT10, cam101[0])
@@ -377,13 +379,19 @@ f_run = face_to(SPOT["A"], SPOT["B"])
 RUN0 = T[4] + F(k.word(4, "two") * FPS)
 pre12 = perf.then("Breathing Idle", length=max(8, RUN0 - int(perf.end) + 8), blend=8, face=f_run, in_place=1.0)
 RUN_D = (Vector(SPOT["A"]) - Vector(SPOT["B"])).length
-stride = min(0.24, max(0.14, k.stride("MX Sprint")))
-run12 = perf.then("MX Sprint", length=max(24, int(RUN_D / stride)), blend=6, face=f_run, in_place=1.0)
+v_run = k.stride("MX Sprint")                                # the clip's own ground speed (m / frame)
+SPR0, SPR1 = bpy.data.actions["MX Sprint"].frame_range
+n_cyc = lambda dist: max(2, round(dist / max(0.05, v_run) / max(1, (SPR1 - SPR0) - 4)))     # run cycles (each overlaps the next by 4 frames)
+run12 = perf.then("MX Sprint", repeat=n_cyc(RUN_D), blend=6, face=f_run, in_place=1.0)
 FB = face_to(SPOT["B"], B_LOC)
-talkB = k.talk(max(14, T[4] + k.hold(4, 0.9) - int(perf.end) + 10), face=FB, at=SPOT["B"], clips=CALM)
-# ---- S13 site C (a cut): he presents its board from its left edge; robots and the crane build, the boss checks
+RUN2_D = (Vector(SPOT["B"]) - Vector(SPOT["C"])).length
+talkB = k.talk(max(14, T[4] + F(k.dur(4) * FPS) - 12 - int(perf.end)), face=FB, at=SPOT["B"], clips=CALM)
+# ---- S13 site C: he sprints on from B to C (the camera trucks with him, no cut), presents its board from its left edge;
+# robots and the crane build, the boss checks
+f_run2 = face_to(SPOT["B"], SPOT["C"])
+run13 = perf.then("MX Sprint", repeat=n_cyc(RUN2_D), blend=6, face=f_run2, in_place=1.0)
 FC = face_to(SPOT["C"], C_LOC)
-setC = perf.then("Breathing Idle", length=12, face=FC, at=SPOT["C"], in_place=1.0)
+setC = perf.then("Breathing Idle", length=12, face=FC, in_place=1.0, blend=8)
 T[5] = int(setC.start) + 12
 talkC = k.talk_until(T[5] + F(k.word(5, "that") * FPS) + 18, face=FC, clips=CALM)
 # ---- end of S13 (in the pull-back): a line to the crane jib, up onto site C's roof
@@ -448,9 +456,12 @@ perf.root_z(zk)
 A0 = BOARD_C + Vector((BOARD_W / 2 - 0.6, 0.3, BOARD_H / 2))    # the line catches the board's top-left corner
 k.web_zip(zip0, land0, A0, lift=1.2, name="S10")
 # S12: the sprint, a straight run (eased in / out) along the front of site A
-ra, rb = int(run12.start), int(run12.end) - 1
+ra, rb = int(first(run12).start), int(final(run12).end) - 1
 pA, pB = Vector((SPOT["A"][0], SPOT["A"][1], 0)), Vector((SPOT["B"][0], SPOT["B"][1], 0))
-k.travel(lambda t: pA.lerp(pB, t * t * (3 - 2 * t)), ra, rb, axes=(0, 1), name="S12run")
+k.travel(lambda t: pA.lerp(pB, t), ra, rb, axes=(0, 1), name="S12run")                  # constant speed = the run cycle's: feet don't slide
+ra2, rb2 = int(first(run13).start), int(final(run13).end) - 1
+pC = Vector((SPOT["C"][0], SPOT["C"][1], 0))
+k.travel(lambda t: pB.lerp(pC, t), ra2, rb2, axes=(0, 1), name="S13run")
 FLOOR_GAP, N_C = 16, 7
 F13_0 = T[5] + F(k.word(5, "agents") * FPS) - 30 - 2 * 16   # floors 0 and 1 are already up when we cut in
 LANDS_C = [F13_0 + i * FLOOR_GAP for i in range(N_C)]
@@ -459,7 +470,7 @@ for fa, fb, nm in k.travels:
     k.path_hits(fa, fb, nm)
 
 # ------------------------------------------------------------------ feet
-air = [(a_, b_) for a_, b_, n_ in k.travels if n_ != "S12run"] + [(int(land0.start), int(land0.start) + 6),
+air = [(a_, b_) for a_, b_, n_ in k.travels if n_ not in ("S12run", "S13run")] + [(int(land0.start), int(land0.start) + 6),
                                                                       (int(landC.start), int(landC.start) + 6)]
 lock_err = 0.0
 for a_, b_, fl in [(1, int(zip0.start) - 1, k.floor_at(CP.x, CP.y)), (int(land0.start), int(setA.start) - 1, FL_ROAD),
@@ -510,12 +521,11 @@ anim.visible(SHOP["L"]["sign"], [(1, True), (CLOSE_F, False)])
 shot.sfx("ui_pop", CLOSE_F)
 # the customers: out of your door, along the sidewalk, into the queue at their door (it runs off to the right). The
 # queue moves: every ENTER_GAP frames the one at their door goes in and everyone steps up a place.
-LEAVE = wordf(1, "competitor")
 dl, dr = SHOP["L"]["door"], SHOP["R"]["door"]
 QUEUE = lambda i: (dr[0] - 0.35 - 0.72 * i, FRONT + 1.45)
 LANE = FRONT + 2.5                                          # the outer lane of the sidewalk (they pass the queue there)
 DOOR_IN = (dr[0], FRONT + 0.05)
-ENTER0, ENTER_GAP = LEAVE - 60, 60
+ENTER0, ENTER_GAP = Q1 + 90, 52
 entries = [ENTER0 + i * ENTER_GAP for i in range(40)]
 n_in = lambda t: sum(1 for e in entries if e <= t)
 
@@ -558,13 +568,17 @@ def queue_route(w_, rank, f0, approach=(), phase=0.0):
     return t_door
 
 
-N_PRE = 6
-for i in range(N_PRE):                                      # already queueing at their door
-    queue_route(spawn(f"Queued{i}"), i, 1, phase=rw.random())
-for i in range(7):                                          # new customers walk in from the street (off frame right)
+# 1. the question is asked to an empty street; 2. a few customers go into the shop that doesn't inspect;
+# 3. many more queue up at the one that does; 4. only then the answer (line 2)
+DOOR_L = (dl[0], FRONT + 0.05)
+for i in range(3):
+    start = (SHOPX["L"] + 6.5 + 1.4 * i, FRONT + 0.5)                               # in from the left along the facade (behind him), into your shop
+    spawn(f"Visitor{i}").route([(start, 0), (DOOR_L, 0)], Q1 - 40 + i * 34, phase=rw.random())
+N_CUST = 11
+for i in range(N_CUST):                                     # in from the street (off frame right), into their queue
     start = (SX - 9.5 - 0.9 * i, LANE + 0.35 * (i % 2))
-    queue_route(spawn(f"Customer{i}"), N_PRE + i, LEAVE - 40 + i * 34, approach=[(start, 0)], phase=rw.random())
-# your shop stays empty: nobody comes out of it (the broken item sits in its window, the sign flips to CLOSED)
+    queue_route(spawn(f"Customer{i}"), i, Q1 - 60 + i * 24, approach=[(start, 0)], phase=rw.random())
+# (nobody comes out of your shop: the broken item sits in its window, the sign flips to CLOSED)
 
 # ================================================================== S11-S13 the sites
 anim.visible(site_signs["A"][1], [(1, False), (wordf(3, "option") - 2, True), (T[4], False)])
@@ -726,7 +740,7 @@ for i, (dx, ph) in enumerate(((T_W / 2 - 0.3, 0.0), (-T_W / 2 + 0.2, 0.5))):
 cw.robot("RobotC0", (tc.x + 0.4, tc.y + T_W / 2 + 2.4), face=(0.3, 1))
 BOSS_C = (tc.x - T_W / 2 - 1.1, tc.y + T_W / 2 + 2.2)
 boss_c = cw.boss("BossC", BOSS_C, face=(0.8, -0.6), rig=rig, clip=CLIP_BOSS)
-boss_c.show([(1, False), (int(setC.start), True)])
+boss_c.show([(1, False), (int(first(run13).start), True)])
 
 # ---- S14: three rolled banners at C's roof edge unroll down its front, one per thing he counts
 BAN_L = 5.5
@@ -1003,12 +1017,8 @@ k.at(int(setA.start), CAM_A[0], CAM_A[1], "lin", cut=True)
 # read: push onto site A's board text, hold it, then back out to the wide before the sprint
 k.at(int(talkA.start) + 6, CAM_AZ[0], CAM_AZ[1], "inout")
 cam.lens(int(talkA.start) + 6, round(CAM_AZ[2]), "inout")
-k.at(int(talkA.end) - 20, CAM_AZ[0], CAM_AZ[1], "inout")
-cam.lens(int(talkA.end) - 20, round(CAM_AZ[2]), "inout")
-k.at(int(talkA.end) - 2, CAM_A[0], CAM_A[1], "inout")
-cam.lens(int(talkA.end) - 2, round(CAM_A[2]), "inout")
-k.at(ra - 2, CAM_A[0] + Vector((0, -0.2, 0)), CAM_A[1], "inout")
-cam.lens(ra - 2, round(CAM_A[2]), "inout")
+k.at(ra - 14, CAM_AZ[0], CAM_AZ[1], "inout")             # held on site A until the sprint starts, then out and across to site B
+cam.lens(ra - 14, round(CAM_AZ[2]), "inout")
 k.at(rb + 10, CAM_B[0], CAM_B[1], "inout")
 cam.lens(rb + 10, round(CAM_B[2]), "inout")
 # read: push onto site B's board text, hold, then the existing pull to CAM_B (on "subtle") brings it back out
@@ -1033,8 +1043,6 @@ cam.lens(RUN_F - 6, 45, "const")
 k.at(RUN_F - 6, door_p + Vector((1.5, 7.4, 0.6)), door_p, "lin")
 cam.lens(RUN_F - 5, round(CAM_B[2]), "const")
 k.at(RUN_F - 5, CAM_B[0], CAM_B[1], "lin", cut=True)
-k.at(int(setC.start) - 1, CAM_B[0] + Vector((0, -0.3, 0)), CAM_B[1], "lin")
-cam.lens(int(setC.start) - 1, round(CAM_B[2]), "const")
 CUTS.append(("B back", RUN_F - 5))
 # S13: site C (board, him, the robots, the boss, the lower floors), widening as the tower goes up; on "That team
 # beats..." the pull-back to all three sites side by side
@@ -1042,17 +1050,18 @@ C_TOP = lambda f: T_H * max(3, min(N_C, sum(1 for lf in LANDS_C if lf <= f))) + 
 c_fit = lambda f: k.fit(C_LOC, ptsC_lo + [TOWER["C"] + Vector((dx * T_W / 2, 0, C_TOP(f))) for dx in (-1, 1)], margin=1.06)
 c_keys = list(range(int(setC.start), THAT - 4, 8)) + [THAT - 4]
 c_sm = {f: c_fit(f) for f in range(int(setC.start) - 16, THAT + 20)}
+k.at(ra2 - 2, CAM_B[0] + Vector((0, -0.2, 0)), CAM_B[1], "inout")      # trucks right with his sprint to site C (no cut)
+cam.lens(ra2 - 2, round(CAM_B[2]), "inout")
 for f in c_keys:                                             # widens with the tower, the ground always in frame
     tg = sum((c_sm[q][0] for q in range(f - 16, f + 17)), Vector()) / 33
     ln = sum(c_sm[q][1] for q in range(f - 16, f + 17)) / 33
-    k.at(f, C_LOC, tg, "lin", cut=(f == int(setC.start)))
-    cam.lens(f, ln, "const" if f == int(setC.start) else "lin")
+    k.at(f, C_LOC, tg, "lin")
+    cam.lens(f, ln, "lin")
 c_last = c_sm[THAT - 4]
 k.at(int(shootC.start), C_LOC, c_last[0], "inout")             # hold the site C framing while he aims the line
 cam.lens(int(shootC.start), c_last[1], "inout")
 k.at(int(landC.start) + 12, ROOF_CAM[0], ROOF_CAM[1], "inout")   # then up with him: the roof, the banners below him
 cam.lens(int(landC.start) + 12, round(ROOF_CAM[2]), "inout")
-CUTS.append(("C", int(setC.start)))
 k.at(int(set15.start) - 1, ROOF_CAM[0] + Vector((0, -0.5, 0)), ROOF_CAM[1], "lin")
 cam.lens(int(set15.start) - 1, round(ROOF_CAM[2]), "const")
 # S15: the medium shot of C's top floor (him on the line, the door, the balcony); it tilts up to the floors still
@@ -1087,7 +1096,7 @@ pL = Vector((SHOPX["L"], FRONT + 0.6, 2.2))
 pR = Vector((SHOPX["R"], FRONT + 0.6, 2.2))
 office.present(fL - 6, pL, side=k.gesture_side(pL, hips(fL), cam10[0]), hold=max(8, fR - fL - 16), ramp=7, amount=0.6)
 office.present(fR - 4, pR, side=k.gesture_side(pR, hips(fR), cam10[0]), hold=max(8, B_WHO - fR - 12), ramp=7, amount=0.6)
-qp = Vector((QUEUE(4)[0], QUEUE(4)[1], 1.4))
+qp = Vector((QUEUE(2)[0], QUEUE(2)[1], 1.4))
 office.present(T[2] + 2, qp, side=k.gesture_side(qp, hips(T[2]), cam101[0]), hold=30, ramp=7, amount=0.7)
 office.present(T[3] + 6, SIGN_C["A"] + Vector((0, 0.4, 0)), side=k.gesture_side(SIGN_C["A"], hips(T[3]), AB_LOC), hold=24, ramp=8, amount=0.6)
 fB = int(first(talkB).start) + 12
@@ -1170,7 +1179,7 @@ for n_, pts_ in big_hits.items():
 print("SHOPS cleared", sorted(blockers))
 
 # ================================================================== captions (laid over in post)
-OVER = [(w7("not") - 2, END, "Common sense isn't in the **training data.**", 0)]      # S14's three things are on the banners
+OVER = []                                                       # no key-phrase captions: subtitles come from 06_assemble
 json.dump(dict(fps=FPS, end=END, captions=[dict(f0=a_, f1=b_, text=t_, row=r_) for a_, b_, t_, r_ in OVER]),
           open(os.path.join(paths.ROOT, "build", f"{NAME}_overlays.json"), "w"), indent=1)
 

@@ -189,6 +189,21 @@ def demo_screen(name="demo", seconds=6.0, fps=30):
     return len(frames)
 
 
+def url_screen(name="billboard_url"):
+    """The closing billboard: just the LiveReview name and its address (no demo footage)."""
+    W, H = 1920, 1080
+    img = Image.new("RGB", (W, H), (255, 255, 255))
+    d = ImageDraw.Draw(img)
+    d.rectangle([0, 0, W, 26], fill=(37, 99, 235))
+    d.text((W / 2, 440), "LiveReview", font=slides.font(250, slides.BOLD), fill=INK, anchor="mm")
+    size = 120
+    while slides.font(size, slides.BOLD).getlength("hexmos.com/livereview") > W - 240:
+        size -= 4
+    d.text((W / 2, 660), "hexmos.com/livereview", font=slides.font(size, slides.BOLD), fill=(37, 99, 235), anchor="mm")
+    save(img, name)
+    return name
+
+
 def blooper(src_dir, name="blooper", n=330):
     """S15 movie screen: the old spinning web swing on loop; a reviewer's red circle + note appear; caption."""
     d_out = os.path.join(OUT, name)
@@ -370,6 +385,9 @@ if __name__ == "__main__":
     elif sys.argv[1:2] == ["v2a"]:
         os.makedirs(OUT, exist_ok=True)
         v2a_signs()
+    elif sys.argv[1:2] == ["url"]:
+        os.makedirs(OUT, exist_ok=True)
+        print("url", url_screen())
     elif sys.argv[1:2] == ["blooper"]:
         os.makedirs(OUT, exist_ok=True)
         print("blooper", blooper(sys.argv[2]), "frames")

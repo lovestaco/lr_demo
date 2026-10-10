@@ -3,6 +3,7 @@
     python3 scripts/06_assemble.py piece1                  # renders/piece1_360p.mp4 -> renders/piece1_360p_vo.mp4
     python3 scripts/06_assemble.py piece2 --music assets/audio/music/bed_piece2.mp3
     python3 scripts/06_assemble.py act1 act2 --height 720  # several shots back to back
+    (street shots get burned-in subtitles from the voice-over word times, one phrase at a time with the spoken word bold; --no-subs skips; --range 100-200 renders just those frames of the joined timeline, numbers kept)
     (every run also writes <name>_tc.mp4: frame number + timecode bottom-right, for review; --no-burnin skips it)
 
 Each shot script marks its audio cues as timeline markers (exported to build/<shot>_cues.json
@@ -14,7 +15,7 @@ Music (optional, --music or assets/audio/music/bed_<shot>.mp3): looped to length
 """
 import random, glob, json, os, subprocess, sys
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from pipeline import paths
+from pipeline import paths, subs
 
 AUDIO = os.path.join(paths.ROOT, "assets", "audio")
 SFX_DIR = os.path.join(AUDIO, "sfx")
@@ -38,16 +39,19 @@ def sfx_file(name):
     return hits[0] if hits else None
 
 
-def burnin_filter(total, height):
-    """Bottom-right review overlay: Blender frame number (frame 1 = first frame) + time / total duration."""
+def burnin_filter(total, height, start=0, strip=0):
+    """Bottom-right review overlay: Blender frame number (frame 1 = first frame) + time / total duration.
+    start = first frame of a --range preview (numbers keep the full video's); strip = subtitle strip px (sits above it)."""
     fs = max(14, height // 24)
     tot = f"00\\:{int(total // 60):02d}\\:{total % 60:06.3f}"            # same HH:MM:SS.mmm as the running time
-    return (f"drawtext=text='f %{{eif\\:n+1\\:d\\:4}}   %{{pts\\:hms}} / {tot}':x=w-tw-12:y=h-th-10:"
+    return (f"drawtext=text='f %{{eif\\:n+{start + 1}\\:d\\:4}}   %{{pts\\:hms\\:{start / 30:.3f}}} / {tot}':x=w-tw-12:y=h-th-10-{strip}:"
             f"fontsize={fs}:fontcolor=white:box=1:boxcolor=black@0.55:boxborderw=6")
 
 
-def main(shots, height=360, music=None, burnin=False, music_once=False):
-    videos, vo, sfx, offset = [], [], [], 0.0
+def main(shots, height=360, music=None, burnin=False, music_once=False, subtitles=None, frame_range=None):
+    videos, vo, sfx, offset, sub_cues = [], [], [], 0.0, []
+    if subtitles is None:                          # default: on for the street films (their voice-over has word times)
+        subtitles = all(sh.startswith("street") for sh in shots)
     for shot in shots:
         videos.append(os.path.join(paths.RENDERS, f"{shot}_{height}p.mp4"))
         meta = json.load(open(os.path.join(paths.BUILD, f"{shot}_cues.json")))
@@ -57,6 +61,8 @@ def main(shots, height=360, music=None, burnin=False, music_once=False):
             elif label.startswith("sfx "):
                 name, _, gain = label[4:].partition("@")
                 sfx.append((offset + t, name.split("#")[0], float(gain or 1.0)))
+        if subtitles:
+            sub_cues += subs.cues_for_shot(shot, offset)
         offset += meta["duration"]
     total = offset
     if music is None and len(shots) == 1:
@@ -66,6 +72,12 @@ def main(shots, height=360, music=None, burnin=False, music_once=False):
     inputs = sum((["-i", v] for v in videos), [])
     fc = "".join(f"[{i}:v]" for i in range(len(videos))) + f"concat=n={len(videos)}:v=1:a=0[vcat];"
     k = len(videos)
+    width = round(height * 16 / 9)
+    strip = subs.strip_px(height) if sub_cues else 0          # bottom strip reserved for the subtitles
+    if sub_cues:                                   # subtitles: RGBA frames piped in as one more video input
+        inputs += ["-f", "rawvideo", "-pix_fmt", "rgba", "-s", f"{width}x{height}", "-r", "30", "-i", "-"]
+        sub_idx = k
+        k += 1
 
     def place(path, t, gain, tag, pitch=1.0):
         nonlocal fc, k
@@ -110,16 +122,38 @@ def main(shots, height=360, music=None, burnin=False, music_once=False):
     else:
         fc += "[key]anullsink;"
     fc += "".join(bus) + f"amix=inputs={len(bus)}:normalize=0,loudnorm=I=-16:TP=-1.5:LRA=11,{trim}[a];"
-    fc += "[vcat]null[v]"
+    if sub_cues:                                   # the video shrinks into the area above the strip; subtitles go in the strip
+        h2 = height - strip
+        w2 = round(h2 * 16 / 9 / 2) * 2
+        fc += (f"[vcat]scale={w2}:{h2}:flags=lanczos,pad={width}:{height}:{(width - w2) // 2}:0:black[vs];"
+               f"[vs][{sub_idx}:v]overlay=format=auto:eof_action=pass[v]")
+    else:
+        fc += "[vcat]null[v]"
     name = "-".join(shots) if len(shots) > 1 else shots[0]
-    out = os.path.join(paths.RENDERS, f"{name}_{height}p_{'mix' if (sfx_l or music) else 'vo'}.mp4")
-    subprocess.run(["ffmpeg", "-loglevel", "error", "-y", *inputs, "-filter_complex", fc, "-map", "[v]", "-map", "[a]",
-                    "-c:v", "libx264", "-pix_fmt", "yuv420p", "-crf", "18", "-c:a", "aac", "-b:a", "192k",
-                    "-ar", "44100", "-shortest", out], check=True)
+    tag = f"_f{frame_range[0]:04d}-{frame_range[1]:04d}" if frame_range else ""
+    out = os.path.join(paths.RENDERS, f"{name}_{height}p_{'mix' if (sfx_l or music) else 'vo'}{tag}.mp4")
+    start = frame_range[0] - 1 if frame_range else 0
+    cut = ["-ss", f"{start / 30:.4f}", "-t", f"{(frame_range[1] - start) / 30:.4f}"] if frame_range else []
+    cmd = ["ffmpeg", "-loglevel", "error", "-y", *inputs, "-filter_complex", fc, "-map", "[v]", "-map", "[a]",
+           "-c:v", "libx264", "-pix_fmt", "yuv420p", "-crf", "18", "-c:a", "aac", "-b:a", "192k",
+           "-ar", "44100", *cut, "-shortest", out]
+    if sub_cues:
+        print(f"subtitles: {len(sub_cues)} phrases")
+        proc = subprocess.Popen(cmd, stdin=subprocess.PIPE)
+        try:
+            for fr in subs.Overlay(width, height).frames(sub_cues, (frame_range[1] if frame_range else int(round(total * 30))) + 1):
+                proc.stdin.write(fr)
+        except BrokenPipeError:
+            pass
+        proc.stdin.close()
+        if proc.wait():
+            raise SystemExit("ffmpeg failed")
+    else:
+        subprocess.run(cmd, check=True)
     print("VIDEO", out, f"({total:.1f}s)" + (f"  music: {os.path.basename(music)}" if music else ""))
     if burnin:                                         # review copy: frame number + time / total, bottom-right
         tc = out[:-4] + "_tc.mp4"
-        subprocess.run(["ffmpeg", "-loglevel", "error", "-y", "-i", out, "-vf", burnin_filter(total, height),
+        subprocess.run(["ffmpeg", "-loglevel", "error", "-y", "-i", out, "-vf", burnin_filter(total, height, start, strip),
                         "-c:v", "libx264", "-pix_fmt", "yuv420p", "-crf", "18", "-c:a", "copy", tc], check=True)
         print("REVIEW", tc)
 
@@ -128,6 +162,8 @@ if __name__ == "__main__":
     args = sys.argv[1:]
     h = int(args[args.index("--height") + 1]) if "--height" in args else 360
     mu = os.path.abspath(args[args.index("--music") + 1]) if "--music" in args else None
-    skip = {args.index(f) + 1 for f in ("--height", "--music") if f in args}
+    skip = {args.index(f) + 1 for f in ("--height", "--music", "--range") if f in args}
     shots = [a for i, a in enumerate(args) if not a.startswith("--") and i not in skip]
-    main(shots or ["piece1"], h, mu, burnin="--no-burnin" not in args, music_once="--music-once" in args)
+    main(shots or ["piece1"], h, mu, burnin="--no-burnin" not in args, music_once="--music-once" in args,
+         subtitles=False if "--no-subs" in args else (True if "--subs" in args else None),
+         frame_range=tuple(int(x) for x in args[args.index("--range") + 1].split("-")) if "--range" in args else None)

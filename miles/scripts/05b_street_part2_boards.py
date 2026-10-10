@@ -31,7 +31,7 @@ EXPAND = 12                                        # frames to grow from the pan
 FULL_AT = 2.0                                       # a media longer than this many seconds goes full screen
 
 BOARDS = {
-    "s16": dict(title="For your engineers: **attention + understanding**",
+    "s16": dict(title="LiveReview helps your engineers **focus on what matters**",
                 items=["Issues ranked by importance", "A slide deck for every change", "A quick quiz to check understanding",
                        "Conversations right on the MR", "Livi: bot that turns your data into analysis reports and actionable items"],
                 media=["blast_radius_zoom.mp4", "slide_deck.gif", "quiz.gif", "converse_in_mr.png", "demo_livi_chat_bot.mp4"],
@@ -39,9 +39,9 @@ BOARDS = {
                 trim=[None, None, None, None, (2.0, 5.0)],            # Livi: only the 2 s-5 s section
                 caption=None),
     "s17": dict(title="For your agents: **enforcement + scale**",
-                items=["CI/CD Gates: Precise, Customized Merge Enforcement", "Integrations: Slack, Teams, Discord", "MCP"],
-                media=["demo_cicd_gates.mp4", "demo_schedule_review.mp4", None],
-                secs=[4.0, 4.0, 5.0],
+                items=["CI/CD Gates: Precise, Customized Merge Enforcement", "Integrations: Microsoft Teams, Slack", "MCP"],
+                media=["demo_cicd_gates.mp4", "seq", None],                 # "seq": the stills in cfg["s17_seq"] (Teams 1 s, Slack 2 s)
+                secs=[4.0, 2.0, 5.0],
                 trim=[None, None, None],
                 caption="MCP can be used to connect to any preferred AI Agent to operate Livi right from your agent."),
 }
@@ -49,7 +49,7 @@ BOARDS = {
 _cache = {}                                        # name -> (tmpdir, [frame paths]) ; only the current clip is kept
 
 
-def media_frames(name, window, trim=None):
+def media_frames(name, window, trim=None, contain=False):
     """The media at 30 fps, cover-fitted to the full frame (loops when shorter than the on-screen window)."""
     global _cache
     if name in _cache:
@@ -64,7 +64,8 @@ def media_frames(name, window, trim=None):
     want = window / 30.0 + 0.1
     dur = min(want, clip_len) if clip_len else want
     subprocess.run(["ffmpeg", "-loglevel", "error", "-y", "-ss", f"{ss:.3f}", "-i", src, "-t", f"{dur:.3f}", "-vf",
-                    f"fps=30,scale={W}:{H}:force_original_aspect_ratio=increase,crop={W}:{H}",
+                    (f"fps=30,scale={W}:{H}:force_original_aspect_ratio=decrease,pad={W}:{H}:(ow-iw)/2:(oh-ih)/2:color=0x111827" if contain
+                     else f"fps=30,scale={W}:{H}:force_original_aspect_ratio=increase,crop={W}:{H}"),
                     os.path.join(d, "c_%04d.png")], check=True)
     fr = sorted(os.path.join(d, f) for f in os.listdir(d))
     if not fr:                                     # a still that ffmpeg refused: load it directly
@@ -187,7 +188,12 @@ def frame(key, f, cfg):
         start = item_fs[cur]
         end = item_fs[cur + 1] if cur + 1 < len(item_fs) else a1
         media = b["media"][cur]
-        if media is not None and b["secs"][cur] > FULL_AT:
+        if media == "seq":                                       # stills one after another, each at its own frames (panel only)
+            hit = next((q for q in cfg.get(f"{key}_seq", []) if q[0] <= f < q[2]), None)
+            media = hit[1] if hit else "none"
+            if hit:
+                start, end = hit[0], hit[2]
+        elif media is not None and b["secs"][cur] > FULL_AT:
             t = max(0.0, (f - start) / EXPAND)
             k = min(1.0, t) * min(1.0, t) * (3 - 2 * min(1.0, t))     # smoothstep out of the panel
     box = box_lerp(k)
@@ -205,8 +211,8 @@ def frame(key, f, cfg):
         bw, bh = bx1 - bx0, by1 - by0
         if media is None:
             out.alpha_composite(text_card(img, box, b["caption"]))
-        else:
-            fr = media_frames(media, end - start, b["trim"][cur])
+        elif media != "none":
+            fr = media_frames(media, end - start, b["trim"][cur], contain=media.endswith(".png") and b["media"][cur] == "seq")
             shot = Image.open(fr[(f - start) % len(fr)]).convert("RGB").resize((bw, bh))
             radius = int(16 * (1 - k))
             if radius > 1:

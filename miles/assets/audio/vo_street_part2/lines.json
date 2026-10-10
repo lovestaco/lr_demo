@@ -34,7 +34,7 @@
    ],
    [
     "your",
-    3.34
+    3.32
    ],
    [
     "competitor",
@@ -46,11 +46,11 @@
    ],
    [
     "every",
-    4.44
+    4.46
    ],
    [
     "change",
-    4.78
+    4.74
    ],
    [
     "who",
@@ -58,7 +58,7 @@
    ],
    [
     "does",
-    5.94
+    5.92
    ],
    [
     "the",
@@ -137,7 +137,7 @@
    ],
    [
     "if",
-    4.84
+    4.82
    ],
    [
     "you",
@@ -153,7 +153,7 @@
    ],
    [
     "inspect",
-    5.24
+    5.22
    ],
    [
     "what",
@@ -212,7 +212,7 @@
    ],
    [
     "you",
-    0.96
+    1.16
    ],
    [
     "review",
@@ -220,15 +220,15 @@
    ],
    [
     "everything",
-    1.7
+    1.64
    ],
    [
     "features",
-    3.02
+    3.28
    ],
    [
     "are",
-    3.2
+    3.28
    ],
    [
     "shipped",
@@ -236,15 +236,15 @@
    ],
    [
     "carefully",
-    3.68
+    3.66
    ],
    [
     "but",
-    4.56
+    4.6
    ],
    [
     "you",
-    4.84
+    4.82
    ],
    [
     "can",
@@ -343,7 +343,7 @@
    ],
    [
     "and",
-    5.52
+    5.5
    ],
    [
     "the",
@@ -359,15 +359,15 @@
    ],
    [
     "break",
-    6.72
+    6.7
    ],
    [
     "customers",
-    8.06
+    8.08
    ],
    [
     "notice",
-    8.06
+    8.08
    ],
    [
     "because",
@@ -383,7 +383,7 @@
    ],
    [
     "refined",
-    9.48
+    9.46
    ],
    [
     "product",
@@ -391,7 +391,7 @@
    ],
    [
     "wins",
-    10.38
+    10.36
    ]
   ]
  },
@@ -414,11 +414,11 @@
    ],
    [
     "agents",
-    1.26
+    1.24
    ],
    [
     "for",
-    1.46
+    1.48
    ],
    [
     "speed",
@@ -426,7 +426,7 @@
    ],
    [
     "and",
-    2.02
+    2.0
    ],
    [
     "scale",
@@ -454,7 +454,7 @@
    ],
    [
     "beats",
-    4.96
+    4.94
    ],
    [
     "human",
@@ -478,11 +478,11 @@
    ],
    [
     "agent",
-    6.98
+    7.0
    ],
    [
     "only",
-    7.24
+    7.26
    ]
   ]
  },
@@ -525,7 +525,7 @@
    ],
    [
     "more",
-    3.26
+    3.24
    ],
    [
     "results",
@@ -628,7 +628,7 @@
    ],
    [
     "the",
-    1.2
+    1.18
    ],
    [
     "loop",
@@ -636,7 +636,7 @@
    ],
    [
     "cause",
-    2.28
+    2.26
    ],
    [
     "common",
@@ -644,7 +644,7 @@
    ],
    [
     "sense",
-    2.7
+    2.72
    ],
    [
     "ai",
@@ -656,7 +656,7 @@
    ],
    [
     "everyone",
-    4.36
+    4.34
    ],
    [
     "ship",
@@ -704,11 +704,11 @@
    ],
    [
     "judgment",
-    8.4
+    8.38
    ],
    [
     "and",
-    8.66
+    8.68
    ],
    [
     "care",
@@ -724,15 +724,15 @@
    ],
    [
     "and",
-    10.08
+    10.02
    ],
    [
     "they",
-    10.32
+    10.34
    ],
    [
     "re",
-    10.32
+    10.34
    ],
    [
     "not",
@@ -747,22 +747,26 @@
     10.9
    ],
    [
-    "models",
+    "model",
+    11.14
+   ],
+   [
+    "s",
     11.14
    ],
    [
     "training",
-    11.72
+    11.66
    ],
    [
     "data",
-    11.9
+    11.88
    ]
   ]
  },
  "8": {
-  "text": "LiveReview gives your engineers attention and understanding. Every issue is ranked by importance, sorted by real blast radius \u2014 what a change touches, how far it spreads, and how risky it is \u2014 so the critical one never gets buried. A slide deck for every change, explaining what moved and why. A quick quiz to check the reviewer understood it. Conversations right on the MR. And Livi, your bot for reports and actions.",
-  "duration": 24.84,
+  "text": "LiveReview helps your engineers focus on what matters. Every issue is ranked by importance, sorted by real blast radius \u2014 what a change touches, how far it spreads, and how risky it is \u2014 so the critical one never gets buried. Then they can understand every change: a slide deck for each one, explaining what moved and why. A quick quiz to check the reviewer understood it. Conversations right on the MR. And Livi, your bot for reports and actions.",
+  "duration": 26.75,
   "take": "take_08.mp3",
   "words": [
    [
@@ -770,290 +774,318 @@
     0.0
    ],
    [
-    "gives",
-    0.46
+    "helps",
+    0.44
    ],
    [
     "your",
-    0.82
+    0.78
    ],
    [
     "engineers",
-    0.98
+    1.08
    ],
    [
-    "attention",
-    1.36
-   ],
-   [
-    "and",
-    1.88
-   ],
-   [
-    "understanding",
-    2.48
-   ],
-   [
-    "every",
-    3.92
-   ],
-   [
-    "issue",
-    4.02
-   ],
-   [
-    "is",
-    4.44
-   ],
-   [
-    "ranked",
-    4.58
-   ],
-   [
-    "by",
-    4.82
-   ],
-   [
-    "importance",
-    5.08
-   ],
-   [
-    "sorted",
-    5.96
-   ],
-   [
-    "by",
-    6.14
-   ],
-   [
-    "real",
-    6.42
-   ],
-   [
-    "blast",
-    6.7
-   ],
-   [
-    "radius",
-    6.98
-   ],
-   [
-    "what",
-    8.02
-   ],
-   [
-    "a",
-    8.12
-   ],
-   [
-    "change",
-    8.2
-   ],
-   [
-    "touches",
-    8.36
-   ],
-   [
-    "how",
-    9.2
-   ],
-   [
-    "far",
-    9.32
-   ],
-   [
-    "it",
-    9.56
-   ],
-   [
-    "spreads",
-    9.7
-   ],
-   [
-    "and",
-    10.32
-   ],
-   [
-    "how",
-    10.34
-   ],
-   [
-    "risky",
-    10.52
-   ],
-   [
-    "it",
-    10.8
-   ],
-   [
-    "is",
-    11.1
-   ],
-   [
-    "so",
-    11.56
-   ],
-   [
-    "the",
-    11.82
-   ],
-   [
-    "critical",
-    11.92
-   ],
-   [
-    "one",
-    12.18
-   ],
-   [
-    "never",
-    12.46
-   ],
-   [
-    "gets",
-    12.78
-   ],
-   [
-    "buried",
-    13.08
-   ],
-   [
-    "a",
-    14.02
-   ],
-   [
-    "slide",
-    14.02
-   ],
-   [
-    "deck",
-    14.26
-   ],
-   [
-    "for",
-    14.5
-   ],
-   [
-    "every",
-    14.68
-   ],
-   [
-    "change",
-    14.96
-   ],
-   [
-    "explaining",
-    15.38
-   ],
-   [
-    "what",
-    15.98
-   ],
-   [
-    "moved",
-    16.38
-   ],
-   [
-    "and",
-    16.66
-   ],
-   [
-    "why",
-    16.98
-   ],
-   [
-    "a",
-    17.88
-   ],
-   [
-    "quick",
-    17.88
-   ],
-   [
-    "quiz",
-    18.02
-   ],
-   [
-    "to",
-    18.3
-   ],
-   [
-    "check",
-    18.54
-   ],
-   [
-    "the",
-    18.7
-   ],
-   [
-    "reviewer",
-    18.84
-   ],
-   [
-    "understood",
-    18.96
-   ],
-   [
-    "it",
-    19.56
-   ],
-   [
-    "conversations",
-    20.2
-   ],
-   [
-    "right",
-    20.76
+    "focus",
+    1.44
    ],
    [
     "on",
-    21.1
+    2.02
+   ],
+   [
+    "what",
+    2.34
+   ],
+   [
+    "matters",
+    2.6
+   ],
+   [
+    "every",
+    3.76
+   ],
+   [
+    "issue",
+    3.88
+   ],
+   [
+    "is",
+    4.32
+   ],
+   [
+    "ranked",
+    4.46
+   ],
+   [
+    "by",
+    4.7
+   ],
+   [
+    "importance",
+    4.96
+   ],
+   [
+    "sorted",
+    5.84
+   ],
+   [
+    "by",
+    5.94
+   ],
+   [
+    "real",
+    6.2
+   ],
+   [
+    "blast",
+    6.52
+   ],
+   [
+    "radius",
+    6.8
+   ],
+   [
+    "what",
+    7.82
+   ],
+   [
+    "a",
+    7.92
+   ],
+   [
+    "change",
+    8.0
+   ],
+   [
+    "touches",
+    8.16
+   ],
+   [
+    "how",
+    9.0
+   ],
+   [
+    "far",
+    9.1
+   ],
+   [
+    "it",
+    9.28
+   ],
+   [
+    "spreads",
+    9.4
+   ],
+   [
+    "and",
+    10.08
+   ],
+   [
+    "how",
+    10.22
+   ],
+   [
+    "risky",
+    10.4
+   ],
+   [
+    "it",
+    10.66
+   ],
+   [
+    "is",
+    10.92
+   ],
+   [
+    "so",
+    11.42
    ],
    [
     "the",
-    21.3
+    11.66
    ],
    [
-    "mr",
-    21.42
+    "critical",
+    11.74
    ],
    [
-    "and",
-    22.34
+    "one",
+    12.0
    ],
    [
-    "livy",
-    22.34
+    "never",
+    12.32
    ],
    [
-    "your",
-    22.84
+    "gets",
+    12.74
    ],
    [
-    "bot",
-    23.08
+    "buried",
+    13.06
+   ],
+   [
+    "then",
+    14.0
+   ],
+   [
+    "they",
+    14.14
+   ],
+   [
+    "can",
+    14.3
+   ],
+   [
+    "understand",
+    14.42
+   ],
+   [
+    "every",
+    14.72
+   ],
+   [
+    "change",
+    15.28
+   ],
+   [
+    "a",
+    16.1
+   ],
+   [
+    "slide",
+    16.2
+   ],
+   [
+    "deck",
+    16.42
    ],
    [
     "for",
-    23.34
+    16.64
    ],
    [
-    "reports",
-    23.54
+    "each",
+    16.82
+   ],
+   [
+    "one",
+    17.02
+   ],
+   [
+    "explaining",
+    17.32
+   ],
+   [
+    "what",
+    17.78
+   ],
+   [
+    "moved",
+    18.22
    ],
    [
     "and",
-    23.8
+    18.5
+   ],
+   [
+    "why",
+    18.82
+   ],
+   [
+    "a",
+    19.76
+   ],
+   [
+    "quick",
+    19.76
+   ],
+   [
+    "quiz",
+    19.9
+   ],
+   [
+    "to",
+    20.16
+   ],
+   [
+    "check",
+    20.42
+   ],
+   [
+    "the",
+    20.58
+   ],
+   [
+    "reviewer",
+    20.72
+   ],
+   [
+    "understood",
+    20.88
+   ],
+   [
+    "it",
+    21.4
+   ],
+   [
+    "conversations",
+    22.16
+   ],
+   [
+    "right",
+    22.68
+   ],
+   [
+    "on",
+    23.04
+   ],
+   [
+    "the",
+    23.22
+   ],
+   [
+    "mr",
+    23.34
+   ],
+   [
+    "and",
+    23.48
+   ],
+   [
+    "livy",
+    24.2
+   ],
+   [
+    "your",
+    24.8
+   ],
+   [
+    "bot",
+    25.0
+   ],
+   [
+    "for",
+    25.2
+   ],
+   [
+    "reports",
+    25.42
+   ],
+   [
+    "and",
+    25.72
    ],
    [
     "actions",
-    24.1
+    26.04
    ]
   ]
  },
  "9": {
-  "text": "And it gives your agents what they need to enforce your standards at scale. CI/CD gates apply precise, customized enforcement on every merge. Integrations keep the team in the loop \u2014 Teams and Slack. And MCP lets any preferred AI agent operate Livi right from your own agent.",
-  "duration": 17.32,
+  "text": "And it gives your agents what they need to enforce your standards at scale. CI/CD gates apply precise, customized enforcement on every merge. Integrations help you work with Livi everywhere \u2014 in Microsoft Teams and Slack. And MCP lets any preferred AI agent operate Livi right from your own agent.",
+  "duration": 18.68,
   "take": "take_09.mp3",
   "words": [
    [
@@ -1062,59 +1094,59 @@
    ],
    [
     "it",
-    0.12
+    0.14
    ],
    [
     "gives",
-    0.18
+    0.2
    ],
    [
     "your",
-    0.34
+    0.4
    ],
    [
     "agents",
-    0.52
+    0.6
    ],
    [
     "what",
-    0.78
+    0.84
    ],
    [
     "they",
-    1.08
+    1.12
    ],
    [
     "need",
-    1.34
+    1.38
    ],
    [
     "to",
-    1.62
+    1.64
    ],
    [
     "enforce",
-    1.84
+    1.88
    ],
    [
     "your",
-    2.06
+    2.12
    ],
    [
     "standards",
-    2.44
+    2.42
    ],
    [
     "at",
-    2.82
+    2.8
    ],
    [
     "scale",
-    3.08
+    3.06
    ],
    [
     "ci",
-    4.38
+    4.34
    ],
    [
     "slash",
@@ -1122,7 +1154,7 @@
    ],
    [
     "cd",
-    4.86
+    4.88
    ],
    [
     "gates",
@@ -1134,19 +1166,19 @@
    ],
    [
     "precise",
-    5.78
+    5.76
    ],
    [
     "customized",
-    6.58
+    6.34
    ],
    [
     "enforcement",
-    6.98
+    7.0
    ],
    [
     "on",
-    7.5
+    7.52
    ],
    [
     "every",
@@ -1158,99 +1190,107 @@
    ],
    [
     "integrations",
-    9.38
+    9.42
    ],
    [
-    "keep",
-    9.84
+    "help",
+    9.86
    ],
    [
-    "the",
-    10.06
+    "you",
+    10.12
    ],
    [
-    "team",
-    10.22
+    "work",
+    10.28
    ],
    [
-    "in",
-    10.38
-   ],
-   [
-    "the",
-    10.54
-   ],
-   [
-    "loop",
-    10.62
-   ],
-   [
-    "teams",
-    11.28
-   ],
-   [
-    "and",
-    11.36
-   ],
-   [
-    "slack",
-    11.78
-   ],
-   [
-    "and",
-    12.7
-   ],
-   [
-    "mcp",
-    12.7
-   ],
-   [
-    "lets",
-    13.04
-   ],
-   [
-    "any",
-    13.5
-   ],
-   [
-    "preferred",
-    13.86
-   ],
-   [
-    "ai",
-    14.22
-   ],
-   [
-    "agent",
-    14.54
-   ],
-   [
-    "operate",
-    14.98
+    "with",
+    10.46
    ],
    [
     "livy",
-    15.4
+    10.64
    ],
    [
-    "right",
-    15.76
+    "everywhere",
+    10.88
    ],
    [
-    "from",
-    16.12
+    "in",
+    11.94
    ],
    [
-    "your",
-    16.34
+    "microsoft",
+    11.96
    ],
    [
-    "own",
-    16.46
+    "teams",
+    12.2
+   ],
+   [
+    "and",
+    12.7
+   ],
+   [
+    "slack",
+    13.1
+   ],
+   [
+    "and",
+    14.08
+   ],
+   [
+    "mcp",
+    14.12
+   ],
+   [
+    "lets",
+    14.48
+   ],
+   [
+    "any",
+    14.92
+   ],
+   [
+    "preferred",
+    15.26
+   ],
+   [
+    "ai",
+    15.64
    ],
    [
     "agent",
-    16.74
+    15.98
+   ],
+   [
+    "operate",
+    16.42
+   ],
+   [
+    "livy",
+    16.72
+   ],
+   [
+    "right",
+    17.16
+   ],
+   [
+    "from",
+    17.46
+   ],
+   [
+    "your",
+    17.68
+   ],
+   [
+    "own",
+    17.82
+   ],
+   [
+    "agent",
+    18.1
    ]
   ]
  },
@@ -1273,7 +1313,7 @@
    ],
    [
     "scale",
-    1.04
+    1.02
    ],
    [
     "use",
@@ -1293,11 +1333,11 @@
    ],
    [
     "better",
-    3.14
+    3.16
    ],
    [
     "product",
-    3.34
+    3.36
    ],
    [
     "inspection",
@@ -1305,11 +1345,11 @@
    ],
    [
     "holds",
-    4.58
+    4.56
    ],
    [
     "it",
-    5.18
+    5.16
    ],
    [
     "all",
@@ -1360,7 +1400,7 @@
    ],
    [
     "you",
-    0.86
+    0.84
    ],
    [
     "competitive",
@@ -1368,7 +1408,7 @@
    ],
    [
     "humans",
-    2.24
+    2.16
    ],
    [
     "and",
@@ -1388,7 +1428,7 @@
    ],
    [
     "the",
-    5.42
+    5.4
    ],
    [
     "blast",
@@ -1404,7 +1444,7 @@
    ],
    [
     "ai",
-    6.38
+    6.36
    ],
    [
     "code",
@@ -1432,7 +1472,7 @@
    ],
    [
     "sign",
-    9.48
+    9.38
    ],
    [
     "in",
@@ -1448,7 +1488,7 @@
    ],
    [
     "it",
-    10.04
+    10.02
    ],
    [
     "or",

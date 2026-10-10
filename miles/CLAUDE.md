@@ -48,6 +48,7 @@ Join acts without audio: `ffmpeg -i act1_360p.mp4 -i act2_360p.mp4 -filter_compl
 - Deck text source: `../ppt/LiveReview-Presentation-slides.md` (slide numbers = `slide_NN.png`).
 
 ## Working agreements with the user
+- **Subtitles are burned into every street video** by `06_assemble.py` (`pipeline/subs.py`; word-timed, spoken word bold). No key-phrase captions, no .srt.
 - **Every rendered video gets a review copy with burn-in** (`<name>_tc.mp4`: Blender frame number + time / total,
   bottom-right) — `06_assemble.py` does it by default; reviewers cite frames like "f 1201". Clean file stays alongside.
 - **Discuss the plan before building** anything new (new act, new scene idea); then build.

@@ -349,11 +349,11 @@ for kk in range(14):
 webs.shot("Web_PushL", L_HAND, lambda f: g0.matrix_world @ Vector((-FIN_W / 2 + 1.2, -FIN_D / 2 - 0.05, 0.2)), R0 - 14, R0 - 6, R0 + 16)
 webs.shot("Web_PushR", R_HAND, lambda f: g0.matrix_world @ Vector((-FIN_W / 2 + 2.4, -FIN_D / 2 - 0.05, 0.2)), R0 - 14, R0 - 6, R0 + 16)
 shot.sfx("web_thwip", R0 - 13)
-# the billboard screen to the right of the site: dark until the very end, then the LiveReview demo
+# the billboard screen to the right of the site: dark until the very end, then LiveReview + its address
 bb_dark = city.sign("BB2Dark", img("site_blank"), BB2_C, Vector((0, -1, 0)), BB2_W, emit=0.0, frame="led", offset=0.0)
 bb_dark.data.materials[0] = fx.material("BB2Off", (0.02, 0.02, 0.03), rough=0.3)
 BB_ON = DEMO_CUT - 45
-demo = city.sign("BB2Demo", seq0("demo", "jpg"), BB2_C, Vector((0, -1, 0)), BB2_W, emit=1.4, offset=0.01, seq=(180, BB_ON))
+demo = city.sign("BB2Demo", img("billboard_url"), BB2_C, Vector((0, -1, 0)), BB2_W, emit=1.4, offset=0.01)      # just the address, no footage
 anim.visible(demo, [(1, False), (BB_ON, True)])
 for o in (bb_dark,) + tuple(bb_dark.children):
     anim.visible(o, [(1, False), (S18_CUT, True)])
@@ -428,15 +428,17 @@ for o in fx.collection("Webs").objects:
         o.data.materials[0] = fx.material("Web_Line", (0.95, 0.97, 1.0), rough=0.35, emit=0.9)
 
 # ================================================================== captions (laid over in post) + the 2D product frames
-OVER = [(T[10], HOLD_F - 4, "Let agents scale. **You do the judging.**", 0), (HOLD_F, SUNRISE + 60, "Inspection **holds it all up.**", 0),
-        (wordf(11, "livereview") - 2, PEACE + 60, "LiveReview keeps you competitive: **humans and AI, working together.**", 0),
-        (DEMO_CUT, END, "hexmos.com/livereview", 0)]
+OVER = []                                                       # no captions: subtitles come from 06_assemble; the URL is on the billboard
 w8 = lambda w: wordf(8, w)
 w9 = lambda w: wordf(9, w)
 json.dump(dict(fps=FPS, end=END, captions=[dict(f0=a_, f1=b_, text=t_, row=r_) for a_, b_, t_, r_ in OVER],
                boards=dict(s16=[T[8], T[9] - 1], s17=[T[9], S18_CUT - 1],
-                           s16_title=w8("attention"), s16_items=[w8("issue"), w8("slide"), w8("quick"), w8("conversations"), w8("livy")],
-                           s17_title=w9("agents"), s17_items=[w9("gates"), w9("integrations"), w9("mcp")])),
+                           s16_title=w8("engineers"), s16_items=[w8("issue"), w8("slide"), w8("quick"), w8("conversations"), w8("livy")],
+                           s17_title=w9("agents"),
+                           # item 2 = the Teams / Slack stills (1 s then 2 s, on the words "Microsoft" and "Slack"); MCP waits for Slack's 2 s
+                           s17_items=[w9("gates"), w9("integrations"), max(w9("mcp"), w9("slack") + 2 * FPS)],
+                           s17_seq=[[w9("microsoft"), "teams_integration.png", w9("slack")],
+                                    [w9("slack"), "slack_integration.png", w9("slack") + 2 * FPS]])),
           open(os.path.join(paths.ROOT, "build", "street_part2_b_overlays.json"), "w"), indent=1)
 
 # ------------------------------------------------------------------ parked cars
