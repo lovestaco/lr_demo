@@ -86,16 +86,16 @@ def parent_keep(child, parent, frame=None):
 # ================================================================== locations (S18/S19 the wreck in the intersection)
 OFF_SPOT = (0.0, 96.0)                                       # out of every shot (behind the lot cameras)
 FIN_C = Vector((0.0, 2.0))
-FIN_W, FIN_D, FIN_N, FIN_S = 12.0, 7.0, 6, 2.4
+FIN_W, FIN_D, FIN_N, FIN_S = 12.0, 7.0, 8, 2.4          # 8 floors: 4 of the thesis tower, AGENTS / HUMANS, then RISK and ATTENTION on top
 FIN_FRONT = FIN_C.y - FIN_D / 2
 FX_SPOT = (FIN_C.x - FIN_W / 2 - 0.8, FIN_FRONT - 1.3)
 FL8 = k.floor_at(*FX_SPOT)
-TOP6 = 6 * FIN_S
+TOP6 = FIN_N * FIN_S                                          # the roof (kept its old name)
 ROOF_SPOT = (FIN_C.x - 1.2, FIN_FRONT + 0.9)
 BB2_C = Vector((12.4, 3.0, 6.6))
 BB2_W, BB2_H = 7.2, 7.2 * 9 / 16
 cam18_loc = Vector((0.5, -17.5, 4.2))
-pts18 = [Vector((x_, FIN_FRONT, z_)) for x_ in (-FIN_W / 2, FIN_W / 2) for z_ in (0.0, TOP6 + 1.2)] + \
+pts18 = [Vector((x_, FIN_FRONT, z_)) for x_ in (-FIN_W / 2, FIN_W / 2) for z_ in (0.0, TOP6 + 3.6)] + \
         [BB2_C + Vector((dx * BB2_W / 2, 0, dz * BB2_H / 2)) for dx in (-1, 1) for dz in (-1, 1)] + \
         [Vector((FX_SPOT[0], FX_SPOT[1], 0.0)), Vector((FIN_C.x, FIN_FRONT - FIN_D - 1.5, 0.0))]
 cam18 = (cam18_loc, *k.fit(cam18_loc, pts18, margin=1.05))
@@ -123,11 +123,17 @@ watch18 = perf.then("Breathing Idle", length=max(20, HOLD_F + 57 - int(perf.end)
 SUNRISE = HOLD_F + 14
 f_rf = face_to(FX_SPOT, ROOF_SPOT)
 shoot18b = k.shoot(f_rf)
-zip18b = k.zip_(16.0, f_rf)
+zip18b = k.zip_(20.5, f_rf)                                  # up to the (now 8-floor) roof
 land18b = k.touch(f_rf, ROOF_SPOT)
 # ---- S19 on the roof: turns to the camera, the call to action, a peace sign, holds
 F19 = 0.0                                                    # faces -y: the camera south of the roof
-T[11] = int(land18b.start) + UPRIGHT + 6
+# ---- S18.5 the Meta section (2D board in post, like S16/S17): he waits on the roof, off the picture, while it plays
+T[12] = int(land18b.start) + UPRIGHT + 6
+T[13] = T[12] + F((k.dur(12) + 0.35) * FPS)
+T[14] = T[13] + F((k.dur(13) + 0.35) * FPS)
+T[11] = T[14] + F((k.dur(14) + 0.7) * FPS)                  # the call to action follows
+META = (T[12], T[11] - 1)
+wait19 = perf.then("Breathing Idle", length=max(20, T[11] - 6 - int(perf.end)), blend=8, face=0.0, in_place=1.0)
 talk19 = k.talk_until(wordf(11, "sign") - 4, face=F19, clips=CALM)
 PHONE = "CMU 79_36 answering the phone"                      # its hand comes up beside the head: the peace sign (fingers on top)
 pk19 = perf.extreme(PHONE, R_HAND, (0, 0, 1), 10, 120)
@@ -275,9 +281,9 @@ fcoll = fx.collection("Finale")
 bld = city.Building("Finale", FIN_C, width=FIN_W, depth=FIN_D, floors=FIN_N, storey=FIN_S, facade_img=os.path.join(ST, "facade_floor.png"),
                     coll=fcoll)
 for o in list(fcoll.objects):                               # the wreck only exists for S18/S19
-    if o.type == "MESH" and o.name.endswith("_Body") and not any(o.name.startswith(f"Finale_F{i}") for i in (4, 5)):
+    if o.type == "MESH" and o.name.endswith("_Body") and not any(o.name.startswith(f"Finale_F{i}") for i in (4, 5, 6, 7)):
         anim.visible(o, [(1, False), (S18_CUT, True)])
-LABELS = [os.path.join(SCR, f"tower_{i}.png") for i in range(4)] + [img("floor_scale"), img("floor_judgment")]
+LABELS = [os.path.join(SCR, f"tower_{i}.png") for i in range(4)] + [img("floor_scale"), img("floor_judgment"), img("floor_risk"), img("floor_attention")]
 labs = []
 for i in range(4):
     lab = bld.light(i, S18_CUT, LABELS[i])
@@ -317,19 +323,19 @@ for i in range(1, 4):
     lf = SUNRISE + 8 + i * 5
     anim.keys(bld.mix[i].inputs[0], "default_value", [(lf, 0.15, "lin"), (lf + 8, 0.9, "out")])
     shot.sfx("ui_pop", lf)
-NEW = [(4, SUNRISE + 30), (5, SUNRISE + 38)]
+NEW = [(4, SUNRISE + 28), (5, SUNRISE + 36), (6, SUNRISE + 44), (7, SUNRISE + 52)]
 for i, f_ in NEW:
     fl = bld.floors[i]
     home = fl.location.copy()
     bld.light(i, f_ + 2, LABELS[i])
     for o in [fl] + list(fl.children_recursive):
-        if o.type == "MESH" and not o.name.endswith(("_L4", "_L5")):
+        if o.type == "MESH" and not o.name.endswith(("_L4", "_L5", "_L6", "_L7")):
             anim.visible(o, [(1, False), (f_ - 16, True)])
     anim.keys(fl, "location", [(1, home + Vector((0, 0, 12.0)), "const"), (f_ - 16, home + Vector((0, 0, 12.0)), "in"), (f_, home, "out"),
                                (f_ + 3, home + Vector((0, 0, 0.1)), "in"), (f_ + 6, home)])
     shot.sfx("block_thud", f_)
 cash_mat = fx.material("CashSide", (0.22, 0.75, 0.32), rough=0.55, emit=0.5)
-CASH_F = SUNRISE + 46
+CASH_F = SUNRISE + 58
 for kk, dx in enumerate((-5.0, -3.6, 3.6, 5.0)):
     rest = Vector((FIN_C.x + dx, FIN_FRONT + 1.6, TOP6 + 0.6))
     ob = box(f"Cash{kk}", (1.2, 1.0, 1.1 + 0.3 * (kk % 2)), rest, cash_mat, fcoll)
@@ -439,7 +445,13 @@ json.dump(dict(fps=FPS, end=END, captions=[dict(f0=a_, f1=b_, text=t_, row=r_) f
                            # item 2 = the Teams / Slack stills (1 s then 2 s, on the words "Microsoft" and "Slack"); MCP waits for Slack's 2 s
                            s17_items=[w9("gates"), w9("integrations"), max(w9("mcp"), w9("slack") + 2 * FPS)],
                            s17_seq=[[w9("microsoft"), "teams_integration.png", w9("slack")],
-                                    [w9("slack"), "slack_integration.png", w9("slack") + 2 * FPS]])),
+                                    [w9("slack"), "slack_integration.png", w9("slack") + 2 * FPS]],
+                           # the Meta section: frames, and the spoken-word frames the cards pop on
+                           meta=list(META),
+                           meta_a=[T[12], T[13] - 1], meta_b=[T[13], T[14] - 1], meta_c=[T[14], T[11] - 1],
+                           meta_words=dict(deal=wordf(12, "deal"), meta=wordf(12, "metaside"), risk=wordf(12, "risk"), low=wordf(12, "low"),
+                                           skip=wordf(12, "skip"), attention=wordf(12, "attention"),
+                                           n1=wordf(13, "1", 0), n2=wordf(13, "1", 1), n3=wordf(13, "33"), live=wordf(14, "live")))),
           open(os.path.join(paths.ROOT, "build", "street_part2_b_overlays.json"), "w"), indent=1)
 
 # ------------------------------------------------------------------ parked cars
@@ -470,11 +482,11 @@ json.dump(dict(travel=[(a_, b_, n_) for a_, b_, n_ in k.travels],
                reads=[],
                webs=[o.name for o in fx.collection("Webs").objects if o.type == "MESH"]),
           open(os.path.join(paths.ROOT, "build", "street_part2_b_audit.json"), "w"))
-VO_CUES = {n: T[n] for n in (8, 9, 10, 11)}
+VO_CUES = {n: T[n] for n in (8, 9, 10, 12, 13, 14, 11)}
 shot.finish(NAME, exposure=-0.35, samples=24, view="AgX", grade="AgX - Punchy",
             markers=[(f"vo {n}", f) for n, f in VO_CUES.items()] + [
                 ("S16 engineers (2D)", T[8]), ("S17 agents (2D)", T[9]),
-                ("S18 rebuild", S18_CUT), ("S19 call to action", T[11]), ("demo", DEMO_CUT), ("end", END)])
+                ("S18 rebuild", S18_CUT), ("S18.5 Meta (2D)", T[12]), ("S19 call to action", T[11]), ("demo", DEMO_CUT), ("end", END)])
 fx.cine_grade(sc)
 bpy.ops.wm.save_mainfile()
 print("CUTS", CUTS)

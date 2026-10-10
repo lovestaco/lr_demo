@@ -221,3 +221,12 @@ Decisions: numbers only, no source credit; no Zuckerberg face; no "deserving per
 Visuals: META sign on the rooftop + risk-sorted change cards (low-risk ones go grey, "SKIPPED"); three number signs "1/50 production incidents", "1/3 deploy reverts",
 "33% lower wait time" popping on the spoken numbers; then LiveReview gifs (risk score / skip low risk, see assets risk-score_*.webp/.mp4) + the website link; then the existing S19 ending (take 11).
 Build plan: 3D signs for the Meta beats (city.sign machinery as in part 1's risk screen), a 2D board (05b style) for the LiveReview gifs + link; new vo lines 12-14 placed between S18 and S19 (T[12..14] in 04_street_part2_b.py), 2b grows by ~20 s.
+
+## Built 2026-10-10 (evening) — NOT rendered: Meta section + ATTENTION/RISK + S18 speed-up + 2a crowd
+- Takes 12/13/14 (Meta) copied + split (lines 12-14 in vo_street_part2.md / lines.json); placed between "he goes up" and S19.
+- 2b = 2763 frames (92.1 s). Meta section = 2D board frames 1684-2369 (`meta_frame` in 05b: change cards sort by risk, low-risk ones "SKIPPED",
+  ATTENTION goes where RISK is; "Meta's results" 1/50, 1/3, 33% cards on the spoken numbers; then the LiveReview risk-score demo excerpt full screen).
+  The 3D render must SKIP 1684-2369 (and 1-1417 boards as before). He waits on the roof (hidden) and S19 starts at 2370.
+- S16 board title = "ATTENTION goes where RISK is". S18 building now 8 floors (FIN_N=8): ... HUMANS: JUDGMENT, RISK, ATTENTION on top (floor_risk/floor_attention.png from 03d `url`).
+- S18 rebuild fitted to the VO (he leaves ~57 frames after "inspection").  2a S10 crowd = 2 vs 18.
+- To render: 2b boards 1-1417 + Meta 1684-2369 via 05b; 3D 1418-1683 and 2370-2763 via 05c; 2a frames 270-720; then 06c post (2b, 2a), 06_assemble (2b, 2a, joined), 10 MB copy.

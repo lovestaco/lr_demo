@@ -388,6 +388,9 @@ if __name__ == "__main__":
     elif sys.argv[1:2] == ["url"]:
         os.makedirs(OUT, exist_ok=True)
         print("url", url_screen())
+        floor_label("floor_risk", "RISK", (153, 27, 27))
+        floor_label("floor_attention", "ATTENTION", (180, 83, 9))
+        print("floor labels: risk, attention")
     elif sys.argv[1:2] == ["blooper"]:
         os.makedirs(OUT, exist_ok=True)
         print("blooper", blooper(sys.argv[2]), "frames")

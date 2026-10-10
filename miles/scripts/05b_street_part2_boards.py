@@ -31,7 +31,7 @@ EXPAND = 12                                        # frames to grow from the pan
 FULL_AT = 2.0                                       # a media longer than this many seconds goes full screen
 
 BOARDS = {
-    "s16": dict(title="LiveReview helps your engineers **focus on what matters**",
+    "s16": dict(title="**ATTENTION** goes where **RISK** is",
                 items=["Issues ranked by importance", "A slide deck for every change", "A quick quiz to check understanding",
                        "Conversations right on the MR", "Livi: bot that turns your data into analysis reports and actionable items"],
                 media=["blast_radius_zoom.mp4", "slide_deck.gif", "quiz.gif", "converse_in_mr.png", "demo_livi_chat_bot.mp4"],
@@ -231,6 +231,116 @@ def frame(key, f, cfg):
     return out.convert("RGB")
 
 
+# ------------------------------------------------------------------ the Meta section (2D, after "he goes up")
+META_ROWS = [("docs/README.md", 9), ("payments/charge.go", 91), ("ui/button.css", 14), ("auth/session.ts", 78),
+             ("config/flags.yaml", 22), ("db/migrate_042.sql", 64)]
+GREEN, AMBER, RED, GREY = (34, 197, 94), (245, 158, 11), (220, 38, 38), (100, 116, 139)
+smooth = lambda t: (lambda u: u * u * (3 - 2 * u))(max(0.0, min(1.0, t)))
+
+
+def gradient_bg():
+    img = Image.new("RGB", (W, H), BG)
+    d = ImageDraw.Draw(img)
+    for yy in range(H):
+        c = int(10 * yy / H)
+        d.line([(0, yy), (W, yy)], fill=(BG[0] + c, BG[1] + c, BG[2] + c + 4))
+    return img
+
+
+def headline(out, f, items, y=64, size=60):
+    """items = [(from_frame, text)]: the latest started one shows, fading in over 6 frames."""
+    cur = max((i for i, (f0, _) in enumerate(items) if f >= f0), default=-1)
+    if cur < 0:
+        return
+    f0, text = items[cur]
+    a = min(1.0, (f - f0 + 1) / 6)
+    layer = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+    ImageDraw.Draw(layer)
+    d = ImageDraw.Draw(layer)
+    rich_center(d, W / 2, y + (1 - a) * 14, text, size, (255, 255, 255, int(255 * a)), W - 160)
+    out.alpha_composite(layer)
+
+
+def meta_rows_layer(f, w):
+    """The change cards: they appear on "Meta", sort by risk on "risk-first", the low-risk ones slip away on "skip"."""
+    layer = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+    d = ImageDraw.Draw(layer)
+    x0, rw, rh, gap, y0 = 300, 680, 64, 16, 190
+    order = sorted(range(len(META_ROWS)), key=lambda i: -META_ROWS[i][1])
+    ks = smooth((f - w["risk"]) / 14)                              # 0 = as they came, 1 = sorted
+    kk = smooth((f - w["skip"]) / 16)                              # the low-risk ones leave
+    ka = smooth((f - w["attention"]) / 10)
+    for i, (name, score) in enumerate(META_ROWS):
+        t_in = smooth((f - (w["meta"] + i * 3)) / 8)
+        if t_in <= 0:
+            continue
+        y_unsorted = y0 + i * (rh + gap)
+        y_sorted = y0 + order.index(i) * (rh + gap)
+        y = y_unsorted + (y_sorted - y_unsorted) * ks
+        x = x0 - (1 - t_in) * 60
+        a = t_in
+        low = score < 30
+        if low:
+            x += kk * 260
+            a *= (1 - kk)
+        if a <= 0.01:
+            continue
+        col = RED if score >= 70 else (AMBER if score >= 30 else GREY)
+        dim = low and kk > 0.0
+        d.rounded_rectangle([x, y, x + rw, y + rh], radius=14, fill=(30, 41, 59, int(255 * a)),
+                            outline=((AMBER + (int(255 * a * ka),)) if not low else None), width=4)
+        d.text((x + 24, y + rh / 2), name, font=slides.font(26, slides.REGULAR), fill=(226, 232, 240, int(255 * a)), anchor="lm")
+        pill = f"RISK {score}"
+        pf = slides.font(22, slides.BOLD)
+        pw = d.textlength(pill, font=pf) + 30
+        d.rounded_rectangle([x + rw - pw - 16, y + 14, x + rw - 16, y + rh - 14], radius=12, fill=col + (int(255 * a),))
+        d.text((x + rw - pw / 2 - 16, y + rh / 2), pill, font=pf, fill=(255, 255, 255, int(255 * a)), anchor="mm")
+        if low and kk > 0.15:
+            d.text((x - 26, y + rh / 2), "SKIPPED", font=slides.font(22, slides.BOLD), fill=GREY + (int(255 * a),), anchor="rm")
+    return layer
+
+
+def meta_frame(f, cfg):
+    w = cfg["meta_words"]
+    a0, a1 = cfg["meta_a"]
+    b0, b1 = cfg["meta_b"]
+    c0, c1 = cfg["meta_c"]
+    out = gradient_bg().convert("RGBA")
+    if f <= a1:                                                   # the idea
+        headline(out, f, [(a0 + 2, "Inspection is a **big deal.**"), (w["meta"] - 2, "**Meta** saw it too."),
+                          (w["risk"] - 3, "**Risk-first** review."), (w["low"] - 2, "Low-risk changes **skip the line.**"),
+                          (w["attention"] - 3, "**ATTENTION** goes where **RISK** is.")])
+        out.alpha_composite(meta_rows_layer(f, w))
+    elif f <= b1:                                                 # the results
+        headline(out, f, [(b0 + 2, "Meta's **results**")], y=70)
+        cards = [(w["n1"], "1/50", "production incidents"), (w["n2"], "1/3", "deploy reverts"), (w["n3"], "33%", "lower wait time")]
+        for i, (fr, big, label) in enumerate(cards):
+            t = smooth((f - fr) / 9)
+            if t <= 0:
+                continue
+            ov = 1 + 0.08 * max(0.0, 1 - abs(t * 2 - 1.3))
+            cw, ch = int(360 * (0.7 + 0.3 * t) * ov), int(320 * (0.7 + 0.3 * t) * ov)
+            cx, cy = 250 + i * 390, 400
+            layer = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+            d = ImageDraw.Draw(layer)
+            d.rounded_rectangle([cx - cw / 2, cy - ch / 2, cx + cw / 2, cy + ch / 2], radius=26, fill=(17, 24, 39, int(255 * t)),
+                                outline=GREEN + (int(255 * t),), width=5)
+            size = int(150 * (0.7 + 0.3 * t))
+            d.text((cx, cy - 22), big, font=slides.font(size, slides.BOLD), fill=GREEN + (int(255 * t),), anchor="mm")
+            d.text((cx, cy + ch / 2 - 56), label, font=slides.font(int(30 * (0.7 + 0.3 * t)), slides.REGULAR),
+                   fill=(226, 232, 240, int(255 * t)), anchor="mm")
+            out.alpha_composite(layer)
+    else:                                                         # the same with LiveReview: its own risk-score footage, full screen
+        fr = media_frames("risk-score_risk-score-demo-compressed.mp4", c1 - c0 + 1, (23.0, 23.0 + (c1 - c0) / 30.0 + 0.4), contain=True)
+        shot = Image.open(fr[(f - c0) % len(fr)]).convert("RGB")
+        out.paste(shot, (0, 0))
+        d2 = ImageDraw.Draw(out)
+        d2.rounded_rectangle([18, 16, 214, 58], radius=12, fill=(8, 12, 22, 170))
+        d2.text((32, 40), "LiveReview", font=slides.font(22, slides.BOLD), fill=(255, 255, 255, 235), anchor="ls")
+        d2.text((150, 40), "· hexmos.com/livereview", font=slides.font(14, slides.REGULAR), fill=(206, 214, 230, 220), anchor="ls")
+    return out.convert("RGB")
+
+
 if __name__ == "__main__":
     out = sys.argv[1]
     name = sys.argv[2] if len(sys.argv) > 2 else "street_part2"
@@ -243,4 +353,8 @@ if __name__ == "__main__":
         for f in range(a0, a1 + 1):
             frame(key, f, cfg).save(os.path.join(out, f"f_{f:04d}.jpg"), quality=92)
             n += 1
-    print("BOARDS", n, "frames", cfg["s16"], cfg["s17"])
+    if "meta" in cfg:
+        for f in range(cfg["meta"][0], cfg["meta"][1] + 1):
+            meta_frame(f, cfg).save(os.path.join(out, f"f_{f:04d}.jpg"), quality=92)
+            n += 1
+    print("BOARDS", n, "frames", cfg["s16"], cfg["s17"], cfg.get("meta"))
