@@ -8,6 +8,7 @@
 Captions come from build/street_part2_overlays.json ({f0, f1, text, row}); captions that end on the same frame are
 one line that builds up phrase by phrase (S14's three things). Each fades in over 6 frames. **bold** in yellow.
 --height sets the frame height (default 720): the frames are used at native size and the caption scales with it.
+Frames are f_NNNN.jpg, or f_NNNN.png when there is no .jpg (the --png/--final renders and SheepIt downloads).
 """
 import json, os, subprocess, sys
 from PIL import Image, ImageDraw
@@ -70,6 +71,8 @@ if __name__ == "__main__":
     missing = 0
     for f in range(1, end + 1):
         p = os.path.join(src, f"f_{f:04d}.jpg")
+        if not os.path.exists(p):                                   # frames from the 05c --png / --final mode (or SheepIt) are PNG
+            p = os.path.join(src, f"f_{f:04d}.png")
         if not os.path.exists(p):
             missing += 1
             img = Image.new("RGB", (W, H), (0, 0, 0))

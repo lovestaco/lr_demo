@@ -6,6 +6,8 @@ Cut out of the old full part 2 (04_street_part2.py) so it stands alone, like 04_
     S17   (2D) tools for your agents
     S18   the wreck before sunrise: he webs INSPECTION back in, it locks with a glow, the floors snap up; the sun
           comes up behind it, floors light one by one, two new floors, cash; he lands on the roof
+    S18.5 the Meta section, in the city itself: a Meta sign at the end of the avenue, the change cards sorting by
+          risk on a screen, three results on billboards along the avenue, LiveReview's footage on the billboard
     S19   the rooftop at sunrise: the call to action, a peace sign, the pull-out; the billboard lights up -> demo
 
 Timeline starts at frame 1 = the S16 cut. He is off frame through S16/S17 (2D frames are laid over in post).
@@ -14,7 +16,7 @@ Timeline starts at frame 1 = the S16 cut. He is off frame through S16/S17 (2D fr
     blender -b build/character.blend --python scripts/04_street_part2_b.py         # -> build/street_part2_b.blend
     blender -b build/street_part2_b.blend --python scripts/check_rules.py -- street_part2_b
 """
-import bpy, bmesh, os, sys, math, random, json
+import bpy, bmesh, os, sys, math, random, json, subprocess
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from mathutils import Vector, Matrix, Quaternion
 from pipeline import paths, anim, fx, shot, city, swing, streetkit, life, props
@@ -367,6 +369,74 @@ for kk, dx in enumerate((-2.4, 2.4)):
     pole = box(f"BB2Pole{kk}", (0.3, 0.3, BB2_C.z - BB2_H / 2 + 0.2), (BB2_C.x + dx, BB2_C.y + 0.4, (BB2_C.z - BB2_H / 2) / 2), steel)
     anim.visible(pole, [(1, False), (S18_CUT, True)])
 shot.sfx("ui_pop", BB_ON)
+
+# ================================================================== S18.5 the Meta section, in the city (3D)
+# All of it hangs in the plaza's skyline and is seen from the roof; the textures are drawn by 03e_street_part2_meta.py.
+MW = dict(deal=wordf(12, "deal"), meta=wordf(12, "metaside"), risk=wordf(12, "risk"), low=wordf(12, "low"), skip=wordf(12, "skip"),
+          attention=wordf(12, "attention"), n1=wordf(13, "1", 0), n2=wordf(13, "1", 1), n3=wordf(13, "33"), live=wordf(14, "live"))
+M_SIGN = MW["meta"] - 14                                      # cut to the Meta billboard (dark), 14 frames before "Meta" is said
+M_STATS = [MW["n1"] - 4, MW["n2"] - 4, MW["n3"] - 4]          # each result lights as its number is said
+M_DEMO = (T[14] - 2, T[11] - 1)                               # LiveReview's footage on the billboard
+META_DIR = os.path.join(paths.ROOT, "build", "meta")
+os.makedirs(META_DIR, exist_ok=True)
+timing = dict(words=MW, sign=[M_SIGN, T[13] - 1], stats=M_STATS, demo=list(M_DEMO))
+stamp_f = os.path.join(META_DIR, "stamp.json")
+stamp = json.load(open(stamp_f)) if os.path.exists(stamp_f) else {}
+if any(stamp.get(k_) != v_ for k_, v_ in timing.items()):      # (re)draw the screens for this timing
+    json.dump(timing, open(os.path.join(META_DIR, "timing.json"), "w"))
+    clean_env = {k_: v_ for k_, v_ in os.environ.items() if not k_.startswith("PYTHON")}
+    subprocess.run(["python3", os.path.join(paths.ROOT, "scripts", "03e_street_part2_meta.py")], check=True, env=clean_env)
+    stamp = json.load(open(stamp_f))
+MD = lambda *p_: os.path.join(META_DIR, *p_)
+mcoll = fx.collection("MetaSet")
+
+
+def show(ob, a, b):
+    """visible a..b (inclusive), the object and everything parented to it."""
+    for o in (ob,) + tuple(ob.children_recursive):
+        anim.visible(o, [(1, False), (int(a), True), (int(b) + 1, False)])
+
+
+def pole_board(name, xy, zc, w, first_png, n, start, a, b, toward):
+    """A lit billboard on two poles, facing `toward` (a point): its images play as a sequence from `start`."""
+    ctr = Vector((xy[0], xy[1], zc))
+    nrm = Vector((toward[0] - ctr.x, toward[1] - ctr.y, 0)).normalized()
+    ob = city.sign(name, first_png, ctr, nrm, w, emit=1.5, frame="led", offset=0.0, seq=(n, start), coll=mcoll)
+    right = (-nrm).cross(Z).normalized()
+    top = zc - w * 9 / 32
+    objs = [ob]
+    for sg in (-1, 1):
+        pp = ctr + right * sg * (w / 2 - 0.9) - nrm * 0.55
+        objs.append(box(f"{name}Pole{sg}", (0.34, 0.34, top), (pp.x, pp.y, top / 2), steel, mcoll))
+    show(ob, a, b)
+    for o in objs[1:]:
+        show(o, a, b)
+    return ob
+
+
+# the Meta billboard: the far wall at the end of the avenue; the logo, then the change cards (one image sequence)
+FAR, FAR_W = Vector((0.0, 55.4, 11.0)), 18.0
+meta_sign = city.sign("MetaSign", MD("sign", "f_0001.png"), FAR, Vector((0, -1, 0)), FAR_W, emit=0.01, frame="billboard", offset=0.35,
+                      seq=(stamp["sign_n"], M_SIGN), coll=mcoll)
+sb = next(n for n in meta_sign.data.materials[0].node_tree.nodes if n.type == "BSDF_PRINCIPLED")
+anim.keys(sb.inputs["Emission Strength"], "default_value", [(1, 0.01, "const"), (MW["meta"] - 3, 0.01, "out"), (MW["meta"] + 8, 3.4, "out"),
+                                                           (MW["meta"] + 50, 2.0, "inout")])
+show(meta_sign, M_SIGN - 2, T[11] - 1)
+shot.sfx("ui_pop", MW["meta"] + 4)
+shot.sfx("ui_pop", MW["risk"] - 12)
+# the three results: billboards standing along the avenue, each lighting as its number is said
+RC = Vector((-0.6, -6.0, 25.0))                                 # where the flight starts: above the roof, looking north
+BOARDS = [(Vector((-3.4, 33.0, 12.0)), 1), (Vector((3.2, 41.0, 12.0)), 2), (Vector((-3.0, 49.0, 12.0)), 3)]
+stat_obs = []
+for (p_, i_), f_on in zip(BOARDS, M_STATS):
+    stat_obs.append(pole_board(f"MetaStat{i_}", (p_.x, p_.y), p_.z, 7.5, MD(f"stat{i_}", "f_0001.png"), stamp["stat_n"], f_on,
+                               f_on, T[11] - 1, (RC.x, RC.y - 40.0)))
+    shot.sfx("ui_pop", f_on)
+# LiveReview's footage plays on the billboard (the address comes later, as before)
+foot = city.sign("BB2Footage", MD("demo", "f_0001.jpg"), BB2_C, Vector((0, -1, 0)), BB2_W, emit=1.5, offset=0.02,
+                 seq=(stamp["demo_n"], M_DEMO[0]), coll=mcoll)
+show(foot, M_DEMO[0], M_DEMO[1])
+shot.sfx("ui_pop", M_DEMO[0] + 2)
 # the sky: pre-dawn at the S18 cut; the sun comes up behind the building; full sunrise in S19
 sky = next(n for n in sc.world.node_tree.nodes if n.type == "TEX_SKY")
 bg = next(n for n in sc.world.node_tree.nodes if n.type == "BACKGROUND")
@@ -401,24 +471,56 @@ CUTS = []
 k.at(T[8], cam18[0], cam18[1], "lin", cut=True)
 CUTS.append(("S16/S17 (2D)", T[8]))
 # S18: the wide from ground level; S19 the rooftop medium shot, then the helicopter pull-out; the demo on the billboard
-k.read_shot(S18_CUT, int(land18b.start) + 40, cam18, drift=0.6)
+k.read_shot(S18_CUT, M_SIGN - 1, cam18, drift=0.6)             # the ground-level wide holds until "Meta" is said
+
+
+# S18.5: one slow flight from above the roof down the avenue toward the Meta billboard (its screen changes with the voice-over),
+# then past the three result boards, then back south to the billboard that plays LiveReview
+def ahead(loc, centre, dist):
+    """The aim point: `dist` along the line from loc to centre (so the depth of field sits on the board)."""
+    return Vector(loc) + (Vector(centre) - Vector(loc)).normalized() * dist
+
+
+def fly(f0, f1, loc0, loc1, centre, w_, m0, m1, cut=False, leave="inout"):
+    """Aim at `centre` from loc0 to loc1; the lens re-fits the board at both ends (margins m0 -> m1)."""
+    for f_, loc_, m_ in ((f0, loc0, m0), (f1, loc1, m1)):
+        tg, ln = k.fit(loc_, corners(centre, w_), margin=m_)
+        k.at(f_, loc_, ahead(loc_, centre, (Vector(centre) - Vector(loc_)).length), "inout" if f_ == f0 else leave, cut=cut and f_ == f0)
+        cam.lens(f_, round(ln, 1), "inout" if f_ == f0 else leave)
+
+
+def corners(c_, w_):
+    return [Vector(c_) + Vector((dx * w_ / 2, 0, dz * w_ * 9 / 32)) for dx in (-1, 1) for dz in (-1, 1)]
+
+
+P_A = Vector((-0.4, 14.0, 18.0))
+fly(M_SIGN, M_STATS[0] - 16, RC, P_A, FAR, FAR_W, 1.9, 1.15, cut=True)       # the push on the billboard holds until the first result is about to appear
+HEROS = [Vector((-1.0, 20.0, 17.0)), Vector((1.0, 29.0, 17.0)), Vector((-0.8, 37.0, 17.0))]
+SPANS = [(M_STATS[0] - 2, M_STATS[1] - 24), (M_STATS[1] - 6, M_STATS[2] - 26), (M_STATS[2] - 6, T[14] - 6)]
+for (p_, i_), hp_, (f0_, f1_) in zip(BOARDS, HEROS, SPANS):
+    push = hp_ + Vector((0, 1.6, 0))
+    fly(f0_, f1_, hp_, push, p_, 7.5, 1.35, 1.3, leave="inout" if i_ < 3 else "const")
+d_loc = BB2_C + Vector((0, -10.0, -0.6))
+d_tgt, d_lens = k.fit(d_loc, [BB2_C + Vector((dx * BB2_W / 2, 0, dz * BB2_H / 2)) for dx in (-1, 1) for dz in (-1, 1)], margin=1.08)
+cam.lens(M_DEMO[0], round(d_lens, 1), "lin")
+k.at(M_DEMO[0], d_loc, d_tgt, "lin", cut=True)
+cam.lens(T[11] - 2, round(d_lens, 1), "const")
+k.at(T[11] - 2, d_loc.lerp(d_tgt, 0.2 / max(1.0, (d_tgt - d_loc).length)), d_tgt, "const")
 rtgt = lambda f: HD(f) + Vector((0, 0, -0.25))
-cam.lens(int(land18b.start) + 41, 35, "const")
-k.at(int(land18b.start) + 41, R_CAM, rtgt(T[11]), "lin", cut=True)
+cam.lens(T[11], 35, "const")
+k.at(T[11], R_CAM, rtgt(T[11]), "lin", cut=True)
 PULL0 = min(PEACE + 6, DEMO_CUT - 72)                         # the pull-out takes ~2.3 s and ends on the billboard cut
 k.at(PULL0, R_CAM + Vector((0.1, -0.3, 0.0)), rtgt(PEACE), "inout")
 k.at(DEMO_CUT - 2, Vector((FIN_C.x + 9.0, FIN_FRONT - 26.0, TOP6 + 14.0)), Vector((FIN_C.x + 4.0, FIN_C.y, 6.0)), "inout")
 cam.lens(PULL0, 35, "inout")
 cam.lens(DEMO_CUT - 2, 28, "inout")
-d_loc = BB2_C + Vector((0, -10.0, -0.6))
-d_tgt, d_lens = k.fit(d_loc, [BB2_C + Vector((dx * BB2_W / 2, 0, dz * BB2_H / 2)) for dx in (-1, 1) for dz in (-1, 1)], margin=1.08)
 k.read_shot(DEMO_CUT, END, (d_loc, d_tgt, d_lens), drift=0.2)
 CUTS.append(("demo", DEMO_CUT))
 for f_ in (int(land18.start) + 5, int(land18b.start) + 5, HOLD_F):
     cam.shake(f_, amp=0.04, dur=8)
 for i, f_ in NEW:
     cam.shake(f_, amp=0.04, dur=8)
-FSTOPS = [(1, 8.0), (T[8], 8.0), (S18_CUT, 8.0), (int(land18b.start) + 41, 4.0), (PEACE + 7, 8.0), (DEMO_CUT, 8.0)]
+FSTOPS = [(1, 8.0), (T[8], 8.0), (S18_CUT, 8.0), (T[11], 4.0), (PEACE + 7, 8.0), (DEMO_CUT, 8.0)]
 for f_, v_ in sorted(FSTOPS):
     anim.key(cam.cam.data.dof, "aperture_fstop", int(f_), v_, ease="const")
 office.face_camera(cam.cam, [(int(first(talk19).start) + 4, int(final(talk19).end) - 2)], amount=0.55)
@@ -447,11 +549,9 @@ json.dump(dict(fps=FPS, end=END, captions=[dict(f0=a_, f1=b_, text=t_, row=r_) f
                            s17_seq=[[w9("microsoft"), "teams_integration.png", w9("slack")],
                                     [w9("slack"), "slack_integration.png", w9("slack") + 2 * FPS]],
                            # the Meta section: frames, and the spoken-word frames the cards pop on
-                           meta=list(META),
+                           meta3d=list(META),                                    # the Meta section is 3D now: 05b makes no board for it
                            meta_a=[T[12], T[13] - 1], meta_b=[T[13], T[14] - 1], meta_c=[T[14], T[11] - 1],
-                           meta_words=dict(deal=wordf(12, "deal"), meta=wordf(12, "metaside"), risk=wordf(12, "risk"), low=wordf(12, "low"),
-                                           skip=wordf(12, "skip"), attention=wordf(12, "attention"),
-                                           n1=wordf(13, "1", 0), n2=wordf(13, "1", 1), n3=wordf(13, "33"), live=wordf(14, "live")))),
+                           meta_words=MW)),
           open(os.path.join(paths.ROOT, "build", "street_part2_b_overlays.json"), "w"), indent=1)
 
 # ------------------------------------------------------------------ parked cars
@@ -486,7 +586,7 @@ VO_CUES = {n: T[n] for n in (8, 9, 10, 12, 13, 14, 11)}
 shot.finish(NAME, exposure=-0.35, samples=24, view="AgX", grade="AgX - Punchy",
             markers=[(f"vo {n}", f) for n, f in VO_CUES.items()] + [
                 ("S16 engineers (2D)", T[8]), ("S17 agents (2D)", T[9]),
-                ("S18 rebuild", S18_CUT), ("S18.5 Meta (2D)", T[12]), ("S19 call to action", T[11]), ("demo", DEMO_CUT), ("end", END)])
+                ("S18 rebuild", S18_CUT), ("S18.5 Meta (city)", T[12]), ("S19 call to action", T[11]), ("demo", DEMO_CUT), ("end", END)])
 fx.cine_grade(sc)
 bpy.ops.wm.save_mainfile()
 print("CUTS", CUTS)
