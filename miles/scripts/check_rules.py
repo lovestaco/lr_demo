@@ -1,4 +1,4 @@
-"""Review-rule audit for the street piece (run after 04_street_part_1_final.py / 04_street_part2.py, which write build/<name>_audit.json).
+"""Review-rule audit for the street piece (run after 04_street_part_1_final.py / 04_street_part2.py / 04_street_part3.py, which write build/<name>_audit.json).
 
     blender -b build/street_part_1_final.blend --python scripts/check_rules.py
     blender -b build/street_part2.blend --python scripts/check_rules.py -- street_part2

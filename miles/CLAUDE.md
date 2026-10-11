@@ -50,7 +50,7 @@ Join acts without audio: `ffmpeg -i act1_360p.mp4 -i act2_360p.mp4 -filter_compl
 ## Working agreements with the user
 - **Subtitles are burned into every street video** by `06_assemble.py` (`pipeline/subs.py`; word-timed, spoken word bold). No key-phrase captions, no .srt.
 - **Every rendered video gets a review copy with burn-in** (`<name>_tc.mp4`: Blender frame number + time / total,
-  bottom-right) — `06_assemble.py` does it by default; reviewers cite frames like "f 1201". Clean file stays alongside.
+  bottom-right) — `06_assemble.py` does it by default; reviewers cite frames like "f 1201". **Only that one file (frames + audio) stays in `renders/`**; the silent base / clean mix go to `build/intermediate/`, no 10 MB variant unless asked.
 - **Discuss the plan before building** anything new (new act, new scene idea); then build.
 - Iterate with **360p** renders (`full` default, ~1–2 min); 720p/1080p only for finals.
 - Always check a contact sheet (`sheet`, or ffmpeg tile from the mp4) before handing over a render.
@@ -139,7 +139,7 @@ Join acts without audio: `ffmpeg -i act1_360p.mp4 -i act2_360p.mp4 -filter_compl
 - Assemble: `python3 scripts/06_assemble.py street_part_1_final --height 720 --music assets/audio/music/bed_street.mp3`
   (film 69 s < the 70 s bed; `--music-once` if a cut ever runs longer than the bed).
 
-## Street part 2 (a separate video: `scripts/04_street_part2.py` → `build/street_part2.blend`, ~2:10)
+## Street parts 2 and 3 (shared: story, pipeline, helpers)
 - v2 story (colleague script): S10 two identical shops facing each other across the west arm (head-on from the middle
   of the road; customers cross the zebra to the competitor) → S10.1 the answer from the sidewalk (your sign flickers,
   the broken item, CLOSED) → S11-S13 three sites on the open lot BEHIND the plaza building (cameras at y 86 looking
@@ -147,10 +147,13 @@ Join acts without audio: `ffmpeg -i act1_360p.mp4 -i act2_360p.mp4 -filter_compl
   (finger count, point, temple tap, hand on chest; lower-third captions) → S16/S17 2D product boards → S18 the wreck
   before sunrise (sky + sun keyed), INSPECTION locks with a glow, floors rise, sunrise, new floors → S19 rooftop,
   peace sign, pull-out, billboard demo. Unmasked lip-sync was declined (no face rig on MilesUnmasked).
-- Pipeline: `03d_street_part2_signs.py v2` → `07c_estimate_vo.py` (until the Mark take) → build →
-  `05c_render_range.py OUT 1-1600 ...` (skips the 2D frames) + `05b_street_part2_boards.py OUT` (S16/S17 frames from
-  `videos/livereview-launch/assets` demo clips) → `06c_street_part2_post.py OUT` (captions from
-  `build/street_part2_overlays.json`, piped straight to ffmpeg) → `06_assemble.py street_part2 --height 720 --music ...`.
+- Pipeline: `03d_street_part2_3_signs.py v2` → `07c_estimate_vo.py` (until the Mark take) → build →
+  `05c_render_range.py OUT A-B ...` (skips the 2D frames) + `05b_street_part3_boards.py OUT street_part3` (S16/S17 frames from
+  `videos/livereview-launch/assets` demo clips) → `06c_street_part2_3_post.py OUT` (captions from
+  `build/<name>_overlays.json`, piped straight to ffmpeg) → `06_assemble.py <name> --height 360 --music ...`.
+- Names: part 2 = `street_part2` (S10-S15, VO lines 1-7), part 3 = `street_part3` (S16-S19 + Meta, VO lines 8-14).
+  Both read `assets/audio/vo_street_part2/` (one numbering, 1-14); `vo_street_part3` is a symlink to it so the
+  name lookup in shot.py / 06_assemble / subs finds it. (Until 2026-10-11 these were "part 2a" / "part 2b".)
 - Shared helpers: `pipeline/streetkit.py` (`Kit`); `life.Walker.route([(point, wait)], f0, pace=[...])` for queues,
   workers, onlookers (pace 2.4 = running off).
 - Hands: a fingers-only REPLACE NLA track ("ZZ Finger poses"); finger curl = +X rotation per segment. An NLA strip made
@@ -161,11 +164,10 @@ Join acts without audio: `ffmpeg -i act1_360p.mp4 -i act2_360p.mp4 -filter_compl
 - `parent_keep(child, parent, frame)` must update the view layer first (a just-placed object reads identity).
 - Audit: `blender -b build/street_part2.blend --python scripts/check_rules.py -- street_part2`.
 
-## Street part 2a (S10-S15 on its own: `scripts/04_street_part2_a.py` → `build/street_part2_a.blend`, ~73 s)
-Part 2 is split for faster iteration. **Part 2b (S16-S19) is now its own build: `scripts/04_street_part2_b.py` →
-`build/street_part2_b.blend`** (~72 s; timeline starts at frame 1 = the S16 cut; he is off frame through S16/S17,
-whose 2D boards come from `05b_street_part2_boards.py OUT street_part2_b`). The old full `04_street_part2.py`
-(→ `build/street_part2.blend`) is superseded and no longer used.
+## Street part 2 (S10-S15: `scripts/04_street_part2.py` → `build/street_part2.blend`, ~73 s)
+**Part 3 (S16-S19) is its own build and video: `scripts/04_street_part3.py` →
+`build/street_part3.blend`** (~72 s; timeline starts at frame 1 = the S16 cut; he is off frame through S16/S17,
+whose 2D boards come from `05b_street_part3_boards.py OUT street_part3`).
 - S10/S10.1: ONE building on the west arm's south facade, two shops side by side (yours screen-left, theirs right, doors
   in the middle), one board over both (states `board_a..d`, `03d ... v2a`); one head-on camera from the north sidewalk
   (S10.1 = a slow push, no cut). Customers walk out of your door along the sidewalk into their queue (it runs off to
@@ -196,11 +198,11 @@ whose 2D boards come from `05b_street_part2_boards.py OUT street_part2_b`). The 
   awning, brass trim, neon, bulbs, a planter; tower B is glossy (white panels, blue glass, glowing bands).
 - VO: real Mark takes per line (website, Generation 1) in `assets/audio/vo_street_part2/takes/take_NN.mp3` →
   `07b_split_take.py --lines ...` (whisper word times, merged into lines.json; Kit.word aliases "cuz"→"cause" etc.).
-- Build name `street_part2_a` (underscore: 06_assemble's prefix lookup then finds `vo_street_part2`).
-- Pipeline: build → `05c_render_range.py build/frames/street_part2_a_720p 1-2158` → `06c_street_part2_post.py
-  build/frames/street_part2_a_720p street_part2_a` → `06_assemble.py street_part2_a --height 720 --music ...`.
+- Build name `street_part2` (underscore: 06_assemble's prefix lookup then finds `vo_street_part2`).
+- Pipeline: build → `05c_render_range.py build/frames/street_part2_720p 1-2158` → `06c_street_part2_3_post.py
+  build/frames/street_part2_720p street_part2` → `06_assemble.py street_part2 --height 720 --music ...`.
   Quick review: `05c_render_range.py OUT 1-2158 --h 360 --fast` (no ray-traced reflections, 8 samples) then
-  `06c_street_part2_post.py OUT street_part2_a --height 360` → `06_assemble.py street_part2_a --height 360
+  `06c_street_part2_3_post.py OUT street_part2 --height 360` → `06_assemble.py street_part2 --height 360
   --music assets/audio/music/bed_street.mp3 --music-once` (writes `<name>_360p_mix.mp4` + frame-numbered `_tc.mp4`).
   Run at most 2 renders in parallel: RAM (13 GB) and the 4 GB GPU both thrash at 3.
 - Pedestrians (all scenes, `pipeline/life.py`): the walk models face -Y (turn them with `_walk_yaw`, never `_yaw_to`

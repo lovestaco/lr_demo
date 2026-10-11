@@ -1,44 +1,42 @@
-"""Street part 2 (~2:40, a separate video): why inspection wins (human + agent), and how LiveReview does it.
+"""Street part 2 (S10-S15, ~75 s): why inspection wins (human + agent). The product boards, the rebuild and the call
+to action (S16-S19) are part 3, its own video: 04_street_part3.py.
 
-    S10   why inspect: two identical shops face each other across a street; he gets up from the cash pile, zips to
-          the middle; "You don't inspect. Your competitor does." — customers leave you and queue at them
-    S10.1 the answer, from the sidewalk: your shop empties, the broken item, the sign flips to CLOSED
-    S11   site A, human only: a careful brick storey; bricks pile up faster than the workers can lay them
-    S12   site B, agent only: a crane stacks a crooked tower fast; push in on a missing window and a door to
+    S10   one building, two shops side by side (yours on the left: "Ships without inspection"; theirs on the right:
+          "Inspects every change"), one board over both. He gets up from the cash pile and zips in beside the board;
+          "You don't inspect. Your competitor does." — your customers walk out and queue next door
+    S10.1 the answer, same building: your shop empties, the last customer puts the broken item down and joins their
+          queue, your sign flickers and flips to CLOSED
+    S11   the lot, sites A and B side by side (one wide shot): site A, human only — a neat little brick building, one
+          storey; bricks pile up faster than the workers can lay them
+    S12   site B, agent only, same shot: a crane stacks a crooked tower fast; push in on a missing window and a door to
           nowhere; customers look up and run
-    S13   site C, human + agent: same speed, square floors; he hangs on a line and stamps every floor (✓ column)
+    S13   site C, human + agent (its own shot): same speed, square floors; he hangs on a line and stamps every floor;
+          on "that team beats..." the camera pulls back to all three sites side by side
     S14   close-up (masked): three things every team wants, counted on his fingers
     S15   close-up: why humans still matter — common sense
-    S16   (2D) the product: tools for your engineers — scripts/05b_street_part2_boards.py fills these frames
-    S17   (2D) tools for your agents
-    S18   the wreck before sunrise: he webs INSPECTION back in, it locks with a glow, the floors snap up; the sun
-          comes up behind it, floors light one by one, two new floors, cash; he lands on the roof
-    S19   the rooftop at sunrise: the call to action, a peace sign, the pull-out; the billboard lights up -> demo
 
-Same rules as part 1 (scripts/check_rules.py): web travel = a straight pull, one body angle, no spins; explaining =
-upright, facing the camera; him right next to each slide at its LEFT edge; a hang only holding the line by hand.
-Captions (lower thirds) are laid over in post from build/street_part2_overlays.json (scripts/06c_street_part2_post.py).
+Same rules as part 1 (scripts/check_rules.py). Captions (S14/S15 lower thirds) are laid over in post from
+build/street_part2_overlays.json (scripts/06c_street_part2_3_post.py ... street_part2).
 
-    python3 scripts/03d_street_part2_signs.py v2
-    python3 scripts/07c_estimate_vo.py assets/audio/vo_street_part2.md assets/audio/vo_street_part2   # until the take exists
+    python3 scripts/03d_street_part2_3_signs.py v2 && python3 scripts/03d_street_part2_3_signs.py v2a
+    python3 scripts/07b_split_take.py --lines assets/audio/vo_street_part2/takes --script assets/audio/vo_street_part2.md --out assets/audio/vo_street_part2
     blender -b build/character.blend --python scripts/04_street_part2.py      # -> build/street_part2.blend
     blender -b build/street_part2.blend --python scripts/check_rules.py -- street_part2
 """
-import bpy, bmesh, os, sys, math, random, json
+import bpy, bmesh, os, sys, math, random, json, itertools
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from mathutils import Vector, Matrix, Quaternion
-from pipeline import paths, anim, fx, shot, city, swing, streetkit, life, props
-from pipeline.mixamo import Performer, ClipGroup
+from mathutils import Vector, Quaternion, Matrix
+from pipeline import paths, anim, fx, shot, city, streetkit, life, props, crew
+from pipeline.mixamo import Performer
 from pipeline.shot import L_HAND, R_HAND, HIPS
-from pipeline.streetkit import first, final, face_to, Z, SHOOT, HANG
+from pipeline.streetkit import first, final, face_to, SHOOT, HANG
 
 FPS = 30
 NAME = "street_part2"
 sc = bpy.context.scene
-ST, ST2 = (os.path.join(paths.ROOT, "assets", d) for d in ("street", "street2"))
+ST2 = os.path.join(paths.ROOT, "assets", "street2")
 SCR = os.path.join(paths.ROOT, "assets", "screens")
 img = lambda n: os.path.join(ST2, n + ".png")
-seq0 = lambda n, ext="png": os.path.join(ST2, n, f"f_0001.{ext}")
 VO = json.load(open(os.path.join(paths.ROOT, "assets", "audio", "vo_street_part2", "lines.json")))
 F = lambda x: int(round(x))
 UPRIGHT = 30
@@ -53,6 +51,12 @@ for o in c.coll.objects:
     if o.parent is None:
         o.location.z += LIFT
 bpy.context.view_layer.update()
+# the plaza building behind the lot filled every site shot with a beige wall: gone (the city skyline shows instead)
+for o in c.coll.all_objects:
+    if o.type == "MESH":
+        bb = [o.matrix_world @ Vector(v) for v in o.bound_box]
+        if min(p.x for p in bb) > -14 and max(p.x for p in bb) < 14 and min(p.y for p in bb) > 54 and max(p.y for p in bb) < 65:
+            o.hide_render = o.hide_viewport = True
 rig = bpy.data.objects["MilesRig"]
 fx.physical_shading(rig, lift=3.0, sheen=0.85, rough=0.38)
 office = props.Office(rig)
@@ -117,73 +121,172 @@ def to_bone(ob, arm, bone, offset=(0, 0, 0), rot=(0, 0, 0)):
     ob.rotation_euler = rot
 
 
+def brick_mat(name, along):
+    """Procedural brick (red, light mortar) in metres on a wall running along `along` ('x' or 'y')."""
+    m = fx.material(name, (0.5, 0.2, 0.12), rough=0.85)
+    nt = m.node_tree
+    bs = next(n for n in nt.nodes if n.type == "BSDF_PRINCIPLED")
+    tc = nt.nodes.new("ShaderNodeTexCoord")
+    sep = nt.nodes.new("ShaderNodeSeparateXYZ")
+    com = nt.nodes.new("ShaderNodeCombineXYZ")
+    br = nt.nodes.new("ShaderNodeTexBrick")
+    nt.links.new(tc.outputs["Object"], sep.inputs[0])
+    nt.links.new(sep.outputs["X" if along == "x" else "Y"], com.inputs["X"])
+    nt.links.new(sep.outputs["Z"], com.inputs["Y"])
+    nt.links.new(com.outputs[0], br.inputs["Vector"])
+    br.inputs["Color1"].default_value = (0.42, 0.13, 0.07, 1)
+    br.inputs["Color2"].default_value = (0.58, 0.22, 0.12, 1)
+    br.inputs["Mortar"].default_value = (0.72, 0.68, 0.6, 1)
+    br.inputs["Scale"].default_value = 1.6                   # a brick ~0.31 m x 0.16 m: readable from the wide
+    br.inputs["Mortar Size"].default_value = 0.02
+    nt.links.new(br.outputs["Color"], bs.inputs["Base Color"])
+    return m
+
+
+cash_mat = fx.material("CashSide", (0.22, 0.75, 0.32), rough=0.55, emit=0.5)
+PED = itertools.count()
+walk = life.WalkKit()
+walk.phone_every = 6                                         # one in six on a phone (not everyone)
+spawn = lambda name: walk.spawn(next(PED), name)            # every walker its own outfit
+rw = random.Random(31)
+
 # ================================================================== locations
-# ---- S10/S10.1 the shop street: the west arm of the cross street, two identical shops facing each other at x -29
+# ---- S10/S10.1 the shop building: the south facade of the west arm (faces +y); the camera looks -y at it from the north
+# sidewalk, so screen-left is +x: your shop on the left, theirs on the right, one board across both
 SX = -29.0
-YS = c.wall((SX, 0.0, 2.0), (0, -1, 0)).point.y          # south facade (faces +y)
-YN = c.wall((SX, 0.0, 2.0), (0, 1, 0)).point.y           # north facade (faces -y)
+YS = c.wall((SX, 0.0, 2.0), (0, -1, 0)).point.y
+YN = c.wall((SX, 0.0, 2.0), (0, 1, 0)).point.y
 SHOP_W = 5.0
+FRONT = YS + 0.35                                           # the shopfronts are built a little out from the facade
+SHOPX = {"L": SX + 2.75, "R": SX - 2.75}
 navy = fx.material("ShopFascia", (0.12, 0.16, 0.23), rough=0.6)
-awn_mat = fx.material("Awning", (0.75, 0.12, 0.12), rough=0.7)
+pil_m = fx.material("ShopPilaster", (0.2, 0.22, 0.26), rough=0.6)
+awn_mat = {"L": fx.material("AwningL", (0.75, 0.12, 0.12), rough=0.7), "R": fx.material("AwningR", (0.75, 0.12, 0.12), rough=0.7)}
 glass_dark = fx.material("ShopGlassDark", (0.03, 0.04, 0.05), rough=0.08, metallic=0.2)
 glass_lit = fx.material("ShopGlassLit", (0.22, 0.17, 0.1), rough=0.1, emit=0.6, emit_color=(1.0, 0.75, 0.45))
-shelf_mat = fx.material("Shelf", (0.55, 0.42, 0.3), rough=0.6)
+table_m = fx.material("Shelf", (0.55, 0.42, 0.3), rough=0.6)
 goods = [fx.material(f"Goods{i}", col, rough=0.5) for i, col in enumerate(((0.8, 0.3, 0.2), (0.2, 0.5, 0.8), (0.9, 0.8, 0.3)))]
 SHOP = {}
-for side, yf, n_ in (("L", YS, 1), ("R", YN, -1)):
-    nv = Vector((0, n_, 0))
-    front = yf + n_ * 0.35                                   # the shopfront is built a little out from the facade
-    box(f"Shop{side}Block", (SHOP_W + 0.4, 0.35, 4.6), (SX, yf + n_ * 0.175, 2.3), navy)
-    win = box(f"Shop{side}Window", (SHOP_W - 1.6, 0.05, 2.0), (SX - 0.6 * n_, front + n_ * 0.03, 1.35),
-              glass_dark if side == "L" else glass_lit)
-    box(f"Shop{side}Door", (1.0, 0.05, 2.3), (SX + 1.9 * n_, front + n_ * 0.03, 1.15), glass_dark)
-    awn = box(f"Shop{side}Awning", (SHOP_W, 1.2, 0.08), (SX, front + n_ * 0.6, 2.75), awn_mat)
-    awn.rotation_euler = (math.radians(-12) * n_, 0, 0)
-    for kk in range(3):                                      # the window display: a shelf and goods
-        box(f"Shop{side}Shelf{kk}", (1.0, 0.35, 0.05), (SX - 0.6 * n_ + (kk - 1) * 1.15, front - n_ * 0.25, 0.9), shelf_mat)
-        if side == "R" or kk != 1:
-            box(f"Shop{side}Goods{kk}", (0.35, 0.25, 0.3), (SX - 0.6 * n_ + (kk - 1) * 1.15, front - n_ * 0.25, 1.08), goods[kk])
-    sg = city.sign(f"Shop{side}Sign", img("shopL" if side == "L" else "shopR"), Vector((SX, front, 3.55)), nv, SHOP_W - 0.4,
+for kk, x_ in enumerate((SX - 5.5, SX, SX + 5.5)):         # pilasters: one building, two bays
+    box(f"ShopPilaster{kk}", (0.5, 0.5, 4.7), (x_, YS + 0.25, 2.35), pil_m)
+for side, cx in SHOPX.items():
+    inner = 1 if side == "R" else -1                        # towards the middle of the building (the doors sit there)
+    box(f"Shop{side}Block", (SHOP_W, 0.3, 4.6), (cx, YS + 0.15, 2.3), navy)
+    win = box(f"Shop{side}Window", (3.0, 0.05, 2.1), (cx - inner * 0.6, FRONT + 0.03, 1.35), glass_dark if side == "L" else glass_lit)
+    door_x = cx + inner * 1.75
+    box(f"Shop{side}Door", (1.0, 0.05, 2.3), (door_x, FRONT + 0.03, 1.15), glass_dark if side == "L" else glass_lit)
+    awn = box(f"Shop{side}Awning", (SHOP_W - 0.2, 1.2, 0.08), (cx, FRONT + 0.6, 2.75), awn_mat[side])
+    awn.rotation_euler = (math.radians(-12), 0, 0)
+    tab_x = cx - inner * 0.6                                # a display table out front, under the awning
+    box(f"Shop{side}Table", (2.4, 0.7, 0.06), (tab_x, FRONT + 0.75, 0.82), table_m)
+    for lg, (dx, dy) in enumerate(((-1.1, -0.28), (1.1, -0.28), (-1.1, 0.28), (1.1, 0.28))):
+        box(f"Shop{side}TableLeg{lg}", (0.05, 0.05, 0.8), (tab_x + dx, FRONT + 0.75 + dy, 0.4), steel)
+    for kk in range(3):
+        if side == "L" and kk == 1:
+            continue                                        # (the broken item stands there)
+        box(f"Shop{side}Goods{kk}", (0.35, 0.28, 0.32), (tab_x + (kk - 1) * 0.8, FRONT + 0.75, 1.01), goods[kk])
+    sg = city.sign(f"Shop{side}Sign", img("shopL" if side == "L" else "shopR"), Vector((cx, FRONT, 3.55)), Vector((0, 1, 0)), SHOP_W - 0.4,
                    aspect=2400 / 520, emit=0.8, frame="lightbox", offset=0.05)
-    SHOP[side] = dict(front=front, n=n_, sign=sg, win=win, door=(SX + 1.9 * n_, front + n_ * 0.25))
-closed = city.sign("ShopLClosed", img("shopL_closed"), Vector((SX, SHOP["L"]["front"], 3.55)), Vector((0, 1, 0)), SHOP_W - 0.4,
+    SHOP[side] = dict(sign=sg, win=win, door=(door_x, FRONT + 0.3), table=(tab_x, FRONT + 0.75))
+
+
+def stripes(name, c1, c2, width=0.32):
+    """Awning stripes along x (object space, metres)."""
+    m = fx.material(name, c1, rough=0.6)
+    nt = m.node_tree
+    bs = next(n for n in nt.nodes if n.type == "BSDF_PRINCIPLED")
+    tc, sep = nt.nodes.new("ShaderNodeTexCoord"), nt.nodes.new("ShaderNodeSeparateXYZ")
+    dv, md = nt.nodes.new("ShaderNodeMath"), nt.nodes.new("ShaderNodeMath")
+    dv.operation, md.operation = "DIVIDE", "FLOORED_MODULO"
+    dv.inputs[1].default_value, md.inputs[1].default_value = width * 2, 1.0
+    ramp = nt.nodes.new("ShaderNodeValToRGB")
+    ramp.color_ramp.interpolation = "CONSTANT"
+    ramp.color_ramp.elements[0].color = (*c1, 1)
+    ramp.color_ramp.elements[1].position = 0.5
+    ramp.color_ramp.elements[1].color = (*c2, 1)
+    nt.links.new(tc.outputs["Object"], sep.inputs[0])
+    nt.links.new(sep.outputs["X"], dv.inputs[0])
+    nt.links.new(dv.outputs[0], md.inputs[0])
+    nt.links.new(md.outputs[0], ramp.inputs[0])
+    nt.links.new(ramp.outputs["Color"], bs.inputs["Base Color"])
+    return m
+
+
+def ball(name, r, loc, mat, coll=signs):
+    me = bpy.data.meshes.new(name)
+    b = bmesh.new()
+    bmesh.ops.create_uvsphere(b, u_segments=12, v_segments=8, radius=r)
+    b.to_mesh(me)
+    b.free()
+    for p_ in me.polygons:
+        p_.use_smooth = True
+    ob = bpy.data.objects.new(name, me)
+    coll.objects.link(ob)
+    ob.location = loc
+    me.materials.append(mat)
+    return ob
+
+
+# the competitor's shop looks the part: its lit interior through the window, a striped awning, brass trim, a
+# planter, warm bulbs under the awning, an OPEN neon, warm light spilling onto the sidewalk (yours stays plain)
+cxR = SHOPX["R"]
+win_c = Vector((cxR - 0.6, FRONT + 0.055, 1.35))
+city.sign("ShopRInterior", img("shopR_interior"), win_c, Vector((0, 1, 0)), 3.0, aspect=1500 / 1050, emit=0.9, offset=0.01)
+city.sign("ShopROpen", img("open_neon"), win_c + Vector((0.85, 0, 0.62)), Vector((0, 1, 0)), 0.9, aspect=900 / 360, emit=3.0,
+          offset=0.02, alpha=True)
+bpy.data.objects["ShopRAwning"].data.materials[0] = stripes("AwningStripes", (0.04, 0.32, 0.14), (0.9, 0.9, 0.86))
+brass = fx.material("Brass", (0.8, 0.58, 0.22), rough=0.3, metallic=1.0)
+for j, (sx_, sz_, dx, dz) in enumerate(((3.16, 0.08, 0, 1.09), (3.16, 0.08, 0, -1.09), (0.08, 2.26, 1.54, 0), (0.08, 2.26, -1.54, 0))):
+    box(f"ShopRTrim{j}", (sx_, 0.06, sz_), win_c + Vector((dx, 0.02, dz)), brass)
+box("ShopRHandle", (0.04, 0.06, 0.5), (SHOP["R"]["door"][0] - 0.38, FRONT + 0.09, 1.1), brass)
+pot_m, leaf_m = fx.material("Planter", (0.12, 0.12, 0.13), rough=0.5), fx.material("Leaves", (0.08, 0.32, 0.08), rough=0.8)
+for j, px in enumerate((SHOP["R"]["door"][0] - 0.95, cxR - 2.25)):
+    box(f"ShopRPot{j}", (0.45, 0.45, 0.5), (px, FRONT + 0.32, 0.25), pot_m)
+    for q, (dx, dz, r_) in enumerate(((0, 0.75, 0.3), (0.12, 0.98, 0.22), (-0.1, 0.92, 0.2))):
+        ball(f"ShopRLeaf{j}{q}", r_, Vector((px + dx, FRONT + 0.32, dz)), leaf_m)
+bulb = fx.material("Bulb", (1.0, 0.85, 0.55), rough=0.3, emit=6.0, emit_color=(1.0, 0.78, 0.45))
+for j in range(12):
+    ball(f"ShopRBulb{j}", 0.045, Vector((cxR - 2.3 + j * 0.42, FRONT + 1.15, 2.5 - 0.05 * math.sin(j * 1.3) ** 2)), bulb)
+spill = bpy.data.lights.new("ShopRSpill", "AREA")
+spill.energy, spill.size, spill.color = 220.0, 3.0, (1.0, 0.78, 0.5)
+spill_ob = bpy.data.objects.new("ShopRSpill", spill)
+signs.objects.link(spill_ob)
+spill_ob.location = win_c + Vector((0, 0.35, 0.4))
+spill_ob.rotation_euler = (math.radians(-60), 0, 0)              # out of the window, down onto the sidewalk
+closed = city.sign("ShopLClosed", img("shopL_closed"), Vector((SHOPX["L"], FRONT, 3.55)), Vector((0, 1, 0)), SHOP_W - 0.4,
                    aspect=2400 / 520, emit=0.8, offset=0.06)
-# the broken item in YOUR window: a white vase with a crack
-vase = box("BrokenItem", (0.3, 0.3, 0.42), (SX - 0.6, SHOP["L"]["front"] - 0.25, 1.14), fx.material("Vase", (0.9, 0.9, 0.88), rough=0.3))
+vase = box("BrokenItem", (0.3, 0.3, 0.42), (SHOP["L"]["table"][0], FRONT + 0.75, 1.06), fx.material("Vase", (0.9, 0.9, 0.88), rough=0.3))
 crk = city.sign("BrokenCrack", img("crack"), vase.location + Vector((0, 0.16, 0)), Vector((0, 1, 0)), 0.3, aspect=1.0, offset=0.0, alpha=True)
 parent_keep(crk, vase)
-# the street banner across the road (the on-screen lines of S10), the LED over the competitor (S10.1)
-BAN_C = Vector((SX + 3.4, 0.0, 4.6))                        # just in front of the shops: close enough to read
-ban_a = city.sign("BannerA", img("banner_a"), BAN_C, Vector((1, 0, 0)), 9.6, aspect=3000 / 480, emit=0.5, frame="billboard", offset=0.0)
-ban_b = city.sign("BannerB", img("banner_b"), BAN_C, Vector((1, 0, 0)), 9.6, aspect=3000 / 480, emit=0.5, offset=0.01)
-for kk, yy in enumerate((-5.0, 5.0)):
-    box(f"BannerPole{kk}", (0.12, 0.12, 5.6), (BAN_C.x + 0.15, yy, 2.8), steel)
-LED_C = Vector((SX, SHOP["R"]["front"], 5.55))
-led_a = city.sign("LedA", img("led_a"), LED_C, Vector((0, -1, 0)), 7.0, aspect=3600 / 420, emit=2.0, frame="led", offset=0.05)
-led_b = city.sign("LedB", img("led_b"), LED_C, Vector((0, -1, 0)), 7.0, aspect=3600 / 420, emit=2.0, offset=0.06)
-zebra = fx.material("Zebra", (0.85, 0.85, 0.82), rough=0.7)
-for kk in range(11):                                         # the crosswalk between the shops
-    box(f"Zebra{kk}", (2.4, 0.45, 0.012), (SX + 0.2, -5.0 + kk * 1.0, -0.07), zebra)
-CP = Vector((-20.8, -2.9))                                   # the cash pile (left foreground)
-LAND10 = (SX + 2.0, 0.0)                                     # in the middle, between the shops, facing the camera
-FL_ROAD = k.floor_at(*LAND10)
-cam10_loc = Vector((-16.6, 0.0, 1.7))
-pts10 = [Vector((SX + dx, y_, z_)) for dx in (-2.5, 2.5) for y_ in (YS + 0.4, YN - 0.4) for z_ in (0.0, 4.1)] + \
-        [Vector((BAN_C.x, y_, BAN_C.z + dz)) for y_ in (-4.8, 4.8) for dz in (-0.8, 0.8)] + [Vector((CP.x, CP.y, 0.0))]
-cam10 = (cam10_loc, *k.fit(cam10_loc, pts10, margin=1.04))
-cam101_loc = Vector((SX + 9.0, YS + 2.5, 1.15))             # on your side's sidewalk, your shop filling the left
-pts101 = [Vector((SX + 2.2, SHOP["L"]["front"], 3.8)), Vector((SX - 2.6, SHOP["R"]["front"], 6.0)), Vector((SX - 4.0, SHOP["R"]["front"], 0.0)),
-          Vector((LAND10[0], LAND10[1], 0.0)), Vector((LAND10[0], LAND10[1], 2.0)), Vector((SX + 2.2, SHOP["L"]["front"], 0.4)),
-          Vector((LED_C.x + 3.5, LED_C.y, LED_C.z + 0.5))]
-cam101 = (cam101_loc, *k.fit(cam101_loc, pts101, margin=1.05))
-print("SHOPS south", round(YS, 2), "north", round(YN, 2), "cam10", round(cam10[2]), "mm  cam101", round(cam101[2]), "mm")
+BOARD_C = Vector((SX, YS, 5.85))
+BOARD_W = 10.8
+BOARD_H = BOARD_W * 560 / 3000
+boards = [city.sign(f"Board{i}", img(f"board_{n}"), BOARD_C, Vector((0, 1, 0)), BOARD_W, aspect=3000 / 560, emit=0.5,
+                    frame="billboard" if i == 0 else None, offset=0.32 + 0.006 * i) for i, n in enumerate("abcd")]
+CP = Vector((SX + 9.5, YS + 6.3))                           # the cash pile, in the road (left foreground)
+SPOT10 = (SX + BOARD_W / 2 + 0.75, FRONT + 1.15)            # under the board's left end, left of your shop, facing the camera
+FL_ROAD = k.floor_at(*SPOT10)
+rr = random.Random(9)
+fx.paper_pour("BillsPile", os.path.join(SCR, "cash_bill.png"), lambda i: Vector((CP.x + rr.uniform(-1, 1), CP.y + rr.uniform(-1, 1), 2.0)),
+              (CP.x, CP.y), count=70, start=-70, dur=30, spread=(1.6, 1.2), size=(0.3, 0.13), arc=(0.3, 0.8))
+for kk in range(3):
+    box(f"CashPile{kk}", (0.9, 0.5, 0.3), Vector((CP.x - 1.2 + kk * 0.9, CP.y - 1.3 + 0.2 * kk, 0.07)), cash_mat, signs).rotation_euler = (0, 0, 0.4 * kk)
+cam10_loc = Vector((SX + 0.8, YN - 1.0, 1.9))
+pts10 = [Vector((SX + dx, FRONT, z_)) for dx in (-5.6, 5.6) for z_ in (0.0, 4.6)] + \
+        [BOARD_C + Vector((dx * BOARD_W / 2, 0, dz * BOARD_H / 2)) for dx in (-1, 1) for dz in (-1, 1)] + \
+        [Vector((SPOT10[0] + 0.5, SPOT10[1], 0.0)), Vector((SPOT10[0] + 0.5, SPOT10[1], 1.9))]
+cam10 = (cam10_loc, *k.fit(cam10_loc, pts10, margin=1.06))
+cam_open = (cam10_loc, *k.fit(cam10_loc, pts10 + [Vector((CP.x + 1.0, CP.y, 0.0)), Vector((CP.x + 1.0, CP.y, 1.6))], margin=1.04))
+cam101_loc = cam10_loc + Vector((-0.4, -2.2, -0.15))      # S10.1: the same head-on shot, pushed in a little
+cam101 = (cam101_loc, *k.fit(cam101_loc, pts10, margin=1.04))
+print("SHOPS facade", round(YS, 2), "/", round(YN, 2), "cam10", round(cam10[2]), "mm  open", round(cam_open[2]), "mm  cam101", round(cam101[2]), "mm")
 
-# ---- S11-S15 the construction lot behind the plaza building (open ground; the cameras look south at it)
-SITES = {"A": -8.0, "B": 0.0, "C": 8.0}                      # cameras look -y: screen-left is +x
+# ---- S11-S15 the construction lot behind the plaza (open ground; the cameras look south at it, screen-left is +x)
+SITES = {"A": 9.0, "B": -1.5, "C": -12.5}                   # left to right on screen: A, B, C
 LOT_Y, SIGN_Y, CAM_Y = 72.0, 76.6, 86.0
 T_W, T_H = 3.6, 2.3
 TOWER = {s: Vector((x - 0.8, LOT_Y, 0.0)) for s, x in SITES.items()}
-SIGN_C = {s: Vector((x + 2.6, SIGN_Y, 0.35 + 1.25)) for s, x in SITES.items()}
+SIGN_C = {s: Vector((x + (3.6 if s == "C" else 2.6), SIGN_Y, 0.35 + 1.25)) for s, x in SITES.items()}   # C: room for its crew
 SW_, SH_ = 4.4, 2.45
 SN = Vector((0, 1, 0))
 SPOT = {s: (SIGN_C[s].x + SW_ / 2 + 0.45, SIGN_Y + 0.55) for s in SITES}
@@ -201,59 +304,68 @@ for s in SITES:
     for kk, dx in enumerate((-1.4, 1.4)):
         box(f"Site{s}Leg{kk}", (0.1, 0.1, 0.45), (SIGN_C[s].x + dx, SIGN_Y - 0.1, 0.22), steel, csite)
     site_signs[s].append(city.sign(f"Site{s}Blank", img("site_blank"), SIGN_C[s], SN, SW_, emit=0.1, offset=0.08))   # one focal point
-
-
-def site_cam(s):
-    """The same camera for every site (same lot layout, same angle): the whole tower, its sign, him."""
-    x = SITES[s]
-    top = {"A": 4.4, "B": 6 * T_H + 0.8, "C": 7 * T_H + 0.8}[s]           # same spot and direction; the zoom fits the site
-    loc = Vector((x + 0.6, CAM_Y, 2.6))
-    pts = [TOWER[s] + Vector((dx * T_W / 2, 0, z_)) for dx in (-1, 1) for z_ in (0.0, top)] + \
-          [SIGN_C[s] + Vector((dx * SW_ / 2, 0, dz * SH_ / 2)) for dx in (-1, 1) for dz in (-1, 1)] + \
-          [Vector((SPOT[s][0] + 0.4, SPOT[s][1], 0.0)), Vector((SPOT[s][0] + 0.4, SPOT[s][1], 1.9)),
-           Vector((TOWER[s].x - T_W / 2 - (3.0 if s == "A" else 0.6), LOT_Y, 0.0))]
-    return (loc, *k.fit(loc, pts, margin=1.05))
-
-
-SITE_CAM = {s: site_cam(s) for s in SITES}
-print("SITECAMS", {s: round(v[2]) for s, v in SITE_CAM.items()})
-CU_SPOT = (TOWER["C"].x - 0.6, SIGN_Y + 2.2)               # S14/S15: the finished tower right behind him (its sign out of frame)
-OFF_SPOT = (0.0, 96.0)                                      # out of every shot (behind the lot cameras)
-# ---- S18/S19 part 1's wreck in the intersection, a billboard screen to its right
-FIN_C = Vector((0.0, 2.0))
-FIN_W, FIN_D, FIN_N, FIN_S = 12.0, 7.0, 6, 2.4
-FIN_FRONT = FIN_C.y - FIN_D / 2
-FX_SPOT = (FIN_C.x - FIN_W / 2 - 0.8, FIN_FRONT - 1.3)
-FL8 = k.floor_at(*FX_SPOT)
-TOP6 = 6 * FIN_S
-ROOF_SPOT = (FIN_C.x - 1.2, FIN_FRONT + 0.9)
-BB2_C = Vector((12.4, 3.0, 6.6))
-BB2_W, BB2_H = 7.2, 7.2 * 9 / 16
-cam18_loc = Vector((0.5, -17.5, 4.2))                      # high enough to see him over the slid-out floor
-pts18 = [Vector((x_, FIN_FRONT, z_)) for x_ in (-FIN_W / 2, FIN_W / 2) for z_ in (0.0, TOP6 + 1.2)] + \
-        [BB2_C + Vector((dx * BB2_W / 2, 0, dz * BB2_H / 2)) for dx in (-1, 1) for dz in (-1, 1)] + \
-        [Vector((FX_SPOT[0], FX_SPOT[1], 0.0)), Vector((FIN_C.x, FIN_FRONT - FIN_D - 1.5, 0.0))]
-cam18 = (cam18_loc, *k.fit(cam18_loc, pts18, margin=1.05))
-print("FINALE cam18", round(cam18[2]), "mm")
+TOP_B = 6 * T_H + 0.6
+AB_LOC = Vector((4.2, CAM_Y + 3.0, 2.3))                    # S11/S12: sites A and B side by side
+ptsA = [Vector((SPOT["A"][0] + 1.1, SPOT["A"][1], z_)) for z_ in (0.0, 1.9)] + \
+       [SIGN_C[s] + Vector((dx * SW_ / 2, 0, dz * SH_ / 2)) for s in "AB" for dx in (-1, 1) for dz in (-1, 1)] + \
+       [TOWER["A"] + Vector((dx * 2.6, 0, z_)) for dx in (-1, 1) for z_ in (0.0, 3.0)] + \
+       [Vector((TOWER["A"].x - T_W / 2 - 2.9, LOT_Y + 0.6, 4.0)), Vector((TOWER["B"].x - T_W / 2 - 0.4, LOT_Y, 0.0)),
+        Vector((TOWER["B"].x - T_W / 2 - 0.4, LOT_Y, 3.5))]
+CAM_A = (AB_LOC, *k.fit(AB_LOC, ptsA, margin=1.05))
+B_TOP = [TOWER["B"] + Vector((dx * (T_W / 2 + 2.2), 0, z_)) for dx in (-1, 1) for z_ in (TOP_B, 0.0)]   # it leans (up to ~2 m)
+B_LOC = Vector((SITES["B"] + 1.6, CAM_Y + 3.0, 2.3))       # S12: site B on its own (A's board out of frame)
+ptsB = [Vector((SPOT["B"][0] + 0.45, SPOT["B"][1], z_)) for z_ in (0.0, 1.9)] + \
+       [SIGN_C["B"] + Vector((dx * SW_ / 2, 0, dz * SH_ / 2)) for dx in (-1, 1) for dz in (-1, 1)] + B_TOP
+CAM_B = (B_LOC, *k.fit(B_LOC, ptsB, margin=1.05))
+# S11/S12 read beats: push the lens onto the board text (same camera position, so the angle is unchanged) and back
+CAM_AZ = (AB_LOC, *k.fit(AB_LOC, [SIGN_C["A"] + Vector((dx * SW_ / 2, 0, dz * SH_ / 2)) for dx in (-1, 1) for dz in (-1, 1)] +
+                                 [Vector((SPOT["A"][0] + 0.8, SPOT["A"][1], z_)) for z_ in (0.0, 1.9)], margin=1.0))
+CAM_BZ = (B_LOC, *k.fit(B_LOC, [SIGN_C["B"] + Vector((dx * SW_ / 2, 0, dz * SH_ / 2)) for dx in (-1, 1) for dz in (-1, 1)] +
+                                [Vector((SPOT["B"][0] + 0.8, SPOT["B"][1], z_)) for z_ in (0.0, 1.9)], margin=1.06))
+C_LOC = Vector((SITES["C"] + 2.4, CAM_Y + 3.0, 2.4))       # S13: the board, him, the crew and the tower
+ptsC_lo = [Vector((SPOT["C"][0] + 1.1, SPOT["C"][1], z_)) for z_ in (0.0, 1.9)] + \
+          [SIGN_C["C"] + Vector((dx * SW_ / 2, 0, dz * SH_ / 2)) for dx in (-1, 1) for dz in (-1, 1)] + \
+          [Vector((TOWER["C"].x - T_W / 2 - 2.3, LOT_Y + T_W / 2 + 2.2, z_)) for z_ in (0.0, 1.9)]     # the boss
+ptsC = ptsC_lo + [TOWER["C"] + Vector((dx * T_W / 2, 0, z_)) for dx in (-1, 1) for z_ in (0.0, 7 * T_H + 0.8)]
+CAM_C0 = (C_LOC, *k.fit(C_LOC, ptsC_lo + [TOWER["C"] + Vector((dx * T_W / 2, 0, 3 * T_H)) for dx in (-1, 1)], margin=1.06))
+CAM_C = (C_LOC, *k.fit(C_LOC, ptsC, margin=1.05))
+W3_LOC = Vector((-1.2, CAM_Y + 13.0, 4.0))                 # all three sites side by side
+pts3 = ptsA + ptsC + B_TOP
+CAM_3 = (W3_LOC, *k.fit(W3_LOC, pts3, margin=1.04))
+print("SITECAMS A", round(CAM_A[2]), "B", round(CAM_B[2]), "C", round(CAM_C0[2]), "/", round(CAM_C[2]), "three", round(CAM_3[2]), "mm")
+TOP_C = 7 * T_H - 0.025                                    # the roof of site C's 7th floor
+ROOF_C = (TOWER["C"].x, LOT_Y + T_W / 2 - 0.5)             # S14: at the roof's front edge, the banners below him
+FACE_C = LOT_Y + T_W / 2                                    # site C's front face (y)
+DOOR15 = Vector((TOWER["C"].x + 0.0, FACE_C, T_H * 6.5 - T_H / 2 + 0.05))   # S15: the door to nowhere, top floor (bottom centre)
+PLAT15 = (DOOR15.x - 1.5, FACE_C + 0.4)                    # S15: a scaffold platform at the door's right; he stands on it
+JIB_C = TOWER["C"] + Vector((T_W / 2 + 0.5, T_W / 2 + 0.3, 7 * T_H + 4.0))  # the crane jib above the tower (his line)
+# S14's wide must hold him on the roof (full body) and the banners
+pts3 += [Vector((ROOF_C[0] + dx, ROOF_C[1], TOP_C + dz)) for dx in (-0.5, 0.5) for dz in (0.0, 2.1)]
+CAM_3 = (W3_LOC, *k.fit(W3_LOC, pts3, margin=1.04))
+ROOF_LOC = Vector((TOWER["C"].x + 1.2, FACE_C + 13.0, TOP_C - 1.2))   # S14: up with him — the roof and the banners below
+ROOF_CAM = (ROOF_LOC, *k.fit(ROOF_LOC, [Vector((ROOF_C[0] + dx, ROOF_C[1], TOP_C + dz)) for dx in (-0.6, 0.6) for dz in (0.0, 2.6)] +
+                             [Vector((TOWER["C"].x + dx, FACE_C, TOP_C - dz)) for dx in (-1.9, 1.9) for dz in (0.0, 5.8)], margin=1.08))
 
 # ================================================================== performance
 T = {}
-# ---- S10: flat in the cash pile, up, a line to the banner, lands in the middle between the shops
+# ---- S10: flat in the cash pile, up, a line to the board's corner, lands under its left end
 open0 = perf.then("Fallen Idle", length=40, face=-120, at=(CP.x, CP.y))
-f_0 = face_to(CP, LAND10)
+f_0 = face_to(CP, SPOT10)
 rise0 = perf.then("Hard Landing", frm=30, to=64, speed=1.1, blend=16, face=f_0)
 shoot0 = k.shoot(f_0)
-zip0 = k.zip_(9.0, f_0)
-land0 = k.touch(f_0, LAND10)
-F10 = face_to(LAND10, cam10[0])
+zip0 = k.zip_((Vector(SPOT10) - CP.xy).length, f_0)
+land0 = k.touch(f_0, SPOT10)
+F10 = face_to(SPOT10, cam10[0])
 T[1] = int(land0.start) + UPRIGHT
-T[2] = T[1] + F((k.dur(1) + 0.3) * FPS)
+BEAT = 3.0                                                   # seconds of staging after "who does the customer pick?" (some go to one shop, many to the other)
+Q1 = T[1] + F(k.dur(1) * FPS)                                # the question has been asked
+T[2] = T[1] + F((k.dur(1) + 0.3 + BEAT) * FPS)
 talk10 = k.talk_until(T[2] + 4, face=F10, clips=CALM)
-# ---- S10.1: the same spot, turned to the sidewalk camera
-F101 = face_to(LAND10, cam101[0])
+# ---- S10.1: the same spot, turned to the closer camera
+F101 = face_to(SPOT10, cam101[0])
 talk101 = k.talk_until(T[2] + k.hold(2, 0.7), face=F101, clips=CALM)
-# ---- S11 site A (a cut): he stands at the sign's left edge
-FA = face_to(SPOT["A"], SITE_CAM["A"][0])
+# ---- S11 the lot (a cut): he stands at site A's sign, its left edge
+FA = face_to(SPOT["A"], AB_LOC)
 setA = perf.then("Breathing Idle", length=12, face=FA, at=SPOT["A"], in_place=1.0)
 T[3] = int(setA.start) + 12
 wordf = lambda n, w, nth=0: T[n] + F(k.word(n, w, nth) * FPS)
@@ -261,62 +373,57 @@ nodA = perf.then("MX Head Nod Yes", frm=8, length=40, blend=10, face=FA, in_plac
 talkA = k.talk_until(wordf(3, "can") - 6, face=FA, clips=CALM)
 shakeA = perf.then("MX Shaking Head No", frm=6, length=48, blend=10, face=FA, in_place=1.0)
 holdA = k.talk_until(T[3] + k.hold(3, 0.7), face=FA, clips=CALM)
-# ---- S12 site B: he isn't in it (out of every shot)
-off12 = perf.then("Breathing Idle", length=k.hold(4, 0.9) + 14, face=0, at=OFF_SPOT, in_place=1.0)
-T[4] = int(off12.start) + 12
-# ---- S13 site C: hanging on a line beside the newest floor, stamping each one
-n13 = k.hold(5, 0.9) + 14
-HX, HY = TOWER["C"].x + T_W / 2 + 0.45, LOT_Y + T_W / 2 + 0.25
-hang13 = perf.then(HANG, frm=20, to=140, speed=120 / n13, face=180, at=(HX, HY), in_place=1.0)
-T[5] = int(hang13.start) + 12
-# ---- S14/S15 the close-up in front of the finished tower
-FCU = 180.0                                                # faces +y: the close-up camera
-cu14 = perf.then("Breathing Idle", length=10, face=FCU, at=CU_SPOT, in_place=1.0)
-T[6] = int(cu14.start) + 10
-talk14 = k.talk_until(T[6] + k.hold(6, 0.3), face=FCU, clips=CALM)
+# ---- S12 "Option two": he sprints across to site B's sign (the camera goes with him), presents it from its left edge
+T[4] = int(perf.end) - 4
+f_run = face_to(SPOT["A"], SPOT["B"])
+RUN0 = T[4] + F(k.word(4, "two") * FPS)
+pre12 = perf.then("Breathing Idle", length=max(8, RUN0 - int(perf.end) + 8), blend=8, face=f_run, in_place=1.0)
+RUN_D = (Vector(SPOT["A"]) - Vector(SPOT["B"])).length
+v_run = k.stride("MX Sprint")                                # the clip's own ground speed (m / frame)
+SPR0, SPR1 = bpy.data.actions["MX Sprint"].frame_range
+n_cyc = lambda dist: max(2, round(dist / max(0.05, v_run) / max(1, (SPR1 - SPR0) - 4)))     # run cycles (each overlaps the next by 4 frames)
+run12 = perf.then("MX Sprint", repeat=n_cyc(RUN_D), blend=6, face=f_run, in_place=1.0)
+FB = face_to(SPOT["B"], B_LOC)
+RUN2_D = (Vector(SPOT["B"]) - Vector(SPOT["C"])).length
+talkB = k.talk(max(14, T[4] + F(k.dur(4) * FPS) - 12 - int(perf.end)), face=FB, at=SPOT["B"], clips=CALM)
+# ---- S13 site C: he sprints on from B to C (the camera trucks with him, no cut), presents its board from its left edge;
+# robots and the crane build, the boss checks
+f_run2 = face_to(SPOT["B"], SPOT["C"])
+run13 = perf.then("MX Sprint", repeat=n_cyc(RUN2_D), blend=6, face=f_run2, in_place=1.0)
+FC = face_to(SPOT["C"], C_LOC)
+setC = perf.then("Breathing Idle", length=12, face=FC, at=SPOT["C"], cut_blend=6, in_place=1.0)   # the run ended exactly here: no visible jump
+T[5] = int(setC.start) + 12
+talkC = k.talk_until(T[5] + F(k.word(5, "that") * FPS) + 18, face=FC, clips=CALM)
+# ---- end of S13 (in the pull-back): a line to the crane jib, up onto site C's roof
+f_up = face_to(SPOT["C"], ROOF_C)
+shootC = k.shoot(f_up)
+zipC = k.zip_(18.0, f_up)
+landC = k.touch(f_up, ROOF_C)
+# ---- S14 on the roof of site C, full body in the wide of all three sites: counts the three things, points down at it
+F14 = face_to(ROOF_C, ROOF_LOC)
+T[6] = max(int(landC.start) + UPRIGHT, T[5] + F((k.dur(5) + 0.25) * FPS))
 T[7] = T[6] + F((k.dur(6) + 0.3) * FPS)
-shrug15 = perf.then("CMU 111_25 Shrug", frm=10, to=62, blend=10, face=FCU, in_place=1.0)
-talk15 = k.talk_until(T[7] + k.hold(7, 0.6), face=FCU, clips=CALM)
-# ---- S16/S17 the product (2D frames in post): he is out of every shot
-T[8] = T[7] + F((k.dur(7) + 0.6) * FPS)
-T[9] = T[8] + F((k.dur(8) + 0.9) * FPS)
-S18_CUT = T[9] + F((k.dur(9) + 1.0) * FPS)
-off16 = perf.then("Breathing Idle", length=max(20, S18_CUT - int(perf.end) - 2), face=0, at=OFF_SPOT, in_place=1.0)
-# ---- S18 he swings in, webs INSPECTION back, the building rises; then up onto the roof
-P18 = Vector((-17.0, -1.0, 13.0))                           # off frame: high over the west arm's road
-f_18 = face_to(P18, FX_SPOT)
-zip18 = perf.then(HANG, frm=20, length=42, face=f_18, in_place=1.0, at=(P18.x, P18.y))
-land18 = k.touch(f_18, FX_SPOT)
-T[10] = int(zip18.start) + 6
-FBLD = face_to(FX_SPOT, FIN_C)
-push18 = perf.then("Standing 2H Magic Attack 01", frm=4, to=60, speed=0.9, blend=10, face=FBLD + 10)
-R0 = int(push18.start) + 22                                 # INSPECTION slides back in
-HOLD_F = max(wordf(10, "inspection"), R0 + 18)             # it locks in (glow); the floors snap up
-watch18 = perf.then("Breathing Idle", length=max(40, HOLD_F + 150 - int(perf.end)), blend=10, face=FBLD)
-SUNRISE = HOLD_F + 40
-f_rf = face_to(FX_SPOT, ROOF_SPOT)
-shoot18b = k.shoot(f_rf)
-zip18b = k.zip_(16.0, f_rf)
-land18b = k.touch(f_rf, ROOF_SPOT)
-# ---- S19 on the roof: turns to the camera, the call to action, a peace sign, holds
-F19 = 0.0                                                    # faces -y: the camera south of the roof
-T[11] = int(land18b.start) + UPRIGHT + 6
-talk19 = k.talk_until(wordf(11, "sign") - 4, face=F19, clips=CALM)
-PHONE = "CMU 79_36 answering the phone"                      # its hand comes up beside the head: the peace sign (fingers on top)
-pk19 = perf.extreme(PHONE, R_HAND, (0, 0, 1), 10, 120)
-up19 = perf.then(PHONE, frm=max(1, pk19 - 24), to=pk19, blend=10, face=F19, in_place=1.0)
-n19 = max(30, T[11] + F((k.dur(11) + 0.8) * FPS) + 3 * FPS - int(perf.end) + 6)
-peace19 = perf.then(PHONE, frm=pk19, to=pk19 + 1, speed=1.0 / n19, blend=4, face=F19, in_place=1.0)
+talk14 = k.talk_until(T[7] - 12, face=F14, clips=CALM)
+# ---- S15 (a cut): a medium shot of C's top floor: he stands on a scaffold platform beside the new door to nowhere,
+# shrugs with both palms up on "why keep humans in the loop?", then talks (his right arm: chin tap, the line, the stamp)
+END = T[7] + F((k.dur(7) + 0.7) * FPS)
+F15 = 180.0                                                # faces +y: the camera
+set15 = perf.then("Breathing Idle", length=12, face=F15, at=PLAT15, in_place=1.0)
+shrug15 = perf.then("CMU 111_25 Shrug", frm=10, to=62, blend=8, face=F15, in_place=1.0)
+talk15 = k.talk_until(END + 2, face=F15, clips=CALM)
 perf.build()
-DEMO_CUT = T[11] + F((k.dur(11) + 0.8) * FPS)
-END = DEMO_CUT + 3 * FPS
 sc.frame_end = END
-print("T", T, "S18", S18_CUT, "R0", R0, "HOLD", HOLD_F, "DEMO", DEMO_CUT, "END", END)
+print("T", T, "END", END)
+w6 = lambda w, nth=0: wordf(6, w, nth)
+w7 = lambda w, nth=0: wordf(7, w, nth)
+T15a = int(set15.start)
+BAL_AT = Vector((DOOR15.x, FACE_C + 0.6, DOOR15.z - 0.1))    # where the balcony goes (under the door)
+STAMP15 = Vector((DOOR15.x - 0.95, FACE_C + 0.06, DOOR15.z + 1.3))     # beside the door, in his reach
 
 # ------------------------------------------------------------------ body to camera on every talk beat
-CU_CAM = Vector((CU_SPOT[0], CU_SPOT[1] + 2.0, 1.62))
-R_CAM = Vector((ROOF_SPOT[0] + 0.6, ROOF_SPOT[1] - 3.6, TOP6 + 1.55))
-AIMS = [([talk10], cam10[0]), ([talk101], cam101[0]), ([talkA, holdA], SITE_CAM["A"][0]), ([talk14, talk15], CU_CAM), ([talk19], R_CAM)]
+CAM15 = Vector((DOOR15.x - 0.4, FACE_C + 7.4, DOOR15.z + 1.0))   # S15: the medium shot of the top floor
+AIMS = [([talk10], cam10[0]), ([talk101], cam101[0]), ([talkA, holdA], AB_LOC), ([talkB], B_LOC), ([talkC], C_LOC), ([talk14], ROOF_LOC),
+        ([talk15], CAM15)]
 aim_spans = [(int(first(gs[0]).start), int(final(gs[-1]).end), Vector(loc)) for gs, loc in AIMS]
 
 
@@ -330,117 +437,80 @@ def facing_cam(f):
 
 flat = lambda gs: [c_ for g in gs for c_ in (g.cycles if hasattr(g, "cycles") else [g])]
 square_err = perf.square_up(flat(sum((gs for gs, _ in AIMS), [])), facing_cam)
-
-
-# ------------------------------------------------------------------ heights (the roof at the end)
+# flat at every cut (no ramps); on the roof: the roof's height under each clip's own lowest foot
 def low_rel(clip):
     return min(min(perf.bone_world(b, f).z for b in ("mixamorig:LeftToeBase", "mixamorig:RightToeBase"))
-               for f in range(int(clip.start) + 4, int(clip.end) - 2, 6))
+               for f in range(int(clip.start) + 4, max(int(clip.start) + 5, int(clip.end) - 2), 6))
 
 
-def between(a, b):
-    i0, i1 = perf.clips.index(first(a)), perf.clips.index(final(b))
-    return perf.clips[i0:i1 + 1]
-
-
-roof_clips = between(land18b, peace19)
-HEIGHTS = [(int(c_.start), (int(n.start) - 1) if n is not None else END, TOP6 - low_rel(c_), c_)
-           for c_, n in zip(roof_clips, roof_clips[1:] + [None])]
-zk = []
-for kk, (a_, b_, z, clip) in enumerate(HEIGHTS):
-    prev = HEIGHTS[kk - 1] if kk else None
-    if prev is not None and prev[1] + 1 >= a_ and getattr(clip, "at", None) is None and clip.blend > 1:
-        zk += [(a_, prev[2], "inout"), (a_ + int(clip.blend), z, "const")]
-    else:
-        zk.append((a_, z, "const"))
-perf.root_z([(1, 0.0, "const")] + zk)
+roof_clips = perf.clips[perf.clips.index(first(landC)):perf.clips.index(final(talk14)) + 1]
+plat_clips = perf.clips[perf.clips.index(first(set15)):perf.clips.index(final(talk15)) + 1]
+zk = [(f_, 0.0, "const") for f_ in (1, int(setA.start), int(setC.start))]
+for c_ in roof_clips:
+    zk.append((int(c_.start), TOP_C - low_rel(c_), "const"))
+for c_ in plat_clips:                                        # S15: the platform is at the door's sill
+    zk.append((int(c_.start), DOOR15.z - low_rel(c_), "const"))
+perf.root_z(zk)
 
 # ------------------------------------------------------------------ travel
-hp = k.hp
-A0 = Vector((BAN_C.x, -1.0, BAN_C.z + 0.75))                # the line catches the banner's top
-k.web_zip(zip0, land0, A0, lift=1.4, name="S10")
-# S13: hanging beside the newest floor; after each landing he swings up to it (a short pendulum arc), stamps it
+A0 = BOARD_C + Vector((BOARD_W / 2 - 0.6, 0.3, BOARD_H / 2))    # the line catches the board's top-left corner
+k.web_zip(zip0, land0, A0, lift=1.2, name="S10")
+# S12: the sprint, a straight run (eased in / out) along the front of site A
+ra, rb = int(first(run12).start), int(final(run12).end) - 1
+pA, pB = Vector((SPOT["A"][0], SPOT["A"][1], 0)), Vector((SPOT["B"][0], SPOT["B"][1], 0))
+k.travel(lambda t: pA.lerp(pB, t), ra, rb, axes=(0, 1), name="S12run")                  # constant speed = the run cycle's: feet don't slide
+ra2, rb2 = int(first(run13).start), int(final(run13).end) - 1
+pC = Vector((SPOT["C"][0], SPOT["C"][1], 0))
+k.travel(lambda t: pB.lerp(pC, t), ra2, rb2, axes=(0, 1), name="S13run")
 FLOOR_GAP, N_C = 16, 7
 F13_0 = T[5] + F(k.word(5, "agents") * FPS) - 30 - 2 * 16   # floors 0 and 1 are already up when we cut in
 LANDS_C = [F13_0 + i * FLOOR_GAP for i in range(N_C)]
-hz = lambda i: T_H * (i + 0.5) - 0.15                      # hips beside floor i
-h13a, h13b = int(hang13.start), int(hang13.end) - 1
-
-
-def p13(t):
-    f = h13a + t * (h13b - h13a)
-    z, x_out = hz(1), 0.0
-    for i, lf in enumerate(LANDS_C):
-        if i < 2:
-            continue
-        a_, b_ = lf + 1, lf + 8
-        if f >= b_:
-            z = hz(i)
-        elif f > a_:
-            u = (f - a_) / (b_ - a_)
-            z0 = hz(i - 1)
-            z = z0 + (hz(i) - z0) * (u * u * (3 - 2 * u))
-            x_out = 0.45 * math.sin(math.pi * u)            # swings out and back in on the way up
-    return Vector((HX + x_out, HY, z))
-
-
-k.travel(p13, h13a, h13b, name="S13hang")
-# S18: off frame, swings in down to the wreck's left corner
-s18, e18 = P18, hp(int(land18.start))
-p18 = k.bez(s18, s18 + Vector((4.0, -6.0, -2.0)), e18 + Vector((-3.0, 3.0, 5.0)), e18)
-A18 = Vector((FX_SPOT[0] + 1.5, FIN_FRONT - 0.05, 3.5))
-k.lean(int(zip18.start) + 1, int(land18.start) - 3, A18 - p18(0.5))
-k.travel(p18, int(zip18.start), int(land18.start) - 1, name="S18")
-A18b = Vector((ROOF_SPOT[0], ROOF_SPOT[1] + 1.0, TOP6 + 0.3))
-k.web_zip(zip18b, land18b, A18b, lift=1.5, name="S18roof")
+k.web_zip(zipC, landC, JIB_C, lift=1.5, name="S13roof")
 for fa, fb, nm in k.travels:
     k.path_hits(fa, fb, nm)
 
 # ------------------------------------------------------------------ feet
-LAND_SETTLE = 6
-perf.contact(int(land18b.start) + LAND_SETTLE, END, floor=TOP6)
-air = [(a_, b_) for a_, b_, _ in k.travels] + [(int(l_.start), int(l_.start) + LAND_SETTLE) for l_ in (land0, land18, land18b)] + \
-      [(int(hang13.start) - 2, int(hang13.end) + 2), (int(land18b.start) - 2, END)]
+air = [(a_, b_) for a_, b_, n_ in k.travels if n_ not in ("S12run", "S13run")] + [(int(land0.start), int(land0.start) + 6),
+                                                                      (int(landC.start), int(landC.start) + 6)]
 lock_err = 0.0
 for a_, b_, fl in [(1, int(zip0.start) - 1, k.floor_at(CP.x, CP.y)), (int(land0.start), int(setA.start) - 1, FL_ROAD),
-                   (int(setA.start), int(off12.start) - 1, k.floor_at(*SPOT["A"])), (int(cu14.start), int(off16.start) - 1, k.floor_at(*CU_SPOT)),
-                   (int(land18.start), int(zip18b.start) - 1, FL8)]:
+                   (int(setA.start), int(setC.start) - 1, k.floor_at(*SPOT["A"])), (int(setC.start), int(zipC.start) - 1, k.floor_at(*SPOT["C"]))]:
     lock_err = max(lock_err, perf.ground_lock(a_, b_, skip=air, step=1, floor=fl))
+perf.contact(int(landC.start) + 6, int(set15.start) - 1, floor=TOP_C)
+perf.contact(int(set15.start) + 2, END, floor=DOOR15.z)
 hips = lambda f: perf.bone_world(HIPS, int(f))
-
-# ------------------------------------------------------------------ props on him: a hard hat + the stamp on site C
-yellow = fx.material("HardHat", (0.95, 0.72, 0.05), rough=0.4)
-hat = dome("SpideyHat", 0.135, yellow, csite)
-to_bone(hat, rig, "mixamorig:Head", offset=(0, -0.02, 0.0))
-stamp_ob = box("StampProp", (0.09, 0.09, 0.14), Vector((0, 0, 0)), fx.material("StampWood", (0.45, 0.3, 0.18), rough=0.6), csite)
-to_bone(stamp_ob, rig, R_HAND, offset=(0, 0.02, 0.06))
-for o in (hat, stamp_ob):
-    anim.visible(o, [(1, False), (int(hang13.start), True), (int(hang13.end) + 1, False)])
 
 # ------------------------------------------------------------------ webs
 webs = fx.WebShots(rig, fx.collection("Webs"))
-for nm, sh, zc, lc, A in (("S10", shoot0, zip0, land0, A0), ("S18roof", shoot18b, zip18b, land18b, A18b)):
-    W = int(perf.clip_frame(sh, k.hit_pk))
-    webs.shot(f"Web_{nm}", R_HAND, (lambda p: (lambda f: p))(Vector(A)), W - 4, W, int(lc.start) - 3)
-    shot.sfx("web_thwip", W - 3)
-    shot.sfx("cartwheel_whoosh", int(zc.start) + 4)
-    shot.sfx("landing_thud", int(lc.start) + 5)
-webs.shot("Web_S18", R_HAND, lambda f: A18, int(zip18.start) - 2, int(zip18.start), int(land18.start) - 3)
-shot.sfx("cartwheel_whoosh", int(zip18.start) + 4)
-shot.sfx("landing_thud", int(land18.start) + 5)
-JIB_C = TOWER["C"] + Vector((T_W / 2 + 0.5, T_W / 2 + 0.3, 7 * T_H + 4.0))     # the crane jib above him
-webs.shot("Web_S13", L_HAND, lambda f: JIB_C, int(hang13.start) - 1, int(hang13.start), int(hang13.end))
+W = int(perf.clip_frame(shoot0, k.hit_pk))
+webs.shot("Web_S10", R_HAND, lambda f: A0, W - 4, W, int(land0.start) - 3)
+shot.sfx("web_thwip", W - 3)
+shot.sfx("cartwheel_whoosh", int(zip0.start) + 4)
+shot.sfx("landing_thud", int(land0.start) + 5)
+Wc = int(perf.clip_frame(shootC, k.hit_pk))
+webs.shot("Web_S13roof", R_HAND, lambda f: JIB_C, Wc - 4, Wc, int(landC.start) - 3)
+shot.sfx("web_thwip", Wc - 3)
+shot.sfx("cartwheel_whoosh", int(zipC.start) + 4)
+shot.sfx("landing_thud", int(landC.start) + 5)
 
 # ================================================================== S10 / S10.1 action
-anim.visible(ban_a, [(1, False), (wordf(1, "you") - 2, True), (wordf(1, "who") - 2, False)])
-anim.visible(ban_b, [(1, False), (wordf(1, "who") - 2, True), (T[2] + 2, False)])
-anim.visible(led_a, [(1, False), (wordf(2, "customers") - 2, True), (wordf(2, "higher") - 2, False)])
-anim.visible(led_b, [(1, False), (wordf(2, "higher") - 2, True)])
-# your shop: the sign flickers through S10.1, then flips to CLOSED and the shop goes dark
+B_WHO, B_CUST, B_HIGH = wordf(1, "who"), wordf(2, "customers"), wordf(2, "higher")
+for ob, a_, b_ in ((boards[0], wordf(1, "you") - 2, B_WHO - 2), (boards[1], B_WHO - 2, B_CUST - 2), (boards[2], B_CUST - 2, B_HIGH - 2),
+                   (boards[3], B_HIGH - 2, None)):
+    spans = [(1, False), (a_, True)] + ([(b_, False)] if b_ else [])
+    if ob is boards[0]:                                      # the board itself (frame) is always there: state a shows a blank
+        spans = [(1, True)]
+    anim.visible(ob, spans)
+blank0 = city.sign("BoardBlank", img("site_blank"), BOARD_C, Vector((0, 1, 0)), BOARD_W, aspect=3000 / 560, emit=0.1, offset=0.35)
+blank0.data.materials[0] = fx.material("BoardOff", (0.05, 0.06, 0.08), rough=0.4)
+anim.visible(blank0, [(1, True), (wordf(1, "you") - 2, False)])
+for f_ in (wordf(1, "you"), B_WHO, B_CUST, B_HIGH):
+    shot.sfx("ui_pop", f_)
+# your shop: the sign flickers through S10.1, then flips to CLOSED and the window goes dark
 lsign_mat = SHOP["L"]["sign"].data.materials[0]
 lbsdf = next(n for n in lsign_mat.node_tree.nodes if n.type == "BSDF_PRINCIPLED")
 flick = random.Random(3)
-CLOSE_F = wordf(2, "higher")
+CLOSE_F = B_HIGH
 seqk = [(1, 0.8, "const")]
 for f_ in range(T[2] - 10, CLOSE_F, 4):
     seqk.append((f_, flick.choice((0.8, 0.8, 0.15, 0.6, 0.05)), "const"))
@@ -449,81 +519,117 @@ anim.keys(lbsdf.inputs["Emission Strength"], "default_value", seqk)
 anim.visible(closed, [(1, False), (CLOSE_F, True)])
 anim.visible(SHOP["L"]["sign"], [(1, True), (CLOSE_F, False)])
 shot.sfx("ui_pop", CLOSE_F)
-walk = life.WalkKit()
-rw = random.Random(31)
-LEAVE = wordf(1, "competitor")
-QUEUE = lambda i: (SX - 2.6 - 0.75 * i, SHOP["R"]["front"] - 1.0)          # along the north sidewalk, away from the camera
-dl = SHOP["L"]["door"]
-for i in range(5):                                          # out of your door, across the zebra, into their queue
-    w_ = walk.spawn(i % 4, f"Customer{i}")
-    w_.route([(dl, 0), ((dl[0] - 0.3, dl[1] + 1.4), 0), ((SX - 0.4 + 0.25 * (i % 2), YN - 2.2), 0), (QUEUE(i + 2), END)],
-             LEAVE + i * 16, phase=rw.random(), until=END)
-for i in range(2):                                          # already queueing there
-    w_ = walk.spawn(i + 1, f"Queued{i}")
-    w_.route([((QUEUE(i)[0] + 0.5, QUEUE(i)[1]), 0), (QUEUE(i), END)], 1, phase=rw.random(), until=END)
-# the last customer in your shop: the broken item, a look, puts it down, crosses to the end of the queue
-w_ = walk.spawn(3, "LastCustomer")
-look_p = (SX - 0.6, SHOP["L"]["front"] + 0.55)
-item_f = wordf(2, "customers") + 6
-w_.route([(dl, 0), (look_p, 70), ((SX - 0.2, YN - 2.2), 0), (QUEUE(8), END)], item_f - 40, phase=0.3, until=END)
-w_.face(item_f - 40 + int(((Vector(look_p) - Vector(dl)).length) / w_.speed) + 1, (0, -1, 0))
-up_ = vase.location.copy()
-anim.keys(vase, "location", [(item_f + 4, up_, "inout"), (item_f + 16, up_ + Vector((0, 0.35, 0.3)), "inout"),
-                             (item_f + 44, up_ + Vector((0, 0.35, 0.3)), "inout"), (item_f + 58, up_)])
+# the customers: out of your door, along the sidewalk, into the queue at their door (it runs off to the right). The
+# queue moves: every ENTER_GAP frames the one at their door goes in and everyone steps up a place.
+dl, dr = SHOP["L"]["door"], SHOP["R"]["door"]
+QUEUE = lambda i: (dr[0] - 0.35 - 0.6 * (i // 3), FRONT + 1.0 + 0.55 * (i % 3))     # a crowd three deep in front of their door
+LANE = FRONT + 2.5                                          # the outer lane of the sidewalk (they pass the queue there)
+DOOR_IN = (dr[0], FRONT + 0.05)
+ENTER0, ENTER_GAP = Q1 + 90, 46
+entries = [ENTER0 + i * ENTER_GAP for i in range(40)]
+n_in = lambda t: sum(1 for e in entries if e <= t)
+
+
+def queue_route(w_, rank, f0, approach=(), phase=0.0):
+    """rank = place in the overall order (0 = first at their door). approach = [(point, wait), ...] from where they
+    start to the sidewalk (empty: already in the line at f0). Then: into their place, a step up at every entry, and
+    in through the door at their own turn (they vanish inside)."""
+    sp = w_.speed
+    walk_n = lambda p_, q_: max(1, int(round((Vector(q_) - Vector(p_)).length / sp)))
+    legs, t = [], int(f0)
+    if approach:
+        legs = [[p_, wt] for p_, wt in approach]
+        for (p_, wt), (q_, _) in zip(approach, approach[1:]):
+            t += wt + walk_n(p_, q_)
+        t += approach[-1][1]
+        slot = max(0, rank - n_in(t + 30))
+        lane_pt = (QUEUE(slot)[0], LANE)
+        t += walk_n(approach[-1][0], lane_pt)
+        t += walk_n(lane_pt, QUEUE(slot))
+        legs += [[lane_pt, 0], [QUEUE(slot), 0]]
+    else:
+        slot = max(0, rank - n_in(t))
+        legs = [[QUEUE(slot), 0]]
+    t_arr = t
+    my_in = max(entries[rank], t + 2)
+    for e in entries:
+        if e <= t or e >= my_in or slot == 0:
+            continue
+        legs[-1][1] = e - t
+        slot -= 1
+        t = e + walk_n(legs[-1][0], QUEUE(slot))
+        legs.append([QUEUE(slot), 0])
+    legs[-1][1] = max(0, my_in - t)
+    t = max(t, my_in)
+    t_door = t + walk_n(legs[-1][0], DOOR_IN)
+    legs.append([DOOR_IN, 0])
+    w_.route([tuple(l) for l in legs], int(f0), phase=phase, until=t_door)
+    w_.face(t_arr if approach else int(f0), (1, 0))         # in line: facing their door (+x)
+    return t_door
+
+
+# 1. the question is asked to an empty street; 2. a few customers go into the shop that doesn't inspect;
+# 3. many more queue up at the one that does; 4. only then the answer (line 2)
+DOOR_L = (dl[0], FRONT + 0.05)
+for i in range(2):                                          # just two go into your shop
+    start = (SHOPX["L"] + 6.5 + 1.4 * i, FRONT + 0.5)                               # in from the left along the facade (behind him), into your shop
+    spawn(f"Visitor{i}").route([(start, 0), (DOOR_L, 0)], Q1 - 40 + i * 34, phase=rw.random())
+N_CUST = 18                                                 # and eighteen into theirs
+for i in range(N_CUST):                                     # in from the street (off frame right), into their crowd
+    start = (SX - 9.5 - 0.5 * (i % 4), LANE + 0.35 * (i % 2))
+    queue_route(spawn(f"Customer{i}"), i, Q1 - 50 + i * 14, approach=[(start, 0)], phase=rw.random())
+# (nobody comes out of your shop: the broken item sits in its window, the sign flips to CLOSED)
 
 # ================================================================== S11-S13 the sites
-anim.visible(site_signs["A"][1], [(1, False), (wordf(3, "option") - 2, True)])
+anim.visible(site_signs["A"][1], [(1, False), (wordf(3, "option") - 2, True), (T[4], False)])
 anim.visible(site_signs["B"][1], [(1, False), (wordf(4, "option") - 2, True)])
 anim.visible(site_signs["B"][2], [(1, False), (wordf(4, "most") - 2, True)])
 anim.visible(site_signs["C"][1], [(1, False), (wordf(5, "that") - 2, True)])
-for s, (a_, b_) in {"A": (int(setA.start) - 1, int(off12.start) - 1), "B": (int(off12.start) - 1, int(hang13.start) - 1),
-                    "C": (int(hang13.start) - 1, int(cu14.start) - 1)}.items():
-    anim.visible(site_signs[s][-1], [(1, True), (a_, False), (b_, True)])     # blank except during its own scene
-for f_ in (wordf(3, "option"), wordf(4, "option"), wordf(4, "most"), wordf(5, "that")):
+THAT = wordf(5, "that")
+# one focal point: a site's sign shows its title only in its own scene; on the three-site pull-back A and B show their titles
+anim.visible(site_signs["A"][-1], [(1, True), (int(setA.start) - 1, False), (T[4], True), (THAT, False)])
+anim.visible(site_signs["B"][-1], [(1, True), (T[4] - 1, False)])
+anim.visible(site_signs["B"][1], [(1, False), (wordf(4, "option") - 2, True), (THAT, False)])
+anim.visible(site_signs["B"][2], [(1, False), (wordf(4, "most") - 2, True), (THAT, False)])
+anim.visible(site_signs["C"][-1], [(1, True), (int(setC.start) - 1, False)])
+for f_ in (wordf(3, "option"), wordf(4, "option"), wordf(4, "most"), THAT):
     shot.sfx("ui_pop", f_)
-# ---- site A: one clean brick storey; the workers lay a brick, check it, nod; the pallet pile outgrows the building
-brick = fx.material("Brick", (0.58, 0.24, 0.15), rough=0.85)
+# ---- site A: a neat one-storey brick building (door, windows); the workers lay the top course; the pallet pile outgrows it
 tA = TOWER["A"]
-for kk, (dx, dy, sx_, sy_) in enumerate(((0, T_W / 2, T_W, 0.3), (0, -T_W / 2, T_W, 0.3), (-T_W / 2, 0, 0.3, T_W), (T_W / 2, 0, 0.3, T_W))):
-    box(f"WallA{kk}", (sx_, sy_, T_H - 0.25), tA + Vector((dx, dy, (T_H - 0.25) / 2)), brick, csite)
+AW, AD, AH = 4.6, 3.6, 2.5
+brick_x, brick_y = brick_mat("BrickX", "x"), brick_mat("BrickY", "y")
+for kk, (dx, dy, sx_, sy_, m_) in enumerate(((0, AD / 2, AW, 0.3, brick_x), (0, -AD / 2, AW, 0.3, brick_x),
+                                             (-AW / 2, 0, 0.3, AD, brick_y), (AW / 2, 0, 0.3, AD, brick_y))):
+    box(f"WallA{kk}", (sx_, sy_, AH), tA + Vector((dx, dy, AH / 2)), m_, csite)
+trim = fx.material("WinTrim", (0.85, 0.85, 0.82), rough=0.5)
+winA = fx.material("WinGlassA", (0.25, 0.4, 0.55), rough=0.08, metallic=0.3)
+doorA = fx.material("DoorA", (0.35, 0.2, 0.1), rough=0.6)
+fy = tA.y + AD / 2 + 0.16
+for kk, wx in enumerate((-1.25, 1.25)):                     # two windows and a door on the front
+    box(f"WinA{kk}", (0.95, 0.04, 0.9), tA + Vector((wx, fy - tA.y, 1.45)), winA, csite)
+    for j, (sx_, sz_, dx, dz) in enumerate(((1.1, 0.08, 0, 0.49), (1.1, 0.08, 0, -0.49), (0.08, 1.0, 0.51, 0), (0.08, 1.0, -0.51, 0))):
+        box(f"WinA{kk}Trim{j}", (sx_, 0.05, sz_), tA + Vector((wx + dx, fy - tA.y + 0.01, 1.45 + dz)), trim, csite)
+box("DoorA", (0.9, 0.04, 1.9), tA + Vector((0.0, fy - tA.y, 0.95)), doorA, csite)
+box("DoorAStep", (1.3, 0.5, 0.12), tA + Vector((0.0, AD / 2 + 0.4, 0.06)), fx.material("Concrete", (0.48, 0.47, 0.45), rough=0.9), csite)
 A_IN = T[3] - 40
-for kk in range(12):                                        # the top course, one brick at a time
-    bx = tA + Vector((-T_W / 2 + 0.3 + kk * 0.27, T_W / 2, T_H - 0.25 + 0.08))
-    b_ = box(f"BrickTop{kk}", (0.25, 0.3, 0.14), bx, brick, csite)
-    anim.visible(b_, [(1, kk < 2), (A_IN + 30 + kk * 30, True)])
-PAL = tA + Vector((-T_W / 2 - 2.1, 0.6, 0.0))              # screen-right of the building (-x)
-box("Pallet", (1.3, 1.1, 0.14), PAL + Vector((0, 0, 0.07)), fx.material("PalletWood", (0.5, 0.36, 0.2), rough=0.8), csite)
-for kk in range(7):                                         # brick bundles keep dropping in from the top of the frame
-    rest = PAL + Vector((0.04 * (kk % 2), -0.03 * (kk % 3), 0.14 + 0.25 + kk * 0.48))
-    b_ = box(f"BrickBundle{kk}", (1.15, 0.95, 0.47), rest, brick, csite)
-    if kk == 0:
-        continue
-    land = A_IN + 4 + kk * 30
-    anim.visible(b_, [(1, False), (land - 10, True)])
-    anim.keys(b_, "location", [(1, rest + Vector((0, 0, 12.0)), "const"), (land - 10, rest + Vector((0, 0, 12.0)), "in"),
-                               (land, rest, "out"), (land + 3, rest + Vector((0, 0, 0.05)), "in"), (land + 5, rest)])
-    shot.sfx("block_thud", land, gain=0.6)
-yellow_hat = fx.material("WorkerHat", (0.95, 0.72, 0.05), rough=0.4)
-for i in range(3):                                           # the workers: hard hats, a slow careful loop
-    w_ = walk.spawn((i * 2 + 1) % 4, f"Worker{i}")
-    pal_p = (PAL.x + 0.9, PAL.y - 0.9 + 0.5 * i)
-    wall_p = (tA.x - 1.0 + i * 1.0, tA.y + T_W / 2 + 0.55)
-    legs = [(pal_p, 14 + 6 * i)]
-    for _ in range(10):
-        legs += [(wall_p, 40), (pal_p, 16)]
-    w_.route(legs, A_IN - 40 + i * 25, phase=rw.random(), until=int(off12.end) + 4)
-    arm_ob = w_.arm
-    head_b = next((b.name for b in arm_ob.data.bones if "head" in b.name.lower() and "end" not in b.name.lower() and "top" not in b.name.lower()), None)
-    if head_b:
-        h_ = dome(f"WorkerHat{i}", 0.14, yellow_hat, csite)
-        to_bone(h_, arm_ob, head_b)
-        anim.visible(h_, [(1, False), (A_IN - 40 + i * 25, True), (int(off12.end) + 5, False)])
-# he follows the pile up with his head: a look target riding up the bundles
-look_t = fx.empty("LookPile", PAL + Vector((0, 0, 0.6)), csite, 0.1)
-lk = office._look(rig.pose.bones["mixamorig:Head"], look_t, "Look pile")
-f_up0, f_up1 = int(nodA.end) + 2, wordf(3, "can") - 8
-anim.keys(look_t, "location", [(f_up0, PAL + Vector((0, 0, 0.6)), "inout"), (f_up1, PAL + Vector((0, 0, 3.6)), "inout")])
-anim.keys(lk, "influence", [(1, 0.0, "const"), (f_up0 - 6, 0.0, "inout"), (f_up0 + 4, 0.8, "inout"), (f_up1, 0.8, "inout"), (f_up1 + 8, 0.0, "inout")])
+brick = fx.material("Brick", (0.5, 0.2, 0.12), rough=0.85)
+for kk in range(14):                                        # the top course along the front, one brick at a time
+    bx = tA + Vector((-AW / 2 + 0.3 + kk * 0.31, AD / 2, AH + 0.08))
+    b_ = box(f"BrickTop{kk}", (0.29, 0.3, 0.15), bx, brick, csite)
+    anim.visible(b_, [(1, kk < 2), (A_IN + 30 + kk * 28, True)])
+box("Pallet", (1.2, 1.0, 0.14), tA + Vector((-AW / 2 - 1.3, 0.6, 0.07)), fx.material("PalletWood", (0.5, 0.36, 0.2), rough=0.8), csite)
+box("BrickBundle", (1.0, 0.85, 0.42), tA + Vector((-AW / 2 - 1.3, 0.6, 0.35)), brick_x, csite)        # one bundle on its pallet
+# the crew: two builders at the front wall (3/4 to the camera), the boss beside them giving instructions
+cw = crew.Crew()
+CREW_END = int(set15.start) + 2
+CLIP_BOSS = "CMU 18_08 conversation - explain with hand gesture"
+builders = [cw.worker("BuilderA0", (tA.x + 1.0, tA.y + AD / 2 + 0.75), face=(-0.6, -0.8), phase=0.0),
+            cw.worker("BuilderA1", (tA.x - 1.2, tA.y + AD / 2 + 0.75), face=(0.6, -0.8), phase=0.45)]
+BOSS_A = (tA.x - AW / 2 - 0.9, tA.y + AD / 2 + 1.7)
+boss_a = cw.boss("BossA", BOSS_A, face=(tA.x - BOSS_A[0], tA.y + AD / 2 + 0.75 - BOSS_A[1]), rig=rig, clip=CLIP_BOSS)
+for u in builders:
+    u.show([(1, True), (CREW_END, False)])
+boss_a.show([(1, True), (int(setC.start), False)])          # S13: he is at site C
 # ---- site B / C: the cranes, the floors
 concrete = fx.material("Concrete", (0.48, 0.47, 0.45), rough=0.9)
 holes = fx.material("Holes", (0.01, 0.01, 0.01), rough=1.0)
@@ -542,15 +648,15 @@ def crane(name, tc, top):
     return pivot
 
 
-def stack(name, tc, n, f_first, gap, mat, crooked=0.0, seed=1):
+def stack(name, tc, n, f_first, gap, mat, crooked=0.0, seed=1, i0=0):
     """Floors lowered by the crane, one every `gap` frames: a quick drop, a thud. Returns [(floor, land, rest)]."""
     r = random.Random(seed)
     out_ = []
     offs = Vector((0, 0, 0))
     for i in range(n):
         offs = offs + Vector((r.uniform(-1, 1) * crooked, r.uniform(-1, 1) * crooked * 0.6, 0))
-        rest = tc + offs + Vector((0, 0, T_H * (i + 0.5)))
-        fl = box(f"{name}F{i}", (T_W, T_W, T_H - 0.05), rest, mat, csite)
+        rest = tc + offs + Vector((0, 0, T_H * (i + i0 + 0.5)))
+        fl = box(f"{name}F{i + i0}", (T_W, T_W, T_H - 0.05), rest, mat, csite)
         rz = r.uniform(-1, 1) * crooked * 0.12
         land = f_first + i * gap
         anim.visible(fl, [(1, False), (land - 14, True)])
@@ -574,10 +680,17 @@ def windows(fl, rest, seed, missing=0.0, hole=None, glass=None, appear=1, landed
             anim.visible(w, [(1, False), (appear, True)])
 
 
-glassB = fx.material("WinGlass", (0.2, 0.28, 0.35), rough=0.1, metallic=0.4)
-T4_0 = T[4] - 10                                             # the crane is already going when we cut in
+glassB = fx.material("WinGlassB", (0.12, 0.42, 0.75), rough=0.05, metallic=0.5, emit=0.25, emit_color=(0.4, 0.7, 1.0))
+panelB = fx.material("AgentPanel", (0.84, 0.86, 0.9), rough=0.22, metallic=0.1)
+bandB = [fx.material("AgentBandTeal", (0.1, 0.8, 0.85), rough=0.3, emit=2.0, emit_color=(0.1, 0.9, 1.0)),
+         fx.material("AgentBandPink", (0.9, 0.2, 0.7), rough=0.3, emit=2.0, emit_color=(1.0, 0.25, 0.8))]
+T4_0 = T[4] + 6                                              # the crane starts on "option two"
 pivB = crane("CraneB", TOWER["B"], 17.0)
-floorsB = stack("TowerB", TOWER["B"], 6, T4_0, 14, concrete, crooked=0.35, seed=5)
+floorsB = stack("TowerB", TOWER["B"], 6, T4_0, 14, panelB, crooked=0.35, seed=5)
+for i, (fl, land, rest) in enumerate(floorsB):                # a glowing band at the foot of every floor
+    bd = box(f"TowerBBand{i}", (T_W + 0.06, T_W + 0.06, 0.16), rest + Vector((0, 0, -T_H / 2 + 0.12)), bandB[i % 2], csite)
+    parent_keep(bd, fl, land + 10)
+    anim.visible(bd, [(1, False), (land - 14, True)])
 HOLE_FL, DOOR_FL = 2, 4
 for i, (fl, land, rest) in enumerate(floorsB):
     windows(fl, rest, 10 + i, missing=0.3, hole=holes, glass=glassB, appear=land - 14, landed=land + 10,
@@ -602,16 +715,7 @@ anim.keys(wob, "rotation_euler", [(1, Vector((0, 0, 0)), "const"), (WOB_F - 6, V
            for kk in range(10)])
 for fl, land, rest in floorsB:
     shot.sfx("block_thud", land, gain=0.8)
-# the customers come to look, spot the flaws and run
 RUN_F = wordf(4, "notice")
-for i in range(4):
-    w_ = walk.spawn(i % 4, f"Onlooker{i}")
-    st_ = (TOWER["B"].x - 11.0 - i * 0.7, LOT_Y + 6.0 + 0.4 * i)          # they walk in from screen-right after the cut
-    look = (TOWER["B"].x - 1.2 + i * 0.9, LOT_Y + T_W / 2 + 1.8 + 0.3 * (i % 2))
-    away = (TOWER["B"].x - 18.0, LOT_Y + 9.0 + i)
-    walk_n = int((Vector(look) - Vector(st_)).length / (w_.speed * 1.5))
-    go = T[4] + 2 + i * 6
-    w_.route([(st_, 0), (look, max(10, RUN_F + 3 * i - (go + walk_n))), (away, 0)], go, phase=rw.random(), pace=[1.5, 2.4])
 # ---- site C: square floors at the same speed; every one gets a green stamp as he reaches it
 blueglass = fx.material("BlueFloor", (0.12, 0.33, 0.78), rough=0.35, metallic=0.2)
 glassC = fx.material("WinGlassC", (0.65, 0.82, 0.95), rough=0.08, metallic=0.3, emit=0.4)
@@ -619,7 +723,7 @@ pivC = crane("CraneC", TOWER["C"], 19.5)
 floorsC = stack("TowerC", TOWER["C"], N_C, F13_0, FLOOR_GAP, blueglass, crooked=0.0, seed=7)
 for i, (fl, land, rest) in enumerate(floorsC):
     windows(fl, rest, 30 + i, missing=0.0, hole=glassC, glass=glassC, appear=land - 14, landed=land + 10)
-    stf = land + 9 if i >= 2 else int(hang13.start)          # floors 0-1 were stamped before we cut in
+    stf = land + 9 if i >= 2 else int(setC.start)            # floors 0-1 were stamped before we cut in
     st_ = city.sign(f"StampC{i}", img("stamp_ok"), rest + Vector((T_W / 2 - 0.5, T_W / 2 + 0.06, 0.2)), SN, 0.8, aspect=1.0,
                     offset=0.0, alpha=True, emit=0.3, coll=csite)
     parent_keep(st_, fl, land + 10)
@@ -628,16 +732,112 @@ for i, (fl, land, rest) in enumerate(floorsC):
     if i >= 2:
         shot.sfx("block_thud", land)
         shot.sfx("ui_pop", stf)
-        office.present(stf - 4, rest + Vector((T_W / 2 - 0.5, T_W / 2 + 0.1, 0.2)), side="R", hold=3, ramp=4, amount=0.9)
 anim.keys(pivC, "rotation_euler", [(f_, Vector((0, 0, 0.3 * math.sin(f_ / 8.0))), "inout") for f_ in range(F13_0 - 40, F13_0 + N_C * FLOOR_GAP + 20, 8)])
-COME_F = wordf(5, "that")
-for i in range(5):                                           # the customers come back: a queue at the tower's base
-    w_ = walk.spawn((i + 2) % 4, f"Returner{i}")
-    st_ = (TOWER["C"].x - 9.0 - 0.6 * i, LOT_Y + 7.0)
-    q = (TOWER["C"].x - 1.4 - 0.7 * i, LOT_Y + T_W / 2 + 1.0)
-    w_.route([(st_, 0), (q, END)], COME_F - 50 + i * 8, phase=rw.random(), until=int(off16.start) + 2)
+# the builders at site C are robots: two arms at the tower's foot, a builder bot; the boss (human judgment) checks
+tc = TOWER["C"]
+for i, (dx, ph) in enumerate(((T_W / 2 - 0.3, 0.0), (-T_W / 2 + 0.2, 0.5))):
+    cw.arm(f"RobotArmC{i}", (tc.x + dx, tc.y + T_W / 2 + 0.9), face=(0, -1), phase=ph)
+cw.robot("RobotC0", (tc.x + 0.4, tc.y + T_W / 2 + 2.4), face=(0.3, 1))
+BOSS_C = (tc.x - T_W / 2 - 1.1, tc.y + T_W / 2 + 2.2)
+boss_c = cw.boss("BossC", BOSS_C, face=(0.8, -0.6), rig=rig, clip=CLIP_BOSS)
+boss_c.show([(1, False), (int(first(run13).start), True)])
 
-# ================================================================== S14 / S15 / S19 the hand: fingers + arm (IK)
+# ---- S14: three rolled banners at C's roof edge unroll down its front, one per thing he counts
+BAN_L = 5.5
+ban_top = TOP_C - 0.12
+roll_m = fx.material("BannerRoll", (0.9, 0.9, 0.86), rough=0.6)
+for i, (nm, word) in enumerate((("banner_headcount", "headcount"), ("banner_results", "results"), ("banner_product", "better"))):
+    bx = TOWER["C"].x + 1.2 - 1.2 * i                        # left to right on screen: +x first
+    piv = fx.empty(f"BannerPivot{i}", Vector((bx, FACE_C + 0.14, ban_top)), csite, 0.1)
+    cloth = city.sign(f"Banner{i}", img(nm), Vector((bx, FACE_C + 0.02, ban_top - BAN_L / 2)), SN, 1.05, aspect=600 / 3000,
+                      emit=0.35, offset=0.12, coll=csite)
+    parent_keep(cloth, piv, 1)
+    me = bpy.data.meshes.new(f"BannerRoll{i}")
+    bm_ = bmesh.new()
+    bmesh.ops.create_cone(bm_, cap_ends=True, segments=14, radius1=0.1, radius2=0.1, depth=1.1)
+    bmesh.ops.rotate(bm_, verts=bm_.verts, cent=(0, 0, 0), matrix=Matrix.Rotation(math.pi / 2, 3, "Y"))
+    bm_.to_mesh(me)
+    bm_.free()
+    roll = bpy.data.objects.new(f"BannerRoll{i}", me)
+    csite.objects.link(roll)
+    me.materials.append(roll_m)
+    f_ = w6(word) - 2
+    anim.keys(piv, "scale", [(1, Vector((1, 1, 0.001)), "const"), (f_, Vector((1, 1, 0.001)), "out"), (f_ + 14, Vector((1, 1, 1)), "back")])
+    anim.keys(roll, "location", [(1, Vector((bx, FACE_C + 0.2, ban_top)), "const"), (f_, Vector((bx, FACE_C + 0.2, ban_top)), "out"),
+                                 (f_ + 14, Vector((bx, FACE_C + 0.2, ban_top - BAN_L)), "back")])
+    shot.sfx("cartwheel_whoosh", f_)
+    for o in (cloth, roll):
+        anim.visible(o, [(1, False), (int(landC.start), True), (T15a, False)])
+# ---- S15: the door to nowhere on C's top floor, a customer walking out of it, the balcony he webs in
+fl6 = bpy.data.objects[f"TowerCF{N_C - 1}"]
+win6 = bpy.data.objects.get(f"TowerCF{N_C - 1}W01")
+if win6:
+    anim.visible(win6, [(1, True), (T15a, False)])
+dark = box("DoorwayC", (0.84, 0.04, 1.94), Vector((DOOR15.x, FACE_C + 0.03, DOOR15.z + 0.97)), holes, csite)
+d_piv = fx.empty("DoorHingeC", Vector((DOOR15.x + 0.42, FACE_C + 0.08, DOOR15.z)), csite, 0.1)
+d15 = box("DoorC", (0.82, 0.06, 1.9), d_piv.location + Vector((-0.41, 0, 0.95)), fx.material("DoorC", (0.85, 0.85, 0.82), rough=0.4), csite)
+parent_keep(d15, d_piv, 1)
+DOOR_OPEN = T[7] + 4
+anim.keys(d_piv, "rotation_euler", [(1, Vector((0, 0, 0)), "const"), (DOOR_OPEN, Vector((0, 0, 0)), "out"), (DOOR_OPEN + 10, Vector((0, 0, -1.5)), "back")])
+for o in (dark, d15):
+    anim.visible(o, [(1, False), (T15a, True)])
+shot.sfx("ui_pop", DOOR_OPEN)
+# the scaffold platform he stands on: a plank at the sill, two brackets, a rail on its outer side
+scaf = fx.material("Scaffold", (0.55, 0.42, 0.25), rough=0.8)
+plat = [box("ScafPlank", (1.4, 0.8, 0.08), Vector((PLAT15[0], FACE_C + 0.4, DOOR15.z - 0.04)), scaf, csite)]
+for j, dx in enumerate((-0.55, 0.55)):
+    br = box(f"ScafBracket{j}", (0.06, 0.06, 1.1), Vector((PLAT15[0] + dx, FACE_C + 0.35, DOOR15.z - 0.45)), steel, csite)
+    br.rotation_euler = (math.radians(40), 0, 0)
+    plat.append(br)
+plat += [box("ScafRailPost0", (0.05, 0.05, 1.05), Vector((PLAT15[0] - 0.68, FACE_C + 0.1, DOOR15.z + 0.52)), steel, csite),
+         box("ScafRailPost1", (0.05, 0.05, 1.05), Vector((PLAT15[0] - 0.68, FACE_C + 0.77, DOOR15.z + 0.52)), steel, csite),
+         box("ScafRail", (0.05, 0.72, 0.05), Vector((PLAT15[0] - 0.68, FACE_C + 0.43, DOOR15.z + 1.03)), steel, csite)]
+for o in plat:
+    anim.visible(o, [(1, False), (T15a, True)])
+# the balcony: flies in on his line from below the door and locks under it
+BAL = fx.empty("BalconyC", BAL_AT, csite, 0.1)
+rail = fx.material("Rail", (0.92, 0.92, 0.9), rough=0.35, metallic=0.6)
+bal_parts = [box("BalSlab", (1.5, 1.0, 0.12), BAL_AT + Vector((0, -0.08, 0.04)), concrete, csite)]
+for j, (sx_, sy_, sz_, dx, dy, dz) in enumerate(((1.5, 0.05, 0.05, 0, 0.4, 1.05), (0.05, 1.0, 0.05, 0.73, -0.08, 1.05), (0.05, 1.0, 0.05, -0.73, -0.08, 1.05),
+                                                  (0.05, 0.05, 1.0, 0.73, 0.4, 0.55), (0.05, 0.05, 1.0, -0.73, 0.4, 0.55), (0.05, 0.05, 1.0, 0, 0.4, 0.55))):
+    bal_parts.append(box(f"BalRail{j}", (sx_, sy_, sz_), BAL_AT + Vector((dx, dy, dz)), rail, csite))
+for o in bal_parts:
+    parent_keep(o, BAL, 1)
+CUZ = w7("cuz")
+from_ = BAL_AT + Vector((-1.4, 0.9, -2.2))
+anim.keys(BAL, "location", [(1, from_, "const"), (CUZ + 2, from_, "out"), (CUZ + 12, BAL_AT, "back")])
+anim.keys(BAL, "scale", [(1, Vector((0.3, 0.3, 0.3)), "const"), (CUZ + 2, Vector((0.3, 0.3, 0.3)), "out"), (CUZ + 12, Vector((1, 1, 1)), "back")])
+for o in bal_parts:
+    anim.visible(o, [(1, False), (CUZ + 2, True)])
+shot.sfx("web_thwip", CUZ)
+shot.sfx("block_thud", CUZ + 12)
+# the customer: out of the door towards the drop, stops on the edge; steps onto the balcony; leans on the rail and waves
+cust = cw._spawn("boss", "DoorBoss", (DOOR15.x, FACE_C + 0.05, DOOR15.z), (0, 1), None)        # the boss, hard hat on
+bacts = {a.name.split("|")[-1]: a for a in cw.src["boss"]["acts"]}
+walk_ip = crew.in_place(bacts["Walk"])
+crew.sequence(cust.arm, [(walk_ip, DOOR_OPEN + 4, DOOR_OPEN + 36), (bacts["Sad_Idle"], DOOR_OPEN + 36, CUZ + 14),
+                         (walk_ip, CUZ + 14, CUZ + 34), (bacts["Victory_Idle"], CUZ + 34, w7("human") - 4), (bacts["Waving"], w7("human") - 4, END + 2)])
+anim.keys(cust.wrap, "location", [(1, Vector((DOOR15.x, FACE_C - 0.05, DOOR15.z)), "const"), (DOOR_OPEN + 4, Vector((DOOR15.x, FACE_C - 0.05, DOOR15.z)), "lin"),
+                                  (DOOR_OPEN + 36, Vector((DOOR15.x, FACE_C + 0.28, DOOR15.z)), "const"), (CUZ + 14, Vector((DOOR15.x, FACE_C + 0.28, DOOR15.z)), "lin"),
+                                  (CUZ + 34, Vector((DOOR15.x, FACE_C + 0.85, DOOR15.z)), "const")])
+cust.show([(1, False), (DOOR_OPEN + 4, True)])
+# the crane keeps stacking floors above, unaware ("AI lets everyone ship more")
+floorsC2 = stack("TowerC", TOWER["C"], 3, w7("ai") - 4, 14, blueglass, crooked=0.0, seed=8, i0=N_C)
+for i, (fl, land, rest) in enumerate(floorsC2):
+    windows(fl, rest, 60 + i, missing=0.0, hole=glassC, glass=glassC, appear=land - 14, landed=land + 10)
+    shot.sfx("block_thud", land, gain=0.7)
+anim.keys(pivC, "rotation_euler", [(f_, Vector((0, 0, 0.3 * math.sin(f_ / 8.0))), "inout") for f_ in range(T15a - 30, END + 10, 8)])
+# "Human judgment and care do that": the green check beside the door, the stamp in his hand
+STAMP_F = w7("human") + 2
+st15 = city.sign("StampDoor", img("stamp_ok"), STAMP15, SN, 0.6, aspect=1.0, offset=0.0, alpha=True, emit=0.3, coll=csite)
+anim.visible(st15, [(1, False), (STAMP_F, True)])
+anim.keys(st15, "scale", [(STAMP_F, Vector((2.2, 2.2, 2.2)), "out"), (STAMP_F + 5, Vector((1, 1, 1)), "back")])
+shot.sfx("ui_pop", STAMP_F)
+stamp_ob = box("StampProp", (0.09, 0.09, 0.14), Vector((0, 0, 0)), fx.material("StampWood", (0.45, 0.3, 0.18), rough=0.6), csite)
+to_bone(stamp_ob, rig, R_HAND, offset=(0, 0.02, 0.06))
+anim.visible(stamp_ob, [(1, False), (T15a, True)])
+
+# ================================================================== S14 / S15 the hand: fingers + arm (IK)
 FING = ("Index", "Middle", "Ring", "Pinky")
 
 
@@ -656,8 +856,7 @@ def finger_pose(open_=(), spread=0.0, thumb_in=True):
 
 
 POSES = {"one": finger_pose(("Index",)), "two": finger_pose(("Index", "Middle")), "three": finger_pose(("Index", "Middle", "Ring")),
-         "point": finger_pose(("Index",)), "fist": finger_pose(()), "flat": finger_pose(FING, thumb_in=False),
-         "peace": finger_pose(("Index", "Middle"), spread=9.0)}
+         "point": finger_pose(("Index",)), "fist": finger_pose(()), "flat": finger_pose(FING, thumb_in=False)}
 f_act = bpy.data.actions.new("FingerPoses")
 ad = rig.animation_data
 keep_action = ad.action
@@ -676,11 +875,11 @@ def key_pose(frame, name):
 
 w6 = lambda w, nth=0: wordf(6, w, nth)
 w7 = lambda w, nth=0: wordf(7, w, nth)
-PEACE = wordf(11, "sign")
+T15a = int(set15.start)
 SEQ = [(w6("headcount") - 6, "flat"), (w6("headcount") - 2, "one"), (w6("results") - 2, "two"), (w6("better") - 2, "three"),
-       (w6("only") - 4, "three"), (w6("only"), "fist"), (w6("human") - 2, "point"), (w6("stay") + 10, "point"), (w6("stay") + 18, "flat"),
-       (w7("why") + 40, "flat"), (w7("why") + 46, "point"), (w7("cuz") - 2, "point"), (w7("ai") + 4, "flat"), (w7("human") - 4, "flat"),
-       (PEACE - 8, "flat"), (PEACE - 2, "peace"), (END - 2, "peace")]
+       (w6("only") - 6, "three"), (w6("only"), "flat"), (w6("human") - 8, "point"), (w6("stay") + 12, "point"), (w6("stay") + 20, "flat"),
+       (T15a, "flat"), (w7("loop") - 2, "point"), (w7("cuz") - 4, "flat"), (w7("human") - 10, "flat"), (w7("human") - 6, "fist"),
+       (END - 2, "fist")]
 for f_, p_ in SEQ:
     key_pose(f_, p_)
 if hasattr(f_act, "slots") and f_act.slots and not ad.action_slot:
@@ -688,244 +887,232 @@ if hasattr(f_act, "slots") and f_act.slots and not ad.action_slot:
 ad.action = keep_action
 fin_tr = ad.nla_tracks.new()
 fin_tr.name = "ZZ Finger poses"
-for a_, b_ in ((T[6] - 4, T[8] - 4), (PEACE - 14, END)):
-    st = fin_tr.strips.new(f"Fingers{a_}", int(a_), f_act)
-    if hasattr(st, "action_slot") and f_act.slots:
-        st.action_slot = f_act.slots[0]
+a_, b_ = T[6] - 4, END
+st = fin_tr.strips.new(f"Fingers{a_}", int(a_), f_act)
+if hasattr(st, "action_slot") and f_act.slots:
+    st.action_slot = f_act.slots[0]
+st.action_frame_start, st.action_frame_end = a_, b_
+st.frame_start, st.frame_end = a_, b_
+st.blend_type = "REPLACE"
+st.use_auto_blend = False
+st.extrapolation = "NOTHING"
+st.use_animated_influence = True                    # (an API-made strip otherwise evaluates at influence 0)
+for f_, v_ in ((a_, 0.0), (a_ + 6, 1.0), (b_ - 6, 1.0), (b_, 0.0)):
+    st.influence = v_
+    st.keyframe_insert("influence", frame=int(f_))
+cuh = lambda f: perf.bone_world("mixamorig:Spine2", f)
+HD = lambda f: perf.bone_world("mixamorig:Head", f)
+fwd = Vector((0, 1, 0))                                      # he faces +y (the close-up camera)
+CHEST = lambda f: cuh(f) + fwd * 0.26 + Vector((0.16, 0, 0.08))          # in front of his chest, his right side (+x: he faces +y)
+# ---- S14/S15 the right-arm gestures (count, chin, temple tap, hand on chest): no IK here — the legacy solver flipped
+# this arm (hand behind the shoulder, elbow up: the "dinosaur"). Instead a two-bone solve per frame (elbow down and
+# out), plus the hand's own rotation, keyed on a REPLACE arm layer over the talk clips, eased in and out.
+UP, TOWARD, BACK = Vector((0, 0, 1)), Vector((0, 1, 0)), Vector((0, -1, 0))   # he faces +y: his right is +x
+RWM = rig.matrix_world
+RW3, RWi = RWM.to_3x3(), RWM.inverted()
+ARM_B = ["mixamorig:RightShoulder", "mixamorig:RightArm", "mixamorig:RightForeArm", "mixamorig:RightHand"]
+rest3 = {n: rig.data.bones[n].matrix_local.to_3x3() for n in ARM_B}
+LEN_UP, LEN_FA = rig.pose.bones[ARM_B[1]].length, rig.pose.bones[ARM_B[2]].length
+SHW = lambda f: perf.bone_world(ARM_B[1], f)
+BAL_AT = Vector((DOOR15.x, FACE_C + 0.6, DOOR15.z - 0.1))    # where the balcony goes (under the door)
+STAMP15 = Vector((DOOR15.x - 0.95, FACE_C + 0.06, DOOR15.z + 1.3))     # beside the door, in his reach
+_d = (BAL_AT - SHW(w7("cuz"))).normalized()
+_z = (-UP - _d * (-UP).dot(_d)).normalized()
+WEB_AXES = (_d.cross(_z), _d, _z)                             # the arm along the shot, palm down
+_py = Vector((0, 0.6, -0.8)).normalized()
+seg = lambda a_, b_: max(4, int(b_) - int(a_))
+GEST = [  # start, ramp, hold, wrist target (world), elbow pull, hand axes (X, Y = along the fingers, Z = palm side)
+    # S14 on the roof: the count, hand raised high (palm to the camera); then pointing down at his own tower
+    (w6("headcount") - 10, 8, seg(w6("headcount") - 2, w6("only") - 20), lambda f: SHW(f) + Vector((0.1, 0.12, 0.38)),
+     Vector((1, 0, -0.3)), (Vector((-1, 0, 0)), UP, TOWARD)),
+    (w6("human") - 10, 7, seg(w6("human") - 3, w6("stay") + 8), lambda f: SHW(f) + Vector((0.06, 0.42, -0.2)),
+     Vector((0.6, -0.3, -1)), (_py.cross(Vector((-1, 0, 0))), _py, Vector((-1, 0, 0)))),
+    # S15 on the platform (the shrug is the clip, both palms): a chin tap, the line to the balcony, the stamp
+    (w7("loop") - 4, 4, seg(w7("loop"), w7("cuz") - 8), lambda f: HD(f) + fwd * 0.12 + Vector((0.02, 0, -0.13)),
+     Vector((0.5, 0, -1)), (Vector((1, 0, 0)), UP, BACK)),
+    (w7("cuz") - 3, 3, 14, lambda f: SHW(f) + _d * 0.45, Vector((0.5, 0, -1)), WEB_AXES),
+    (w7("human") - 8, 6, 20, lambda f: STAMP15 + Vector((0, 0.1, -0.06)), Vector((0.6, 0, -1)), (Vector((1, 0, 0)), UP, BACK)),
+]
+
+
+def solve(f, tgt, pull, axes):
+    """Armature-space rotations for shoulder (as is), upper arm, forearm, hand at frame f."""
+    sc.frame_set(f)
+    pbs = rig.pose.bones
+    M = {n: pbs[n].matrix.to_3x3() for n in ARM_B}
+    S = RWi @ (RWM @ pbs[ARM_B[1]].head)
+    T = RWi @ tgt(f)
+    P = (RW3.inverted() @ pull).normalized()
+    d = T - S
+    L = min(d.length, (LEN_UP + LEN_FA) * 0.98)
+    u = d.normalized()
+    ca = max(-1.0, min(1.0, (LEN_UP ** 2 + L ** 2 - LEN_FA ** 2) / (2 * LEN_UP * L)))
+    v = (P - u * P.dot(u)).normalized()
+    E = S + (u * ca + v * math.sqrt(1 - ca * ca)) * LEN_UP
+    T = S + u * L
+    r1 = M[ARM_B[1]].col[1].normalized().rotation_difference((E - S).normalized()).to_matrix()
+    up = r1 @ M[ARM_B[1]]
+    fa0 = r1 @ M[ARM_B[2]]
+    fa = fa0.col[1].normalized().rotation_difference((T - E).normalized()).to_matrix() @ fa0
+    X, Y, Z = (Vector(a_).normalized() for a_ in axes)
+    hand = RW3.inverted() @ Matrix((X, Y, Z)).transposed()
+    return {ARM_B[0]: M[ARM_B[0]], ARM_B[1]: up, ARM_B[2]: fa, ARM_B[3]: hand}
+
+
+GEST.sort(key=lambda g: g[0])
+for g0, g1 in zip(GEST, GEST[1:]):                           # one layer: the spans must not overlap
+    assert int(g0[0]) + 2 * g0[1] + g0[2] < int(g1[0]), ("gestures overlap", g0[0], g1[0])
+arm_act = bpy.data.actions.new("ArmGestures")
+keyed = []
+for f0, ramp, hold, tgt, pull, axes in GEST:
+    for f in range(int(f0), int(f0) + 2 * ramp + hold + 1, 2):
+        keyed.append((f, solve(f, tgt, pull, axes)))
+ad.action = arm_act
+if hasattr(ad, "action_slot") and arm_act.slots:
+    ad.action_slot = arm_act.slots[0]
+for f, Ms in keyed:
+    for i, n in enumerate(ARM_B[1:], start=1):
+        par = ARM_B[i - 1]
+        basis = (rest3[n].inverted() @ rest3[par]) @ Ms[par].inverted() @ Ms[n]
+        pbn = rig.pose.bones[n]
+        pbn.rotation_quaternion = basis.to_quaternion()
+        pbn.keyframe_insert("rotation_quaternion", frame=f)
+if hasattr(arm_act, "slots") and arm_act.slots and not ad.action_slot:
+    ad.action_slot = arm_act.slots[0]
+ad.action = keep_action
+arm_tr = ad.nla_tracks.new()
+arm_tr.name = "ZZZ Arm gestures"
+for f0, ramp, hold, tgt, pull, axes in GEST:
+    a_, b_ = int(f0), int(f0) + 2 * ramp + hold
+    st = arm_tr.strips.new(f"Arm{a_}", a_, arm_act)
+    if hasattr(st, "action_slot") and arm_act.slots:
+        st.action_slot = arm_act.slots[0]
     st.action_frame_start, st.action_frame_end = a_, b_
     st.frame_start, st.frame_end = a_, b_
     st.blend_type = "REPLACE"
     st.use_auto_blend = False
     st.extrapolation = "NOTHING"
-    st.use_animated_influence = True                    # (an API-made strip otherwise evaluates at influence 0)
-    for f_, v_ in ((a_, 0.0), (a_ + 6, 1.0), (b_ - 6, 1.0), (b_, 0.0)):
+    st.use_animated_influence = True
+    for f_, v_ in ((a_, 0.0), (a_ + ramp, 1.0), (b_ - ramp, 1.0), (b_, 0.0)):
         st.influence = v_
         st.keyframe_insert("influence", frame=int(f_))
-cuh = lambda f: perf.bone_world("mixamorig:Spine2", f)
-HD = lambda f: perf.bone_world("mixamorig:Head", f)
-fwd = Vector((0, 1, 0))                                      # he faces +y (the close-up camera)
-CHEST = lambda f: HD(f) + fwd * 0.34 + Vector((0.2, 0, -0.16))           # beside his face, his own (right) side
-office.present(w6("headcount") - 10, CHEST(w6("headcount")), side="R", hold=w6("only") - w6("headcount") + 4, ramp=8, amount=0.95)
-office.present(w6("human") - 6, CU_CAM, side="R", hold=w6("stay") - w6("human") + 6, ramp=7, amount=0.8)
-office.present(w7("why") + 40, HD(w7("why") + 40) + fwd * 0.12 + Vector((0, 0, -0.1)), side="R", hold=16, ramp=6, amount=1.0)   # chin
-office.present(w7("cuz") - 6, HD(w7("cuz")) + Vector((-0.11, 0.04, 0.05)), side="R", hold=12, ramp=5, amount=1.0)              # temple
-office.present(w7("human") - 8, cuh(w7("human")) + fwd * 0.16 + Vector((0.05, 0, 0.05)), side="R", hold=26, ramp=7, amount=1.0)    # chest
-
-
-# ================================================================== S18 the wreck, the lock, the rise, the sunrise
-fcoll = fx.collection("Finale")
-bld = city.Building("Finale", FIN_C, width=FIN_W, depth=FIN_D, floors=FIN_N, storey=FIN_S, facade_img=os.path.join(ST, "facade_floor.png"),
-                    coll=fcoll)
-for o in list(fcoll.objects):                               # the wreck only exists for S18/S19
-    if o.type == "MESH" and o.name.endswith("_Body") and not any(o.name.startswith(f"Finale_F{i}") for i in (4, 5)):
-        anim.visible(o, [(1, False), (S18_CUT, True)])
-LABELS = [os.path.join(SCR, f"tower_{i}.png") for i in range(4)] + [img("floor_scale"), img("floor_judgment")]
-labs = []
-for i in range(4):
-    lab = bld.light(i, S18_CUT, LABELS[i])
-    anim.keys(lab, "scale", [(S18_CUT, Vector((1, 1, 1)), "const"), (S18_CUT + 9, Vector((1, 1, 1)), "const")])
-    anim.keys(bld.mix[i].inputs[0], "default_value", [(S18_CUT - 1, 0.15, "const"), (S18_CUT, 0.15, "const"), (S18_CUT + 9, 0.15, "const")])
-    labs.append(lab)
-rp = random.Random(4)
-SQ = 0.42
-g0 = bld.floors[0]
-G_HOME = g0.location.copy()
-PULL = Vector((0.14, -1, 0)).normalized()
-G_OUT = G_HOME + PULL * (FIN_D + 1.5) + Vector((0, 0, -0.2))
-anim.keys(g0, "location", [(1, G_OUT, "const"), (R0, G_OUT, "inout"), (R0 + 16, G_HOME, "out"), (R0 + 20, G_HOME + Vector((0, 0, 0.05)), "in"),
-                           (R0 + 24, G_HOME)])
-anim.keys(g0, "rotation_euler", [(1, Vector((0.04, 0, -0.08)), "const"), (R0, Vector((0.04, 0, -0.08)), "inout"), (R0 + 16, Vector((0, 0, 0)))])
-crack2 = city.sign("InspectionCrack", img("crack"), Vector((FIN_C.x + 2.6, FIN_FRONT - 0.04, 1.2)), Vector((0, -1, 0)), 1.6, aspect=1.0,
-                   offset=0.0, alpha=True, coll=fcoll)
-parent_keep(crack2, g0, R0 + 30)
-anim.visible(crack2, [(1, False), (S18_CUT, True)])
-# the lock: INSPECTION's label flares as it seats; the floors above snap back up on top of it
-lab0_bsdf = next(n for n in labs[0].data.materials[0].node_tree.nodes if n.type == "BSDF_PRINCIPLED")
-anim.keys(lab0_bsdf.inputs["Emission Strength"], "default_value", [(1, 1.2, "const"), (HOLD_F - 2, 1.2, "lin"), (HOLD_F + 3, 9.0, "out"),
-                                                                  (HOLD_F + 24, 1.6, "inout")])
-anim.keys(bld.mix[0].inputs[0], "default_value", [(HOLD_F - 2, 0.15, "lin"), (HOLD_F + 4, 0.95, "out")])
-shot.sfx("block_thud", HOLD_F)
-for i in range(1, 4):
-    fl = bld.floors[i]
-    home = fl.location.copy()
-    crushed = Vector((home.x + rp.uniform(-0.25, 0.25), home.y + rp.uniform(-0.3, 0.3), (i - 1) * FIN_S * SQ + FIN_S * SQ / 2 + 0.02))
-    tilt = Vector((rp.uniform(-0.06, 0.06), rp.uniform(-0.1, 0.1), rp.uniform(-0.08, 0.08)))
-    up = HOLD_F + 6 + (i - 1) * 5
-    anim.keys(fl, "location", [(1, crushed, "const"), (up, crushed, "back"), (up + 10, home, "out"), (up + 13, home + Vector((0, 0, 0.06)), "in"),
-                               (up + 16, home)])
-    anim.keys(fl, "rotation_euler", [(1, tilt, "const"), (up, tilt, "out"), (up + 10, Vector((0, 0, 0)))])
-    anim.keys(fl, "scale", [(1, Vector((1.03, 1.04, SQ)), "const"), (up, Vector((1.03, 1.04, SQ)), "out"), (up + 9, Vector((1, 1, 1)), "back")])
-    shot.sfx("block_thud", up + 10)
-for i in range(1, 4):                                       # after the line: the floors light up one by one, bottom first
-    lf = SUNRISE + 20 + i * 12
-    anim.keys(bld.mix[i].inputs[0], "default_value", [(lf, 0.15, "lin"), (lf + 8, 0.9, "out")])
-    shot.sfx("ui_pop", lf)
-NEW = [(4, SUNRISE + 80), (5, SUNRISE + 98)]
-for i, f_ in NEW:                                           # two new floors land on top
-    fl = bld.floors[i]
-    home = fl.location.copy()
-    bld.light(i, f_ + 2, LABELS[i])
-    for o in [fl] + list(fl.children_recursive):
-        if o.type == "MESH" and not o.name.endswith(("_L4", "_L5")):
-            anim.visible(o, [(1, False), (f_ - 16, True)])
-    anim.keys(fl, "location", [(1, home + Vector((0, 0, 12.0)), "const"), (f_ - 16, home + Vector((0, 0, 12.0)), "in"), (f_, home, "out"),
-                               (f_ + 3, home + Vector((0, 0, 0.1)), "in"), (f_ + 6, home)])
-    shot.sfx("block_thud", f_)
-cash_mat = fx.material("CashSide", (0.22, 0.75, 0.32), rough=0.55, emit=0.5)
-CASH_F = SUNRISE + 112
-for kk, dx in enumerate((-5.0, -3.6, 3.6, 5.0)):
-    rest = Vector((FIN_C.x + dx, FIN_FRONT + 1.6, TOP6 + 0.6))
-    ob = box(f"Cash{kk}", (1.2, 1.0, 1.1 + 0.3 * (kk % 2)), rest, cash_mat, fcoll)
-    anim.visible(ob, [(1, False), (CASH_F + kk * 3, True)])
-    anim.keys(ob, "location", [(CASH_F + kk * 3, rest + Vector((0, 0, 6.0)), "in"), (CASH_F + kk * 3 + 9, rest, "back")])
-shot.sfx("cash_flutter", CASH_F)
-rr = random.Random(9)
-chunk_mat = fx.material("ConcreteChunk", (0.42, 0.4, 0.38), rough=0.9)
-for kk in range(14):
-    s_ = rr.uniform(0.15, 0.38)
-    p_ = Vector((FIN_C.x + rr.uniform(-5.5, 5.5), FIN_FRONT - rr.uniform(0.3, 2.6), s_ * 0.3 - 0.08))
-    if (p_.xy - Vector(FX_SPOT)).length < 1.2:
-        continue
-    ch_ = box(f"Chunk{kk}", (s_, s_ * rr.uniform(0.6, 1.2), s_ * rr.uniform(0.5, 1.0)), p_, chunk_mat, fcoll)
-    ch_.rotation_euler = (0, 0, rr.uniform(0, 3))
-    anim.visible(ch_, [(1, False), (S18_CUT, True)])
-webs.shot("Web_PushL", L_HAND, lambda f: g0.matrix_world @ Vector((-FIN_W / 2 + 1.2, -FIN_D / 2 - 0.05, 0.2)), R0 - 14, R0 - 6, R0 + 16)
-webs.shot("Web_PushR", R_HAND, lambda f: g0.matrix_world @ Vector((-FIN_W / 2 + 2.4, -FIN_D / 2 - 0.05, 0.2)), R0 - 14, R0 - 6, R0 + 16)
-shot.sfx("web_thwip", R0 - 13)
-# the cash pile he lies in at the start of S10
-fx.paper_pour("BillsPile", os.path.join(SCR, "cash_bill.png"), lambda i: Vector((CP.x + rr.uniform(-1, 1), CP.y + rr.uniform(-1, 1), 2.0)),
-              (CP.x, CP.y), count=70, start=-70, dur=30, spread=(1.6, 1.2), size=(0.3, 0.13), arc=(0.3, 0.8))
-for kk in range(3):
-    box(f"CashPile{kk}", (0.9, 0.5, 0.3), Vector((CP.x - 1.2 + kk * 0.9, CP.y - 1.3 + 0.2 * kk, 0.07)), cash_mat, signs).rotation_euler = (0, 0, 0.4 * kk)
-# the billboard screen to the right of the site: dark until the very end, then the LiveReview demo
-bb_dark = city.sign("BB2Dark", img("site_blank"), BB2_C, Vector((0, -1, 0)), BB2_W, emit=0.0, frame="led", offset=0.0)
-bb_dark.data.materials[0] = fx.material("BB2Off", (0.02, 0.02, 0.03), rough=0.3)
-BB_ON = DEMO_CUT - 45
-demo = city.sign("BB2Demo", seq0("demo", "jpg"), BB2_C, Vector((0, -1, 0)), BB2_W, emit=1.4, offset=0.01, seq=(180, BB_ON))
-anim.visible(demo, [(1, False), (BB_ON, True)])
-for o in (bb_dark,) + tuple(bb_dark.children):
-    anim.visible(o, [(1, False), (S18_CUT, True)])
-for kk, dx in enumerate((-2.4, 2.4)):
-    pole = box(f"BB2Pole{kk}", (0.3, 0.3, BB2_C.z - BB2_H / 2 + 0.2), (BB2_C.x + dx, BB2_C.y + 0.4, (BB2_C.z - BB2_H / 2) / 2), steel)
-    anim.visible(pole, [(1, False), (S18_CUT, True)])
-shot.sfx("ui_pop", BB_ON)
-# the sky: golden hour through S15; before sunrise at the S18 cut; the sun comes up behind the building; full sunrise in S19
-sky = next(n for n in sc.world.node_tree.nodes if n.type == "TEX_SKY")
-bg = next(n for n in sc.world.node_tree.nodes if n.type == "BACKGROUND")
-DAY = dict(elev=6.0, az=-60.0, energy=7.2, color=(1.0, 0.66, 0.40), bgs=0.18)
-DAWN = dict(elev=-1.5, az=92.0, energy=1.6, color=(0.62, 0.7, 1.0), bgs=1.6)
-RISE = dict(elev=4.5, az=92.0, energy=6.0, color=(1.0, 0.6, 0.32), bgs=0.3)
-FULL = dict(elev=9.0, az=70.0, energy=7.0, color=(1.0, 0.78, 0.55), bgs=0.2)
-
-
-def light_key(f_, L, ease="const"):
-    anim.key(sky, "sun_elevation", int(f_), math.radians(L["elev"]), ease=ease)
-    anim.key(sky, "sun_rotation", int(f_), math.radians(L["az"]), ease=ease)
-    anim.key(bg.inputs[1], "default_value", int(f_), L["bgs"], ease=ease)
-    lamp_el = max(L["elev"], 7.0)                          # the lamp stays above the horizon (a pre-dawn sky fill)
-    anim.key(sun, "rotation_euler", int(f_), Vector((math.radians(90 - lamp_el), 0, math.radians(L["az"] + 90))), ease=ease)
-    anim.key(sun.data, "energy", int(f_), L["energy"], ease=ease)
-    anim.key(sun.data, "color", int(f_), Vector(L["color"]), ease=ease)
-
-
-light_key(1, DAY)
-light_key(S18_CUT - 1, DAY)
-light_key(S18_CUT, DAWN)
-light_key(SUNRISE, DAWN, ease="inout")
-light_key(SUNRISE + 120, RISE, ease="inout")
-light_key(T[11] - 21, RISE)
-light_key(T[11] - 20, FULL)
 
 # ================================================================== cameras
 cam = k.camera()
 CUTS = []
-k.read_shot(1, T[2] - 1, cam10, drift=0.2)                  # S10: head-on from the middle of the road
-k.read_shot(T[2], int(setA.start) - 1, cam101, drift=0.1)   # S10.1: from the sidewalk, at an angle
-k.read_shot(int(setA.start), int(off12.start) - 1, SITE_CAM["A"], drift=0.15)
-# S12: wide, push in on the missing window then the door to nowhere, back wide as the customers run
-bw = SITE_CAM["B"]
+# S10: framed wide enough for the cash pile, then settles on the building as he lands beside the board
+cam.lens(1, round(cam_open[2]), "const")
+k.at(1, cam_open[0], cam_open[1], "lin", cut=True)
+k.at(int(zip0.start), cam_open[0], cam_open[1], "inout")
+cam.lens(int(zip0.start), round(cam_open[2]), "inout")
+k.at(int(land0.start) + 14, cam10[0], cam10[1], "inout")
+cam.lens(int(land0.start) + 14, round(cam10[2]), "inout")
+k.at(T[2], cam10[0] + Vector((0, -0.15, 0)), cam10[1], "inout")   # S10.1: no cut, a slow push in on the same building
+cam.lens(T[2], round(cam10[2]), "inout")
+k.at(int(setA.start) - 1, cam101[0], cam101[1], "inout")
+cam.lens(int(setA.start) - 1, round(cam101[2]), "const")
+# S11: site A (B's empty plot at the right edge); S12: the camera trucks right with his sprint and settles on site B
+cam.lens(int(setA.start), round(CAM_A[2]), "const")
+k.at(int(setA.start), CAM_A[0], CAM_A[1], "lin", cut=True)
+# read: push onto site A's board text, hold it, then back out to the wide before the sprint
+k.at(int(talkA.start) + 6, CAM_AZ[0], CAM_AZ[1], "inout")
+cam.lens(int(talkA.start) + 6, round(CAM_AZ[2]), "inout")
+k.at(ra - 18, CAM_AZ[0], CAM_AZ[1], "inout")             # held on site A until just before the sprint, then out ...
+cam.lens(ra - 18, round(CAM_AZ[2]), "inout")
+k.at(ra - 2, CAM_A[0] + Vector((0, -0.2, 0)), CAM_A[1], "inout")      # ... and across to site B with him
+cam.lens(ra - 2, round(CAM_A[2]), "inout")
+k.at(rb + 10, CAM_B[0], CAM_B[1], "inout")
+cam.lens(rb + 10, round(CAM_B[2]), "inout")
+# read: push onto site B's board text, hold, then the existing pull to CAM_B (on "subtle") brings it back out
+fBZ = max(rb + 14, int(talkB.start) + 8)
+k.at(fBZ, CAM_B[0], CAM_B[1], "inout")
+cam.lens(fBZ, round(CAM_B[2]), "inout")
+k.at(fBZ + 34, CAM_BZ[0], CAM_BZ[1], "inout")
+cam.lens(fBZ + 34, round(CAM_BZ[2]), "inout")
+k.at(fBZ + 84, CAM_BZ[0], CAM_BZ[1], "inout")
+cam.lens(fBZ + 84, round(CAM_BZ[2]), "inout")
+CUTS.append(("A", int(setA.start)))
 hole_p = floorsB[HOLE_FL][2] + Vector((0, T_W / 2, 0.1))
 door_p = floorsB[DOOR_FL][2] + Vector((T_W / 2 - 0.6, T_W / 2, 0.0))
 SUB = wordf(4, "subtle")
-cam.lens(int(off12.start), round(bw[2]), "const")
-k.at(int(off12.start), bw[0], bw[1], "lin", cut=True)
-k.at(SUB - 2, bw[0], bw[1], "inout")
-cam.lens(SUB - 2, round(bw[2]), "inout")
+k.at(max(SUB - 2, rb + 12), CAM_B[0], CAM_B[1], "inout")
+cam.lens(max(SUB - 2, rb + 12), round(CAM_B[2]), "inout")
 cam.lens(SUB + 22, 45, "inout")
 k.at(SUB + 22, hole_p + Vector((1.5, 7.5, 1.0)), hole_p, "inout")
 k.at(DOOR_F - 4, hole_p + Vector((1.3, 7.2, 1.0)), hole_p, "inout")
 k.at(DOOR_F + 14, door_p + Vector((1.5, 7.5, 0.6)), door_p, "inout")
 cam.lens(RUN_F - 6, 45, "const")
 k.at(RUN_F - 6, door_p + Vector((1.5, 7.4, 0.6)), door_p, "lin")
-cam.lens(RUN_F - 5, round(bw[2]), "const")
-k.at(RUN_F - 5, bw[0], bw[1], "lin", cut=True)
-k.at(int(hang13.start) - 1, bw[0] + Vector((0, -0.3, 0)), bw[1], "lin")
-CUTS.append(("B back wide", RUN_F - 5))
-k.read_shot(int(hang13.start), int(cu14.start) - 1, SITE_CAM["C"], drift=0.1)
-# S14 / S15: the close-up (head and shoulders; S15 a little tighter); the tower soft behind him
-cu_t = lambda f: HD(f) + Vector((0, 0, -0.04))
-cam.lens(int(cu14.start), 55, "const")
-cam.lens(T[7] - 1, 55, "inout")
-cam.lens(T[7] + 20, 60, "inout")
-cu_pts = {f: cu_t(f) for f in range(int(cu14.start) - 8, T[8] + 9)}
-cu_sm = lambda f: sum((cu_pts[q] for q in range(f - 8, f + 9)), Vector()) / 17          # follows his head, smoothly
-for f in range(int(cu14.start), T[8], 3):
-    push = min(1.0, max(0.0, (f - T[7]) / 20.0)) * 0.25
-    k.at(f, CU_CAM + Vector((0, -push, 0)), cu_sm(f), "lin", cut=(f == int(cu14.start)))
-CUTS.append(("close-up", int(cu14.start)))
-# S16/S17: 2D (post) — the camera parks on the lot
-k.at(T[8], SITE_CAM["C"][0], SITE_CAM["C"][1], "lin", cut=True)
-# S18: the wide from ground level; S19 the rooftop medium shot, then the helicopter pull-out; the demo on the billboard
-k.read_shot(S18_CUT, int(land18b.start) + 40, cam18, drift=0.6)
-rtgt = lambda f: HD(f) + Vector((0, 0, -0.25))
-cam.lens(int(land18b.start) + 41, 35, "const")
-k.at(int(land18b.start) + 41, R_CAM, rtgt(T[11]), "lin", cut=True)
-k.at(PEACE + 6, R_CAM + Vector((0.1, -0.3, 0.0)), rtgt(PEACE), "inout")
-k.at(DEMO_CUT - 2, Vector((FIN_C.x + 9.0, FIN_FRONT - 26.0, TOP6 + 14.0)), Vector((FIN_C.x + 4.0, FIN_C.y, 6.0)), "inout")
-cam.lens(PEACE + 6, 35, "inout")
-cam.lens(DEMO_CUT - 2, 28, "inout")
-d_loc = BB2_C + Vector((0, -10.0, -0.6))
-d_tgt, d_lens = k.fit(d_loc, [BB2_C + Vector((dx * BB2_W / 2, 0, dz * BB2_H / 2)) for dx in (-1, 1) for dz in (-1, 1)], margin=1.08)
-k.read_shot(DEMO_CUT, END, (d_loc, d_tgt, d_lens), drift=0.2)
-CUTS.append(("demo", DEMO_CUT))
-for f_ in (int(land0.start) + 5, int(land18.start) + 5, int(land18b.start) + 5, HOLD_F):
-    cam.shake(f_, amp=0.04, dur=8)
-for i, f_ in NEW:
-    cam.shake(f_, amp=0.04, dur=8)
-FSTOPS = [(1, 8.0), (T[2], 8.0), (int(setA.start), 8.0), (int(off12.start), 8.0), (SUB + 22, 4.0), (RUN_F - 5, 8.0), (int(hang13.start), 8.0),
-          (int(cu14.start), 2.0), (T[8], 8.0), (S18_CUT, 8.0), (int(land18b.start) + 41, 4.0), (PEACE + 7, 8.0), (DEMO_CUT, 8.0)]
+cam.lens(RUN_F - 5, round(CAM_B[2]), "const")
+k.at(RUN_F - 5, CAM_B[0], CAM_B[1], "lin", cut=True)
+CUTS.append(("B back", RUN_F - 5))
+# S13: site C (board, him, the robots, the boss, the lower floors), widening as the tower goes up; on "That team
+# beats..." the pull-back to all three sites side by side
+C_TOP = lambda f: T_H * max(3, min(N_C, sum(1 for lf in LANDS_C if lf <= f))) + 0.8      # the top of the tower so far
+c_fit = lambda f: k.fit(C_LOC, ptsC_lo + [TOWER["C"] + Vector((dx * T_W / 2, 0, C_TOP(f))) for dx in (-1, 1)], margin=1.06)
+c_keys = list(range(int(setC.start) + 10, THAT - 4, 8)) + [THAT - 4]      # the first key is where the camera arrives (10 frames after his run ends)
+c_sm = {f: c_fit(f) for f in range(int(setC.start) - 16, THAT + 20)}
+k.at(ra2 - 2, CAM_B[0] + Vector((0, -0.2, 0)), CAM_B[1], "inout")      # trucks right with his sprint to site C (no cut)
+cam.lens(ra2 - 2, round(CAM_B[2]), "inout")
+for f in c_keys:                                             # widens with the tower, the ground always in frame
+    tg = sum((c_sm[q][0] for q in range(f - 16, f + 17)), Vector()) / 33
+    ln = sum(c_sm[q][1] for q in range(f - 16, f + 17)) / 33
+    k.at(f, C_LOC, tg, "lin")
+    cam.lens(f, ln, "lin")
+c_last = c_sm[THAT - 4]
+k.at(int(shootC.start), C_LOC, c_last[0], "inout")             # hold the site C framing while he aims the line
+cam.lens(int(shootC.start), c_last[1], "inout")
+k.at(int(landC.start) + 12, ROOF_CAM[0], ROOF_CAM[1], "inout")   # then up with him: the roof, the banners below him
+cam.lens(int(landC.start) + 12, round(ROOF_CAM[2]), "inout")
+k.at(int(set15.start) - 1, ROOF_CAM[0] + Vector((0, -0.5, 0)), ROOF_CAM[1], "lin")
+cam.lens(int(set15.start) - 1, round(ROOF_CAM[2]), "const")
+# S15: the medium shot of C's top floor (him on the line, the door, the balcony); it tilts up to the floors still
+# stacking above on "AI lets everyone ship more", and back down for the customer on the balcony
+T15a = int(set15.start)
+tgt15 = Vector((DOOR15.x - 0.45, FACE_C + 0.3, DOOR15.z + 1.05))
+up15 = Vector((0, 0, 1.3))
+cam.lens(T15a, 35, "const")
+k.at(T15a, CAM15, tgt15, "lin", cut=True)
+for f_, off in ((w7("ai") - 8, Vector()), (w7("ai") + 10, up15), (w7("human") - 10, up15), (w7("human") + 6, Vector())):
+    k.at(f_, CAM15 + off * 0.3, tgt15 + off, "inout")
+k.at(END, CAM15 + Vector((0, -0.2, 0)), tgt15, "lin")
+CUTS.append(("S15 top floor", T15a))
+cam.shake(int(land0.start) + 5, amp=0.04, dur=8)
+FSTOPS = [(1, 8.0), (T[2], 8.0), (int(setA.start), 8.0), (SUB + 22, 4.0), (RUN_F - 5, 8.0), (int(setC.start), 8.0), (T15a, 5.6)]
 for f_, v_ in sorted(FSTOPS):
     anim.key(cam.cam.data.dof, "aperture_fstop", int(f_), v_, ease="const")
-TALKS = [talk10, talk101, talkA, holdA, talk19]
-office.face_camera(cam.cam, [(int(first(g).start) + 4, int(final(g).end) - 2) for g in TALKS] + [(int(cu14.start), T[8] - 4)], amount=0.55)
+TALKS = [talk10, talk101, talkA, holdA, talkB, talkC, talk14, talk15]
+office.face_camera(cam.cam, [(int(first(g).start) + 4, int(final(g).end) - 2) for g in TALKS], amount=0.55)
 office.nod(w6("stay"), depth=0.6)
 office.nod(w7("cuz") + 6, depth=-0.4)
 for kk in range(3):                                          # a light head shake on "doesn't make more great products"
     f_ = w7("doesn") + kk * 7
     anim.keys(office.cam_eye, "location", [(f_, 0.0, "inout"), (f_ + 3, 0.35 * (-1) ** kk, "inout"), (f_ + 7, 0.0, "inout")], index=0)
 anim.keys(office.cam_eye, "location", [(T[2] - 14, 0.0, "inout"), (T[2] - 6, 0.5, "inout"), (T[2] + 2, 0.0, "inout")], index=0)   # the head tilt (S10)
+anim.keys(office.cam_eye, "location", [(w7("loop") - 8, 0.0, "inout"), (w7("loop"), -0.45, "inout"), (w7("cuz") - 4, -0.45, "inout"),
+                                       (w7("cuz") + 4, 0.0, "inout")], index=0)                                      # the tilt (chin tap)
 fx.char_lights(rig, cam.cam, key=170.0, rim=340.0)
-# he looks at your shop, then theirs (S10)
-look_s = fx.empty("LookShops", (SX, SHOP["L"]["front"], 2.0), signs, 0.1)
-lks = office._look(rig.pose.bones["mixamorig:Head"], look_s, "Look shops")
+# S10: he presents your shop on "you ship without inspection", theirs on "your competitor"; S10.1 a thumb at their queue
 fL, fR = wordf(1, "without"), wordf(1, "competitor")
-anim.keys(look_s, "location", [(fL - 6, Vector((SX, SHOP["L"]["front"], 2.0)), "const"), (fR - 4, Vector((SX, SHOP["L"]["front"], 2.0)), "inout"),
-                               (fR + 6, Vector((SX, SHOP["R"]["front"], 2.0)), "inout")])
-anim.keys(lks, "influence", [(1, 0.0, "const"), (fL - 6, 0.0, "inout"), (fL + 2, 0.75, "inout"), (wordf(1, "who") - 6, 0.75, "inout"),
-                             (wordf(1, "who") + 2, 0.0, "inout")])
-# thumb over the shoulder at the queue (S10.1, "Easy"); presenting the site A sign
-qp = Vector((SX - 1.5, SHOP["R"]["front"] - 1.0, 1.4))
+pL = Vector((SHOPX["L"], FRONT + 0.6, 2.2))
+pR = Vector((SHOPX["R"], FRONT + 0.6, 2.2))
+office.present(fL - 6, pL, side=k.gesture_side(pL, hips(fL), cam10[0]), hold=max(8, fR - fL - 16), ramp=7, amount=0.6)
+office.present(fR - 4, pR, side=k.gesture_side(pR, hips(fR), cam10[0]), hold=max(8, B_WHO - fR - 12), ramp=7, amount=0.6)
+qp = Vector((QUEUE(4)[0], QUEUE(4)[1], 1.4))
 office.present(T[2] + 2, qp, side=k.gesture_side(qp, hips(T[2]), cam101[0]), hold=30, ramp=7, amount=0.7)
-office.present(T[3] + 6, SIGN_C["A"] + Vector((0, 0.4, 0)), side=k.gesture_side(SIGN_C["A"], hips(T[3]), SITE_CAM["A"][0]), hold=24, ramp=8, amount=0.6)
+office.present(T[3] + 6, SIGN_C["A"] + Vector((0, 0.4, 0)), side=k.gesture_side(SIGN_C["A"], hips(T[3]), AB_LOC), hold=24, ramp=8, amount=0.6)
+fB = int(first(talkB).start) + 12
+office.present(fB, SIGN_C["B"] + Vector((0, 0.4, 0)), side=k.gesture_side(SIGN_C["B"], hips(fB), B_LOC), hold=24, ramp=8, amount=0.6)
+office.present(T[5] + 6, SIGN_C["C"] + Vector((0, 0.4, 0)), side=k.gesture_side(SIGN_C["C"], hips(T[5]), C_LOC), hold=24, ramp=8, amount=0.6)
 from pipeline import face
 eyes = face.Lenses(bpy.data.objects["MilesMasked"])
 for f_, w_ in ((1, dict(Squint=0.85)), (int(rise0.start) + 10, dict(Squint=0.0, Wide=0.4)), (T[1], dict(Wide=0.0, Squint=0.25)),
-               (wordf(1, "who"), dict(Squint=0.0, Wide=0.7)), (T[2], dict(Wide=0.3)), (wordf(2, "higher"), dict(Wide=0.0, Angry=0.25)),
-               (T[3], dict(Angry=0.0, Squint=0.3)), (wordf(3, "can"), dict(Squint=0.0, Sad=0.6)), (T[5], dict(Sad=0.0, Squint=0.4)),
+               (B_WHO, dict(Squint=0.0, Wide=0.7)), (T[2], dict(Wide=0.3)), (B_HIGH, dict(Wide=0.0, Angry=0.25)),
+               (T[3], dict(Angry=0.0, Squint=0.3)), (wordf(3, "can"), dict(Squint=0.0, Sad=0.6)), (T[4], dict(Sad=0.0, Wide=0.5)),
+               (RUN_F, dict(Wide=0.0, Squint=0.5)), (T[5], dict(Squint=0.4)),
                (T[6], dict(Squint=0.0, Wide=0.45)), (w6("only"), dict(Wide=0.0, Squint=0.35, Angry=0.3)), (w6("stay"), dict(Squint=0.0, Angry=0.0, Wide=0.3)),
-               (T[7], dict(Wide=0.0, Sad=0.3)), (w7("cuz"), dict(Sad=0.0, Wide=1.0)), (w7("doesn"), dict(Wide=0.0, Angry=0.35)),
-               (w7("human"), dict(Angry=0.0, Squint=0.3)), (S18_CUT, dict(Squint=0.0, Angry=0.4)), (HOLD_F, dict(Angry=0.0, Wide=0.8)),
-               (T[11], dict(Wide=0.3)), (PEACE, dict(Wide=0.0, Squint=0.45))):
+               (T[7], dict(Wide=0.4)), (w7("loop") - 4, dict(Wide=0.0, Squint=0.55)), (w7("cuz") - 2, dict(Squint=0.0, Wide=1.0)),
+               (w7("ai"), dict(Wide=0.3)), (w7("doesn"), dict(Wide=0.0, Angry=0.35)), (w7("human"), dict(Angry=0.0, Squint=0.3))):
     eyes.set(f_, **w_)
 eyes.blinks(1, END, every=95)
 webs.bake(range(1, END + 1))
@@ -933,19 +1120,70 @@ for o in fx.collection("Webs").objects:
     if o.type == "MESH":
         o.data.materials[0] = fx.material("Web_Line", (0.95, 0.97, 1.0), rough=0.35, emit=0.9)
 
-# ================================================================== captions (laid over in post) + the 2D product frames
-OVER = [(w6("headcount") - 2, T[7] - 6, "Same headcount.", 0), (w6("results") - 2, T[7] - 6, "More results.", 1),
-        (w6("better") - 2, T[7] - 6, "Better product.", 2), (w7("not") - 2, T[8] - 2, "Common sense isn't in the **training data.**", 0),
-        (T[10], HOLD_F - 4, "Let agents scale. **You do the judging.**", 0), (HOLD_F, SUNRISE + 60, "Inspection **holds it all up.**", 0),
-        (wordf(11, "livereview") - 2, PEACE + 60, "LiveReview keeps you competitive: **humans and AI, working together.**", 0),
-        (DEMO_CUT, END, "hexmos.com/livereview", 0)]
-w8 = lambda w: wordf(8, w)
-w9 = lambda w: wordf(9, w)
-json.dump(dict(fps=FPS, end=END, captions=[dict(f0=a_, f1=b_, text=t_, row=r_) for a_, b_, t_, r_ in OVER],
-               boards=dict(s16=[T[8], T[9] - 1], s17=[T[9], S18_CUT - 1],
-                           s16_title=w8("attention"), s16_items=[w8("issue"), w8("slide"), w8("quick"), w8("conversations"), w8("livy")],
-                           s17_title=w9("agents"), s17_items=[w9("gates"), w9("integrations"), w9("mcp")])),
-          open(os.path.join(paths.ROOT, "build", "street_part2_overlays.json"), "w"), indent=1)
+# ------------------------------------------------------------------ nothing of the city between the lens and the shops
+deps = bpy.context.evaluated_depsgraph_get()
+blockers = set()
+for loc in (cam10[0], cam101[0], cam_open[0]):
+    for p in pts10 + [Vector((x_, FRONT + 0.3, z_)) for x_ in [SX - 5.2 + 0.8 * i for i in range(14)] for z_ in (0.5, 1.5, 2.5, 3.5)]:
+        d = p - loc
+        ok, hp_, nn, ii, ob, mm = sc.ray_cast(deps, loc, d.normalized(), distance=d.length - 0.3)
+        if ok and ob.name in c.coll.all_objects:
+            dims = ob.dimensions
+            if max(dims) < 9.0:
+                blockers.add(ob.name)
+for n_ in sorted(blockers):
+    bpy.data.objects[n_].hide_render = bpy.data.objects[n_].hide_viewport = True
+big_hits = {}
+for loc in (cam10[0], cam101[0], cam_open[0]):
+    tg = pts10 + [Vector((x_, FRONT + 0.3, z_)) for x_ in [SX - 5.2 + 0.4 * i for i in range(28)] for z_ in (0.5, 1.5, 2.5, 3.5, 4.5)] + \
+         [Vector((SPOT10[0] + dx, SPOT10[1], z_)) for dx in (-0.3, 0.0, 0.3) for z_ in (0.3, 1.0, 1.7)]
+    for p in tg:
+        d = p - loc
+        ok, hp_, nn, ii, ob, mm = sc.ray_cast(deps, loc, d.normalized(), distance=d.length - 0.3)
+        if ok and ob.name in c.coll.all_objects and max(ob.dimensions) >= 9.0:
+            big_hits.setdefault(ob.name, []).append((ii, hp_.copy()))
+
+
+def drop_islands(ob, hits, r_xy=0.5, max_size=12.0):
+    """Delete the mesh islands (a lamp head, its pole) of a merged city mesh that contain the hit faces, or stand on
+    the same spot (a pole's vertices sit at its ends, right above / below a mid-height hit)."""
+    me = ob.data.copy()
+    ob.data = me
+    bm = bmesh.new()
+    bm.from_mesh(me)
+    bm.faces.ensure_lookup_table()
+    M = ob.matrix_world
+    seeds = {v for i, _ in hits if i < len(bm.faces) for v in bm.faces[i].verts}
+    pts_ = [p_ for _, p_ in hits]
+    seeds |= {v for v in bm.verts if any(((M @ v.co).xy - p_.xy).length < r_xy for p_ in pts_)}
+    seeds = list(seeds)
+    seen, stack = set(seeds), list(seeds)
+    while stack:
+        v = stack.pop()
+        for e in v.link_edges:
+            o_ = e.other_vert(v)
+            if o_ not in seen:
+                seen.add(o_)
+                stack.append(o_)
+    ws = [M @ v.co for v in seen]
+    size = max((max(w[i] for w in ws) - min(w[i] for w in ws)) for i in range(3)) if ws else 0
+    if seen and size <= max_size:
+        bmesh.ops.delete(bm, geom=list(seen), context="VERTS")
+        bm.to_mesh(me)
+        print("SHOPS removed", len(seen), "verts of", ob.name, f"({size:.1f} m)")
+    else:
+        print("SHOPS kept", ob.name, f"island {size:.1f} m")
+    bm.free()
+
+
+for n_, pts_ in big_hits.items():
+    drop_islands(bpy.data.objects[n_], pts_)
+print("SHOPS cleared", sorted(blockers))
+
+# ================================================================== captions (laid over in post)
+OVER = []                                                       # no key-phrase captions: subtitles come from 06_assemble
+json.dump(dict(fps=FPS, end=END, captions=[dict(f0=a_, f1=b_, text=t_, row=r_) for a_, b_, t_, r_ in OVER]),
+          open(os.path.join(paths.ROOT, "build", f"{NAME}_overlays.json"), "w"), indent=1)
 
 # ------------------------------------------------------------------ parked cars (none on the shop street)
 guard = life.Guard(cam.cam, lambda f: rig.matrix_world @ rig.pose.bones[HIPS].head, (1, END), step=2)
@@ -970,19 +1208,18 @@ print("LIFE parked", parked)
 # ------------------------------------------------------------------ checks + audit data + finish
 k.visible_report(END)
 v3 = lambda v: [round(float(x), 3) for x in v]
-READS = [("siteA", talkA, SIGN_C["A"], SN, SW_, SH_)]
-json.dump(dict(travel=[(a_, b_, n_) for a_, b_, n_ in k.travels if n_ != "S13hang"],
+READS = [("siteA", talkA, SIGN_C["A"], SN, SW_, SH_), ("siteB", talkB, SIGN_C["B"], SN, SW_, SH_), ("siteC", talkC, SIGN_C["C"], SN, SW_, SH_)]
+json.dump(dict(travel=[(a_, b_, n_) for a_, b_, n_ in k.travels if n_ != "S12run"],
                talks=[(int(first(g).start + first(g).blend) + 4, int(final(g).end) - 12, v3(loc)) for gs, loc in AIMS for g in gs],
                reads=[(n_, int(first(g).start + first(g).blend) + 4, int(final(g).end) - 6, v3(bc), v3(nn), w_, h_)
                       for n_, g, bc, nn, w_, h_ in READS],
                webs=[o.name for o in fx.collection("Webs").objects if o.type == "MESH"]),
-          open(os.path.join(paths.ROOT, "build", "street_part2_audit.json"), "w"))
-VO_CUES = {n: T[n] for n in range(1, 12)}
+          open(os.path.join(paths.ROOT, "build", f"{NAME}_audit.json"), "w"))
+VO_CUES = {n: T[n] for n in range(1, 8)}
 shot.finish(NAME, exposure=-0.35, samples=24, view="AgX", grade="AgX - Punchy",
             markers=[(f"vo {n}", f) for n, f in VO_CUES.items()] + [
                 ("S10 shops", T[1]), ("S10.1 answer", T[2]), ("S11 human", T[3]), ("S12 agent", T[4]), ("S13 both", T[5]),
-                ("S14 close-up", T[6]), ("S15 common sense", T[7]), ("S16 engineers (2D)", T[8]), ("S17 agents (2D)", T[9]),
-                ("S18 rebuild", S18_CUT), ("S19 call to action", T[11]), ("demo", DEMO_CUT), ("end", END)])
+                ("S14 close-up", T[6]), ("S15 common sense", T[7]), ("end", END)])
 fx.cine_grade(sc)
 bpy.ops.wm.save_mainfile()
 cues = sorted(VO_CUES.items(), key=lambda kv: kv[1])
@@ -990,4 +1227,4 @@ for (a, fa), (b, fb) in zip(cues, cues[1:]):
     if fa + k.dur(a) * FPS > fb:
         print(f"VO OVERLAP {a}->{b}: {(fa + k.dur(a) * FPS - fb) / FPS:.2f}s")
 print("CUTS", CUTS)
-print(f"STREET2 frames 1-{END} ({END / FPS:.1f}s)  ground-lock {lock_err * 100:.1f} cm  square {square_err:.1f}")
+print(f"STREET2A frames 1-{END} ({END / FPS:.1f}s)  ground-lock {lock_err * 100:.1f} cm  square {square_err:.1f}")

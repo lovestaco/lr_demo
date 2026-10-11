@@ -1,6 +1,6 @@
 """Burned-in subtitles for the narrated videos, built from the voice-over data (no extra files).
 
-    cues  = subs.cues_for_shot("street_part2_b", offset=0.0)     # [(t0, t1, [(word, t_word), ...])] in video seconds
+    cues  = subs.cues_for_shot("street_part3", offset=0.0)     # [(t0, t1, [(word, t_word), ...])] in video seconds
     for frame in subs.Overlay(width, height).frames(cues, n_frames): ...   # RGBA bytes, one per video frame
 
 Timing comes from the same data that places the audio: the shot's `vo N` markers (build/<shot>_cues.json) +

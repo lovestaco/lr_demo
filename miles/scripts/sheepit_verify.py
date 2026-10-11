@@ -1,6 +1,6 @@
-"""Verify a packed SheepIt .blend (run by make_sheepit_2b.sh on a CLEAN extraction of the zip).
+"""Verify a packed SheepIt .blend (run by make_sheepit_part3.sh on a CLEAN extraction of the zip).
 
-    blender -b EXTRACTED/street_part2_b.blend --python scripts/sheepit_verify.py -- --frames 1418-2763 [--h 1080] [--samples 64]
+    blender -b EXTRACTED/street_part3.blend --python scripts/sheepit_verify.py -- --frames 1418-2763 [--h 1080] [--samples 64]
 
 Prints "VERIFY ok ..." lines and "VERIFY FAIL ..." for each problem, and exits with status 1 if there was any.
 Checks: every external path is relative (//...), stays inside the blend's folder and exists (sequences: the folder holds
