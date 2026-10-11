@@ -79,6 +79,84 @@ def physical_shading(obj, lift=2.2, rough=0.42, sheen=0.6, bump=0.35):
         nt.links.new(b.outputs["BSDF"], out.inputs["Surface"])
 
 
+def suit_look(obj, floor=(0.018, 0.020, 0.036), lift=2.0, rough=0.38, spec=0.25, coat=0.3, coat_rough=0.18,
+              sheen=0.12, red_glow=0.55, lens_glow=1.4, bump=0.12):
+    """Opt-in suit/mask look for the masked Miles: dark spandex with red detail and soft glossy highlights.
+
+    Why: the Sketchfab suit's own network is a Shader-to-RGB toon ramp, and `physical_shading(rig)` is a no-op
+    on the armature (it walks the object's own material slots, the armature has none). So the suit stayed a flat
+    toon black. `obj` = the rig or the mesh; every child mesh is searched. Per material that has a diffuse
+    texture (`_D`: Body_D for the suit, HeadMask_D for the mask) this builds a Principled BSDF from the albedo:
+    colour lifted and floored at a navy-black (`floor`, so true black still shows the clearcoat/sheen), satin
+    gloss (`rough`, `spec`) + clearcoat (`coat`) + sheen for the rim sheen, and a small emission only where the
+    texture is red (`red_glow`: the spider emblems and the lines hold up at dusk) or, on the mask, light (the
+    lenses, `lens_glow`). No extra lights or textures: it is cheap in EEVEE and reflects the world + city
+    (ray-traced in final, the world probe in draft). Idempotent: a second call rebuilds the same nodes.
+    """
+    objs = [obj] + list(obj.children_recursive) if obj.type == "ARMATURE" else [obj]
+    for ob in objs:
+        if ob.type != "MESH" or ob.hide_render:       # (MilesUnmasked is hidden: skip)
+            continue
+        for slot in ob.material_slots:
+            m = slot.material
+            if not m or not m.node_tree:
+                continue
+            nt = m.node_tree
+            for n in [n for n in nt.nodes if n.name.startswith("SuitLook")]:       # re-run: drop the old nodes
+                nt.nodes.remove(n)
+            imgs = [n for n in nt.nodes if n.type == "TEX_IMAGE" and n.image and not n.mute and
+                    (n.image.packed_file or os.path.exists(bpy.path.abspath(n.image.filepath)))]
+            diff = next((n for n in imgs if "_D" in n.image.name and "Material" not in n.image.name), None)
+            if diff is None:
+                continue                   # eye lenses etc.: leave their look alone
+            is_mask = "Mask" in diff.image.name
+            out = next(n for n in nt.nodes if n.type == "OUTPUT_MATERIAL" and n.is_active_output)
+            new = lambda t, name: (lambda n: (setattr(n, "name", "SuitLook " + name), n)[1])(nt.nodes.new(t))
+            hsv = new("ShaderNodeHueSaturation", "lift")
+            hsv.inputs["Value"].default_value = lift
+            lo = new("ShaderNodeMix", "floor")                                      # Lighten: black -> navy-black, red stays
+            lo.data_type, lo.blend_type = "RGBA", "LIGHTEN"
+            lo.inputs["Factor"].default_value = 1.0
+            lo.inputs["B"].default_value = (*floor, 1.0)
+            b = new("ShaderNodeBsdfPrincipled", "BSDF")
+            bm = new("ShaderNodeBump", "bump")
+            bm.inputs["Strength"].default_value = bump
+            bm.inputs["Distance"].default_value = 0.004
+            nt.links.new(diff.outputs["Color"], hsv.inputs["Color"])
+            nt.links.new(hsv.outputs["Color"], lo.inputs["A"])
+            nt.links.new(lo.outputs["Result"], b.inputs["Base Color"])
+            nt.links.new(diff.outputs["Color"], bm.inputs["Height"])
+            nt.links.new(bm.outputs["Normal"], b.inputs["Normal"])
+            for k, v in (("Roughness", rough), ("Specular IOR Level", spec), ("Coat Weight", coat),
+                         ("Coat Roughness", coat_rough), ("Sheen Weight", sheen), ("Sheen Roughness", 0.3),
+                         ("Metallic", 0.0)):
+                b.inputs[k].default_value = v
+            b.inputs["Sheen Tint"].default_value = (0.75, 0.82, 1.0, 1.0)         # cool sheen against the warm sun
+            # glow mask: redness (R - G) on the suit, brightness on the mask (its lenses are the light part)
+            if is_mask:
+                key = new("ShaderNodeRGBToBW", "mask")
+                nt.links.new(diff.outputs["Color"], key.inputs["Color"])
+                src, lo_, hi_, amount = key.outputs["Val"], 0.45, 0.75, lens_glow
+            else:
+                sep = new("ShaderNodeSeparateColor", "sep")
+                key = new("ShaderNodeMath", "mask")
+                key.operation = "SUBTRACT"
+                nt.links.new(diff.outputs["Color"], sep.inputs["Color"])
+                nt.links.new(sep.outputs["Red"], key.inputs[0])
+                nt.links.new(sep.outputs["Green"], key.inputs[1])
+                src, lo_, hi_, amount = key.outputs["Value"], 0.2, 0.6, red_glow
+            ramp = new("ShaderNodeValToRGB", "ramp")
+            ramp.color_ramp.elements[0].position, ramp.color_ramp.elements[1].position = lo_, hi_
+            nt.links.new(src, ramp.inputs["Fac"])
+            gain = new("ShaderNodeMath", "gain")
+            gain.operation = "MULTIPLY"
+            gain.inputs[1].default_value = amount
+            nt.links.new(ramp.outputs["Color"], gain.inputs[0])
+            nt.links.new(diff.outputs["Color"], b.inputs["Emission Color"])
+            nt.links.new(gain.outputs["Value"], b.inputs["Emission Strength"])
+            nt.links.new(b.outputs["BSDF"], out.inputs["Surface"])
+
+
 # ------------------------------------------------------------------ studio
 THEMES = {
     # light: soft cool-grey cyclorama so the black suit reads clearly

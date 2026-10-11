@@ -236,8 +236,11 @@ whose 2D boards come from `05b_street_part3_boards.py OUT street_part3`).
 - Blender 5.2 API: layered actions (`action.layers[].strips[].channelbag(slot)`), assign `action_slot`
   when setting actions; compositor = `scene.compositing_node_group`; Glare params are socket inputs.
   Material `use_nodes` deprecated — check `node_tree is None`.
-- The Sketchfab Miles uses a Shader-to-RGB toon network → suit renders flat black; always call
-  `fx.physical_shading()`. Source pack has no normal/spec maps (Sketchfab glTF neither).
+- The Sketchfab Miles uses a Shader-to-RGB toon network → suit renders flat black. `fx.physical_shading(obj)` only fixes
+  objects that have material slots: given the armature (`MilesRig`, as the street parts do) it silently does nothing, so
+  the street parts were still toon-shaded. Use `fx.suit_look(rig)` (Principled suit from the real `_D` texture: red detail
+  kept, soft gloss; opt-in, part 1 so far — parts 2/3 still to get it). Source pack has no normal/spec maps (Sketchfab glTF
+  neither; the four missing `Body_N/S`, `HeadMask_N/S` are unused nodes).
 - Avoid `ELASTIC` easing on keys with equal values (oscillates). `BACK` is safe.
 - Masked suit is aligned in armature-local REST space, so posing/moving rigs in `miles.blend` is harmless.
 - GPU is a GTX 1650 (4 GB): EEVEE only; tools needing 8 GB VRAM (GVHMR, UniRig) won't run locally.

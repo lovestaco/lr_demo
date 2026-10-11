@@ -52,6 +52,7 @@ for o in c.coll.objects:
 bpy.context.view_layer.update()
 rig = bpy.data.objects["MilesRig"]
 fx.physical_shading(rig, lift=3.0, sheen=0.85, rough=0.38)
+fx.suit_look(rig)                                           # (physical_shading(rig) is a no-op on the armature) real suit gloss + red detail
 office = props.Office(rig)
 for n in ("Watch_Band", "Watch_Face"):                       # street look: badge stays, watch goes
     o = bpy.data.objects.get(n)
