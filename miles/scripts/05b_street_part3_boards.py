@@ -1,6 +1,7 @@
 """Street part 3, S16/S17: the product, as clean full-screen 2D frames (no Spidey).
 
     python3 scripts/05b_street_part3_boards.py build/frames/street_part3_360p street_part3   # writes f_NNNN.jpg for the S16/S17 frames
+    python3 scripts/05b_street_part3_boards.py OUT street_part3 --h 1080                      # the same at 1920x1080 (default 1280x720)
 
 Frame ranges and word frames come from build/street_part3_overlays.json (written by 04_street_part3.py), so the
 boards re-time with the voice-over like the 3D scenes. The 3D render skips these frames.
@@ -19,7 +20,8 @@ from pipeline import paths
 import importlib
 slides = importlib.import_module("03_make_slides")
 
-W, H = 1280, 720
+W, H = 1280, 720                                   # the layout space; SC scales everything to the output size (--h 1080: 1.5)
+SC = 1.0
 DEMO = os.path.join(paths.REPO, "videos", "livereview-launch", "assets")
 BG, CARD, INK, DIM = (12, 18, 32), (255, 255, 255), (15, 23, 42), (148, 163, 184)
 ACCENT = {"s16": (37, 99, 235), "s17": (22, 163, 74)}
@@ -31,28 +33,84 @@ FULL_AT = 2.0                                       # a media longer than this m
 
 BOARDS = {
     "s16": dict(title="**ATTENTION** goes where **RISK** is",
-                items=["Issues ranked by importance", "A slide deck for every change", "A quick quiz to check understanding",
+                items=["**Skip** low-risk changes", "Issues ranked by **risk**", "A slide deck for every change", "A quick quiz to check understanding",
                        "Conversations right on the MR", "Livi: bot that turns your data into analysis reports and actionable items"],
-                media=["blast_radius_zoom.mp4", "slide_deck.gif", "quiz.gif", "converse_in_mr.png", "demo_livi_chat_bot.mp4"],
-                secs=[12.0, 5.0, 3.0, 2.0, 3.0],                       # media length -> >2 s goes full screen
-                trim=[None, None, None, None, (2.0, 5.0)],            # Livi: only the 2 s-5 s section
+                media=[None, "blast_radius_zoom.mp4", "slide_deck.gif", "quiz.gif", "converse_in_mr.png", "demo_livi_chat_bot.mp4"],
+                secs=[2.0, 12.0, 5.0, 3.0, 2.0, 3.0],                  # media length -> >2 s goes full screen
+                trim=[None, None, None, None, None, (2.0, 5.0)],      # Livi: only the 2 s-5 s section
+                cards={0: ("**Skip** low-risk changes", 78)},         # item 1 has no clip: a plain dark card in the panel (text, start size)
                 caption=None),
     "s17": dict(title="For your agents: **enforcement + scale**",
                 items=["CI/CD Gates: Precise, Customized Merge Enforcement", "Integrations: Microsoft Teams, Slack", "MCP"],
                 media=["demo_cicd_gates.mp4", "seq", None],                 # "seq": the stills in cfg["s17_seq"] (Teams 1 s, Slack 2 s)
                 secs=[4.0, 2.0, 5.0],
                 trim=[None, None, None],
+                cards={},
                 caption="MCP can be used to connect to any preferred AI Agent to operate Livi right from your agent."),
 }
+
+
+
+class Font:
+    """A font in layout units (1280x720): getlength() answers in layout units, the real PIL font is size * SC px."""
+    def __init__(self, size, weight):
+        self.size, self.pil = size, slides.font(int(round(size * SC)), weight)
+
+    def getlength(self, text):
+        return self.pil.getlength(text) / SC
+
+
+def _sc(v):
+    return [_sc(x) for x in v] if isinstance(v, (list, tuple)) else v * SC
+
+
+class Draw:
+    """ImageDraw in layout units: coordinates, radii and line widths are scaled by SC (SC 1.0 = plain ImageDraw)."""
+    def __init__(self, im):
+        self.d = ImageDraw.Draw(im)
+
+    @staticmethod
+    def _kw(kw):
+        return {k: (max(1, int(round(v * SC))) if k == "width" else v) for k, v in kw.items()}
+
+    def rounded_rectangle(self, xy, radius=0, **kw):
+        self.d.rounded_rectangle(_sc(xy), radius=radius * SC, **self._kw(kw))
+
+    def rectangle(self, xy, **kw):
+        self.d.rectangle(_sc(xy), **self._kw(kw))
+
+    def ellipse(self, xy, **kw):
+        self.d.ellipse(_sc(xy), **self._kw(kw))
+
+    def line(self, xy, **kw):
+        self.d.line(_sc(xy), **self._kw(kw))
+
+    def text(self, xy, text, font, **kw):
+        self.d.text(_sc(xy), text, font=font.pil, **kw)
+
+    def textlength(self, text, font):
+        return font.getlength(text)
+
+
+def canvas(color=(0, 0, 0, 0), mode="RGBA"):
+    return Image.new(mode, (int(round(W * SC)), int(round(H * SC))), color)
+
+
+def px(*v):
+    return tuple(int(round(x * SC)) for x in v)
+
 
 _cache = {}                                        # name -> (tmpdir, [frame paths]) ; only the current clip is kept
 
 
-def media_frames(name, window, trim=None, contain=False):
-    """The media at 30 fps, cover-fitted to the full frame (loops when shorter than the on-screen window)."""
+def media_frames(name, window, trim=None, contain=False, pad="0x111827", crop=None, size=None):
+    """The media at 30 fps, cover-fitted to the full frame (loops when shorter than the on-screen window).
+    crop = "w:h:x:y" cuts the source first; size = (w, h) in px instead of the output size."""
     global _cache
-    if name in _cache:
-        return _cache[name][1]
+    sw, sh = size or px(W, H)
+    key = f"{name}{pad}{crop}{sw}"
+    if key in _cache:
+        return _cache[key][1]
     for d_, _ in _cache.values():                  # one item plays at a time: drop the previous clip
         shutil.rmtree(d_, ignore_errors=True)
     _cache = {}
@@ -62,22 +120,23 @@ def media_frames(name, window, trim=None, contain=False):
     clip_len = (trim[1] - trim[0]) if trim else None
     want = window / 30.0 + 0.1
     dur = min(want, clip_len) if clip_len else want
+    cut = f"crop={crop}," if crop else ""
     subprocess.run(["ffmpeg", "-loglevel", "error", "-y", "-ss", f"{ss:.3f}", "-i", src, "-t", f"{dur:.3f}", "-vf",
-                    (f"fps=30,scale={W}:{H}:force_original_aspect_ratio=decrease,pad={W}:{H}:(ow-iw)/2:(oh-ih)/2:color=0x111827" if contain
-                     else f"fps=30,scale={W}:{H}:force_original_aspect_ratio=increase,crop={W}:{H}"),
+                    (f"fps=30,{cut}scale={sw}:{sh}:force_original_aspect_ratio=decrease,pad={sw}:{sh}:(ow-iw)/2:(oh-ih)/2:color={pad}" if contain
+                     else f"fps=30,{cut}scale={sw}:{sh}:force_original_aspect_ratio=increase,crop={sw}:{sh}"),
                     os.path.join(d, "c_%04d.png")], check=True)
     fr = sorted(os.path.join(d, f) for f in os.listdir(d))
     if not fr:                                     # a still that ffmpeg refused: load it directly
         Image.open(src).convert("RGB").save(os.path.join(d, "c_0001.png"))
         fr = [os.path.join(d, "c_0001.png")]
-    _cache[name] = (d, fr)
+    _cache[key] = (d, fr)
     return fr
 
 
 def rich(d, x, y, text, size, fill, max_w):
     """Wrapped text with **bold** spans; returns the y after it."""
     tokens = slides.words(text)
-    fonts = {False: slides.font(size, slides.REGULAR), True: slides.font(size, slides.BOLD)}
+    fonts = {False: Font(size, slides.REGULAR), True: Font(size, slides.BOLD)}
     lines, space = slides.wrap(tokens, fonts, max_w)
     lh = int(size * 1.22)
     for line in lines:
@@ -91,7 +150,7 @@ def rich(d, x, y, text, size, fill, max_w):
 
 def rich_center(d, cx, y, text, size, fill, max_w):
     tokens = slides.words(text)
-    fonts = {False: slides.font(size, slides.REGULAR), True: slides.font(size, slides.BOLD)}
+    fonts = {False: Font(size, slides.REGULAR), True: Font(size, slides.BOLD)}
     lines, space = slides.wrap(tokens, fonts, max_w)
     lh = int(size * 1.35)
     for line in lines:
@@ -112,16 +171,16 @@ def brand_header(d, x0, y0, x1, h=68):
     """The blue header on the board card: LiveReview in white, the URL in light grey."""
     d.rounded_rectangle([x0, y0, x1, y0 + h], radius=22, fill=BRAND + (255,))
     d.rectangle([x0, y0 + h - 22, x1, y0 + h], fill=BRAND + (255,))
-    d.text((x0 + 24, y0 + 30), "LiveReview", font=slides.font(28, slides.BOLD), fill=(255, 255, 255, 255), anchor="ls")
-    d.text((x0 + 24, y0 + 52), "hexmos.com/livereview", font=slides.font(15, slides.REGULAR), fill=(214, 224, 245, 255), anchor="ls")
+    d.text((x0 + 24, y0 + 30), "LiveReview", font=Font(28, slides.BOLD), fill=(255, 255, 255, 255), anchor="ls")
+    d.text((x0 + 24, y0 + 52), "hexmos.com/livereview", font=Font(15, slides.REGULAR), fill=(214, 224, 245, 255), anchor="ls")
     return y0 + h
 
 
 def board_layer(key, f, title_f, item_fs, slide):
     """The left card: brand header, title, numbered items (the one being spoken highlighted)."""
     b = BOARDS[key]
-    layer = Image.new("RGBA", (W, H), (0, 0, 0, 0))
-    d = ImageDraw.Draw(layer)
+    layer = canvas()
+    d = Draw(layer)
     x0, y0, x1, y1 = 28 + slide, 40, 430 + slide, 682
     d.rounded_rectangle([x0, y0, x1, y1], radius=22, fill=CARD + (255,))
     y = brand_header(d, x0, y0, x1)
@@ -139,27 +198,27 @@ def board_layer(key, f, title_f, item_fs, slide):
         hi = i == cur
         if hi:
             tint = {"s16": (219, 234, 254), "s17": (220, 252, 231)}[key]
-            fonts = {False: slides.font(size, slides.REGULAR), True: slides.font(size, slides.BOLD)}
+            fonts = {False: Font(size, slides.REGULAR), True: Font(size, slides.BOLD)}
             lines_n = max(1, len(slides.wrap(slides.words(txt), fonts, x1 - x0 - 90)[0]))
             d.rounded_rectangle([x0 + 14, y - 8, x1 - 14, y + int(size * 1.22) * lines_n + 10], radius=12, fill=tint + (255,))
         d.ellipse([x0 + 24, y + 2, x0 + 54, y + 32], fill=(ACCENT[key] if hi else DIM) + (255,))
-        d.text((x0 + 39, y + 17), str(i + 1), font=slides.font(18, slides.BOLD), fill=(255, 255, 255, 255), anchor="mm")
+        d.text((x0 + 39, y + 17), str(i + 1), font=Font(18, slides.BOLD), fill=(255, 255, 255, 255), anchor="mm")
         y = rich(d, x0 + 66, y, txt, size, (INK if hi else (100, 116, 139)) + (255,), x1 - x0 - 90)
         y += 22
     return layer
 
 
-def text_card(img, box, caption):
-    """An item with no clip: a dark card with the sentence centred."""
+def text_card(img, box, caption, size0=30):
+    """An item with no clip: a dark card with the sentence centred (the largest size from size0 down that fits)."""
     x0, y0, x1, y1 = (int(v) for v in box)
     pad = 26
-    card = Image.new("RGBA", (W, H), (0, 0, 0, 0))
-    d = ImageDraw.Draw(card)
+    card = canvas()
+    d = Draw(card)
     d.rounded_rectangle([x0, y0, x1, y1], radius=18, fill=(17, 24, 39, 255))
     d.rounded_rectangle([x0, y0, x0 + 8, y1], radius=4, fill=BRAND + (255,))
-    size = 30
+    size = size0
     while size > 18:
-        fonts = {False: slides.font(size, slides.REGULAR), True: slides.font(size, slides.BOLD)}
+        fonts = {False: Font(size, slides.REGULAR), True: Font(size, slides.BOLD)}
         lines, space = slides.wrap(slides.words(caption), fonts, x1 - x0 - 2 * pad)
         if len(lines) * int(size * 1.35) < (y1 - y0) - 2 * pad:
             break
@@ -174,11 +233,7 @@ def frame(key, f, cfg):
     title_f = cfg[f"{key}_title"]
     item_fs = cfg[f"{key}_items"]
     a0, a1 = cfg[key]
-    img = Image.new("RGB", (W, H), BG)
-    d = ImageDraw.Draw(img)
-    for yy in range(H):                                          # a soft vertical gradient
-        c = int(10 * yy / H)
-        d.line([(0, yy), (W, yy)], fill=(BG[0] + c, BG[1] + c, BG[2] + c + 4))
+    img = gradient_bg()
 
     cur = max((i for i, fi in enumerate(item_fs) if f >= fi), default=-1)
     k = 0.0                                                      # 0 = panel, 1 = full screen
@@ -207,26 +262,29 @@ def frame(key, f, cfg):
 
     if cur >= 0:
         bx0, by0, bx1, by1 = (int(v) for v in box)
-        bw, bh = bx1 - bx0, by1 - by0
         if media is None:
-            out.alpha_composite(text_card(img, box, b["caption"]))
+            cap, size0 = b["cards"].get(cur, (b["caption"], 30))
+            out.alpha_composite(text_card(img, box, cap, size0))
         elif media != "none":
+            bx0, by0, bx1, by1 = px(bx0, by0, bx1, by1)           # (the clip is placed in output pixels)
+            bw, bh = bx1 - bx0, by1 - by0
             fr = media_frames(media, end - start, b["trim"][cur], contain=media.endswith(".png") and b["media"][cur] == "seq")
             shot = Image.open(fr[(f - start) % len(fr)]).convert("RGB").resize((bw, bh))
-            radius = int(16 * (1 - k))
+            radius = int(round(16 * (1 - k) * SC))
             if radius > 1:
-                sh = Image.new("RGBA", (bw + 40, bh + 40), (0, 0, 0, 0))
-                ImageDraw.Draw(sh).rounded_rectangle([20, 20, bw + 20, bh + 20], radius=radius + 4, fill=(0, 0, 0, 170))
-                out.alpha_composite(sh.filter(ImageFilter.GaussianBlur(12)), (bx0 - 20, by0 - 20))
+                m_ = int(round(20 * SC))
+                sh = Image.new("RGBA", (bw + 2 * m_, bh + 2 * m_), (0, 0, 0, 0))
+                ImageDraw.Draw(sh).rounded_rectangle([m_, m_, bw + m_, bh + m_], radius=radius + int(4 * SC), fill=(0, 0, 0, 170))
+                out.alpha_composite(sh.filter(ImageFilter.GaussianBlur(12 * SC)), (bx0 - m_, by0 - m_))
             mask = Image.new("L", (bw, bh), 0)
             ImageDraw.Draw(mask).rounded_rectangle([0, 0, bw - 1, bh - 1], radius=radius, fill=255)
             out.paste(shot, (bx0, by0), mask)
 
     if k > 0.55:                                                 # full screen: keep a small wordmark top-left
-        d2 = ImageDraw.Draw(out)
+        d2 = Draw(out)
         d2.rounded_rectangle([18, 16, 214, 58], radius=12, fill=(8, 12, 22, 150))
-        d2.text((32, 40), "LiveReview", font=slides.font(22, slides.BOLD), fill=(255, 255, 255, 235), anchor="ls")
-        d2.text((150, 40), "· hexmos.com/livereview", font=slides.font(14, slides.REGULAR), fill=(206, 214, 230, 220), anchor="ls")
+        d2.text((32, 40), "LiveReview", font=Font(22, slides.BOLD), fill=(255, 255, 255, 235), anchor="ls")
+        d2.text((150, 40), "· hexmos.com/livereview", font=Font(14, slides.REGULAR), fill=(206, 214, 230, 220), anchor="ls")
     return out.convert("RGB")
 
 
@@ -238,32 +296,33 @@ smooth = lambda t: (lambda u: u * u * (3 - 2 * u))(max(0.0, min(1.0, t)))
 
 
 def gradient_bg():
-    img = Image.new("RGB", (W, H), BG)
+    """The soft vertical gradient (drawn per output row)."""
+    img = canvas(BG, "RGB")
     d = ImageDraw.Draw(img)
-    for yy in range(H):
-        c = int(10 * yy / H)
-        d.line([(0, yy), (W, yy)], fill=(BG[0] + c, BG[1] + c, BG[2] + c + 4))
+    for yy in range(img.height):
+        c = int(10 * yy / img.height)
+        d.line([(0, yy), (img.width, yy)], fill=(BG[0] + c, BG[1] + c, BG[2] + c + 4))
     return img
 
 
-def headline(out, f, items, y=64, size=60):
+def headline(out, f, items, y=64, size=60, color=(255, 255, 255)):
     """items = [(from_frame, text)]: the latest started one shows, fading in over 6 frames."""
     cur = max((i for i, (f0, _) in enumerate(items) if f >= f0), default=-1)
     if cur < 0:
         return
     f0, text = items[cur]
     a = min(1.0, (f - f0 + 1) / 6)
-    layer = Image.new("RGBA", (W, H), (0, 0, 0, 0))
-    ImageDraw.Draw(layer)
-    d = ImageDraw.Draw(layer)
-    rich_center(d, W / 2, y + (1 - a) * 14, text, size, (255, 255, 255, int(255 * a)), W - 160)
+    layer = canvas()
+    Draw(layer)
+    d = Draw(layer)
+    rich_center(d, W / 2, y + (1 - a) * 14, text, size, tuple(color) + (int(255 * a),), W - 160)
     out.alpha_composite(layer)
 
 
-def meta_rows_layer(f, w):
+def meta_rows_layer(f, w, light=False):
     """The change cards: they appear on "Meta", sort by risk on "risk-first", the low-risk ones slip away on "skip"."""
-    layer = Image.new("RGBA", (W, H), (0, 0, 0, 0))
-    d = ImageDraw.Draw(layer)
+    layer = canvas()
+    d = Draw(layer)
     x0, rw, rh, gap, y0 = 300, 680, 64, 16, 190
     order = sorted(range(len(META_ROWS)), key=lambda i: -META_ROWS[i][1])
     ks = smooth((f - w["risk"]) / 14)                              # 0 = as they came, 1 = sorted
@@ -286,16 +345,17 @@ def meta_rows_layer(f, w):
             continue
         col = RED if score >= 70 else (AMBER if score >= 30 else GREY)
         dim = low and kk > 0.0
-        d.rounded_rectangle([x, y, x + rw, y + rh], radius=14, fill=(30, 41, 59, int(255 * a)),
-                            outline=((AMBER + (int(255 * a * ka),)) if not low else None), width=4)
-        d.text((x + 24, y + rh / 2), name, font=slides.font(26, slides.REGULAR), fill=(226, 232, 240, int(255 * a)), anchor="lm")
+        card, ink = ((241, 245, 249), (15, 23, 42)) if light else ((30, 41, 59), (226, 232, 240))
+        d.rounded_rectangle([x, y, x + rw, y + rh], radius=14, fill=card + (int(255 * a),),
+                            outline=((AMBER + (int(255 * a * ka),)) if not low else ((203, 213, 225, int(255 * a)) if light else None)), width=4)
+        d.text((x + 24, y + rh / 2), name, font=Font(26, slides.REGULAR), fill=ink + (int(255 * a),), anchor="lm")
         pill = f"RISK {score}"
-        pf = slides.font(22, slides.BOLD)
+        pf = Font(22, slides.BOLD)
         pw = d.textlength(pill, font=pf) + 30
         d.rounded_rectangle([x + rw - pw - 16, y + 14, x + rw - 16, y + rh - 14], radius=12, fill=col + (int(255 * a),))
         d.text((x + rw - pw / 2 - 16, y + rh / 2), pill, font=pf, fill=(255, 255, 255, int(255 * a)), anchor="mm")
         if low and kk > 0.15:
-            d.text((x - 26, y + rh / 2), "SKIPPED", font=slides.font(22, slides.BOLD), fill=GREY + (int(255 * a),), anchor="rm")
+            d.text((x - 26, y + rh / 2), "SKIPPED", font=Font(22, slides.BOLD), fill=GREY + (int(255 * a),), anchor="rm")
     return layer
 
 
@@ -320,29 +380,34 @@ def meta_frame(f, cfg):
             ov = 1 + 0.08 * max(0.0, 1 - abs(t * 2 - 1.3))
             cw, ch = int(360 * (0.7 + 0.3 * t) * ov), int(320 * (0.7 + 0.3 * t) * ov)
             cx, cy = 250 + i * 390, 400
-            layer = Image.new("RGBA", (W, H), (0, 0, 0, 0))
-            d = ImageDraw.Draw(layer)
+            layer = canvas()
+            d = Draw(layer)
             d.rounded_rectangle([cx - cw / 2, cy - ch / 2, cx + cw / 2, cy + ch / 2], radius=26, fill=(17, 24, 39, int(255 * t)),
                                 outline=GREEN + (int(255 * t),), width=5)
             size = int(150 * (0.7 + 0.3 * t))
-            d.text((cx, cy - 22), big, font=slides.font(size, slides.BOLD), fill=GREEN + (int(255 * t),), anchor="mm")
-            d.text((cx, cy + ch / 2 - 56), label, font=slides.font(int(30 * (0.7 + 0.3 * t)), slides.REGULAR),
+            d.text((cx, cy - 22), big, font=Font(size, slides.BOLD), fill=GREEN + (int(255 * t),), anchor="mm")
+            d.text((cx, cy + ch / 2 - 56), label, font=Font(int(30 * (0.7 + 0.3 * t)), slides.REGULAR),
                    fill=(226, 232, 240, int(255 * t)), anchor="mm")
             out.alpha_composite(layer)
     else:                                                         # the same with LiveReview: its own risk-score footage, full screen
         fr = media_frames("risk-score_risk-score-demo-compressed.mp4", c1 - c0 + 1, (23.0, 23.0 + (c1 - c0) / 30.0 + 0.4), contain=True)
         shot = Image.open(fr[(f - c0) % len(fr)]).convert("RGB")
         out.paste(shot, (0, 0))
-        d2 = ImageDraw.Draw(out)
+        d2 = Draw(out)
         d2.rounded_rectangle([18, 16, 214, 58], radius=12, fill=(8, 12, 22, 170))
-        d2.text((32, 40), "LiveReview", font=slides.font(22, slides.BOLD), fill=(255, 255, 255, 235), anchor="ls")
-        d2.text((150, 40), "· hexmos.com/livereview", font=slides.font(14, slides.REGULAR), fill=(206, 214, 230, 220), anchor="ls")
+        d2.text((32, 40), "LiveReview", font=Font(22, slides.BOLD), fill=(255, 255, 255, 235), anchor="ls")
+        d2.text((150, 40), "· hexmos.com/livereview", font=Font(14, slides.REGULAR), fill=(206, 214, 230, 220), anchor="ls")
     return out.convert("RGB")
 
 
 if __name__ == "__main__":
-    out = sys.argv[1]
-    name = sys.argv[2] if len(sys.argv) > 2 else "street_part3"
+    argv = sys.argv[1:]
+    if "--h" in argv:                                            # output height (default 720); the layout scales with it
+        i_ = argv.index("--h")
+        SC = int(argv[i_ + 1]) / 720.0
+        del argv[i_:i_ + 2]
+    out = argv[0]
+    name = argv[1] if len(argv) > 1 else "street_part3"
     ov = json.load(open(os.path.join(paths.ROOT, "build", f"{name}_overlays.json")))
     cfg = ov["boards"]
     os.makedirs(out, exist_ok=True)

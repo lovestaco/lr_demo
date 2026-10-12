@@ -32,3 +32,7 @@ miles/.venv-tts/
 # python bytecode
 __pycache__/
 *.pyc
+
+# Claude Code transcripts/context for this project (large; memory/ is kept)
+.claude_data/*
+!.claude_data/memory/

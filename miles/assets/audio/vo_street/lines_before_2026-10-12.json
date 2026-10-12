@@ -1,0 +1,911 @@
+{
+ "1": {
+  "text": "You already ship a lot of AI-generated code.",
+  "start": 4.0,
+  "duration": 3.02,
+  "take": "street_vo.mp3",
+  "src_start": 0.0,
+  "src_end": 3.024,
+  "words": [
+   [
+    "you",
+    0.0
+   ],
+   [
+    "already",
+    0.22
+   ],
+   [
+    "ship",
+    0.62
+   ],
+   [
+    "a",
+    0.98
+   ],
+   [
+    "lot",
+    1.12
+   ],
+   [
+    "of",
+    1.44
+   ],
+   [
+    "ai",
+    1.6
+   ],
+   [
+    "generated",
+    1.8
+   ],
+   [
+    "code",
+    2.26
+   ]
+  ]
+ },
+ "2": {
+  "text": "But do you do enough code inspection?",
+  "start": 8.0,
+  "duration": 2.52,
+  "take": "street_vo.mp3",
+  "src_start": 3.024,
+  "src_end": 5.542,
+  "words": [
+   [
+    "but",
+    0.076
+   ],
+   [
+    "do",
+    0.416
+   ],
+   [
+    "you",
+    0.596
+   ],
+   [
+    "do",
+    0.736
+   ],
+   [
+    "enough",
+    0.856
+   ],
+   [
+    "code",
+    1.216
+   ],
+   [
+    "inspection",
+    1.576
+   ]
+  ]
+ },
+ "3": {
+  "text": "Code now ships faster than ever.",
+  "start": 12.5,
+  "duration": 2.42,
+  "take": "street_vo.mp3",
+  "src_start": 5.542,
+  "src_end": 7.963,
+  "words": [
+   [
+    "code",
+    0.138
+   ],
+   [
+    "now",
+    0.438
+   ],
+   [
+    "ships",
+    0.658
+   ],
+   [
+    "faster",
+    0.838
+   ],
+   [
+    "than",
+    1.278
+   ],
+   [
+    "ever",
+    1.658
+   ]
+  ]
+ },
+ "4": {
+  "text": "More code means bigger systems... and more bugs.",
+  "start": 16.0,
+  "duration": 3.97,
+  "take": "street_vo.mp3",
+  "src_start": 7.963,
+  "src_end": 11.933,
+  "words": [
+   [
+    "more",
+    0.297
+   ],
+   [
+    "code",
+    0.357
+   ],
+   [
+    "means",
+    0.657
+   ],
+   [
+    "bigger",
+    0.997
+   ],
+   [
+    "systems",
+    1.417
+   ],
+   [
+    "and",
+    1.897
+   ],
+   [
+    "more",
+    2.777
+   ],
+   [
+    "bugs",
+    2.997
+   ]
+  ]
+ },
+ "5": {
+  "text": "And human review just can't keep up.",
+  "start": 21.5,
+  "duration": 2.55,
+  "take": "street_vo.mp3",
+  "src_start": 11.933,
+  "src_end": 14.486,
+  "words": [
+   [
+    "and",
+    0.187
+   ],
+   [
+    "human",
+    0.247
+   ],
+   [
+    "review",
+    0.587
+   ],
+   [
+    "just",
+    0.847
+   ],
+   [
+    "can",
+    1.187
+   ],
+   [
+    "t",
+    1.187
+   ],
+   [
+    "keep",
+    1.707
+   ],
+   [
+    "up",
+    1.867
+   ]
+  ]
+ },
+ "6": {
+  "text": "So customers walk away... over downtime, security holes, slow apps, and bad UI.",
+  "start": 25.5,
+  "duration": 6.58,
+  "take": "street_vo.mp3",
+  "src_start": 14.486,
+  "src_end": 21.065,
+  "words": [
+   [
+    "so",
+    0.354
+   ],
+   [
+    "customers",
+    0.354
+   ],
+   [
+    "walk",
+    0.734
+   ],
+   [
+    "away",
+    1.054
+   ],
+   [
+    "over",
+    1.794
+   ],
+   [
+    "downtime",
+    1.994
+   ],
+   [
+    "security",
+    2.974
+   ],
+   [
+    "holes",
+    3.234
+   ],
+   [
+    "slow",
+    4.134
+   ],
+   [
+    "apps",
+    4.454
+   ],
+   [
+    "and",
+    4.774
+   ],
+   [
+    "bad",
+    5.214
+   ],
+   [
+    "ui",
+    5.574
+   ]
+  ]
+ },
+ "7": {
+  "text": "How do you stay competitive?",
+  "start": 33.0,
+  "duration": 1.8,
+  "take": "street_vo.mp3",
+  "src_start": 21.065,
+  "src_end": 22.862,
+  "words": [
+   [
+    "how",
+    0.295
+   ],
+   [
+    "do",
+    0.415
+   ],
+   [
+    "you",
+    0.495
+   ],
+   [
+    "stay",
+    0.575
+   ],
+   [
+    "competitive",
+    0.775
+   ]
+  ]
+ },
+ "8": {
+  "text": "You need a better inspection layer.",
+  "start": 35.5,
+  "duration": 2.44,
+  "take": "street_vo.mp3",
+  "src_start": 22.862,
+  "src_end": 25.305,
+  "words": [
+   [
+    "you",
+    0.398
+   ],
+   [
+    "need",
+    0.478
+   ],
+   [
+    "a",
+    0.618
+   ],
+   [
+    "better",
+    0.798
+   ],
+   [
+    "inspection",
+    1.178
+   ],
+   [
+    "layer",
+    1.618
+   ]
+  ]
+ },
+ "9": {
+  "text": "Inspection gives engineers confidence.",
+  "start": 39.0,
+  "duration": 2.77,
+  "take": "street_vo.mp3",
+  "src_start": 25.305,
+  "src_end": 28.071,
+  "words": [
+   [
+    "inspection",
+    -0.045
+   ],
+   [
+    "gives",
+    0.415
+   ],
+   [
+    "engineers",
+    1.035
+   ],
+   [
+    "confidence",
+    1.495
+   ]
+  ]
+ },
+ "10": {
+  "text": "Engineers' confidence gives customers confidence.",
+  "start": 42.0,
+  "duration": 3.02,
+  "take": "street_vo.mp3",
+  "src_start": 28.071,
+  "src_end": 31.086,
+  "words": [
+   [
+    "engineers",
+    0.049
+   ],
+   [
+    "confidence",
+    0.409
+   ],
+   [
+    "gives",
+    0.889
+   ],
+   [
+    "customers",
+    1.489
+   ],
+   [
+    "confidence",
+    1.969
+   ]
+  ]
+ },
+ "11": {
+  "text": "And customer confidence keeps you competitive, and the money coming in.",
+  "start": 45.0,
+  "duration": 4.74,
+  "take": "street_vo.mp3",
+  "src_start": 31.086,
+  "src_end": 35.823,
+  "words": [
+   [
+    "and",
+    0.294
+   ],
+   [
+    "customer",
+    0.334
+   ],
+   [
+    "confidence",
+    0.614
+   ],
+   [
+    "keeps",
+    1.254
+   ],
+   [
+    "you",
+    1.614
+   ],
+   [
+    "competitive",
+    1.994
+   ],
+   [
+    "and",
+    2.434
+   ],
+   [
+    "the",
+    3.154
+   ],
+   [
+    "money",
+    3.394
+   ],
+   [
+    "coming",
+    3.634
+   ],
+   [
+    "in",
+    3.974
+   ]
+  ]
+ },
+ "12": {
+  "text": "Without inspection, everything above it collapses.",
+  "start": 50.0,
+  "duration": 3.33,
+  "take": "street_vo.mp3",
+  "src_start": 35.823,
+  "src_end": 39.157,
+  "words": [
+   [
+    "without",
+    0.297
+   ],
+   [
+    "inspection",
+    0.457
+   ],
+   [
+    "everything",
+    1.477
+   ],
+   [
+    "above",
+    1.837
+   ],
+   [
+    "it",
+    2.297
+   ],
+   [
+    "collapses",
+    2.417
+   ]
+  ]
+ },
+ "13": {
+  "text": "It starts with inspection.",
+  "start": 67.0,
+  "duration": 1.82,
+  "take": "vo_piece2/piece2_vo.mp3 (line 12, reused)",
+  "src_start": 41.137,
+  "src_end": 42.961,
+  "words": [
+   [
+    "it",
+    0.303
+   ],
+   [
+    "starts",
+    0.323
+   ],
+   [
+    "with",
+    0.583
+   ],
+   [
+    "inspection",
+    0.903
+   ]
+  ]
+ },
+ "14": {
+  "text": "AI writes your code faster than your team can review it. Every M R is twice as big as last year. And every dev ships one and a half times more of them. So reviewers run out of attention, and may skip the changes that are actually risky. Meta fixed the attention problem by giving every M R a risk score. Low-risk M R are approved automatically, and humans only review high risk changes. The result? Production incidents down 98%, rollback rates down 30%, and wait time down 33%. Engineers ship faster and safer, while also reviewing less. Here's why inspection matters.",
+  "duration": 36.68,
+  "take": "take_14.mp3",
+  "words": [
+   [
+    "ai",
+    0.0
+   ],
+   [
+    "writes",
+    0.18
+   ],
+   [
+    "your",
+    0.58
+   ],
+   [
+    "code",
+    0.76
+   ],
+   [
+    "faster",
+    1.0
+   ],
+   [
+    "than",
+    1.36
+   ],
+   [
+    "your",
+    1.7
+   ],
+   [
+    "team",
+    1.8
+   ],
+   [
+    "can",
+    2.08
+   ],
+   [
+    "review",
+    2.26
+   ],
+   [
+    "it",
+    2.54
+   ],
+   [
+    "every",
+    3.34
+   ],
+   [
+    "mr",
+    3.54
+   ],
+   [
+    "is",
+    3.84
+   ],
+   [
+    "twice",
+    4.16
+   ],
+   [
+    "as",
+    4.38
+   ],
+   [
+    "big",
+    4.76
+   ],
+   [
+    "as",
+    4.92
+   ],
+   [
+    "last",
+    5.06
+   ],
+   [
+    "year",
+    5.24
+   ],
+   [
+    "and",
+    6.08
+   ],
+   [
+    "every",
+    6.18
+   ],
+   [
+    "dev",
+    6.46
+   ],
+   [
+    "ships",
+    6.7
+   ],
+   [
+    "one",
+    6.96
+   ],
+   [
+    "and",
+    7.32
+   ],
+   [
+    "a",
+    7.44
+   ],
+   [
+    "half",
+    7.5
+   ],
+   [
+    "times",
+    7.66
+   ],
+   [
+    "more",
+    7.96
+   ],
+   [
+    "of",
+    8.26
+   ],
+   [
+    "them",
+    8.46
+   ],
+   [
+    "so",
+    9.16
+   ],
+   [
+    "reviewers",
+    9.22
+   ],
+   [
+    "run",
+    9.46
+   ],
+   [
+    "out",
+    9.92
+   ],
+   [
+    "of",
+    10.06
+   ],
+   [
+    "attention",
+    10.18
+   ],
+   [
+    "and",
+    10.44
+   ],
+   [
+    "may",
+    11.0
+   ],
+   [
+    "skip",
+    11.12
+   ],
+   [
+    "the",
+    11.42
+   ],
+   [
+    "changes",
+    11.62
+   ],
+   [
+    "that",
+    11.86
+   ],
+   [
+    "are",
+    12.12
+   ],
+   [
+    "actually",
+    12.22
+   ],
+   [
+    "risky",
+    12.62
+   ],
+   [
+    "meta",
+    13.84
+   ],
+   [
+    "fix",
+    13.9
+   ],
+   [
+    "the",
+    14.18
+   ],
+   [
+    "attention",
+    14.4
+   ],
+   [
+    "problem",
+    14.62
+   ],
+   [
+    "by",
+    15.02
+   ],
+   [
+    "giving",
+    15.38
+   ],
+   [
+    "every",
+    15.54
+   ],
+   [
+    "mr",
+    15.96
+   ],
+   [
+    "a",
+    16.26
+   ],
+   [
+    "risk",
+    16.64
+   ],
+   [
+    "score",
+    16.84
+   ],
+   [
+    "low",
+    17.86
+   ],
+   [
+    "risk",
+    17.88
+   ],
+   [
+    "mr",
+    18.08
+   ],
+   [
+    "are",
+    18.32
+   ],
+   [
+    "approved",
+    18.7
+   ],
+   [
+    "automatically",
+    19.0
+   ],
+   [
+    "and",
+    20.16
+   ],
+   [
+    "humans",
+    20.22
+   ],
+   [
+    "only",
+    20.56
+   ],
+   [
+    "review",
+    20.98
+   ],
+   [
+    "high",
+    21.38
+   ],
+   [
+    "risk",
+    21.74
+   ],
+   [
+    "changes",
+    21.98
+   ],
+   [
+    "the",
+    22.9
+   ],
+   [
+    "result",
+    23.0
+   ],
+   [
+    "production",
+    24.14
+   ],
+   [
+    "incidents",
+    24.14
+   ],
+   [
+    "down",
+    24.42
+   ],
+   [
+    "98",
+    24.8
+   ],
+   [
+    "rollback",
+    26.22
+   ],
+   [
+    "rates",
+    26.72
+   ],
+   [
+    "down",
+    26.96
+   ],
+   [
+    "30",
+    27.22
+   ],
+   [
+    "and",
+    28.02
+   ],
+   [
+    "wait",
+    28.46
+   ],
+   [
+    "time",
+    28.66
+   ],
+   [
+    "down",
+    28.92
+   ],
+   [
+    "33",
+    29.22
+   ],
+   [
+    "engineers",
+    30.58
+   ],
+   [
+    "ship",
+    31.06
+   ],
+   [
+    "faster",
+    31.48
+   ],
+   [
+    "and",
+    31.9
+   ],
+   [
+    "safer",
+    32.38
+   ],
+   [
+    "while",
+    32.84
+   ],
+   [
+    "also",
+    33.22
+   ],
+   [
+    "reviewing",
+    33.66
+   ],
+   [
+    "less",
+    34.02
+   ],
+   [
+    "here",
+    35.1
+   ],
+   [
+    "s",
+    35.1
+   ],
+   [
+    "why",
+    35.2
+   ],
+   [
+    "inspection",
+    35.34
+   ],
+   [
+    "matters",
+    35.52
+   ]
+  ]
+ }
+}

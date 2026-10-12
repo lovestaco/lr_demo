@@ -1,0 +1,64 @@
+diff --git a/miles/scripts/04_street_part_1_final.py b/miles/scripts/04_street_part_1_final.py
+index ef0ae8d..c6dbc79 100644
+--- a/miles/scripts/04_street_part_1_final.py
++++ b/miles/scripts/04_street_part_1_final.py
+@@ -1,12 +1,12 @@
+-"""Street piece (~76 s): Spidey's tour of the inspection story through a city at sunset — one continuous journey.
++"""Street piece (part 1, ~60 s): Spidey's tour of the inspection story through a city at sunset — one continuous journey.
++Part 0 (04_street_part0.py, the Meta opening) plays before it; the old S3 (LED ticker, VO 3) and S5 (subway lightbox, VO 5)
++were cut when that opening was added, so the numbering below skips them.
+ 
+     S0  aerial: he zips down the avenue on a web line, lands on the wall board's ledge (top-left corner)
+     S1  mural: "You already ship a lot of AI-generated code." (stands at the board's corner, presents)
+     S2  zips straight across to the billboard, lands on its catwalk at the left edge: "But do you do enough..."
+-    S3  zips east to the LED ticker (shop-front height), lands at its left end: "Code now ships faster than ever."
+-    S4  sprints to the bus stop, stops at the ad's left edge; spiders on "bugs": the bug dance; up onto the shelter
+-    S5  zips to the subway lightbox, stands at its left edge: "Human review can't keep up."
+-    S6  zips up to the catwalk under the big screen: a few steps on each risk, then moonwalks off with the customers
++    S4  zips across the city to the bus stop, lands at the ad's left edge; spiders on "bugs": the bug dance; up onto the shelter
++    S6  zips from the shelter up to the catwalk under the big screen: a few steps on each risk, then moonwalks off with the customers
+     S7  zips up to the rooftop, stands at the screen's left edge: "How do you stay competitive?" / "...inspection layer."
+     S8  leaps off, zips down into the intersection: the v3 storeyed building, each floor lights on its word, cash on top
+     S9  yanks INSPECTION (the ground floor) out -> the floors above hang a beat, then pancake; cash rain; he flops
+@@ -88,11 +88,9 @@ NORTH = lambda x, z=6.0: c.wall((x, 0.0, z), (0, 1, 0))       # facades on the n
+ WALL_G = SOUTH(-18.0)                          # west arm, south: graffiti mural
+ BBW = NORTH(-19.0)                             # west arm, north: billboard on the roof
+ BB_ROOF = c.roof(-19.0, BBW.point.y + 2.0)
+-TICK = NORTH(13.0, z=2.0)                      # east arm, north (near the corner): LED ticker at shop-front height
+-POST = SOUTH(26.0, z=2.0)                      # east arm, south: subway lightbox
+ SCREEN = NORTH(25.0, z=9.0)                    # east arm, north (further east): the big screen
+ ROOF_Z = c.roof(12.0, -17.5)                   # tall building on the avenue (rooftop scene)
+-print("SET", WALL_G.point, BBW.point, BB_ROOF, TICK.point, POST.point, SCREEN.point, ROOF_Z)
++print("SET", WALL_G.point, BBW.point, BB_ROOF, SCREEN.point, ROOF_Z)
+ 
+ # ------------------------------------------------------------------ signs
+ signs = fx.collection("Signs")
+@@ -136,17 +134,6 @@ BB_BOT = BB_C.z - 9.6 / 3.0 / 2 - 0.12
+ # the billboard's service catwalk (what he lands and presents on): runs past the board's left edge (screen-left)
+ BB_WALK = (BB_C.x - 9.6 / 2 - 1.1, BB_C.x + 9.6 / 2 + 0.2, BB_C.y - 1.05, BB_C.y + 0.05)
+ BB_SPOT = (BB_C.x - 9.6 / 2 - 0.4, BB_C.y - 0.55)               # just left of the board, beside it (not over the text)
+-TK_W = 8.4
+-TK_C = Vector((13.0, TICK.point.y, 2.0))             # shop-front LED strip at eye level, x 8.8-17.2
+-TK_SPOT = (TK_C.x - TK_W / 2 - 0.45, TICK.point.y - 0.8)          # on the sidewalk at its left end
+-ticker = city.sign("Ticker", img("ticker_faster"), TK_C, TICK.normal, TK_W, aspect=3600 / 420, emit=2.2, frame="led",
+-                   offset=0.35)
+-px, POST = city.flat_spot(c, [26.0, 24.8, 24.4, 25.2, 24.0, 23.6, 27.0], 0.0, -1, 2.4, 3.6)
+-POST_C = Vector((px, POST.point.y, 1.85))           # low: his head level with the lower half of the box
+-SUB_SPOT = (POST_C.x + 3.6 / 2 + 0.42, POST.point.y + 0.12 + 0.5)   # screen-left of it (camera looks -y: left = +x)
+-SUB_N = 180
+-subway = city.sign("Subway", seq0("st_queue"), POST_C, POST.normal, 3.6, emit=1.4, frame="lightbox", seq=(SUB_N, 1),
+-                   offset=0.12)
+ SCR_N = Vector((0, -1, 0))
+ SCR_C = Vector((25.0, SCREEN.point.y, 7.2))
+ # rooftop screen on the tall avenue building, facing the avenue (west)
+@@ -272,10 +259,7 @@ TOP1 = (G_C.x + 2.5, WALL_G.point.y + WALL_G.normal.y * 0.85)       # on the boa
+ b_pts = board_pts(G_C + WALL_G.normal * 0.45, WALL_G.normal, GB_W, GB_H)
+ s1 = presenter(G_C + WALL_G.normal * 0.45, WALL_G.normal, GB_W, GB_H, TOP1, LEDGE_TOP)
+ cam2 = presenter(BB_C, (0, -1, 0), 9.6, 3.2, BB_SPOT, BB_WALK_Z)
+-TK_H = TK_W * 420 / 3600
+-cam3 = presenter(TK_C + TICK.normal * 0.35, TICK.normal, TK_W, TK_H, TK_SPOT, 0.0)
+ cam4 = presenter(BUS_AD_C + BUS_AD_N * 0.1, BUS_AD_N, BUS_AD_W, BUS_AD_W * 9 / 16, BUS_SPOT, 0.0)
+-cam5 = presenter(POST_C + POST.normal * 0.12, POST.normal, 3.6, 3.6 * 9 / 16, SUB_SPOT, 0.0)
+ SCR_W, SCR_OFF = 9.2, 0.9
+ SCR_H = SCR_W * 9 / 16
+ TS_Z = SCR_C.z - SCR_H / 2 - 1.55                 # catwalk below the screen: his head only reaches its bottom margin

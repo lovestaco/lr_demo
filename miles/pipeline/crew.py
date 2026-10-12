@@ -191,24 +191,59 @@ def in_place(action, root="Hips"):
 
 
 def sequence(arm, clips):
-    """[(action, f0, f1), ...] one after another on stacked NLA tracks (later on top), each held inside its span."""
+    """[(action, f0, f1[, opts]), ...] one after another on stacked NLA tracks (later on top), each held inside its span.
+    opts: window=(a0, a1) plays only that part of the clip (default: all of it), reverse=True plays it backwards,
+    blend=n crossfades the first n frames into whatever is below (influence ramp: an animated influence ignores blend_in)."""
     ad = arm.animation_data or arm.animation_data_create()
     ad.action = None
     for t in ad.nla_tracks:
         t.mute = True
-    for action, f0, f1 in clips:
+    for action, f0, f1, *o in clips:
+        o = o[0] if o else {}
         tr = ad.nla_tracks.new()
         st = tr.strips.new(action.name, int(f0), action)
         if hasattr(st, "action_slot") and action.slots:
             st.action_slot = action.slots[0]
-        a0, a1 = action.frame_range
+        a0, a1 = o.get("window") or action.frame_range
         st.action_frame_start, st.action_frame_end = a0, a1
+        st.use_reverse = bool(o.get("reverse"))
         st.frame_start = int(f0)
         st.repeat = max(1.0, (f1 - f0) / max(1.0, a1 - a0))
         st.extrapolation = "NOTHING"
         st.use_animated_influence = True
-        st.influence = 1.0
-        st.keyframe_insert("influence", frame=int(f0))
+        for f_, v_ in ((int(f0), 1.0),) if not o.get("blend") else ((int(f0), 0.0), (int(f0) + o["blend"], 1.0)):
+            st.influence = v_
+            st.keyframe_insert("influence", frame=f_)
+
+
+def same_hemisphere(action, ref, ref_frame):
+    """A copy of `action` whose bone quaternions are on the same side (q vs -q: the same rotation) as `ref` at
+    `ref_frame`; an NLA crossfade between the two otherwise swings that bone through 180 degrees."""
+    out = action.copy()
+    out.name = action.name + " (hemisphere)"
+    fcs = lambda a: {(fc.data_path, fc.array_index): fc for ly in a.layers for st in ly.strips for cb in st.channelbags for fc in cb.fcurves}
+    fo, fr = fcs(out), fcs(ref)
+    a0 = out.frame_range[0]
+    for dp in {k[0] for k in fo if k[0].endswith("rotation_quaternion")}:
+        if all((dp, i) in fr for i in range(4)) and sum(fo[(dp, i)].evaluate(a0) * fr[(dp, i)].evaluate(ref_frame) for i in range(4)) < 0:
+            for i in range(4):
+                for kp in fo[(dp, i)].keyframe_points:
+                    kp.co.y, kp.handle_left.y, kp.handle_right.y = -kp.co.y, -kp.handle_left.y, -kp.handle_right.y
+    return out
+
+
+def calm(action, f0, f1, window, blend=0):
+    """Clips for sequence() that hold a calm stretch of `action` (`window`, e.g. the idle part between two gestures)
+    over f0..f1 without repeating the gesture: the window is played back and forth, so the pose is continuous at
+    every turn. Starts at the window's end (where the clip before it left off) when blend is 0."""
+    a0, a1 = window
+    pos, rev, f, out = (a1 if not blend else a0), not blend, int(f0), []
+    while f < f1:
+        n = min(a1 - a0, int(f1) - f)
+        w = (pos - n, pos) if rev else (pos, pos + n)
+        out.append((action, f, f + n, dict(window=w, reverse=rev, blend=blend if not out else 0)))
+        pos, rev, f = (pos - n if rev else pos + n), (not rev) if n == a1 - a0 else rev, f + n
+    return out
 
 
 def _strip_suffix(n):

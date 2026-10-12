@@ -233,3 +233,21 @@ Build plan: 3D signs for the Meta beats (city.sign machinery as in part 1's risk
 - S16 board title = "ATTENTION goes where RISK is". S18 building now 8 floors (FIN_N=8): ... HUMANS: JUDGMENT, RISK, ATTENTION on top (floor_risk/floor_attention.png from 03d `url`).
 - S18 rebuild fitted to the VO (he leaves ~57 frames after "inspection").  part 2 S10 crowd = 2 vs 18.
 - To render: part 3 boards 1-1417 + Meta 1684-2369 via 05b; 3D 1418-1683 and 2370-2763 via 05c; part 2 frames 270-720; then 06c post (part 3, part 2), 06_assemble (part 3, part 2, joined), 10 MB copy.
+
+## Meta section rework 2 (2026-10-11): white boards, tower, return to the Meta billboard
+User asks, all built into `04_street_part3.py` + `03e_street_part3_meta.py` (textures) and checked with 8 single stills
+(`build/meta_check/`, contact sheet `part3_meta_contact_sheet.jpg`). Not yet rendered into the video.
+- Meta billboard (f1742+): white board, blue border kept, the official logo big and centred, nothing else (no "Meta" text, no tagline).
+  Logo from `videos/livereview-launch/assets/Meta-Logo.png`, cropped to `assets/street2/meta_logo_official.png` (full) and
+  `meta_logo_symbol.png` (infinity symbol only).
+- Change-cards screen (~f1850): white board, dark text, the infinity symbol only (no wordmark) top right.
+- Results: no more boards popping up on poles. Three white boards hang on the flat east wall of the west tower
+  (x -8.82, y 29, z 29.6 / 24.4 / 19.2, 7 m wide; the build prints STATWALL: the wall is flat behind each). At "And the results?"
+  (`TURN0` = `T[13]+2`, f1974) the camera turns left from the Meta billboard to the tower, then slides down one floor per number
+  (f2015 / 2089 / 2162), straight on, with a slow push. Each board lights as its number is said.
+- Ending: after the last number the camera turns back to the Meta billboard (`P_B`, arrives T[14]+8) and zooms in (`P_C`, to T[11]-2)
+  while LiveReview's risk-score footage crossfades onto that same billboard at M_DEMO[0]=T[14]-2 (the sign image sequence now runs
+  to T[11]-1: logo, cards, footage). The separate demo billboard (BB2Footage) is gone; BB2 still shows the address at the end.
+- Frames that differ from the 360p SheepIt render: f1742-2369 (628 frames). Everything before and after is unchanged.
+- Build gotchas hit today: files made as root (build/meta, build/*.blend) broke the build; fixed by `chown -R lovestaco:lovestaco` (after moving the
+  old ones aside to `build/meta_before_whiteboards`, `*.rootowned`). `OCCLUDED` lines for the Meta range refer to Miles hidden on the roof: ignore.

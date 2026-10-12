@@ -59,6 +59,7 @@ for o in c.coll.all_objects:
             o.hide_render = o.hide_viewport = True
 rig = bpy.data.objects["MilesRig"]
 fx.physical_shading(rig, lift=3.0, sheen=0.85, rough=0.38)
+fx.suit_look(rig, rough=0.46, coat=0.22, sheen=0.1, floor=(0.012, 0.013, 0.026))   # (physical_shading(rig) is a no-op on the armature) real suit gloss + red detail; a bit more matte/darker than the default for the dusk lot
 office = props.Office(rig)
 for con in (office.ik_phone, office.ik_reach, office.ik_watch):      # unused here; the legacy IK solver weighs every IK on the
     con.mute = True                                                  # chain even at influence 0 (they dragged the hand down)
@@ -319,7 +320,8 @@ ptsB = [Vector((SPOT["B"][0] + 0.45, SPOT["B"][1], z_)) for z_ in (0.0, 1.9)] + 
 CAM_B = (B_LOC, *k.fit(B_LOC, ptsB, margin=1.05))
 # S11/S12 read beats: push the lens onto the board text (same camera position, so the angle is unchanged) and back
 CAM_AZ = (AB_LOC, *k.fit(AB_LOC, [SIGN_C["A"] + Vector((dx * SW_ / 2, 0, dz * SH_ / 2)) for dx in (-1, 1) for dz in (-1, 1)] +
-                                 [Vector((SPOT["A"][0] + 0.8, SPOT["A"][1], z_)) for z_ in (0.0, 1.9)], margin=1.0))
+                                 [Vector((SPOT["A"][0] + 0.8, SPOT["A"][1], z_)) for z_ in (0.0, 1.9)] +
+                                 [Vector((TOWER["A"].x - 0.6, LOT_Y + 1.8, z_)) for z_ in (0.0, 3.0)], margin=1.05))   # + the brick front and builders
 CAM_BZ = (B_LOC, *k.fit(B_LOC, [SIGN_C["B"] + Vector((dx * SW_ / 2, 0, dz * SH_ / 2)) for dx in (-1, 1) for dz in (-1, 1)] +
                                 [Vector((SPOT["B"][0] + 0.8, SPOT["B"][1], z_)) for z_ in (0.0, 1.9)], margin=1.06))
 C_LOC = Vector((SITES["C"] + 2.4, CAM_Y + 3.0, 2.4))       # S13: the board, him, the crew and the tower
@@ -815,8 +817,16 @@ shot.sfx("block_thud", CUZ + 12)
 cust = cw._spawn("boss", "DoorBoss", (DOOR15.x, FACE_C + 0.05, DOOR15.z), (0, 1), None)        # the boss, hard hat on
 bacts = {a.name.split("|")[-1]: a for a in cw.src["boss"]["acts"]}
 walk_ip = crew.in_place(bacts["Walk"])
+# one raise of the hand per gesture (Victory_Idle's, then the wave); in between he holds the clip's calm stretch
+# (played back and forth, no second raise), and after the wave the same calm stretch again
+VIC = bacts["Victory_Idle"]
+WAV = crew.same_hemisphere(bacts["Waving"], VIC, 36)                # (a crossfade into the raw wave twists his left shoulder)
+F_VIC, F_WAV = CUZ + 34, w7("human") - 4
+VIC_END, WAV_END = F_VIC + int(VIC.frame_range[1] - VIC.frame_range[0]), F_WAV + int(WAV.frame_range[1] - WAV.frame_range[0])
+VIC_CALM = (36, int(VIC.frame_range[1]))
 crew.sequence(cust.arm, [(walk_ip, DOOR_OPEN + 4, DOOR_OPEN + 36), (bacts["Sad_Idle"], DOOR_OPEN + 36, CUZ + 14),
-                         (walk_ip, CUZ + 14, CUZ + 34), (bacts["Victory_Idle"], CUZ + 34, w7("human") - 4), (bacts["Waving"], w7("human") - 4, END + 2)])
+                         (walk_ip, CUZ + 14, CUZ + 34), (VIC, F_VIC, VIC_END), *crew.calm(VIC, VIC_END, F_WAV + 12, VIC_CALM),
+                         (WAV, F_WAV, WAV_END, dict(blend=12)), *crew.calm(VIC, WAV_END - 12, END + 2, VIC_CALM, blend=12)])
 anim.keys(cust.wrap, "location", [(1, Vector((DOOR15.x, FACE_C - 0.05, DOOR15.z)), "const"), (DOOR_OPEN + 4, Vector((DOOR15.x, FACE_C - 0.05, DOOR15.z)), "lin"),
                                   (DOOR_OPEN + 36, Vector((DOOR15.x, FACE_C + 0.28, DOOR15.z)), "const"), (CUZ + 14, Vector((DOOR15.x, FACE_C + 0.28, DOOR15.z)), "lin"),
                                   (CUZ + 34, Vector((DOOR15.x, FACE_C + 0.85, DOOR15.z)), "const")])

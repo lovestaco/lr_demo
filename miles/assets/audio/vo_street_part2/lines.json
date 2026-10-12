@@ -765,8 +765,8 @@
   ]
  },
  "8": {
-  "text": "LiveReview helps your engineers focus on what matters. Every issue is prioritized by risk, based on what a change affects, how far its impact spreads, and the potential consequences \u2014 so critical issues never get buried. Then they can understand every change: a slide deck for each one, explaining what moved and why. A quick quiz to check the reviewer understood it. Conversations right on the MR. And Livi, your bot for reports and actions.",
-  "duration": 26.67,
+  "text": "LiveReview helps your engineers go safer and faster by skipping low-risk changes. Every issue is prioritized by risk, based on what a change affects, how far its impact spreads, and the potential consequences, so critical issues never get buried. Then they can understand every change: a slide deck for each one, explaining what moved and why. A quick quiz to check the reviewer understood it. Conversations right on the MR. And Livi, your bot for reports and actions.",
+  "duration": 28.03,
   "take": "take_08.mp3",
   "words": [
    [
@@ -775,306 +775,326 @@
    ],
    [
     "helps",
-    0.48
+    0.44
    ],
    [
     "your",
-    0.78
+    0.76
    ],
    [
     "engineers",
-    1.1
+    0.96
    ],
    [
-    "focus",
-    1.48
+    "go",
+    1.22
    ],
    [
-    "on",
-    2.0
+    "safer",
+    1.6
    ],
    [
-    "what",
-    2.32
+    "and",
+    2.04
    ],
    [
-    "matters",
-    2.52
-   ],
-   [
-    "every",
-    3.68
-   ],
-   [
-    "issue",
-    3.76
-   ],
-   [
-    "is",
-    4.24
-   ],
-   [
-    "prioritized",
-    4.38
+    "faster",
+    2.28
    ],
    [
     "by",
-    5.08
+    2.72
+   ],
+   [
+    "skipping",
+    3.12
+   ],
+   [
+    "low",
+    3.46
    ],
    [
     "risk",
-    5.24
+    3.84
    ],
    [
-    "based",
-    5.9
-   ],
-   [
-    "on",
-    6.12
-   ],
-   [
-    "what",
-    6.3
-   ],
-   [
-    "a",
-    6.52
-   ],
-   [
-    "change",
-    6.58
-   ],
-   [
-    "affects",
-    6.76
-   ],
-   [
-    "how",
-    7.54
-   ],
-   [
-    "far",
-    7.72
-   ],
-   [
-    "its",
-    7.96
-   ],
-   [
-    "impact",
-    8.12
-   ],
-   [
-    "spreads",
-    8.44
-   ],
-   [
-    "and",
-    9.42
-   ],
-   [
-    "the",
-    9.58
-   ],
-   [
-    "potential",
-    9.7
-   ],
-   [
-    "consequences",
-    9.98
-   ],
-   [
-    "so",
-    11.26
-   ],
-   [
-    "critical",
-    11.5
-   ],
-   [
-    "issues",
-    11.74
-   ],
-   [
-    "never",
-    12.14
-   ],
-   [
-    "get",
-    12.62
-   ],
-   [
-    "buried",
-    12.92
-   ],
-   [
-    "then",
-    13.78
-   ],
-   [
-    "they",
-    13.98
-   ],
-   [
-    "can",
-    14.14
-   ],
-   [
-    "understand",
-    14.26
+    "changes",
+    4.08
    ],
    [
     "every",
-    14.58
+    5.18
    ],
    [
-    "change",
-    15.16
+    "issue",
+    5.26
    ],
    [
-    "a",
-    15.98
+    "is",
+    5.74
    ],
    [
-    "slide",
-    16.1
+    "prioritized",
+    5.86
    ],
    [
-    "deck",
-    16.34
+    "by",
+    6.56
    ],
    [
-    "for",
-    16.54
+    "risk",
+    6.76
    ],
    [
-    "each",
-    16.72
-   ],
-   [
-    "one",
-    16.9
-   ],
-   [
-    "explaining",
-    17.22
-   ],
-   [
-    "what",
-    17.54
-   ],
-   [
-    "moved",
-    18.06
-   ],
-   [
-    "and",
-    18.34
-   ],
-   [
-    "why",
-    18.66
-   ],
-   [
-    "a",
-    19.54
-   ],
-   [
-    "quick",
-    19.56
-   ],
-   [
-    "quiz",
-    19.7
-   ],
-   [
-    "to",
-    19.98
-   ],
-   [
-    "check",
-    20.24
-   ],
-   [
-    "the",
-    20.4
-   ],
-   [
-    "reviewer",
-    20.56
-   ],
-   [
-    "understood",
-    20.74
-   ],
-   [
-    "it",
-    21.22
-   ],
-   [
-    "conversations",
-    21.94
-   ],
-   [
-    "right",
-    22.5
+    "based",
+    7.42
    ],
    [
     "on",
-    22.84
+    7.62
+   ],
+   [
+    "what",
+    7.82
+   ],
+   [
+    "a",
+    8.04
+   ],
+   [
+    "change",
+    8.1
+   ],
+   [
+    "affects",
+    8.26
+   ],
+   [
+    "how",
+    9.08
+   ],
+   [
+    "far",
+    9.26
+   ],
+   [
+    "its",
+    9.48
+   ],
+   [
+    "impact",
+    9.66
+   ],
+   [
+    "spreads",
+    9.96
+   ],
+   [
+    "and",
+    10.92
    ],
    [
     "the",
-    23.04
+    11.04
    ],
    [
-    "m",
-    23.16
+    "potential",
+    11.16
    ],
    [
-    "r",
-    23.3
+    "consequences",
+    11.44
    ],
    [
-    "and",
-    24.18
+    "so",
+    12.7
    ],
    [
-    "livy",
-    24.18
+    "critical",
+    12.8
    ],
    [
-    "your",
-    24.72
+    "issues",
+    13.06
    ],
    [
-    "bot",
-    24.9
+    "never",
+    13.46
+   ],
+   [
+    "get",
+    13.88
+   ],
+   [
+    "buried",
+    14.16
+   ],
+   [
+    "then",
+    15.08
+   ],
+   [
+    "they",
+    15.26
+   ],
+   [
+    "can",
+    15.44
+   ],
+   [
+    "understand",
+    15.56
+   ],
+   [
+    "every",
+    15.88
+   ],
+   [
+    "change",
+    16.42
+   ],
+   [
+    "a",
+    17.32
+   ],
+   [
+    "slide",
+    17.4
+   ],
+   [
+    "deck",
+    17.64
    ],
    [
     "for",
-    25.12
+    17.86
    ],
    [
-    "reports",
-    25.34
+    "each",
+    18.02
+   ],
+   [
+    "one",
+    18.24
+   ],
+   [
+    "explaining",
+    18.54
+   ],
+   [
+    "what",
+    18.98
+   ],
+   [
+    "moved",
+    19.42
    ],
    [
     "and",
-    25.58
+    19.66
+   ],
+   [
+    "why",
+    20.02
+   ],
+   [
+    "a",
+    20.88
+   ],
+   [
+    "quick",
+    20.9
+   ],
+   [
+    "quiz",
+    21.04
+   ],
+   [
+    "to",
+    21.32
+   ],
+   [
+    "check",
+    21.56
+   ],
+   [
+    "the",
+    21.72
+   ],
+   [
+    "reviewer",
+    21.86
+   ],
+   [
+    "understood",
+    21.98
+   ],
+   [
+    "it",
+    22.58
+   ],
+   [
+    "conversations",
+    22.84
+   ],
+   [
+    "right",
+    23.86
+   ],
+   [
+    "on",
+    24.24
+   ],
+   [
+    "the",
+    24.42
+   ],
+   [
+    "mr",
+    24.54
+   ],
+   [
+    "and",
+    25.34
+   ],
+   [
+    "livy",
+    25.5
+   ],
+   [
+    "you",
+    26.06
+   ],
+   [
+    "re",
+    26.06
+   ],
+   [
+    "bought",
+    26.32
+   ],
+   [
+    "for",
+    26.54
+   ],
+   [
+    "reports",
+    26.74
+   ],
+   [
+    "and",
+    27.02
    ],
    [
     "actions",
-    25.92
+    27.3
    ]
   ]
  },
  "9": {
   "text": "And it gives your agents what they need to enforce your standards at scale. CI/CD gates apply precise, customized enforcement on every merge. Integrations help you work with Livi everywhere \u2014 in Microsoft Teams and Slack. And MCP lets any preferred AI agent operate Livi right from your own agent.",
   "duration": 18.68,
-  "take": "take_09.mp3",
+  "take": "take_09.wav",
   "words": [
    [
     "and",
@@ -1082,39 +1102,39 @@
    ],
    [
     "it",
-    0.14
+    0.18
    ],
    [
     "gives",
-    0.2
+    0.24
    ],
    [
     "your",
-    0.4
+    0.42
    ],
    [
     "agents",
-    0.6
+    0.62
    ],
    [
     "what",
-    0.84
+    0.86
    ],
    [
     "they",
-    1.12
+    1.16
    ],
    [
     "need",
-    1.38
+    1.44
    ],
    [
     "to",
-    1.64
+    1.7
    ],
    [
     "enforce",
-    1.88
+    1.92
    ],
    [
     "your",
@@ -1122,163 +1142,155 @@
    ],
    [
     "standards",
-    2.42
+    2.52
    ],
    [
     "at",
-    2.8
+    2.9
    ],
    [
     "scale",
-    3.06
+    3.14
    ],
    [
-    "ci",
-    4.34
-   ],
-   [
-    "slash",
-    4.38
-   ],
-   [
-    "cd",
-    4.88
+    "cicd",
+    4.28
    ],
    [
     "gates",
-    5.08
+    4.78
    ],
    [
     "apply",
-    5.4
+    5.0
    ],
    [
     "precise",
-    5.76
+    5.38
    ],
    [
     "customized",
-    6.34
+    6.22
    ],
    [
     "enforcement",
-    7.0
+    6.64
    ],
    [
     "on",
-    7.52
+    7.14
    ],
    [
     "every",
-    7.96
+    7.62
    ],
    [
     "merge",
-    8.28
+    8.02
    ],
    [
     "integrations",
-    9.42
+    9.06
    ],
    [
     "help",
-    9.86
+    9.46
    ],
    [
     "you",
-    10.12
+    9.76
    ],
    [
     "work",
-    10.28
+    9.9
    ],
    [
     "with",
-    10.46
+    10.08
    ],
    [
     "livy",
-    10.64
+    10.26
    ],
    [
     "everywhere",
-    10.88
+    10.46
    ],
    [
     "in",
-    11.94
+    11.18
    ],
    [
     "microsoft",
-    11.96
+    11.54
    ],
    [
     "teams",
-    12.2
+    11.76
    ],
    [
     "and",
-    12.7
+    12.34
    ],
    [
     "slack",
-    13.1
+    12.7
    ],
    [
     "and",
-    14.08
+    13.58
    ],
    [
     "mcp",
-    14.12
+    13.68
    ],
    [
     "lets",
-    14.48
+    14.08
    ],
    [
     "any",
-    14.92
+    14.54
    ],
    [
     "preferred",
-    15.26
+    14.86
    ],
    [
     "ai",
-    15.64
+    15.26
    ],
    [
     "agent",
-    15.98
+    15.58
    ],
    [
     "operate",
-    16.42
+    16.04
    ],
    [
     "livy",
-    16.72
+    16.34
    ],
    [
     "right",
-    17.16
+    16.84
    ],
    [
     "from",
-    17.46
+    17.12
    ],
    [
     "your",
-    17.68
+    17.38
    ],
    [
     "own",
-    17.82
+    17.5
    ],
    [
     "agent",
-    18.1
+    17.78
    ]
   ]
  },
@@ -1501,101 +1513,67 @@
   ]
  },
  "12": {
-  "text": "Inspection is a big deal. Meta saw it too, and went risk-first. Low-risk changes skip the line, so attention goes where risk is.",
-  "duration": 9.25,
+  "text": "Remember Meta? Every MR scored by risk, and the low-risk ones approved automatically.",
+  "duration": 5.8,
   "take": "take_12.mp3",
+  "src_end": 5.8,
+  "trimmed_from": "line_12_before_2026-10-12.wav (dropped 'Production incidents down 98%.')",
   "words": [
    [
-    "inspection",
+    "remember",
     0.0
    ],
    [
-    "is",
-    0.3
+    "meta",
+    0.66
    ],
    [
-    "a",
-    0.98
+    "every",
+    1.78
    ],
    [
-    "big",
-    1.08
+    "mr",
+    1.78
    ],
    [
-    "deal",
-    1.4
+    "scored",
+    1.98
    ],
    [
-    "metaside",
-    2.4
+    "by",
+    2.42
    ],
    [
-    "too",
-    3.0
+    "risk",
+    2.68
    ],
    [
     "and",
-    3.6
-   ],
-   [
-    "went",
-    3.72
-   ],
-   [
-    "risk",
-    3.88
-   ],
-   [
-    "first",
-    4.16
-   ],
-   [
-    "low",
-    5.26
-   ],
-   [
-    "risk",
-    5.4
-   ],
-   [
-    "changes",
-    5.66
-   ],
-   [
-    "skip",
-    6.08
+    3.3
    ],
    [
     "the",
-    6.4
+    3.4
    ],
    [
-    "line",
-    6.58
-   ],
-   [
-    "so",
-    7.18
-   ],
-   [
-    "attention",
-    7.38
-   ],
-   [
-    "goes",
-    7.82
-   ],
-   [
-    "where",
-    8.16
+    "low",
+    3.5
    ],
    [
     "risk",
-    8.42
+    3.68
    ],
    [
-    "is",
-    8.64
+    "ones",
+    3.92
+   ],
+   [
+    "approved",
+    4.2
+   ],
+   [
+    "automatically",
+    4.62
    ]
   ]
  },
@@ -1683,57 +1661,194 @@
   ]
  },
  "14": {
-  "text": "You can get the same results in your org, with LiveReview.",
-  "duration": 3.63,
+  "text": "LiveReview brings Meta's approach to your team. Risk-scored MRs and the low-risk ones approved automatically. So engineers ship faster and safer, while also reviewing less!",
+  "duration": 10.84,
   "take": "take_14.mp3",
   "words": [
    [
-    "you",
+    "livereview",
     0.0
    ],
    [
-    "can",
-    0.22
-   ],
-   [
-    "get",
-    0.36
-   ],
-   [
-    "the",
+    "brings",
     0.5
    ],
    [
-    "same",
-    0.62
+    "meta",
+    1.02
    ],
    [
-    "results",
-    0.9
+    "s",
+    1.02
    ],
    [
-    "in",
-    1.28
+    "approach",
+    1.44
+   ],
+   [
+    "to",
+    1.68
    ],
    [
     "your",
-    1.52
+    1.98
    ],
    [
-    "org",
-    1.74
+    "team",
+    2.22
    ],
    [
-    "with",
-    2.42
+    "risk",
+    3.26
    ],
    [
-    "live",
-    2.6
+    "scored",
+    3.26
    ],
    [
-    "review",
-    2.8
+    "mrs",
+    3.62
+   ],
+   [
+    "and",
+    4.18
+   ],
+   [
+    "the",
+    4.3
+   ],
+   [
+    "low",
+    4.4
+   ],
+   [
+    "risk",
+    4.6
+   ],
+   [
+    "ones",
+    4.84
+   ],
+   [
+    "approved",
+    5.1
+   ],
+   [
+    "automatically",
+    5.48
+   ],
+   [
+    "so",
+    6.8
+   ],
+   [
+    "engineers",
+    6.9
+   ],
+   [
+    "ship",
+    7.2
+   ],
+   [
+    "faster",
+    7.6
+   ],
+   [
+    "and",
+    7.98
+   ],
+   [
+    "safer",
+    8.42
+   ],
+   [
+    "while",
+    8.84
+   ],
+   [
+    "also",
+    9.34
+   ],
+   [
+    "reviewing",
+    9.76
+   ],
+   [
+    "less",
+    10.08
+   ]
+  ]
+ },
+ "15": {
+  "text": "The result? Production incidents down 98%, rollback rates down 30%, and wait time down 33%.",
+  "duration": 7.91,
+  "take": "../vo_street/takes/take_14.mp3",
+  "src_start": 22.78,
+  "src_end": 30.69,
+  "words": [
+   [
+    "the",
+    0.12
+   ],
+   [
+    "result",
+    0.22
+   ],
+   [
+    "production",
+    1.36
+   ],
+   [
+    "incidents",
+    1.36
+   ],
+   [
+    "down",
+    1.64
+   ],
+   [
+    "98",
+    2.02
+   ],
+   [
+    "rollback",
+    3.44
+   ],
+   [
+    "rates",
+    3.94
+   ],
+   [
+    "down",
+    4.18
+   ],
+   [
+    "30",
+    4.44
+   ],
+   [
+    "and",
+    5.24
+   ],
+   [
+    "wait",
+    5.68
+   ],
+   [
+    "time",
+    5.88
+   ],
+   [
+    "down",
+    6.14
+   ],
+   [
+    "33",
+    6.44
+   ],
+   [
+    "engineers",
+    7.8
    ]
   ]
  }
